@@ -1,0 +1,191 @@
+@import "tailwindcss";
+
+/*
+ * Serif nghiêng cho phần nhấn của tiêu đề: Noto Serif Display, bản nén ngang
+ * (extra-condensed), tự host trong public/fonts. Có đủ dấu tiếng Việt.
+ */
+@font-face {
+  font-family: "VSAP Serif";
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/serif-italic-vietnamese.woff2") format("woff2");
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301,
+    U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+@font-face {
+  font-family: "VSAP Serif";
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/serif-italic-latin-ext.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329,
+    U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: "VSAP Serif";
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/serif-italic-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@theme {
+  --color-forest-950: #0e2410;
+  --color-forest-900: #17361a;
+  --color-forest-800: #224a25;
+  --color-forest-600: #2f8a35;
+  --color-sage-500: #7f8c7b;
+  --color-sage-400: #a2ac9e;
+  --color-lime-300: #d6f25c;
+  --color-lime-400: #c9ea3e;
+  --color-sun-500: #f59e0b;
+  --color-chili-600: #d73e27;
+  --color-mist-50: #f4f5f2;
+  --color-mist-100: #eceee9;
+  --color-mist-200: #dfe2db;
+  --color-ink-900: #17231a;
+  --color-ink-600: #59645b;
+  --color-ink-400: #8d968d;
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "VSAP Serif", ui-serif, Georgia, serif;
+}
+
+:root {
+  color-scheme: light;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: #fff;
+  color: var(--color-ink-900);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--color-lime-300);
+  color: var(--color-forest-950);
+}
+
+/*
+ * Page width: side gutters scale with the viewport (~5%, like the mockup) and the
+ * content only stops growing on very wide screens.
+ */
+:root {
+  --page-gutter: clamp(1.25rem, 5vw, 6rem);
+  --page-max: 120rem;
+}
+
+@utility container-page {
+  width: 100%;
+  max-width: var(--page-max);
+  margin-inline: auto;
+  padding-inline: var(--page-gutter);
+}
+
+/* Left inset that lines up with .container-page content, for full-bleed scrollers. */
+@utility page-inset-left {
+  padding-left: max(var(--page-gutter), calc((100vw - var(--page-max)) / 2 + var(--page-gutter)));
+  scroll-padding-left: max(var(--page-gutter), calc((100vw - var(--page-max)) / 2 + var(--page-gutter)));
+}
+
+/* Sans đậm vừa, khít chữ — phần chính của mọi tiêu đề. */
+@utility heading {
+  font-weight: 500;
+  letter-spacing: -0.035em;
+  line-height: 1.08;
+  text-wrap: balance;
+}
+
+/* Phần serif nghiêng đi kèm tiêu đề ("Generations", "Simple and Efficient"…). */
+@utility accent {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+
+/* Ẩn thanh cuộn cho băng thẻ trượt ngang. */
+@utility no-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/*
+ * Motion (see components/MotionMain.tsx, HeroSlider.tsx). Intro elements start
+ * hidden only when JS is present; GSAP removes `data-intro` and animates them in.
+ * If the script never runs, the failsafe animation shows them after 3s.
+ */
+.js [data-intro] {
+  opacity: 0;
+  animation: intro-failsafe 0.01s 3s forwards;
+}
+
+@keyframes intro-failsafe {
+  to {
+    opacity: 1;
+  }
+}
+
+/* Typewriter caret (components/StatementSlider.tsx): solid while typing, blinking at rest. */
+[data-caret] {
+  position: relative;
+}
+[data-caret]::after {
+  content: "";
+  position: absolute;
+  top: 0.08em;
+  bottom: 0.02em;
+  right: -0.08em;
+  width: max(2px, 0.06em);
+  border-radius: 1px;
+  background: var(--color-forest-600);
+  animation: caret-blink 1.05s steps(1, end) infinite;
+}
+[data-typing] [data-caret]::after {
+  animation: none;
+}
+@keyframes caret-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+/* Smooth open/close for the <details> accordions where the browser supports it. */
+@media (prefers-reduced-motion: no-preference) {
+  @supports (interpolate-size: allow-keywords) {
+    :root {
+      interpolate-size: allow-keywords;
+    }
+    details::details-content {
+      block-size: 0;
+      overflow: clip;
+      transition:
+        block-size 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+        content-visibility 0.45s allow-discrete;
+    }
+    details[open]::details-content {
+      block-size: auto;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .js [data-intro] {
+    opacity: 1;
+    animation: none;
+  }
+}
