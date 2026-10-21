@@ -1,9 +1,10 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Building2, Download, Globe2, Inbox, Loader2, Mail, MessageCircle, Package, Phone, RefreshCw, Search, Trash2 } from "lucide-react";
+import { BellRing, Building2, Download, Globe2, Inbox, Loader2, Mail, MessageCircle, Package, Phone, RefreshCw, Search, Trash2 } from "lucide-react";
 import { inquiryStatuses, inquiryStatusInfo, type Inquiry, type InquiryStatus } from "@/lib/cms/inquiry-format";
-import { api, formatTime } from "./api";
+import { api, formatTime, type TelegramStatus } from "./api";
+import { TelegramSettings } from "./TelegramSettings";
 
 const productLabel: Record<string, string> = { cashew: "Hạt điều", macadamia: "Hạt macca", other: "Khác" };
 
@@ -21,13 +22,16 @@ function StatusPill({ status }: { status: InquiryStatus }) {
 const digits = (s = "") => s.replace(/[^\d]/g, "");
 
 /** Quote requests from the website: triage by status, reply, keep internal notes, export to CSV. */
-export function InboxView({ onCounts }: { onCounts?: (c: Record<InquiryStatus, number>) => void }) {
+export function InboxView({ onCounts, canConfigure = false }: { onCounts?: (c: Record<InquiryStatus, number>) => void; canConfigure?: boolean }) {
   const [status, setStatus] = useState<InquiryStatus | "">("");
   const [q, setQ] = useState("");
   const [query, setQuery] = useState("");
   const [items, setItems] = useState<Inquiry[] | null>(null);
   const [counts, setCounts] = useState<Record<InquiryStatus, number> | null>(null);
-  const [selected, setSelected] = useState<number | null>(null);
+  // A Telegram alert links to /admin?view=inbox&id=… to open that request directly.
+  const [selected, setSelected] = useState<number | null>(() => (typeof window === "undefined" ? null : Number(new URLSearchParams(location.search).get("id")) || null));
+  const [telegramOpen, setTelegramOpen] = useState(false);
+  const [telegram, setTelegram] = useState<TelegramStatus | null>(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const selectedRef = useRef<number | null>(null);
@@ -51,6 +55,10 @@ export function InboxView({ onCounts }: { onCounts?: (c: Record<InquiryStatus, n
       setLoading(false);
     }
   }, [status, query, onCounts]);
+
+  useEffect(() => {
+    if (canConfigure) api.telegram().then(setTelegram).catch(() => {});
+  }, [canConfigure]);
 
   useEffect(() => {
     load();
@@ -106,6 +114,17 @@ export function InboxView({ onCounts }: { onCounts?: (c: Record<InquiryStatus, n
               <p className="mt-0.5 text-xs leading-snug text-ink-600">Gửi từ form trên website. Mở một yêu cầu mới sẽ chuyển nó sang “Đang xử lý”.</p>
             </div>
             <div className="flex shrink-0 gap-1">
+              {canConfigure && (
+                <button
+                  type="button"
+                  title={telegram?.chat ? `Đang báo về Telegram: ${telegram.chat.title}` : "Cài đặt thông báo Telegram"}
+                  onClick={() => setTelegramOpen(true)}
+                  className="relative inline-flex items-center gap-1 rounded-lg border border-mist-200 px-2 py-1.5 text-xs text-ink-900 hover:bg-mist-50"
+                >
+                  <BellRing className="size-3.5" /> Telegram
+                  <span className={`size-1.5 rounded-full ${telegram?.chat && telegram.tokenSource ? "bg-forest-600" : "bg-mist-200"}`} aria-hidden="true" />
+                </button>
+              )}
               <button type="button" title="Tải lại" onClick={load} className="rounded-lg p-1.5 text-ink-600 hover:bg-mist-100">
                 <RefreshCw className={`size-4 ${loading ? "animate-spin" : ""}`} />
               </button>
@@ -161,6 +180,8 @@ export function InboxView({ onCounts }: { onCounts?: (c: Record<InquiryStatus, n
           ))}
         </ol>
       </aside>
+
+      {telegramOpen && <TelegramSettings onClose={() => setTelegramOpen(false)} onChange={setTelegram} />}
 
       <section className="min-h-0 flex-1 overflow-y-auto bg-mist-50">
         {current ? (

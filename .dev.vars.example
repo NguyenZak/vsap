@@ -1,3 +1,5 @@
 # Copy to .dev.vars for local development. Never commit real values.
 ADMIN_PASSWORD=change-me
 ADMIN_SESSION_SECRET=generate-a-long-random-string
+# Optional: Telegram bot token for quote-request alerts (can also be pasted in Studio › Báo giá › Telegram).
+# TELEGRAM_BOT_TOKEN=

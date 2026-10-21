@@ -234,3 +234,39 @@ describe("faqFromMarkdown", () => {
     ]);
   });
 });
+
+describe("telegram alert", async () => {
+  const { inquiryAlert } = await import("./telegram-format");
+  const base = { id: 12, data: { name: "Anna <Müller>", company: "Nuss & Co", email: "anna@example.com", phone: "+49 30 1234567", country: "Germany", product: "cashew", quantity: "1 FCL", message: "Need <b>W240</b>" }, locale: "en", source: "/en/contact", country: "DE" };
+
+  it("escapes customer text for Telegram HTML", () => {
+    const { text } = inquiryAlert(base, "https://vsap.com.vn");
+    expect(text).toContain("<b>Anna &lt;Müller&gt;</b> · Nuss &amp; Co");
+    expect(text).toContain("<i>Need &lt;b&gt;W240&lt;/b&gt;</i>");
+    expect(text).toContain("📦 Hạt điều · 1 FCL");
+    expect(text).toContain("🌍 Germany · IP: DE");
+    expect(text).not.toMatch(/\n\n\n/);
+  });
+
+  it("links to the request in Studio and to WhatsApp", () => {
+    const { buttons } = inquiryAlert(base, "https://vsap.com.vn");
+    expect(buttons[0][0].url).toBe("https://vsap.com.vn/admin?view=inbox&id=12");
+    expect(buttons[1]).toEqual([{ text: "WhatsApp", url: "https://wa.me/49301234567" }]);
+  });
+
+  it("adds Zalo for Vietnamese numbers and skips empty fields", () => {
+    const { text, buttons } = inquiryAlert({ id: 3, data: { name: "Bình", email: "b@example.com", phone: "0901 234 567", message: "Báo giá" } }, "https://x.test");
+    expect(buttons[1]).toEqual([
+      { text: "WhatsApp", url: "https://wa.me/84901234567" },
+      { text: "Zalo", url: "https://zalo.me/0901234567" },
+    ]);
+    expect(text).not.toContain("🌍");
+    expect(text).not.toContain("📦");
+  });
+
+  it("truncates very long messages", () => {
+    const { text } = inquiryAlert({ ...base, data: { ...base.data, message: "x".repeat(2000) } }, "https://x.test");
+    expect(text.length).toBeLessThan(1400);
+    expect(text).toContain("…");
+  });
+});

@@ -3,6 +3,7 @@ import type { SessionUser } from "@/lib/cms/auth";
 import type { Inquiry, InquiryStatus } from "@/lib/cms/inquiry-format";
 import type { PostRecord, PostSummary } from "@/lib/cms/posts";
 import type { Permission, Role } from "@/lib/cms/roles";
+import type { TelegramChat, TelegramStatus } from "@/lib/cms/notify";
 import type { MediaItem } from "@/lib/cms/store";
 import type { Post, SiteContent } from "@/lib/cms/types";
 import type { AuditEntry, PublicUser } from "@/lib/cms/users";
@@ -21,7 +22,7 @@ async function call<T>(url: string, init?: RequestInit): Promise<T> {
 export type AdminState = { content: SiteContent; hasDraft: boolean; draftUpdatedAt: number | null; publishedAt: number | null };
 export type Revision = { id: number; created_at: number; note: string | null; author: string | null; size: number };
 export type Me = { user: SessionUser; permissions: Permission[] };
-export type { AuditEntry, Inquiry, InquiryStatus, PostRecord, PostSummary, PublicUser };
+export type { AuditEntry, Inquiry, InquiryStatus, PostRecord, PostSummary, PublicUser, TelegramChat, TelegramStatus };
 
 const qs = (params: Record<string, string | number | undefined>) => {
   const q = new URLSearchParams();
@@ -59,6 +60,13 @@ export const api = {
   inquiriesCsvUrl: (params: { status?: string; q?: string }) => `/api/admin/inquiries${qs({ ...params, format: "csv" })}`,
   updateInquiry: (id: number, patch: { status?: InquiryStatus; note?: string }) => call<{ inquiry: Inquiry }>("/api/admin/inquiries", { method: "PATCH", body: JSON.stringify({ id, ...patch }) }),
   deleteInquiry: (id: number) => call<{ ok: true }>(`/api/admin/inquiries?id=${id}`, { method: "DELETE" }),
+
+  telegram: () => call<TelegramStatus>("/api/admin/notify"),
+  telegramToken: (token: string) => call<TelegramStatus>("/api/admin/notify", { method: "POST", body: JSON.stringify({ action: "token", token }) }),
+  telegramDiscover: () => call<{ chats: TelegramChat[] }>("/api/admin/notify", { method: "POST", body: JSON.stringify({ action: "discover" }) }),
+  telegramChat: (chat: TelegramChat) => call<TelegramStatus>("/api/admin/notify", { method: "POST", body: JSON.stringify({ action: "chat", chatId: chat.id, title: chat.title }) }),
+  telegramTest: () => call<{ ok: true }>("/api/admin/notify", { method: "POST", body: JSON.stringify({ action: "test" }) }),
+  telegramDisconnect: () => call<TelegramStatus>("/api/admin/notify", { method: "POST", body: JSON.stringify({ action: "disconnect" }) }),
 
   posts: () => call<{ posts: PostSummary[] }>("/api/admin/posts"),
   createPost: (post?: Partial<Post>) => call<{ post: PostRecord }>("/api/admin/posts", { method: "POST", body: JSON.stringify(post ?? null) }),

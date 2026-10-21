@@ -2,6 +2,7 @@ import { env } from "cloudflare:workers";
 import { clientHash } from "@/lib/cms/api";
 import type { InquiryData as Inquiry } from "@/lib/cms/inquiry-format";
 import { recentFrom, saveInquiry } from "@/lib/cms/inquiries";
+import { notifyInquiry } from "@/lib/cms/notify";
 
 /** Submissions allowed per visitor address in the window below. */
 const MAX_PER_WINDOW = 5;
@@ -53,11 +54,12 @@ export async function POST(request: Request) {
 
   // 1) Keep it in the Studio inbox (Yêu cầu báo giá).
   let stored = false;
+  let id: number | null = null;
   try {
     // Daily salt: the same visitor can be rate-limited today, but hashes can't be linked across days.
     const ipHash = await clientHash(request, `inquiry:${new Date().toISOString().slice(0, 10)}`);
     if ((await recentFrom(ipHash, WINDOW_MS)) >= MAX_PER_WINDOW) return Response.json({ ok: false }, { status: 429 });
-    await saveInquiry(inquiry, { locale, source, country, ipHash });
+    id = await saveInquiry(inquiry, { locale, source, country, ipHash });
     stored = true;
   } catch (e) {
     console.error("Inquiry could not be stored", e);
@@ -81,7 +83,15 @@ export async function POST(request: Request) {
     }
   }
 
-  // Only report failure when the request was neither stored nor forwarded.
-  if (!stored && !forwarded) return Response.json({ ok: false }, { status: 502 });
+  // 3) Alert the sales chat on Telegram, if connected in Studio.
+  let alerted = false;
+  try {
+    alerted = await notifyInquiry({ id, data: inquiry, locale, source, country }, new URL(request.url).origin);
+  } catch (e) {
+    console.error("Telegram alert failed", e);
+  }
+
+  // Only report failure when the request reached nobody.
+  if (!stored && !forwarded && !alerted) return Response.json({ ok: false }, { status: 502 });
   return Response.json({ ok: true });
 }

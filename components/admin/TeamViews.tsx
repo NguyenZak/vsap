@@ -29,7 +29,7 @@ export function RoleBadge({ role }: { role: Role }) {
   return <span className={`rounded-full px-2 py-0.5 text-[11px] font-medium ${roleTone[role]}`}>{roleInfo[role].label}</span>;
 }
 
-function Modal({ title, onClose, children }: { title: string; onClose: () => void; children: React.ReactNode }) {
+export function Modal({ title, onClose, children }: { title: string; onClose: () => void; children: React.ReactNode }) {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
     window.addEventListener("keydown", onKey);
@@ -37,7 +37,7 @@ function Modal({ title, onClose, children }: { title: string; onClose: () => voi
   }, [onClose]);
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
-      <div role="dialog" aria-modal="true" aria-label={title} className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl">
+      <div role="dialog" aria-modal="true" aria-label={title} className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl max-h-[90dvh] overflow-y-auto">
         <div className="flex items-start justify-between">
           <h2 className="text-lg font-medium text-ink-900">{title}</h2>
           <button type="button" onClick={onClose} aria-label="Đóng" className="rounded-lg p-1 text-ink-600 hover:bg-mist-100">
@@ -368,6 +368,9 @@ const actionLabel: Record<string, string> = {
   "user.update": "Sửa tài khoản",
   "user.delete": "Xoá tài khoản",
   "user.password": "Đổi mật khẩu",
+  "notify.token": "Kết nối bot Telegram",
+  "notify.chat": "Chọn nhóm Telegram",
+  "notify.disconnect": "Ngắt Telegram",
 };
 
 const actionTone = (a: string) =>

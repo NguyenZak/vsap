@@ -164,6 +164,8 @@ export function Studio() {
     const q = new URLSearchParams();
     if (view.kind === "page") q.set("page", view.id);
     else q.set("view", view.kind);
+    const id = new URLSearchParams(location.search).get("id");
+    if (view.kind === "inbox" && id) q.set("id", id);
     history.replaceState(null, "", `/admin?${q}`);
   }, [view, me]);
 
@@ -622,7 +624,7 @@ export function Studio() {
         {view.kind === "news" && content && (
           <PostsView settings={content.settings} canWrite={canWrite} canPublish={canPublish} locale={locale} onLocale={setLocale} />
         )}
-        {view.kind === "inbox" && <InboxView onCounts={onInboxCounts} />}
+        {view.kind === "inbox" && <InboxView onCounts={onInboxCounts} canConfigure={can("users")} />}
         {view.kind === "users" && <UsersView me={me} />}
         {view.kind === "audit" && <AuditView />}
         {view.kind === "history" && (
