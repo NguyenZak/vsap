@@ -230,6 +230,12 @@ const pages: Record<PageId, Page> = {
   },
 };
 
+/** Search titles for the seed products (the page heading stays the short product name). */
+const productSeoTitles: Record<string, { vi: string; en: string }> = {
+  cashew: { vi: "Nhân hạt điều Việt Nam xuất khẩu W180–W450", en: "Vietnamese cashew kernels W180–W450 for export" },
+  macadamia: { vi: "Hạt macca Tây Nguyên xuất khẩu", en: "Vietnamese macadamia nuts from the Central Highlands" },
+};
+
 function ui(d: Dict): UiStrings {
   const { home } = d;
   return {
@@ -314,7 +320,7 @@ export function defaultContent(): SiteContent {
       packaging: p.packaging.vi.map((text, i) => ({ text: { vi: text, en: p.packaging.en[i] ?? text } })),
       specs: p.specs.map((s) => ({ label: { ...s.label }, value: s.value })),
       applications: p.applications.vi.map((text, i) => ({ text: { vi: text, en: p.applications.en[i] ?? text } })),
-      seo: { title: { vi: "", en: "" }, description: { vi: "", en: "" } },
+      seo: { title: { ...(productSeoTitles[p.slug] ?? { vi: "", en: "" }) }, description: { vi: "", en: "" } },
     })),
     retailPacks: retailPacks.map((r) => ({
       id: r.id,

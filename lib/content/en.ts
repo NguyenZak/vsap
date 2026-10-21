@@ -245,7 +245,7 @@ export const en: Dictionary = {
     { title: "Delivery", body: "Documentation, customs clearance and shipping to your port of destination." },
   ],
   about: {
-    metaTitle: "About VSAP",
+    metaTitle: "Our story & core values",
     metaDescription: "The story, mission and core values of VSAP – Vietnamese agricultural products at international standards.",
     eyebrow: "About us",
     title: "Raising the profile of",
@@ -273,7 +273,7 @@ export const en: Dictionary = {
     valuesTitle: "Core values",
   },
   productsPage: {
-    metaTitle: "Products",
+    metaTitle: "Export cashew & macadamia nuts",
     metaDescription: "Export-grade Vietnamese cashew and macadamia nuts: a full range of grades and flexible packing.",
     eyebrow: "Products",
     title: "Export-grade",
@@ -292,7 +292,7 @@ export const en: Dictionary = {
     specsNote: "Specifications are indicative and can be adjusted per contract.",
   },
   quality: {
-    metaTitle: "Quality & Process",
+    metaTitle: "Quality control & export documents",
     metaDescription: "VSAP’s quality control process from farm to delivery, with complete export documentation.",
     eyebrow: "Quality & Process",
     title: "Quality controlled",
@@ -317,7 +317,7 @@ export const en: Dictionary = {
     ],
   },
   contact: {
-    metaTitle: "Contact",
+    metaTitle: "Request a quote & samples",
     metaDescription: "Contact VSAP for pricing and samples of Vietnamese cashew and macadamia nuts.",
     eyebrow: "Contact",
     title: "Start working",

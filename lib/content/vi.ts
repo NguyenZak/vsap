@@ -249,7 +249,7 @@ export const vi = {
     { title: "Giao hàng", body: "Hoàn thiện chứng từ, thông quan và vận chuyển đến cảng đích." },
   ],
   about: {
-    metaTitle: "Về VSAP",
+    metaTitle: "Câu chuyện & giá trị cốt lõi",
     metaDescription: "Câu chuyện, sứ mệnh và giá trị cốt lõi của VSAP – thương hiệu nông sản Việt chuẩn quốc tế.",
     eyebrow: "Về chúng tôi",
     title: "Nâng tầm nông sản Việt",
@@ -277,7 +277,7 @@ export const vi = {
     valuesTitle: "Giá trị cốt lõi",
   },
   productsPage: {
-    metaTitle: "Sản phẩm",
+    metaTitle: "Hạt điều & hạt macca xuất khẩu",
     metaDescription: "Hạt điều và hạt macca Việt Nam tiêu chuẩn xuất khẩu: đa dạng phân loại, quy cách đóng gói linh hoạt.",
     eyebrow: "Sản phẩm",
     title: "Hạt dinh dưỡng Việt Nam",
@@ -296,7 +296,7 @@ export const vi = {
     specsNote: "Thông số mang tính tham khảo, có thể điều chỉnh theo hợp đồng.",
   },
   quality: {
-    metaTitle: "Chất lượng & Quy trình",
+    metaTitle: "Kiểm soát chất lượng & chứng từ xuất khẩu",
     metaDescription: "Quy trình kiểm soát chất lượng của VSAP từ vùng trồng đến giao hàng, cùng bộ chứng từ xuất khẩu đầy đủ.",
     eyebrow: "Chất lượng & Quy trình",
     title: "Chất lượng được kiểm soát",
@@ -321,7 +321,7 @@ export const vi = {
     ],
   },
   contact: {
-    metaTitle: "Liên hệ",
+    metaTitle: "Liên hệ nhận báo giá & mẫu thử",
     metaDescription: "Liên hệ VSAP để nhận báo giá, mẫu thử hạt điều và hạt macca Việt Nam.",
     eyebrow: "Liên hệ",
     title: "Bắt đầu hợp tác",

@@ -7,8 +7,8 @@ import { MotionMain } from "@/components/MotionMain";
 import { PreviewBridge } from "@/components/cms/PreviewBridge";
 import { pick } from "@/lib/cms/links";
 import { getContent, isPreview } from "@/lib/cms/store";
-import { localeParams, resolveLocale, metadataLocale } from "@/lib/i18n";
-import { jsonLdHtml, seoMetadata, siteJsonLd } from "@/lib/seo";
+import { localeParams, locales, resolveLocale, metadataLocale } from "@/lib/i18n";
+import { jsonLdHtml, ogLocale, seoMetadata, siteJsonLd } from "@/lib/seo";
 import "../globals.css";
 
 const font = Inter({
@@ -80,6 +80,12 @@ export default async function LocaleLayout({ children, params }: Props) {
         <Footer locale={locale} content={content} ui={ui} />
         {!preview && <FloatingContact t={ui.chat} links={site} />}
         {preview && <PreviewBridge />}
+        {/* vinext doesn't emit openGraph.alternateLocale; React 19 hoists this <meta> into <head>. */}
+        {locales
+          .filter((l) => l !== locale)
+          .map((l) => (
+            <meta key={l} property="og:locale:alternate" content={ogLocale[l]} />
+          ))}
         <script type="application/ld+json" dangerouslySetInnerHTML={jsonLdHtml(siteJsonLd(content, locale))} />
         {ga4 && (
           <>
