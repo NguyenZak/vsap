@@ -2,7 +2,7 @@ import { bindings, defineConfig, defineWorker } from "cf/config";
 
 export default defineConfig({
   worker: defineWorker({
-    name: "vsap-web",
+    name: "vsap",
     entrypoint: "vinext/server/fetch-handler",
     compatibilityDate: "2026-10-16",
     compatibilityFlags: ["nodejs_compat"],
