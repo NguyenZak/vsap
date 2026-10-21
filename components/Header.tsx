@@ -119,7 +119,7 @@ export function Header({ locale, nav, contact: site, logoAlt }: Props) {
             alt={logoAlt}
             width={136}
             height={68}
-            className="h-11 w-auto sm:h-12 lg:h-14"
+            className="h-10 w-auto sm:h-12 lg:h-14"
           />
         </Link>
 
@@ -140,13 +140,11 @@ export function Header({ locale, nav, contact: site, logoAlt }: Props) {
           ))}
         </nav>
 
-        <div className="flex items-center gap-2">
-          <div className="hidden sm:block">
-            <LocaleSwitcher locale={locale} />
-          </div>
+        <div className="flex items-center gap-1.5 sm:gap-2">
+          <LocaleSwitcher locale={locale} />
           <Link
             href={`/${locale}/contact`}
-            className="inline-flex rounded-full bg-white px-4 py-2 text-sm font-medium whitespace-nowrap text-ink-900 transition hover:bg-mist-100 group-data-solid/header:bg-forest-900 group-data-solid/header:text-white sm:px-5 sm:py-2.5"
+            className="hidden rounded-full bg-white px-3.5 py-2 text-sm font-medium whitespace-nowrap min-[360px]:inline-flex text-ink-900 transition hover:bg-mist-100 group-data-solid/header:bg-forest-900 group-data-solid/header:text-white sm:px-5 sm:py-2.5"
           >
             {nav.quote}
           </Link>
@@ -157,7 +155,7 @@ export function Header({ locale, nav, contact: site, logoAlt }: Props) {
             aria-expanded={open}
             aria-controls="mobile-nav"
             aria-label={open ? nav.close : nav.menu}
-            className={`relative inline-flex size-10 items-center justify-center rounded-full text-white transition-colors duration-300 group-data-solid/header:text-ink-900 lg:hidden ${
+            className={`relative -mr-2 inline-flex size-10 items-center justify-center rounded-full text-white transition-colors duration-300 group-data-solid/header:text-ink-900 lg:hidden ${
               open ? "bg-mist-100" : "active:bg-white/15"
             }`}
           >
@@ -224,9 +222,6 @@ export function Header({ locale, nav, contact: site, logoAlt }: Props) {
               </a>
             </li>
           </ul>
-          <div data-menu-fade className="flex sm:hidden">
-            <LocaleSwitcher locale={locale} />
-          </div>
         </div>
       </nav>
     </header>
