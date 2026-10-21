@@ -2,6 +2,7 @@
 // published, the copy visitors see, so a post can be revised without the live
 // version changing until someone with publish rights approves it.
 import { cache } from "react";
+import { samplePosts } from "../content/posts";
 import type { Locale } from "../locales";
 import { newPost } from "./collections";
 import { db } from "./db";
@@ -68,7 +69,28 @@ const record = (r: Row): PostRecord => ({ id: r.id, draft: parse(r.draft)!, publ
 
 // ---- Studio -------------------------------------------------------------------
 
+/**
+ * Load the sample posts (lib/content/posts.ts) once, as unpublished drafts, the
+ * first time the Studio lists posts. A marker row keeps them from coming back
+ * after editors delete them.
+ */
+async function seedSamplePosts() {
+  const d = await db();
+  const done = await d.prepare("SELECT 1 AS x FROM cms_documents WHERE key = 'seed:posts'").first();
+  if (done) return;
+  const now = Date.now();
+  await d.batch([
+    ...samplePosts.map((p, i) =>
+      d
+        .prepare("INSERT OR IGNORE INTO cms_posts (id, slug, draft, published, published_at, created_at, updated_at, updated_by) VALUES (?, ?, ?, NULL, NULL, ?, ?, 'VSAP')")
+        .bind(crypto.randomUUID(), p.slug, JSON.stringify(p), now + i, now + i),
+    ),
+    d.prepare("INSERT OR IGNORE INTO cms_documents (key, data, updated_at) VALUES ('seed:posts', '{}', ?)").bind(now),
+  ]);
+}
+
 export async function listPostsAdmin(): Promise<PostSummary[]> {
+  await seedSamplePosts();
   const { results } = await (await db()).prepare("SELECT * FROM cms_posts ORDER BY created_at DESC").all<Row>();
   return results.map(summary).sort((a, b) => b.date.localeCompare(a.date));
 }

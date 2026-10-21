@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { parseMarkdown, parseInline, plainText, readingMinutes, safeHref } from "../markdown";
+import { faqFromMarkdown, parseMarkdown, parseInline, plainText, readingMinutes, safeHref } from "../markdown";
 import { newPost } from "./collections";
 import { defaultContent } from "./defaults";
 import { inquiriesCsv, type Inquiry } from "./inquiry-format";
@@ -168,5 +168,69 @@ describe("inquiry CSV", () => {
   it("defuses spreadsheet formulas", () => {
     const csv = inquiriesCsv([{ ...base, data: { ...base.data, name: "=HYPERLINK(\"x\")" } }]);
     expect(csv).toContain(`"'=HYPERLINK(""x"")"`);
+  });
+});
+
+describe("sample posts", async () => {
+  const { existsSync } = await import("node:fs");
+  const { fileURLToPath } = await import("node:url");
+  const { samplePosts } = await import("../content/posts");
+  const root = fileURLToPath(new URL("../../", import.meta.url));
+  const slugs = new Set(samplePosts.map((p) => p.slug));
+  const sitePaths = new Set(["/", "/products", "/products/cashew", "/products/macadamia", "/quality", "/about", "/contact", "/news"]);
+
+  it("are ten valid, unique, bilingual posts", () => {
+    expect(samplePosts).toHaveLength(10);
+    expect(slugs.size).toBe(10);
+    for (const p of samplePosts) {
+      expect(postProblem(p), p.slug).toBeNull();
+      expect(inLocale(p, "vi") && inLocale(p, "en"), p.slug).toBe(true);
+      expect(isScheduled(p, Date.UTC(2026, 9, 22)), p.slug).toBe(false);
+    }
+  });
+
+  it("keep SEO titles and descriptions within search-result lengths", () => {
+    for (const p of samplePosts)
+      for (const l of ["vi", "en"] as const) {
+        const t = [...p.seo.title[l]].length;
+        const d = [...p.seo.description[l]].length;
+        expect(t, `${p.slug} ${l} title ${t}`).toBeGreaterThanOrEqual(30);
+        expect(t, `${p.slug} ${l} title ${t}`).toBeLessThanOrEqual(60);
+        expect(d, `${p.slug} ${l} description ${d}`).toBeGreaterThanOrEqual(70);
+        expect(d, `${p.slug} ${l} description ${d}`).toBeLessThanOrEqual(160);
+      }
+  });
+
+  it("each answer three or more FAQ questions in both languages", () => {
+    for (const p of samplePosts) for (const l of ["vi", "en"] as const) expect(faqFromMarkdown(p.body[l]).length, `${p.slug} ${l}`).toBeGreaterThanOrEqual(3);
+  });
+
+  it("only link to pages and images that exist", () => {
+    const links: string[] = [];
+    const images: string[] = samplePosts.map((p) => p.cover.src);
+    const walk = (nodes: unknown) => {
+      for (const n of nodes as { t: string; href?: string; c?: unknown; items?: unknown[]; src?: string }[]) {
+        if (n.t === "link" && n.href) links.push(n.href);
+        if (n.t === "img" && n.src) images.push(n.src);
+        if (n.c) walk(n.c);
+        if (n.items) n.items.forEach(walk);
+      }
+    };
+    for (const p of samplePosts) for (const l of ["vi", "en"] as const) walk(parseMarkdown(p.body[l]));
+    for (const href of links.filter((h) => h.startsWith("/"))) {
+      const ok = sitePaths.has(href) || (href.startsWith("/news/") && slugs.has(href.slice(6)));
+      expect(ok, href).toBe(true);
+    }
+    for (const src of images) expect(existsSync(`${root}public${src}`), src).toBe(true);
+  });
+});
+
+describe("faqFromMarkdown", () => {
+  it("reads ### questions under the FAQ heading only", () => {
+    const md = "## Intro\n\n### Not a question\n\ntext\n\n## Câu hỏi thường gặp\n\n### Một?\n\nTrả lời **một**.\n\n### Hai?\n\nHai.\n\n## Nguồn\n\n### Ignored?\n\nx";
+    expect(faqFromMarkdown(md)).toEqual([
+      { q: "Một?", a: "Trả lời một." },
+      { q: "Hai?", a: "Hai." },
+    ]);
   });
 });

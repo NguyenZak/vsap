@@ -118,3 +118,36 @@ export function plainText(src: string) {
 
 /** Minutes to read at ~220 words a minute (at least 1). */
 export const readingMinutes = (src: string) => Math.max(1, Math.round(plainText(src).split(" ").filter(Boolean).length / 220));
+
+const FAQ_HEADING = /^(câu hỏi thường gặp|hỏi đáp|faq|frequently asked questions)\b/i;
+
+/**
+ * Question/answer pairs from a post's FAQ: an "## Câu hỏi thường gặp" (or "## FAQ")
+ * heading followed by "### Question?" headings, each answered by the text below
+ * it. Used for FAQPage structured data.
+ */
+export function faqFromMarkdown(src: string): { q: string; a: string }[] {
+  const out: { q: string; a: string }[] = [];
+  let inFaq = false;
+  let current: { q: string; a: string[] } | null = null;
+  const flush = () => {
+    if (current && current.a.length) out.push({ q: current.q, a: plainText(current.a.join("\n")) });
+    current = null;
+  };
+  for (const raw of src.replace(/\r\n?/g, "\n").split("\n")) {
+    const line = raw.trim();
+    const h = line.match(/^(#{1,4})\s+(.+)$/);
+    if (h && h[1].length <= 2) {
+      flush();
+      inFaq = FAQ_HEADING.test(plainText(h[2]));
+      continue;
+    }
+    if (!inFaq) continue;
+    if (h) {
+      flush();
+      current = { q: plainText(h[2]), a: [] };
+    } else if (current && line) current.a.push(line);
+  }
+  flush();
+  return out.filter((f) => f.q && f.a);
+}

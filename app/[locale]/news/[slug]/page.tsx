@@ -11,8 +11,8 @@ import { formatDate, inLocale } from "@/lib/cms/post-format";
 import { getPosts } from "@/lib/cms/posts";
 import { getContent, isPreview } from "@/lib/cms/store";
 import { locales, metadataLocale, resolveLocale, type Locale } from "@/lib/i18n";
-import { plainText, readingMinutes } from "@/lib/markdown";
-import { articleJsonLd, breadcrumbJsonLd, jsonLdHtml, seoMetadata } from "@/lib/seo";
+import { faqFromMarkdown, plainText, readingMinutes } from "@/lib/markdown";
+import { articleJsonLd, breadcrumbJsonLd, faqJsonLd, jsonLdHtml, seoMetadata } from "@/lib/seo";
 
 type Props = { params: Promise<{ locale: string; slug: string }> };
 
@@ -60,7 +60,8 @@ export default async function PostPage({ params }: Props) {
   const more = posts.filter((p) => p.slug !== post.slug).slice(0, 3);
   const path = `/news/${post.slug}`;
 
-  const jsonLd = [
+  const faq = faqFromMarkdown(body);
+  const jsonLd: unknown[] = [
     articleJsonLd(content, locale, {
       path,
       headline: tr(post.title),
@@ -75,6 +76,7 @@ export default async function PostPage({ params }: Props) {
       { name: tr(post.title), path },
     ]),
   ];
+  if (faq.length) jsonLd.push(faqJsonLd(faq));
 
   return (
     <>
