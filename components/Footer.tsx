@@ -101,6 +101,19 @@ export function Footer({ locale, content, ui }: Props) {
           <p>
             © {new Date().getFullYear()} {site.name}. {footer.rights}
           </p>
+          {site.social.length > 0 && (
+            <ul className="flex flex-wrap gap-x-5 gap-y-1">
+              {site.social
+                .filter((x) => x.url)
+                .map((x) => (
+                  <li key={x.url}>
+                    <a href={x.url} target="_blank" rel="noopener noreferrer me" className="text-white/70 transition hover:text-lime-300">
+                      {x.name}
+                    </a>
+                  </li>
+                ))}
+            </ul>
+          )}
           <p>
             {footer.brandOf} {site.legalName}
           </p>

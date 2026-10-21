@@ -1,9 +1,6 @@
 import type { NextConfig } from "next";
 
-const nextConfig: NextConfig = {
-  async redirects() {
-    return [{ source: "/", destination: "/vi", permanent: false }];
-  },
-};
+// "/" → /vi or /en is decided per visitor language in proxy.ts.
+const nextConfig: NextConfig = {};
 
 export default nextConfig;

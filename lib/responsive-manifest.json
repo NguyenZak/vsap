@@ -1,0 +1,123 @@
+{
+  "/images/cashew-apple.webp": {
+    "width": 1600,
+    "sizes": [
+      640,
+      1280
+    ]
+  },
+  "/images/cashew-grove.webp": {
+    "width": 2000,
+    "sizes": [
+      640,
+      1280
+    ]
+  },
+  "/images/cashew-harvest.webp": {
+    "width": 1400,
+    "sizes": [
+      640
+    ]
+  },
+  "/images/cashew-kernels.webp": {
+    "width": 1400,
+    "sizes": [
+      640
+    ]
+  },
+  "/images/cashew-orchard.webp": {
+    "width": 2400,
+    "sizes": [
+      640,
+      1280
+    ]
+  },
+  "/images/cashew-processing.webp": {
+    "width": 1200,
+    "sizes": [
+      640
+    ]
+  },
+  "/images/cashew-roasted.webp": {
+    "width": 1400,
+    "sizes": [
+      640
+    ]
+  },
+  "/images/cashew-tree-sky.webp": {
+    "width": 1600,
+    "sizes": [
+      640,
+      1280
+    ]
+  },
+  "/images/cashew.webp": {
+    "width": 1800,
+    "sizes": [
+      640,
+      1280
+    ]
+  },
+  "/images/farmer-hoe.webp": {
+    "width": 2400,
+    "sizes": [
+      640,
+      1280
+    ]
+  },
+  "/images/farmer-watering.webp": {
+    "width": 2000,
+    "sizes": [
+      640,
+      1280
+    ]
+  },
+  "/images/highland-farmers.webp": {
+    "width": 2000,
+    "sizes": [
+      640,
+      1280
+    ]
+  },
+  "/images/highlands.webp": {
+    "width": 2400,
+    "sizes": [
+      640,
+      1280
+    ]
+  },
+  "/images/macadamia-spoon.webp": {
+    "width": 1400,
+    "sizes": [
+      640
+    ]
+  },
+  "/images/macadamia-tree.webp": {
+    "width": 1600,
+    "sizes": [
+      640,
+      1280
+    ]
+  },
+  "/images/macadamia.webp": {
+    "width": 1800,
+    "sizes": [
+      640,
+      1280
+    ]
+  },
+  "/images/paddy-work.webp": {
+    "width": 2000,
+    "sizes": [
+      640,
+      1280
+    ]
+  },
+  "/images/shipping.webp": {
+    "width": 2400,
+    "sizes": [
+      640,
+      1280
+    ]
+  }
+}

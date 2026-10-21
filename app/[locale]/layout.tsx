@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import { FloatingContact } from "@/components/FloatingContact";
 import { Footer } from "@/components/Footer";
@@ -7,7 +7,8 @@ import { MotionMain } from "@/components/MotionMain";
 import { PreviewBridge } from "@/components/cms/PreviewBridge";
 import { pick } from "@/lib/cms/links";
 import { getContent, isPreview } from "@/lib/cms/store";
-import { alternates, localeParams, resolveLocale, metadataLocale } from "@/lib/i18n";
+import { localeParams, resolveLocale, metadataLocale } from "@/lib/i18n";
+import { jsonLdHtml, seoMetadata, siteJsonLd } from "@/lib/seo";
 import "../globals.css";
 
 const font = Inter({
@@ -24,23 +25,36 @@ export const generateStaticParams = localeParams;
 // Content comes from the CMS on every request (see lib/cms/store.ts).
 export const dynamic = "force-dynamic";
 
+export const viewport: Viewport = {
+  themeColor: "#17361a",
+  colorScheme: "light",
+};
+
 export async function generateMetadata({ params }: Omit<Props, "children">): Promise<Metadata> {
   const locale = metadataLocale((await params).locale);
-  const { settings } = await getContent();
-  const title = pick(settings.seo.title, locale);
-  const description = pick(settings.seo.description, locale);
+  const content = await getContent();
+  const { settings } = content;
+  const base = seoMetadata({
+    content,
+    locale,
+    path: "",
+    title: pick(settings.seo.title, locale),
+    description: pick(settings.seo.description, locale),
+    absoluteTitle: true,
+  });
   return {
+    ...base,
     metadataBase: new URL(settings.url),
-    title: { default: title, template: `%s | ${settings.name}` },
-    description,
-    alternates: alternates(locale),
-    openGraph: {
-      type: "website",
-      siteName: settings.name,
-      title,
-      description,
-      locale: locale === "vi" ? "vi_VN" : "en_US",
-      images: settings.seo.image ? [{ url: settings.seo.image }] : undefined,
+    title: { default: pick(settings.seo.title, locale), template: `%s | ${settings.name}` },
+    applicationName: settings.name,
+    authors: [{ name: settings.legalName, url: settings.url }],
+    publisher: settings.legalName,
+    formatDetection: { telephone: true, email: true, address: false },
+    manifest: "/manifest.webmanifest",
+    icons: { icon: [{ url: "/icon.svg", type: "image/svg+xml" }], apple: [{ url: "/apple-icon.png", sizes: "180x180" }] },
+    verification: {
+      google: settings.verification.google || undefined,
+      other: settings.verification.bing ? { "msvalidate.01": settings.verification.bing } : undefined,
     },
   };
 }
@@ -50,25 +64,8 @@ export default async function LocaleLayout({ children, params }: Props) {
   const [content, preview] = await Promise.all([getContent(), isPreview()]);
   const { settings: site } = content;
   const ui = content.ui[locale];
-
-  const orgJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    name: site.name,
-    legalName: site.legalName,
-    url: site.url,
-    logo: `${site.url}/logo.svg`,
-    slogan: site.tagline,
-    email: site.email,
-    telephone: site.phoneE164,
-    address: site.offices.map((o) => ({
-      "@type": "PostalAddress",
-      streetAddress: o.street,
-      addressLocality: o.locality,
-      addressRegion: o.region,
-      addressCountry: "VN",
-    })),
-  };
+  // Only a real GA4 id is ever interpolated into the inline script.
+  const ga4 = /^G-[A-Z0-9]{4,16}$/.test(site.analytics.ga4.trim()) && !preview ? site.analytics.ga4.trim() : "";
 
   return (
     // suppressHydrationWarning: the inline script below adds the `js` class before React hydrates.
@@ -83,7 +80,17 @@ export default async function LocaleLayout({ children, params }: Props) {
         <Footer locale={locale} content={content} ui={ui} />
         {!preview && <FloatingContact t={ui.chat} links={site} />}
         {preview && <PreviewBridge />}
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={jsonLdHtml(siteJsonLd(content, locale))} />
+        {ga4 && (
+          <>
+            <script async src={`https://www.googletagmanager.com/gtag/js?id=${ga4}`} />
+            <script
+              dangerouslySetInnerHTML={{
+                __html: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date());gtag("config","${ga4}");`,
+              }}
+            />
+          </>
+        )}
       </body>
     </html>
   );

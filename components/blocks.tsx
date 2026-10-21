@@ -21,6 +21,7 @@ import {
   toneBg,
   type Tone,
 } from "./sections";
+import { SIZES } from "@/lib/responsive";
 import { CmsIcon } from "./cms/Icon";
 import { Button, Tag, Title } from "./ui";
 
@@ -322,10 +323,10 @@ const renderers: Record<string, Renderer> = {
         </div>
         <div className="grid grid-cols-2 gap-3 lg:col-span-6">
           <div data-reveal="clip" className="relative aspect-[3/4] overflow-hidden rounded-2xl">
-            <CmsImg image={img(p.imageA)} parallax className="absolute inset-0 size-full" />
+            <CmsImg image={img(p.imageA)} parallax sizes={SIZES.thumb} className="absolute inset-0 size-full" />
           </div>
           <div data-reveal="clip" className="relative mt-10 aspect-[3/4] overflow-hidden rounded-2xl">
-            <CmsImg image={img(p.imageB)} parallax className="absolute inset-0 size-full" />
+            <CmsImg image={img(p.imageB)} parallax sizes={SIZES.thumb} className="absolute inset-0 size-full" />
           </div>
         </div>
       </div>
@@ -371,7 +372,7 @@ const renderers: Record<string, Renderer> = {
           <AccordionCards name={`acc-${section.id}`} items={items} />
         </div>
         <div data-reveal="clip" className="relative aspect-[4/3] overflow-hidden rounded-2xl lg:aspect-auto">
-          <CmsImg image={img(p.image)} parallax className="absolute inset-0 size-full" />
+          <CmsImg image={img(p.image)} parallax sizes={SIZES.half} className="absolute inset-0 size-full" />
         </div>
       </div>
     );
@@ -466,7 +467,7 @@ const renderers: Record<string, Renderer> = {
     return (
       <div className="block-pad container-page grid gap-10 lg:grid-cols-2 lg:items-center">
         <div data-reveal="clip" className={`relative aspect-[4/3] overflow-hidden rounded-2xl ${imageLeft ? "" : "lg:order-2"}`}>
-          <CmsImg image={img(p.image)} parallax className="absolute inset-0 size-full" />
+          <CmsImg image={img(p.image)} parallax sizes={SIZES.half} className="absolute inset-0 size-full" />
         </div>
         <div data-reveal>
           {t(p.eyebrow) && <Tag tone={dark ? "glass" : "light"}>{t(p.eyebrow)}</Tag>}
@@ -495,7 +496,7 @@ const renderers: Record<string, Renderer> = {
         <ul className={`grid gap-3 ${cols} ${hasHeading(p, ctx) ? "mt-12" : ""}`}>
           {list(p.images).map((it, i) => (
             <li key={i} data-reveal="clip" className="relative aspect-[4/3] overflow-hidden rounded-2xl">
-              <CmsImg image={img(it.image)} className="absolute inset-0 size-full transition duration-700 hover:scale-105" />
+              <CmsImg image={img(it.image)} sizes={SIZES.third} className="absolute inset-0 size-full transition duration-700 hover:scale-105" />
             </li>
           ))}
         </ul>

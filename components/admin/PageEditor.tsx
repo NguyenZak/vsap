@@ -249,6 +249,7 @@ export function SectionInspector({
   onChange,
   onSections,
   onSelect,
+  seoPreview,
 }: {
   page: Page;
   basePath: Path;
@@ -256,10 +257,13 @@ export function SectionInspector({
   onChange: (path: Path, value: unknown) => void;
   onSections: (sections: Section[]) => void;
   onSelect: (id: string | null) => void;
+  /** Search/social preview shown above the page's SEO fields. */
+  seoPreview?: React.ReactNode;
 }) {
   if (selected === "seo") {
     return (
       <Panel title="Cài đặt trang" subtitle={page.label}>
+        {seoPreview}
         <FieldForm fields={pageSeoFields} value={page.seo} path={[...basePath, "seo"]} onChange={onChange} />
       </Panel>
     );

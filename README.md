@@ -91,6 +91,15 @@ Binding `DB` (D1 `vsap-cms`) và `MEDIA` (R2 `vsap-media`) khai báo trong `clou
 npm test   # kiểm tra nội dung mặc định, registry section, đường dẫn ảnh, gộp dữ liệu cũ
 ```
 
+## SEO
+
+- Mỗi trang: tiêu đề, mô tả, ảnh chia sẻ, ẩn khỏi Google (noindex) — sửa trong Studio › Trang › *Cài đặt trang (SEO)*, có xem trước kết quả Google / thẻ chia sẻ và đo độ dài. Sản phẩm có trường SEO riêng.
+- Tự sinh: canonical, hreflang vi/en + `x-default`, Open Graph + Twitter card (ảnh lớn), `sitemap.xml` (bỏ trang noindex, có `lastmod` từ lần xuất bản), `robots.txt`, `manifest.webmanifest`, icon iPhone, trang 404 song ngữ.
+- Dữ liệu có cấu trúc (JSON-LD): Organization + WebSite (mọi trang), BreadcrumbList (trang con, sản phẩm), Product (trang sản phẩm), FAQPage (khi trang có section câu hỏi). Code ở `lib/seo.ts`.
+- Studio › Công ty: mạng xã hội (hiện ở chân trang + `sameAs`), mã xác minh Google Search Console / Bing, Google Analytics 4 (chỉ tải khi có mã).
+- `/` chuyển tới `/vi` hoặc `/en` theo ngôn ngữ trình duyệt (`proxy.ts`).
+- Ảnh có sẵn có thêm bản 640/1280px cho `srcset`: sau khi thêm/đổi ảnh trong `public/images`, chạy `python3 scripts/responsive-images.py`.
+
 ## Form báo giá
 
 `POST /api/inquiry` kiểm tra dữ liệu và chuyển tiếp JSON tới webhook nếu có biến `INQUIRY_WEBHOOK_URL` (Slack, Google Apps Script → Google Sheet, CRM…):

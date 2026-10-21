@@ -36,6 +36,16 @@ export const productFields: FieldDef[] = [
     newItem: () => ({ label: l("Độ ẩm", "Moisture"), value: "≤ 5%" }),
   },
   { key: "applications", label: "Ứng dụng", type: "list", itemLabel: "ứng dụng", titleKey: "text", fields: [{ key: "text", label: "Nội dung", type: "text" }], newItem: () => ({ text: l("Ứng dụng", "Use") }) },
+  {
+    key: "seo",
+    label: "SEO",
+    type: "group",
+    help: "Để trống để dùng tên và mô tả ngắn của sản phẩm.",
+    fields: [
+      { key: "title", label: "Tiêu đề trên Google", type: "text" },
+      { key: "description", label: "Mô tả trên Google", type: "textarea", rows: 2 },
+    ],
+  },
 ];
 
 export const newProduct = () => ({
@@ -51,6 +61,7 @@ export const newProduct = () => ({
   packaging: [],
   specs: [],
   applications: [],
+  seo: { title: l(""), description: l("") },
 });
 
 export const retailFields: FieldDef[] = [
@@ -136,14 +147,45 @@ export const settingsFields: FieldDef[] = [
     label: "SEO mặc định",
     type: "group",
     fields: [
-      { key: "title", label: "Tiêu đề trang", type: "text" },
-      { key: "description", label: "Mô tả", type: "textarea", rows: 2 },
-      { key: "image", label: "Ảnh chia sẻ mạng xã hội", type: "media" },
+      { key: "title", label: "Tiêu đề trang chủ trên Google", type: "text" },
+      { key: "description", label: "Mô tả mặc định", type: "textarea", rows: 2 },
+      { key: "image", label: "Ảnh chia sẻ mặc định (1200×630)", type: "media", help: "Dùng khi trang không có ảnh riêng." },
     ],
+  },
+  {
+    key: "social",
+    label: "Mạng xã hội",
+    type: "list",
+    itemLabel: "mạng xã hội",
+    titleKey: "name",
+    help: "Hiện ở chân trang và giúp Google liên kết các trang của công ty.",
+    fields: [
+      { key: "name", label: "Tên (Facebook, YouTube, LinkedIn, Zalo OA…)", type: "string" },
+      { key: "url", label: "Đường dẫn", type: "link" },
+    ],
+    newItem: () => ({ name: "Facebook", url: "https://www.facebook.com/" }),
+  },
+  {
+    key: "verification",
+    label: "Xác minh công cụ tìm kiếm",
+    type: "group",
+    help: "Dán mã trong thẻ meta xác minh (chỉ phần content).",
+    fields: [
+      { key: "google", label: "Google Search Console", type: "string" },
+      { key: "bing", label: "Bing Webmaster", type: "string" },
+    ],
+  },
+  {
+    key: "analytics",
+    label: "Thống kê truy cập",
+    type: "group",
+    fields: [{ key: "ga4", label: "Google Analytics 4 (G-XXXXXXX)", type: "string", help: "Để trống để không tải Google Analytics." }],
   },
 ];
 
 export const pageSeoFields: FieldDef[] = [
-  { key: "title", label: "Tiêu đề trang (SEO)", type: "text" },
-  { key: "description", label: "Mô tả (SEO)", type: "textarea", rows: 2 },
+  { key: "title", label: "Tiêu đề trên Google", type: "text", help: "Nên dài 30–60 ký tự." },
+  { key: "description", label: "Mô tả trên Google", type: "textarea", rows: 3, help: "Nên dài 70–160 ký tự." },
+  { key: "image", label: "Ảnh chia sẻ (Facebook, Zalo…)", type: "media", help: "Tỉ lệ 1200×630. Để trống thì dùng ảnh đầu trang." },
+  { key: "noindex", label: "Ẩn trang khỏi Google (noindex)", type: "boolean" },
 ];

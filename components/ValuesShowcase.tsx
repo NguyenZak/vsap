@@ -3,6 +3,7 @@
 import { useId, useRef, useState } from "react";
 import { Minus, Plus } from "lucide-react";
 import { gsap, prefersReducedMotion, ScrollTrigger, useGSAP } from "@/lib/gsap";
+import { srcSetFor } from "@/lib/responsive";
 import { CmsIcon } from "./cms/Icon";
 
 export type ShowcaseItem = { icon: string; title: string; body: string; image: { src: string; alt: string } };
@@ -125,7 +126,7 @@ export function ValuesShowcase({ items: values, autoplay: AUTOPLAY }: { items: S
       <div data-reveal="clip" className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-mist-100 lg:aspect-auto lg:min-h-[28rem]">
         {values.map((v, i) => (
           <div key={i} data-vs-slide className="absolute inset-0 overflow-hidden" aria-hidden={i !== active}>
-            <img src={v.image.src} alt={v.image.alt} loading="lazy" decoding="async" className="size-full object-cover will-change-transform" />
+            <img src={v.image.src} srcSet={srcSetFor(v.image.src)} sizes="(min-width: 1024px) 50vw, 100vw" alt={v.image.alt} loading="lazy" decoding="async" className="size-full object-cover will-change-transform" />
           </div>
         ))}
         <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-28 bg-gradient-to-t from-black/45 to-transparent" />

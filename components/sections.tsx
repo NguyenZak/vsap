@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { ArrowUpRight, Handshake, Minus, Plus } from "lucide-react";
 import type { CmsImage } from "@/lib/cms/types";
+import { SIZES, srcSetFor } from "@/lib/responsive";
 import { CmsIcon } from "./cms/Icon";
 import { Tag, Title } from "./ui";
 
@@ -65,17 +66,22 @@ export function CmsImg({
   priority = false,
   parallax = false,
   decorative = false,
+  sizes = SIZES.full,
 }: {
   image: { src: string; alt: string } | undefined;
   className?: string;
   priority?: boolean;
   parallax?: boolean;
   decorative?: boolean;
+  /** `sizes` hint for srcset; see lib/responsive.ts. */
+  sizes?: string;
 }) {
   if (!image?.src) return <div className={`bg-mist-100 ${className}`} aria-hidden="true" />;
   return (
     <img
       src={image.src}
+      srcSet={srcSetFor(image.src)}
+      sizes={srcSetFor(image.src) ? sizes : undefined}
       alt={decorative ? "" : image.alt}
       loading={priority ? "eager" : "lazy"}
       fetchPriority={priority ? "high" : undefined}
@@ -214,7 +220,7 @@ export function ProductCard({ card }: { card: ProductCardView }) {
   return (
     <Link href={card.href} data-reveal className="group block rounded-3xl bg-mist-50 p-2">
       <div className="overflow-hidden rounded-2xl">
-        <CmsImg image={card.image} className="aspect-[4/3] w-full transition duration-700 group-hover:scale-105" />
+        <CmsImg image={card.image} sizes={SIZES.half} className="aspect-[4/3] w-full transition duration-700 group-hover:scale-105" />
       </div>
       <div className="p-5 sm:p-6">
         {card.latin && <p className="accent text-lg text-ink-600">{card.latin}</p>}

@@ -50,7 +50,7 @@ async function readDoc(key: "draft" | "published"): Promise<{ content: SiteConte
 
 /**
  * The content to render for this request: the draft when the admin preview
- * asked for it (middleware sets x-vsap-preview after checking the session),
+ * asked for it (proxy.ts sets x-vsap-preview after checking the session),
  * otherwise the published version, otherwise the built-in defaults.
  */
 export const getContent = cache(async (): Promise<SiteContent> => {
@@ -61,6 +61,16 @@ export const getContent = cache(async (): Promise<SiteContent> => {
   } catch (e) {
     if (!(e instanceof CmsUnavailableError)) console.error("[cms] read failed, using defaults", e);
     return defaultContent();
+  }
+});
+
+/** When the live content was last published (null before the first publish). */
+export const getPublishedAt = cache(async (): Promise<number | null> => {
+  try {
+    const row = await (await db()).prepare("SELECT updated_at FROM cms_documents WHERE key = 'published'").first<{ updated_at: number }>();
+    return row?.updated_at ?? null;
+  } catch {
+    return null;
   }
 });
 

@@ -24,6 +24,7 @@ export function CollectionEditor<T extends object>({
   onItems,
   onChange,
   validate,
+  header,
 }: {
   title: string;
   description: string;
@@ -39,6 +40,8 @@ export function CollectionEditor<T extends object>({
   onItems: (items: T[]) => void;
   onChange: (path: Path, value: unknown) => void;
   validate?: (item: T, all: T[]) => string | null;
+  /** Extra content above the selected item's form (e.g. SEO preview). */
+  header?: (item: T) => React.ReactNode;
 }) {
   const [drag, setDrag] = useState<number | null>(null);
   const current = items[selected];
@@ -141,6 +144,7 @@ export function CollectionEditor<T extends object>({
             }
           >
             {problem && <p className="mb-4 rounded-lg bg-red-50 px-3 py-2 text-xs text-chili-600">{problem}</p>}
+            {header?.(current)}
             <FieldForm fields={fields} value={current} path={[...basePath, selected]} onChange={onChange} />
           </Panel>
         ) : (

@@ -8,7 +8,8 @@ import { CmsImg, SectionHeading } from "@/components/sections";
 import { Button, Title } from "@/components/ui";
 import { pick } from "@/lib/cms/links";
 import { getContent } from "@/lib/cms/store";
-import { alternates, metadataLocale, resolveLocale } from "@/lib/i18n";
+import { metadataLocale, resolveLocale } from "@/lib/i18n";
+import { breadcrumbJsonLd, jsonLdHtml, seoMetadata } from "@/lib/seo";
 
 type Props = { params: Promise<{ locale: string; slug: string }> };
 
@@ -23,15 +24,18 @@ async function load(params: Props["params"]) {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { raw, product } = await load(params);
+  const { raw, content, product } = await load(params);
   const locale = metadataLocale(raw);
   if (!product) return {};
-  return {
-    title: pick(product.name, locale),
-    description: pick(product.short, locale),
-    alternates: alternates(locale, `/products/${product.slug}`),
-    openGraph: { images: product.image?.src ? [{ url: product.image.src }] : undefined },
-  };
+  return seoMetadata({
+    content,
+    locale,
+    path: `/products/${product.slug}`,
+    title: pick(product.seo?.title, locale) || pick(product.name, locale),
+    description: pick(product.seo?.description, locale) || pick(product.short, locale),
+    image: product.image?.src,
+    imageAlt: pick(product.image?.alt, locale),
+  });
 }
 
 export default async function ProductPage({ params }: Props) {
@@ -50,12 +54,24 @@ export default async function ProductPage({ params }: Props) {
     "@type": "Product",
     name: tr(product.name),
     description: tr(product.description),
-    image: [...packs.flatMap((p) => (p.images[0]?.src ? [p.images[0].src] : [])), product.image?.src]
+    image: [product.image?.src, ...gallery.map((g) => g.src), ...packs.flatMap((p) => (p.images[0]?.src ? [p.images[0].src] : []))]
       .filter(Boolean)
       .map((src) => new URL(src!, site.url).toString()),
     brand: { "@type": "Brand", name: site.name },
+    manufacturer: { "@id": `${site.url}/#organization` },
+    category: ui.footer.products,
+    countryOfOrigin: { "@type": "Country", name: "Vietnam" },
     url: `${site.url}/${locale}/products/${product.slug}`,
+    additionalProperty: [
+      ...product.grades.map((g) => ({ "@type": "PropertyValue", name: g.code, value: tr(g.label) })),
+      ...product.specs.map((s) => ({ "@type": "PropertyValue", name: tr(s.label), value: s.value })),
+    ],
   };
+  const crumbs = breadcrumbJsonLd(content, locale, [
+    { name: ui.nav.products, path: "/products" },
+    { name: tr(product.name), path: `/products/${product.slug}` },
+  ]);
+
 
   return (
     <>
@@ -225,7 +241,8 @@ export default async function ProductPage({ params }: Props) {
         </div>
       </section>
 
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={jsonLdHtml(productJsonLd)} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={jsonLdHtml(crumbs)} />
     </>
   );
 }

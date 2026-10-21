@@ -25,6 +25,12 @@ export type Settings = {
   about: L;
   /** Default SEO title/description and social share image. */
   seo: { title: L; description: L; image: string };
+  /** Profiles linked from the footer and listed as sameAs for Google. */
+  social: { name: string; url: string }[];
+  /** Search engine ownership codes (content of the verification meta tag). */
+  verification: { google: string; bing: string };
+  /** Optional GA4 measurement ID (G-XXXXXXX); analytics loads only when set. */
+  analytics: { ga4: string };
 };
 
 /** Interface strings that are not part of any one section (nav, buttons, form labels…). */
@@ -62,7 +68,7 @@ export type Page = {
   /** Shown in the admin only. */
   label: string;
   path: string;
-  seo: { title: L; description: L };
+  seo: { title: L; description: L; image: string; noindex: boolean };
   sections: Section[];
 };
 
@@ -79,6 +85,8 @@ export type Product = {
   packaging: { text: L }[];
   specs: { label: L; value: string }[];
   applications: { text: L }[];
+  /** Overrides for the product page's title/description in search results. */
+  seo: { title: L; description: L };
 };
 
 export type RetailPack = {

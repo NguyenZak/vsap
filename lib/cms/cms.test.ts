@@ -137,3 +137,34 @@ describe("links", () => {
     expect(pick("plain", "en")).toBe("plain");
   });
 });
+
+describe("seo", async () => {
+  const { seoMetadata, jsonLdHtml, pageImage, siteJsonLd } = await import("../seo");
+  const { srcSetFor } = await import("../responsive");
+
+  it("builds canonical, hreflang with x-default and social tags", () => {
+    const m = seoMetadata({ content, locale: "en", path: "/about", title: "About", description: "d", image: "/images/highlands.webp" });
+    expect(m.alternates?.canonical).toBe("/en/about");
+    expect(m.alternates?.languages).toMatchObject({ vi: "/vi/about", en: "/en/about", "x-default": "/vi/about" });
+    expect(m.openGraph).toMatchObject({ url: "/en/about", locale: "en_US", title: "About | VSAP" });
+    expect(m.twitter).toMatchObject({ card: "summary_large_image" });
+    expect(m.robots).toBeUndefined();
+    expect(seoMetadata({ content, locale: "vi", path: "", title: "", description: "", noindex: true }).robots).toMatchObject({ index: false });
+  });
+
+  it("uses each page's first photo as its share image", () => {
+    for (const page of Object.values(content.pages)) expect(pageImage(page)?.src, page.label).toMatch(/^\/images\//);
+  });
+
+  it("escapes JSON-LD so content cannot close the script tag", () => {
+    expect(jsonLdHtml({ a: "</script><script>x" }).__html).not.toContain("</script>");
+    expect(siteJsonLd(content, "vi")["@graph"][0]).toMatchObject({ "@type": "Organization", name: "VSAP" });
+  });
+
+  it("offers smaller copies only for built-in photos that have them", () => {
+    expect(srcSetFor("/images/highlands.webp")).toContain("/images/_w/highlands-640.webp 640w");
+    expect(srcSetFor("/media/2026/x.png")).toBeUndefined();
+    for (const set of [srcSetFor("/images/highlands.webp")!])
+      for (const url of set.split(", ").map((x) => x.split(" ")[0])) expect(existsSync(`${root}public${url}`), url).toBe(true);
+  });
+});

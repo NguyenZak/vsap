@@ -1,15 +1,12 @@
 import { notFound } from "next/navigation";
 
-export const locales = ["vi", "en"] as const;
-export type Locale = (typeof locales)[number];
-export const defaultLocale: Locale = "vi";
+import { defaultLocale, isLocale, locales, type Locale } from "./locales";
+
+export { defaultLocale, isLocale, locales, type Locale };
 
 /** Shape of the seed content in lib/content (used to build the CMS defaults). */
 export type Dictionary = typeof import("./content/vi").vi;
 
-export function isLocale(value: string): value is Locale {
-  return (locales as readonly string[]).includes(value);
-}
 
 /** Resolve the `[locale]` route param, 404-ing on anything unsupported. */
 export function resolveLocale(value: string): Locale {

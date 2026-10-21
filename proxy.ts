@@ -2,12 +2,24 @@ import { NextResponse, type NextRequest } from "next/server";
 import { readCookie, verifySession } from "@/lib/cms/auth";
 
 /**
+ * - / redirects to /vi or /en by the browser's language.
  * - /admin and /api/admin need a valid admin session (except the login page/API).
  * - Public pages opened with ?__preview=1 by a signed-in admin render the draft:
  *   we pass that on as the x-vsap-preview request header, read by getContent().
  */
-export async function middleware(req: NextRequest) {
+export async function proxy(req: NextRequest) {
   const { pathname, searchParams } = req.nextUrl;
+
+  // "/" picks the visitor's language: Vietnamese (or no preference, e.g. crawlers) → /vi, anything else → /en.
+  if (pathname === "/") {
+    const accept = (req.headers.get("accept-language") ?? "").toLowerCase();
+    const first = accept.split(",")[0]?.trim() ?? "";
+    const url = req.nextUrl.clone();
+    url.pathname = !first || first.startsWith("vi") || first === "*" ? "/vi" : "/en";
+    const res = NextResponse.redirect(url, 302);
+    res.headers.set("Vary", "Accept-Language");
+    return res;
+  }
   const isAdminArea = pathname === "/admin" || pathname.startsWith("/admin/") || pathname.startsWith("/api/admin/");
   const isLogin = pathname === "/admin/login" || pathname === "/api/admin/login";
 
@@ -36,5 +48,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin", "/admin/:path*", "/api/admin/:path*", "/vi", "/vi/:path*", "/en", "/en/:path*"],
+  matcher: ["/", "/admin", "/admin/:path*", "/api/admin/:path*", "/vi", "/vi/:path*", "/en", "/en/:path*"],
 };

@@ -3,6 +3,7 @@
 import { useId, useRef, useState } from "react";
 import { MapPin } from "lucide-react";
 import { gsap, MOTION_OK, prefersReducedMotion, ScrollTrigger, useGSAP } from "@/lib/gsap";
+import { srcSetFor } from "@/lib/responsive";
 import { CmsIcon } from "./cms/Icon";
 
 export type ProcessStep = { icon: string; title: string; body: string; image: { src: string; alt: string } };
@@ -164,6 +165,8 @@ export function ProcessTabs({
           <img
             key={active}
             src={step.image.src}
+            srcSet={srcSetFor(step.image.src)}
+            sizes="100vw"
             alt={step.image.alt}
             loading="lazy"
             decoding="async"

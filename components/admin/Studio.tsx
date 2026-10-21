@@ -31,7 +31,9 @@ import { CollectionEditor } from "./CollectionEditor";
 import { FieldForm, LinkSuggestions } from "./fields";
 import { Panel, SectionInspector, SectionList } from "./PageEditor";
 import { Preview, type PreviewHandle } from "./Preview";
+import { SeoPreview } from "./SeoPreview";
 import { UiEditor } from "./UiEditor";
+import { pageImage } from "@/lib/seo";
 import { HistoryView, MediaView } from "./Views";
 
 type Path = (string | number)[];
@@ -396,6 +398,21 @@ export function Studio() {
                 onChange={onField}
                 onSections={(sections) => onField(["pages", view.id, "sections"], sections)}
                 onSelect={setSelected}
+                seoPreview={(() => {
+                  const page = content.pages[view.id];
+                  const t = (v: { vi: string; en: string }) => v[locale] || v.vi;
+                  const title = t(page.seo.title) || (view.id === "home" ? t(content.settings.seo.title) : `${content.ui[locale].nav[view.id]}`);
+                  return (
+                    <SeoPreview
+                      siteName={content.settings.name}
+                      title={view.id === "home" ? title : `${title} | ${content.settings.name}`}
+                      description={t(page.seo.description) || t(content.settings.seo.description)}
+                      url={`${content.settings.url}/${locale}${page.path}`}
+                      image={page.seo.image || pageImage(page)?.src || content.settings.seo.image}
+                      noindex={page.seo.noindex}
+                    />
+                  );
+                })()}
               />
             </section>
           </>
@@ -416,6 +433,18 @@ export function Studio() {
             newItem={() => ({ ...newProduct(), slug: `san-pham-${content.products.length + 1}` }) as Product}
             onItems={(items) => onField(["products"], items)}
             onChange={onField}
+            header={(p) => {
+              const t = (v: { vi: string; en: string } | undefined) => (v ? v[locale] || v.vi : "");
+              return (
+                <SeoPreview
+                  siteName={content.settings.name}
+                  title={`${t(p.seo?.title) || t(p.name)} | ${content.settings.name}`}
+                  description={t(p.seo?.description) || t(p.short)}
+                  url={`${content.settings.url}/${locale}/products/${p.slug}`}
+                  image={p.image?.src}
+                />
+              );
+            }}
             validate={(p, all) =>
               !/^[a-z0-9]+(-[a-z0-9]+)*$/.test(p.slug)
                 ? "Slug chỉ gồm chữ thường không dấu, số và gạch ngang."
@@ -468,6 +497,13 @@ export function Studio() {
         {view.kind === "settings" && (
           <section className="flex w-[34rem] shrink-0 flex-col border-r border-mist-200 bg-white">
             <Panel title="Thông tin công ty" subtitle="Dùng ở chân trang, trang Liên hệ, nút liên hệ nổi và dữ liệu cho Google.">
+              <SeoPreview
+                siteName={content.settings.name}
+                title={content.settings.seo.title[locale] || content.settings.seo.title.vi}
+                description={content.settings.seo.description[locale] || content.settings.seo.description.vi}
+                url={`${content.settings.url}/${locale}`}
+                image={content.settings.seo.image}
+              />
               <FieldForm fields={settingsFields} value={content.settings} path={["settings"]} onChange={onField} />
             </Panel>
           </section>

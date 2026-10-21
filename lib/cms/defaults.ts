@@ -89,7 +89,7 @@ const pages: Record<PageId, Page> = {
   home: {
     label: "Trang chủ",
     path: "",
-    seo: { title: tr((d) => d.meta.title), description: tr((d) => d.meta.description) },
+    seo: { title: tr((d) => d.meta.title), description: tr((d) => d.meta.description), image: "", noindex: false },
     sections: [
       section("home-hero", "hero", {
         slides: vi.home.hero.slides.map((_, i) => ({
@@ -147,7 +147,7 @@ const pages: Record<PageId, Page> = {
   about: {
     label: "Về VSAP",
     path: "/about",
-    seo: { title: tr((d) => d.about.metaTitle), description: tr((d) => d.about.metaDescription) },
+    seo: { title: tr((d) => d.about.metaTitle), description: tr((d) => d.about.metaDescription), image: "", noindex: false },
     sections: [
       pageHero("about-hero", (d) => d.about, "farmerHoe"),
       section("about-story", "story", {
@@ -177,7 +177,7 @@ const pages: Record<PageId, Page> = {
   products: {
     label: "Sản phẩm",
     path: "/products",
-    seo: { title: tr((d) => d.productsPage.metaTitle), description: tr((d) => d.productsPage.metaDescription) },
+    seo: { title: tr((d) => d.productsPage.metaTitle), description: tr((d) => d.productsPage.metaDescription), image: "", noindex: false },
     sections: [
       pageHero("products-hero", (d) => d.productsPage, "cashewTreeSky"),
       section("products-cards", "productCards", {
@@ -194,7 +194,7 @@ const pages: Record<PageId, Page> = {
   quality: {
     label: "Chất lượng",
     path: "/quality",
-    seo: { title: tr((d) => d.quality.metaTitle), description: tr((d) => d.quality.metaDescription) },
+    seo: { title: tr((d) => d.quality.metaTitle), description: tr((d) => d.quality.metaDescription), image: "", noindex: false },
     sections: [
       pageHero("quality-hero", (d) => d.quality, "cashewProcessing"),
       processSection("quality-process"),
@@ -225,7 +225,7 @@ const pages: Record<PageId, Page> = {
   contact: {
     label: "Liên hệ",
     path: "/contact",
-    seo: { title: tr((d) => d.contact.metaTitle), description: tr((d) => d.contact.metaDescription) },
+    seo: { title: tr((d) => d.contact.metaTitle), description: tr((d) => d.contact.metaDescription), image: "", noindex: false },
     sections: [pageHero("contact-hero", (d) => d.contact, "shipping"), section("contact-main", "contact", { showForm: true })],
   },
 };
@@ -295,6 +295,9 @@ export function defaultContent(): SiteContent {
       })),
       about: tr((d) => d.footer.about),
       seo: { title: tr((d) => d.meta.title), description: tr((d) => d.meta.description), image: images.highlands.src },
+      social: [],
+      verification: { google: "", bing: "" },
+      analytics: { ga4: "" },
     },
     ui: { vi: ui(vi), en: ui(en as Dict) },
     pages,
@@ -311,6 +314,7 @@ export function defaultContent(): SiteContent {
       packaging: p.packaging.vi.map((text, i) => ({ text: { vi: text, en: p.packaging.en[i] ?? text } })),
       specs: p.specs.map((s) => ({ label: { ...s.label }, value: s.value })),
       applications: p.applications.vi.map((text, i) => ({ text: { vi: text, en: p.applications.en[i] ?? text } })),
+      seo: { title: { vi: "", en: "" }, description: { vi: "", en: "" } },
     })),
     retailPacks: retailPacks.map((r) => ({
       id: r.id,

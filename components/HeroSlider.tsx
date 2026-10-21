@@ -3,6 +3,7 @@
 import { useRef, useState, type KeyboardEvent, type TouchEvent } from "react";
 import { ArrowDown, ArrowLeft, ArrowRight, Pause, Play, Star } from "lucide-react";
 import { gsap, prefersReducedMotion, useGSAP } from "@/lib/gsap";
+import { srcSetFor } from "@/lib/responsive";
 import { Button, Tag } from "./ui";
 
 const pad = (n: number) => String(n).padStart(2, "0");
@@ -228,6 +229,8 @@ export function HeroSlider({ slides, autoplay: AUTOPLAY, scrollLabel, rankValue,
           >
             <img
               src={s.image.src}
+              srcSet={srcSetFor(s.image.src)}
+              sizes="100vw"
               alt={s.image.alt}
               loading={i === 0 ? "eager" : "lazy"}
               fetchPriority={i === 0 ? "high" : undefined}
