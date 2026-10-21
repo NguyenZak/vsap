@@ -63,6 +63,17 @@ export const retailPacks: RetailPack[] = [
     nutrition: { energy: "750 kcal", fat: "72 g", carbs: "15 g", protein: "10 g" },
   },
   {
+    id: "cashew-roasted",
+    slug: "cashew",
+    name: { vi: "Hạt điều rang củi", en: "Wood-fire roasted cashews" },
+    flavor: { vi: "Vị rang muối", en: "Roasted & salted" },
+    pack: { vi: "Túi zip đáy đứng", en: "Stand-up zip pouch" },
+    weights: ["250 g", "500 g"],
+    images: [img("cashew-roasted-250"), img("cashew-roasted-500"), img("cashew-roasted-250-angle"), img("cashew-roasted-250-back")],
+    ingredients: { vi: "98% hạt điều, 2% muối", en: "98% cashews, 2% salt" },
+    highlight: { vi: "Rang bằng củi, còn nguyên vỏ lụa", en: "Roasted over wood fire, skin on" },
+  },
+  {
     id: "cashew-hex",
     slug: "cashew",
     name: { vi: "Hạt điều rang củi", en: "Wood-fire roasted cashews" },

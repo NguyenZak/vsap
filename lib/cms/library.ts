@@ -12,6 +12,10 @@ const packshots = [
   "macca-kernel-250",
   "macca-kernel-500",
   "macca-kernel-250-back",
+  "cashew-roasted-250",
+  "cashew-roasted-500",
+  "cashew-roasted-250-angle",
+  "cashew-roasted-250-back",
   "cashew-hex-160-front",
   "cashew-hex-160-nutrition",
   "cashew-hex-160-info",
@@ -24,11 +28,6 @@ const packshots = [
   "cashew-box-450-back",
   "cashew-tub-500-front",
   "cashew-tub-500-back",
-  // Earlier pouch design, kept so content saved before the redesign still shows.
-  "cashew-roasted-250",
-  "cashew-roasted-500",
-  "cashew-roasted-250-angle",
-  "cashew-roasted-250-back",
 ];
 
 export type LibraryImage = { src: string; label: string; alt: { vi: string; en: string } };
