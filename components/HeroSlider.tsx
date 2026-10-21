@@ -10,7 +10,7 @@ import { Button, Tag } from "./ui";
 
 // Photo and link for each slide, in the same order as `hero.slides` in lib/content.
 const media: { image: ImageKey; href: string; /** Tailwind object-position class */ focus?: string }[] = [
-  { image: "cashewOrchard", href: "/products", focus: "object-[60%_center]" },
+  { image: "highlands", href: "/products" },
   { image: "cashew", href: "/products/cashew" },
   { image: "macadamia", href: "/products/macadamia" },
   { image: "shipping", href: "/contact" },

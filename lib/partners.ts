@@ -1,27 +1,16 @@
-// Đối tác đang làm việc cùng VSAP, hiển thị ở section "Đối tác" trên trang chủ.
-// Chỉ thêm đối tác thật, đã đồng ý xuất hiện trên website.
-// Có logo thì đặt file vào public/images/partners/ và điền `logo` (ví dụ "/images/partners/fine-farm.svg").
-import type { Locale } from "./i18n";
-
-type L = Record<Locale, string>;
+// Đối tác đang làm việc cùng VSAP, hiển thị dạng tường logo ở section "Đối tác" trên trang chủ.
+// Chỉ thêm đối tác THẬT đã đồng ý xuất hiện trên website: đặt logo của bên nào là ngầm khẳng định
+// quan hệ hợp tác với bên đó.
+// Logo: đặt file (ưu tiên SVG hoặc PNG nền trong suốt) vào public/images/partners/ rồi điền `logo`.
+// Chưa có logo thì ô hiển thị tên `name` dạng chữ.
 
 export type Partner = {
   name: string;
-  role: L;
-  location: L;
   logo?: string;
   url?: string;
 };
 
 export const partners: Partner[] = [
-  {
-    name: "Công ty TNHH Fine Farm",
-    role: { vi: "Đối tác chế biến & đóng gói hạt macca", en: "Macadamia processing & packing partner" },
-    location: { vi: "Tân An, Đắk Lắk", en: "Tan An, Dak Lak" },
-  },
-  {
-    name: "Công ty TNHH MTV DV XNK Hoàng Khang",
-    role: { vi: "Đối tác rang & đóng gói hạt điều", en: "Cashew roasting & packing partner" },
-    location: { vi: "Phước Vĩnh, Đồng Nai", en: "Phuoc Vinh, Dong Nai" },
-  },
+  { name: "Fine Farm" },
+  { name: "Hoàng Khang" },
 ];

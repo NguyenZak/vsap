@@ -9,7 +9,7 @@ import { Photo } from "./Photo";
 
 const icons = [BadgeCheck, Leaf, Handshake, Globe2, Factory, Sprout];
 // One photo per core value, same order as `values` in lib/content.
-const photos: ImageKey[] = ["cashewKernels", "farmerWatering", "paddyWork", "shipping", "cashewProcessing", "cashewOrchard"];
+const photos: ImageKey[] = ["cashewKernels", "farmerWatering", "paddyWork", "shipping", "cashewProcessing", "highlandFarmers"];
 
 /** Seconds each value stays open before autoplay moves on. */
 const AUTOPLAY = 4;

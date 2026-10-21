@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowUpRight, Handshake, MapPin, Minus, Plus, type LucideIcon } from "lucide-react";
+import { ArrowUpRight, Handshake, Minus, Plus, type LucideIcon } from "lucide-react";
 import type { Dictionary, Locale } from "@/lib/i18n";
 import type { ImageKey } from "@/lib/images";
 import type { Product } from "@/lib/products";
@@ -225,7 +225,7 @@ export function CtaBanner({ locale, cta }: { locale: Locale; cta: Dictionary["ho
   return (
     <section className="container-page py-16 sm:py-24">
       <div data-reveal="clip" className="relative isolate overflow-hidden rounded-3xl px-6 py-14 sm:px-12 sm:py-20">
-        <Photo name="cashewOrchard" locale={locale} decorative parallax className="absolute inset-0 -z-10 size-full" />
+        <Photo name="cashewGrove" locale={locale} decorative parallax className="absolute inset-0 -z-10 size-full" />
         <div className="absolute inset-0 -z-10 bg-gradient-to-r from-black/65 via-black/35 to-black/10" />
         <div data-reveal className="max-w-xl">
           <Title title={cta.title} accent={cta.accent} className="text-4xl text-white sm:text-5xl" />
@@ -239,49 +239,54 @@ export function CtaBanner({ locale, cta }: { locale: Locale; cta: Dictionary["ho
   );
 }
 
-/** Partner cards from lib/partners, closed by a "become a partner" card. */
-export function PartnerGrid({ locale, t }: { locale: Locale; t: Dictionary["home"]["partners"] }) {
-  const initials = (name: string) =>
-    name
-      .replace(/^Công ty (TNHH|CP|Cổ phần)( MTV)?( DV XNK)? /i, "")
-      .split(" ")
-      .slice(0, 2)
-      .map((w) => w[0])
-      .join("")
-      .toUpperCase();
+// Column count follows the number of tiles (partners + the "become a partner" tile) so no row is left half empty.
+const wallCols: Record<number, string> = {
+  1: "grid-cols-1",
+  2: "sm:grid-cols-2",
+  3: "sm:grid-cols-3",
+  4: "sm:grid-cols-2 lg:grid-cols-4",
+  5: "sm:grid-cols-3 lg:grid-cols-5",
+  6: "sm:grid-cols-3 lg:grid-cols-6",
+};
 
+/** Logo wall of partners from lib/partners: logos only, greyscale until hovered. */
+export function PartnerGrid({ locale, t }: { locale: Locale; t: Dictionary["home"]["partners"] }) {
   return (
-    <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-      {partners.map((p) => (
-        <li key={p.name} data-reveal className="group flex flex-col rounded-2xl bg-mist-50 p-6 transition-colors hover:bg-mist-100">
-          <div className="flex h-16 items-center">
-            {p.logo ? (
-              <img src={p.logo} alt={p.name} className="max-h-14 w-auto max-w-[70%] object-contain grayscale transition group-hover:grayscale-0" />
-            ) : (
-              <span className="inline-flex size-14 items-center justify-center rounded-2xl bg-forest-900 text-lg font-semibold tracking-tight text-lime-300">
-                {initials(p.name)}
-              </span>
-            )}
-          </div>
-          <h3 className="mt-8 text-lg font-medium text-ink-900">{p.name}</h3>
-          <p className="mt-1 text-sm text-ink-600">{p.role[locale]}</p>
-          <p className="mt-auto flex items-center gap-1.5 pt-6 text-xs text-ink-400">
-            <MapPin className="size-3.5" />
-            {p.location[locale]}
-          </p>
+    <div>
+      <ul className={`grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-mist-200 bg-mist-200 ${wallCols[Math.min(partners.length + 1, 6)]}`}>
+        {partners.map((p) => {
+          const mark = p.logo ? (
+            <img
+              src={p.logo}
+              alt={p.name}
+              loading="lazy"
+              className="max-h-12 w-auto max-w-[70%] object-contain opacity-60 grayscale transition duration-300 group-hover:opacity-100 group-hover:grayscale-0"
+            />
+          ) : (
+            <span className="text-xl font-semibold tracking-tight text-ink-400 uppercase transition group-hover:text-forest-900 sm:text-2xl">
+              {p.name}
+            </span>
+          );
+          return (
+            <li key={p.name} data-reveal className="group flex h-32 items-center justify-center bg-white px-6 sm:h-36">
+              {p.url ? (
+                <a href={p.url} target="_blank" rel="noopener noreferrer" aria-label={p.name} className="flex size-full items-center justify-center">
+                  {mark}
+                </a>
+              ) : (
+                mark
+              )}
+            </li>
+          );
+        })}
+        <li data-reveal className="flex h-32 items-center justify-center bg-mist-50 px-6 sm:h-36">
+          <Link href={`/${locale}/contact`} className="group inline-flex items-center gap-2 text-sm font-medium text-forest-900">
+            <Handshake className="size-5 text-forest-600" />
+            {t.join.cta}
+            <ArrowUpRight className="size-4 transition group-hover:rotate-45" />
+          </Link>
         </li>
-      ))}
-      <li data-reveal className="relative isolate flex flex-col overflow-hidden rounded-2xl bg-forest-900 p-6 text-white">
-        <Photo name="cashewOrchard" locale={locale} decorative className="absolute inset-0 -z-10 size-full opacity-30" />
-        <span className="inline-flex size-14 items-center justify-center rounded-2xl bg-lime-300 text-forest-950">
-          <Handshake className="size-6" />
-        </span>
-        <h3 className="mt-8 text-lg font-medium">{t.join.title}</h3>
-        <p className="mt-1 text-sm text-white/75">{t.join.body}</p>
-        <div className="mt-auto pt-6">
-          <Button href={`/${locale}/contact`}>{t.join.cta}</Button>
-        </div>
-      </li>
-    </ul>
+      </ul>
+    </div>
   );
 }
