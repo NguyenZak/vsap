@@ -1,14 +1,16 @@
 import Link from "next/link";
 import { Mail, MapPin, Phone } from "lucide-react";
-import type { Dictionary, Locale } from "@/lib/i18n";
-import { products } from "@/lib/products";
-import { site } from "@/lib/site";
+import { pick } from "@/lib/cms/links";
+import type { SiteContent, UiStrings } from "@/lib/cms/types";
+import type { Locale } from "@/lib/i18n";
 import { Button } from "./ui";
 
-type Props = { locale: Locale; dict: Dictionary };
+type Props = { locale: Locale; content: SiteContent; ui: UiStrings };
 
-export function Footer({ locale, dict }: Props) {
-  const { nav, footer } = dict;
+export function Footer({ locale, content, ui }: Props) {
+  const { nav, footer } = ui;
+  const site = content.settings;
+  const products = content.products;
   const heading = "text-xs font-medium uppercase tracking-[0.18em] text-white/50";
   const link = "text-white/80 transition hover:text-lime-300";
 
@@ -17,8 +19,8 @@ export function Footer({ locale, dict }: Props) {
       <div className="container-page pt-16 sm:pt-20">
         <div className="flex flex-col gap-8 border-b border-white/10 pb-12 md:flex-row md:items-end md:justify-between">
           <div>
-            <img src="/logo-light.svg" alt="VSAP" width={136} height={68} className="-ml-3 h-16 w-auto" />
-            <p className="mt-4 max-w-sm text-sm leading-relaxed text-white/65">{footer.about}</p>
+            <img src="/logo-light.svg" alt={site.name} width={136} height={68} className="-ml-3 h-16 w-auto" />
+            <p className="mt-4 max-w-sm text-sm leading-relaxed text-white/65">{pick(site.about, locale)}</p>
             <p className="mt-5 text-xs text-white/50">
               {footer.brandOf}
               <span className="mt-1 block text-sm font-semibold tracking-wide text-white uppercase">{site.legalName}</span>
@@ -73,8 +75,8 @@ export function Footer({ locale, dict }: Props) {
                   {site.email}
                 </a>
               </li>
-              {site.offices.map((o) => (
-                <li key={o.label.en} className="flex gap-3">
+              {site.offices.map((o, i) => (
+                <li key={i} className="flex gap-3">
                   <MapPin className="mt-0.5 size-4 shrink-0 text-lime-300" />
                   <span className="text-white/80">
                     <span className="block text-white">{o.label[locale]}</span>

@@ -4,8 +4,10 @@ import { FloatingContact } from "@/components/FloatingContact";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { MotionMain } from "@/components/MotionMain";
-import { alternates, getDictionary, localeParams, resolveLocale, metadataLocale } from "@/lib/i18n";
-import { site } from "@/lib/site";
+import { PreviewBridge } from "@/components/cms/PreviewBridge";
+import { pick } from "@/lib/cms/links";
+import { getContent, isPreview } from "@/lib/cms/store";
+import { alternates, localeParams, resolveLocale, metadataLocale } from "@/lib/i18n";
 import "../globals.css";
 
 const font = Inter({
@@ -19,28 +21,35 @@ type Props = { children: React.ReactNode; params: Promise<{ locale: string }> };
 
 export const dynamicParams = false;
 export const generateStaticParams = localeParams;
+// Content comes from the CMS on every request (see lib/cms/store.ts).
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: Omit<Props, "children">): Promise<Metadata> {
   const locale = metadataLocale((await params).locale);
-  const { meta } = getDictionary(locale);
+  const { settings } = await getContent();
+  const title = pick(settings.seo.title, locale);
+  const description = pick(settings.seo.description, locale);
   return {
-    metadataBase: new URL(site.url),
-    title: { default: meta.title, template: `%s | ${site.name}` },
-    description: meta.description,
+    metadataBase: new URL(settings.url),
+    title: { default: title, template: `%s | ${settings.name}` },
+    description,
     alternates: alternates(locale),
     openGraph: {
       type: "website",
-      siteName: site.name,
-      title: meta.title,
-      description: meta.description,
+      siteName: settings.name,
+      title,
+      description,
       locale: locale === "vi" ? "vi_VN" : "en_US",
+      images: settings.seo.image ? [{ url: settings.seo.image }] : undefined,
     },
   };
 }
 
 export default async function LocaleLayout({ children, params }: Props) {
   const locale = resolveLocale((await params).locale);
-  const dict = getDictionary(locale);
+  const [content, preview] = await Promise.all([getContent(), isPreview()]);
+  const { settings: site } = content;
+  const ui = content.ui[locale];
 
   const orgJsonLd = {
     "@context": "https://schema.org",
@@ -52,7 +61,13 @@ export default async function LocaleLayout({ children, params }: Props) {
     slogan: site.tagline,
     email: site.email,
     telephone: site.phoneE164,
-    address: site.offices.map((o) => ({ "@type": "PostalAddress", ...o.postal, addressCountry: "VN" })),
+    address: site.offices.map((o) => ({
+      "@type": "PostalAddress",
+      streetAddress: o.street,
+      addressLocality: o.locality,
+      addressRegion: o.region,
+      addressCountry: "VN",
+    })),
   };
 
   return (
@@ -63,10 +78,11 @@ export default async function LocaleLayout({ children, params }: Props) {
         <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js')" }} />
       </head>
       <body className="flex min-h-dvh flex-col">
-        <Header locale={locale} nav={dict.nav} />
+        <Header locale={locale} nav={ui.nav} contact={site} logoAlt={`${site.name} – ${site.tagline}`} />
         <MotionMain>{children}</MotionMain>
-        <Footer locale={locale} dict={dict} />
-        <FloatingContact t={dict.chat} />
+        <Footer locale={locale} content={content} ui={ui} />
+        {!preview && <FloatingContact t={ui.chat} links={site} />}
+        {preview && <PreviewBridge />}
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }} />
       </body>
     </html>

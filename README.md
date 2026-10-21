@@ -15,6 +15,7 @@ npm run dev        # dev server (http://localhost:5173)
 npm run build      # build + prerender toàn bộ trang tĩnh
 npm run start      # chạy thử bản build trong workerd
 npm run typecheck
+npm test           # unit test phần lõi CMS
 npm run deploy     # deploy lên Cloudflare Workers
 ```
 
@@ -54,6 +55,41 @@ lib/
 - Câu tuyên bố gõ chữ dạng slider: `components/StatementSlider.tsx`; nội dung ở `home.statement.items`, ảnh tròn từng câu ở mảng `pills`, thời gian giữ câu: hằng `HOLD`.
 - Hiệu ứng khi cuộn do `components/MotionMain.tsx` điều khiển, bật bằng thuộc tính trên phần tử: `data-reveal`, `data-reveal="clip"`, `data-parallax` (hoặc `<Photo parallax />`), `data-count`, `data-intro`.
 - Plugin GSAP đăng ký ở `lib/gsap.ts`. Người dùng bật "giảm chuyển động" trong hệ điều hành sẽ thấy trang tĩnh, slider không tự chạy.
+
+## CMS (VSAP Studio)
+
+Toàn bộ nội dung website (các trang, section, sản phẩm, bao bì bán lẻ, đối tác, thông tin công ty, chữ giao diện, ảnh) sửa được tại **`/admin`**.
+
+- **Trang** — page builder: thêm / kéo thả / nhân bản / ẩn / xoá section, sửa từng trường song ngữ VI–EN. Khung xem trước bên phải là trang thật (bản nháp), có chế độ máy tính / máy tính bảng / điện thoại; bấm lên một section trong khung xem trước để sửa nó.
+- **Sản phẩm, Bán lẻ, Đối tác** — danh sách + form. Sản phẩm mới tự có trang `/products/<slug>`.
+- **Công ty** — tên, liên hệ, văn phòng, link Zalo/WhatsApp, SEO mặc định. **Chữ giao diện** — nhãn nút, menu, form.
+- **Thư viện ảnh** — tải ảnh lên (lưu trên R2), dùng ở mọi trường ảnh.
+- **Bản nháp → Xuất bản.** Mọi thay đổi tự lưu vào bản nháp (khách không thấy); bấm *Xuất bản* để đưa lên website. *Lịch sử* giữ 50 lần xuất bản gần nhất để khôi phục. Hoàn tác/làm lại: Ctrl/Cmd + Z / Shift + Z.
+
+Kỹ thuật: nội dung là một tài liệu JSON (`lib/cms/types.ts`) lưu trong D1 (bản nháp + bản đang chạy + lịch sử), ảnh tải lên lưu trong R2 và phục vụ ở `/media/...`. Lần đầu chưa có gì trong D1, site dùng nội dung mặc định dựng từ `lib/content/*`, `lib/products.ts`, `lib/retail.ts`… (`lib/cms/defaults.ts`). Bảng D1 tự tạo khi dùng lần đầu.
+
+| Thêm gì | Sửa ở đâu |
+|---|---|
+| Loại section mới | Khai báo trường trong `lib/cms/registry.ts`, viết renderer cùng tên trong `components/blocks.tsx` (test sẽ báo nếu thiếu) |
+| Trường mới cho sản phẩm/cài đặt | `lib/cms/types.ts` + `lib/cms/collections.ts` + giá trị mặc định trong `lib/cms/defaults.ts` |
+| Biểu tượng chọn được | `lib/cms/icons.ts` + `components/cms/Icon.tsx` |
+
+### Đăng nhập
+
+Một mật khẩu chung, lưu trong secret của Worker:
+
+- Local: file `.dev.vars` (không commit; mẫu ở `.dev.vars.example`) gồm `ADMIN_PASSWORD` và `ADMIN_SESSION_SECRET`.
+- Production: `npx cf workers secrets update ADMIN_PASSWORD` và `npx cf workers secrets update ADMIN_SESSION_SECRET` (chuỗi ngẫu nhiên dài). Đổi mật khẩu sẽ đăng xuất mọi phiên.
+
+### Deploy lần đầu
+
+Binding `DB` (D1 `vsap-cms`) và `MEDIA` (R2 `vsap-media`) khai báo trong `cloudflare.config.ts`; theo tài liệu Cloudflare chúng được tạo tự động ở lần deploy đầu. Nếu tài khoản không tự tạo, tạo thủ công D1 và R2 với đúng tên trên trong Cloudflare dashboard rồi deploy lại.
+
+### Test
+
+```sh
+npm test   # kiểm tra nội dung mặc định, registry section, đường dẫn ảnh, gộp dữ liệu cũ
+```
 
 ## Form báo giá
 

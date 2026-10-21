@@ -1,14 +1,16 @@
 import type { MetadataRoute } from "next";
+import { getContent } from "@/lib/cms/store";
 import { locales } from "@/lib/i18n";
-import { products } from "@/lib/products";
-import { site } from "@/lib/site";
 
-export default function sitemap(): MetadataRoute.Sitemap {
-  const paths = ["", "/about", "/products", "/quality", "/contact", ...products.map((p) => `/products/${p.slug}`)];
+export const dynamic = "force-dynamic";
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const { settings, pages, products } = await getContent();
+  const paths = [...Object.values(pages).map((p) => p.path), ...products.map((p) => `/products/${p.slug}`)];
   return paths.flatMap((path) =>
     locales.map((locale) => ({
-      url: `${site.url}/${locale}${path}`,
-      alternates: { languages: Object.fromEntries(locales.map((l) => [l, `${site.url}/${l}${path}`])) },
+      url: `${settings.url}/${locale}${path}`,
+      alternates: { languages: Object.fromEntries(locales.map((l) => [l, `${settings.url}/${l}${path}`])) },
     })),
   );
 }

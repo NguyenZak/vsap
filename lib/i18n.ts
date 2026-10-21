@@ -1,14 +1,11 @@
 import { notFound } from "next/navigation";
-import { en } from "./content/en";
-import { vi } from "./content/vi";
 
 export const locales = ["vi", "en"] as const;
 export type Locale = (typeof locales)[number];
 export const defaultLocale: Locale = "vi";
 
-export type Dictionary = typeof vi;
-
-const dictionaries: Record<Locale, Dictionary> = { vi, en };
+/** Shape of the seed content in lib/content (used to build the CMS defaults). */
+export type Dictionary = typeof import("./content/vi").vi;
 
 export function isLocale(value: string): value is Locale {
   return (locales as readonly string[]).includes(value);
@@ -28,9 +25,6 @@ export function metadataLocale(value: string): Locale {
   return isLocale(value) ? value : defaultLocale;
 }
 
-export function getDictionary(locale: Locale): Dictionary {
-  return dictionaries[locale];
-}
 
 export function localeParams() {
   return locales.map((locale) => ({ locale }));

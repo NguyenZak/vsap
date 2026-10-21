@@ -113,6 +113,26 @@ body {
   letter-spacing: -0.01em;
 }
 
+/*
+ * Vertical rhythm for CMS sections (components/blocks.tsx). Two neighbouring
+ * sections on the same background share one gap instead of stacking two.
+ */
+.block-pad {
+  padding-block: 4rem;
+  @media (width >= 40rem) {
+    padding-block: 6rem;
+  }
+}
+[data-tone="white"]:has(+ [data-tone="white"]) > .block-pad,
+[data-tone="muted"]:has(+ [data-tone="muted"]) > .block-pad,
+[data-tone="dark"]:has(+ [data-tone="dark"]) > .block-pad {
+  padding-bottom: 0;
+}
+/* Stat cards sit right under the block above them, like one panel. */
+[data-tone="white"] + [data-type="stats"][data-tone="white"] > .block-pad {
+  padding-top: 0.75rem;
+}
+
 /* Ẩn thanh cuộn cho băng thẻ trượt ngang. */
 @utility no-scrollbar {
   scrollbar-width: none;

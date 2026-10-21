@@ -2,7 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import { CheckCircle2, Loader2, Send } from "lucide-react";
-import type { Dictionary } from "@/lib/i18n";
+import type { UiStrings } from "@/lib/cms/types";
 
 type Status = "idle" | "sending" | "success" | "error";
 
@@ -10,7 +10,7 @@ const field =
   "mt-1.5 block w-full rounded-xl border border-mist-200 bg-white px-4 py-3 text-ink-900 placeholder:text-ink-400 outline-none transition focus:border-forest-600 focus:ring-4 focus:ring-lime-300/50";
 const label = "text-sm font-medium text-ink-900";
 
-export function InquiryForm({ t, defaultProduct }: { t: Dictionary["contact"]["form"]; defaultProduct?: string }) {
+export function InquiryForm({ t, defaultProduct }: { t: UiStrings["form"]; defaultProduct?: string }) {
   const [status, setStatus] = useState<Status>("idle");
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {

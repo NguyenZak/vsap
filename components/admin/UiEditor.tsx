@@ -1,0 +1,157 @@
+"use client";
+
+import { useState } from "react";
+import type { UiStrings } from "@/lib/cms/types";
+import { Panel } from "./PageEditor";
+
+type Path = (string | number)[];
+
+const groups: Record<keyof UiStrings, string> = {
+  nav: "Menu & nút đầu trang",
+  common: "Nút & nhãn dùng chung",
+  footer: "Chân trang",
+  chat: "Nút liên hệ nổi (Zalo/WhatsApp)",
+  contactInfo: "Thẻ liên hệ",
+  form: "Form yêu cầu báo giá",
+  productDetail: "Trang chi tiết sản phẩm",
+  retail: "Thông tin bao bì bán lẻ",
+};
+
+/** Vietnamese labels for the keys an editor is likely to puzzle over. */
+const keyLabels: Record<string, string> = {
+  home: "Trang chủ",
+  about: "Về VSAP",
+  products: "Sản phẩm",
+  quality: "Chất lượng",
+  contact: "Liên hệ",
+  quote: "Nút báo giá",
+  menu: "Mở menu (đọc màn hình)",
+  close: "Đóng menu (đọc màn hình)",
+  viewProduct: "Xem chi tiết",
+  requestQuote: "Yêu cầu báo giá",
+  allProducts: "Tất cả sản phẩm",
+  prev: "Trước",
+  next: "Sau",
+  pause: "Tạm dừng",
+  play: "Tự chạy",
+  slide: "Slide",
+  step: "Bước",
+  photo: "Ảnh",
+  explore: "Tiêu đề cột Khám phá",
+  rights: "Bản quyền",
+  brandOf: "“Sản phẩm của”",
+  label: "Nhãn nhóm",
+  call: "Gọi",
+  email: "Email",
+  phone: "Điện thoại",
+  website: "Website",
+  name: "Họ tên",
+  company: "Công ty",
+  country: "Quốc gia",
+  product: "Sản phẩm quan tâm",
+  productOptions: "Lựa chọn sản phẩm",
+  cashew: "Hạt điều",
+  macadamia: "Hạt macca",
+  other: "Khác",
+  quantity: "Số lượng",
+  quantityPlaceholder: "Gợi ý số lượng",
+  message: "Nội dung",
+  messagePlaceholder: "Gợi ý nội dung",
+  submit: "Nút gửi",
+  sending: "Đang gửi",
+  success: "Thông báo gửi thành công",
+  error: "Thông báo lỗi",
+  required: "Bắt buộc",
+  origin: "Vùng nguyên liệu",
+  grades: "Phân loại",
+  packaging: "Quy cách đóng gói",
+  specs: "Chỉ tiêu",
+  applications: "Ứng dụng",
+  back: "Quay lại",
+  inquireTitle: "Tiêu đề khối báo giá",
+  inquireBody: "Mô tả khối báo giá",
+  specsNote: "Ghi chú chỉ tiêu",
+  packsEyebrow: "Nhãn khối bao bì",
+  packsTitle: "Tiêu đề khối bao bì",
+  packsAccent: "Tiêu đề khối bao bì (nghiêng)",
+  sizes: "Quy cách",
+  ingredients: "Thành phần",
+  nutrition: "Dinh dưỡng",
+  energy: "Năng lượng",
+  fat: "Chất béo",
+  carbs: "Carbohydrate",
+  protein: "Chất đạm",
+  shelfLife: "Hạn sử dụng",
+  serving: "Khuyên dùng",
+  storage: "Bảo quản",
+  packedBy: "Đóng gói tại",
+  view: "Xem chi tiết",
+  zalo: "Zalo",
+  whatsapp: "WhatsApp",
+};
+
+const inputCls = "w-full rounded-lg border border-mist-200 bg-white px-3 py-2 text-sm outline-none focus:border-forest-600 focus:ring-2 focus:ring-lime-300/50";
+
+function Rows({ vi, en, path, onChange }: { vi: Record<string, unknown>; en: Record<string, unknown>; path: Path; onChange: (path: Path, v: unknown) => void }) {
+  return (
+    <div className="space-y-3">
+      {Object.entries(vi).map(([k, v]) => {
+        if (v && typeof v === "object") {
+          return (
+            <fieldset key={k} className="rounded-lg border border-mist-200 p-3">
+              <legend className="px-1 text-xs font-medium text-ink-900">{keyLabels[k] ?? k}</legend>
+              <Rows vi={v as Record<string, unknown>} en={(en?.[k] ?? {}) as Record<string, unknown>} path={[...path, k]} onChange={onChange} />
+            </fieldset>
+          );
+        }
+        return (
+          <div key={k}>
+            <p className="mb-1 text-xs font-medium text-ink-900">
+              {keyLabels[k] ?? k} <span className="font-mono font-normal text-ink-400">· {k}</span>
+            </p>
+            <div className="grid gap-2 sm:grid-cols-2">
+              {(["vi", "en"] as const).map((lang) => (
+                <label key={lang} className="relative block">
+                  <span className="pointer-events-none absolute top-2 left-2.5 rounded bg-mist-100 px-1 text-[10px] font-semibold text-ink-600 uppercase">{lang}</span>
+                  <input
+                    value={String((lang === "vi" ? v : en?.[k]) ?? "")}
+                    onChange={(e) => onChange(["ui", lang, ...path, k], e.target.value)}
+                    className={`${inputCls} pl-10`}
+                  />
+                </label>
+              ))}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+/** Every interface string, grouped, with Vietnamese and English side by side. */
+export function UiEditor({ ui, onChange }: { ui: Record<"vi" | "en", UiStrings>; onChange: (path: Path, v: unknown) => void }) {
+  const keys = Object.keys(groups) as (keyof UiStrings)[];
+  const [group, setGroup] = useState<keyof UiStrings>("nav");
+  return (
+    <>
+      <aside className="flex w-64 shrink-0 flex-col border-r border-mist-200 bg-white">
+        <div className="border-b border-mist-200 px-4 py-4">
+          <h2 className="text-base font-medium text-ink-900">Chữ giao diện</h2>
+          <p className="mt-0.5 text-xs leading-snug text-ink-600">Nhãn nút, menu, form… dùng chung trên mọi trang.</p>
+        </div>
+        <nav className="space-y-0.5 p-3">
+          {keys.map((k) => (
+            <button key={k} type="button" onClick={() => setGroup(k)} className={`block w-full rounded-lg px-3 py-2 text-left text-sm ${group === k ? "bg-forest-900 text-white" : "text-ink-900 hover:bg-mist-100"}`}>
+              {groups[k]}
+            </button>
+          ))}
+        </nav>
+      </aside>
+      <section className="flex w-[34rem] shrink-0 flex-col border-r border-mist-200 bg-white">
+        <Panel title={groups[group]}>
+          <Rows vi={ui.vi[group] as Record<string, unknown>} en={ui.en[group] as Record<string, unknown>} path={[group]} onChange={onChange} />
+        </Panel>
+      </section>
+    </>
+  );
+}

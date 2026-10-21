@@ -1,0 +1,65 @@
+import {
+  Award,
+  BadgeCheck,
+  Compass,
+  Droplets,
+  Factory,
+  FileCheck2,
+  FlaskConical,
+  Globe2,
+  Handshake,
+  Heart,
+  Leaf,
+  MessageCircleQuestion,
+  Mountain,
+  PackageCheck,
+  QrCode,
+  ScanEye,
+  ScanSearch,
+  ShieldCheck,
+  Ship,
+  Sprout,
+  Star,
+  Sun,
+  Target,
+  Truck,
+  Users,
+  Wheat,
+  type LucideIcon,
+} from "lucide-react";
+import type { IconName } from "@/lib/cms/icons";
+
+export const iconMap: Record<IconName, LucideIcon> = {
+  "badge-check": BadgeCheck,
+  leaf: Leaf,
+  handshake: Handshake,
+  globe: Globe2,
+  factory: Factory,
+  sprout: Sprout,
+  wheat: Wheat,
+  "scan-search": ScanSearch,
+  "package-check": PackageCheck,
+  ship: Ship,
+  target: Target,
+  compass: Compass,
+  heart: Heart,
+  "qr-code": QrCode,
+  "scan-eye": ScanEye,
+  flask: FlaskConical,
+  "shield-check": ShieldCheck,
+  "file-check": FileCheck2,
+  truck: Truck,
+  award: Award,
+  sun: Sun,
+  droplets: Droplets,
+  mountain: Mountain,
+  users: Users,
+  star: Star,
+  "message-question": MessageCircleQuestion,
+};
+
+/** Icon chosen in the CMS by name; unknown names fall back to a leaf. */
+export function CmsIcon({ name, className }: { name: string; className?: string }) {
+  const Icon = iconMap[name as IconName] ?? Leaf;
+  return <Icon className={className} aria-hidden="true" />;
+}

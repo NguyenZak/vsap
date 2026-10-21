@@ -1,29 +1,23 @@
 "use client";
 
-import { useRef, useState } from "react";
-import { BadgeCheck, Factory, Globe2, Handshake, Leaf, Minus, Plus, Sprout } from "lucide-react";
-import type { Dictionary, Locale } from "@/lib/i18n";
-import type { ImageKey } from "@/lib/images";
+import { useId, useRef, useState } from "react";
+import { Minus, Plus } from "lucide-react";
 import { gsap, prefersReducedMotion, ScrollTrigger, useGSAP } from "@/lib/gsap";
-import { Photo } from "./Photo";
+import { CmsIcon } from "./cms/Icon";
 
-const icons = [BadgeCheck, Leaf, Handshake, Globe2, Factory, Sprout];
-// One photo per core value, same order as `values` in lib/content.
-const photos: ImageKey[] = ["cashewKernels", "farmerWatering", "paddyWork", "shipping", "cashewProcessing", "highlandFarmers"];
-
-/** Seconds each value stays open before autoplay moves on. */
-const AUTOPLAY = 4;
+export type ShowcaseItem = { icon: string; title: string; body: string; image: { src: string; alt: string } };
 
 /**
  * Core values as an accordion driving a photo slider: the open item picks the
  * photo, which wipes in with GSAP. Autoplay walks through the items while the
  * block is on screen and pauses on keyboard focus.
  */
-export function ValuesShowcase({ values, locale }: { values: Dictionary["values"]; locale: Locale }) {
+export function ValuesShowcase({ items: values, autoplay: AUTOPLAY }: { items: ShowcaseItem[]; autoplay: number }) {
   const root = useRef<HTMLDivElement>(null);
   const goTo = useRef<(i: number) => void>(() => {});
   const [active, setActive] = useState(0);
   const n = values.length;
+  const uid = useId();
 
   useGSAP(
     (_, contextSafe) => {
@@ -57,7 +51,7 @@ export function ValuesShowcase({ values, locale }: { values: Dictionary["values"
           }
         }
         timer?.kill();
-        if (reduce) return;
+        if (reduce || n < 2) return;
         timer = gsap.fromTo(bar, { scaleX: 0 }, { scaleX: 1, duration: AUTOPLAY, ease: "none", onComplete: () => show((current + 1) % n) });
         sync();
       });
@@ -92,14 +86,13 @@ export function ValuesShowcase({ values, locale }: { values: Dictionary["values"
     <div ref={root} className="grid gap-4 lg:grid-cols-2">
       <ul className="space-y-2.5">
         {values.map((v, i) => {
-          const Icon = icons[i % icons.length];
-          const open = i === active;
+                    const open = i === active;
           return (
-            <li key={v.title} data-reveal className={`rounded-2xl p-2 transition-colors ${open ? "bg-mist-100" : "bg-mist-50 hover:bg-mist-100"}`}>
+            <li key={i} data-reveal className={`rounded-2xl p-2 transition-colors ${open ? "bg-mist-100" : "bg-mist-50 hover:bg-mist-100"}`}>
               <button
                 type="button"
                 aria-expanded={open}
-                aria-controls={`value-${i}`}
+                aria-controls={`${uid}-value-${i}`}
                 onClick={() => goTo.current(i)}
                 className="flex w-full items-center gap-3 rounded-xl p-1.5 text-left outline-none focus-visible:ring-2 focus-visible:ring-forest-600"
               >
@@ -108,14 +101,14 @@ export function ValuesShowcase({ values, locale }: { values: Dictionary["values"
                     open ? "bg-lime-300 text-forest-950" : "bg-white text-ink-600"
                   }`}
                 >
-                  <Icon className="size-[18px]" />
+                  <CmsIcon name={v.icon} className="size-[18px]" />
                 </span>
                 <h3 className="flex-1 text-base text-ink-900">{v.title}</h3>
                 {open ? <Minus className="size-5 text-ink-900" /> : <Plus className="size-5 text-ink-600" />}
               </button>
               {/* grid-rows 0fr → 1fr animates the panel to its natural height. */}
               <div
-                id={`value-${i}`}
+                id={`${uid}-value-${i}`}
                 className={`grid transition-[grid-template-rows] duration-500 ease-out motion-reduce:transition-none ${
                   open ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
                 }`}
@@ -130,9 +123,9 @@ export function ValuesShowcase({ values, locale }: { values: Dictionary["values"
       </ul>
 
       <div data-reveal="clip" className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-mist-100 lg:aspect-auto lg:min-h-[28rem]">
-        {photos.map((p, i) => (
-          <div key={p} data-vs-slide className="absolute inset-0 overflow-hidden" aria-hidden={i !== active}>
-            <Photo name={p} locale={locale} className="size-full will-change-transform" />
+        {values.map((v, i) => (
+          <div key={i} data-vs-slide className="absolute inset-0 overflow-hidden" aria-hidden={i !== active}>
+            <img src={v.image.src} alt={v.image.alt} loading="lazy" decoding="async" className="size-full object-cover will-change-transform" />
           </div>
         ))}
         <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-28 bg-gradient-to-t from-black/45 to-transparent" />

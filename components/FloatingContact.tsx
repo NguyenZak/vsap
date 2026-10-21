@@ -2,12 +2,13 @@
 
 import { useRef } from "react";
 import { Phone } from "lucide-react";
-import type { Dictionary } from "@/lib/i18n";
+import type { UiStrings } from "@/lib/cms/types";
 import { gsap, MOTION_OK, useGSAP } from "@/lib/gsap";
-import { site } from "@/lib/site";
 
 /** Zalo / WhatsApp / call buttons pinned to the bottom-right corner on every page. */
-export function FloatingContact({ t }: { t: Dictionary["chat"] }) {
+type Links = { zalo: string; whatsapp: string; phone: string; phoneE164: string };
+
+export function FloatingContact({ t, links: site }: { t: UiStrings["chat"]; links: Links }) {
   const root = useRef<HTMLDivElement>(null);
 
   useGSAP(
@@ -26,8 +27,8 @@ export function FloatingContact({ t }: { t: Dictionary["chat"] }) {
   const items = [
     { href: site.zalo, label: t.zalo, className: "bg-white ring-1 ring-black/5", ping: "bg-[#0068ff]", icon: <ZaloIcon /> },
     { href: site.whatsapp, label: t.whatsapp, className: "bg-[#25d366]", icon: <WhatsAppIcon /> },
-    { href: `tel:${site.phoneE164}`, label: `${t.call} ${site.phone}`, className: "bg-forest-900", icon: <Phone className="size-5" /> },
-  ];
+    { href: site.phoneE164 ? `tel:${site.phoneE164}` : "", label: `${t.call} ${site.phone}`, className: "bg-forest-900", icon: <Phone className="size-5" /> },
+  ].filter((item) => item.href);
 
   return (
     <div

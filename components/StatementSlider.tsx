@@ -2,23 +2,18 @@
 
 import { Fragment, useRef, useState } from "react";
 import { ArrowLeft, ArrowRight } from "lucide-react";
-import type { Dictionary, Locale } from "@/lib/i18n";
-import type { ImageKey } from "@/lib/images";
 import { gsap, prefersReducedMotion, ScrollTrigger, useGSAP } from "@/lib/gsap";
-import { Photo } from "./Photo";
 import { Tag } from "./ui";
-
-// Photo inside the rounded pill of each statement, same order as `statement.items`.
-const pills: ImageKey[] = ["paddyWork", "cashewHarvest", "macadamiaTree", "cashewKernels"];
-
-/** Seconds a fully typed statement stays on screen before it is erased. */
-const HOLD = 3.5;
 
 const pad = (n: number) => String(n).padStart(2, "0");
 
+export type StatementItem = { strong: string; muted: string; tail: string; image: { src: string; alt: string } };
+
 type Props = {
-  locale: Locale;
-  statement: Dictionary["home"]["statement"];
+  eyebrow: string;
+  items: StatementItem[];
+  /** Seconds a fully typed statement stays on screen before it is erased. */
+  hold: number;
   labels: { prev: string; next: string; slide: string };
 };
 
@@ -29,11 +24,10 @@ type Props = {
  * Typing only runs while the block is on screen; reduced motion shows whole
  * statements and leaves switching to the arrows.
  */
-export function StatementSlider({ locale, statement, labels }: Props) {
+export function StatementSlider({ eyebrow, items, hold: HOLD, labels }: Props) {
   const root = useRef<HTMLDivElement>(null);
   const goTo = useRef<(i: number) => void>(() => {});
   const [index, setIndex] = useState(0);
-  const items = statement.items;
   const n = items.length;
 
   useGSAP(
@@ -165,7 +159,7 @@ export function StatementSlider({ locale, statement, labels }: Props) {
     <div ref={root}>
       <div className="flex items-center justify-between gap-6">
         <div data-reveal>
-          <Tag>{statement.eyebrow}</Tag>
+          <Tag>{eyebrow}</Tag>
         </div>
         <div data-reveal className="flex items-center gap-2.5">
           <p className="mr-2 text-ink-900 tabular-nums" aria-hidden="true">
@@ -184,7 +178,7 @@ export function StatementSlider({ locale, statement, labels }: Props) {
       <div className="mt-8 grid">
         {items.map((item, i) => (
           <div
-            key={item.strong}
+            key={i}
             data-st-slide
             aria-hidden={i !== index}
             className={`[grid-area:1/1] ${i === 0 ? "" : "invisible"}`}
@@ -201,14 +195,11 @@ export function StatementSlider({ locale, statement, labels }: Props) {
                 <Chars text={item.muted} />
               </span>
               <Chars text=" " />
-              <span data-pill className="inline-block align-[-0.1em]">
-                <Photo
-                  name={pills[i % pills.length]}
-                  locale={locale}
-                  decorative
-                  className="inline-block h-[0.85em] w-[2.1em] rounded-full"
-                />
-              </span>
+              {item.image.src && (
+                <span data-pill className="inline-block align-[-0.1em]">
+                  <img src={item.image.src} alt="" loading="lazy" className="inline-block h-[0.85em] w-[2.1em] rounded-full object-cover" />
+                </span>
+              )}
               <Chars text=" " />
               <span className="text-sage-500">
                 <Chars text={item.tail} />
@@ -221,7 +212,7 @@ export function StatementSlider({ locale, statement, labels }: Props) {
       <div className="mt-10 grid max-w-md grid-cols-4 gap-2">
         {items.map((item, i) => (
           <button
-            key={item.strong}
+            key={i}
             type="button"
             onClick={() => go(i)}
             aria-label={`${labels.slide} ${i + 1}`}

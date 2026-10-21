@@ -5,13 +5,13 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { ArrowUpRight, House, Mail, Phone } from "lucide-react";
 import { gsap, prefersReducedMotion, useGSAP } from "@/lib/gsap";
-import type { Dictionary, Locale } from "@/lib/i18n";
-import { site } from "@/lib/site";
+import type { UiStrings } from "@/lib/cms/types";
+import type { Locale } from "@/lib/i18n";
 import { LocaleSwitcher } from "./LocaleSwitcher";
 
-type Props = { locale: Locale; nav: Dictionary["nav"] };
+type Props = { locale: Locale; nav: UiStrings["nav"]; contact: { phone: string; phoneE164: string; email: string }; logoAlt: string };
 
-export function Header({ locale, nav }: Props) {
+export function Header({ locale, nav, contact: site, logoAlt }: Props) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -115,7 +115,7 @@ export function Header({ locale, nav }: Props) {
         <Link href={`/${locale}`} className="-ml-2 shrink-0" aria-label="VSAP">
           <img
             src={solid ? "/logo.svg" : "/logo-light.svg"}
-            alt="VSAP – Good Food Good Health"
+            alt={logoAlt}
             width={136}
             height={68}
             className="h-11 w-auto sm:h-12 lg:h-14"

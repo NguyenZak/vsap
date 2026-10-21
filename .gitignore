@@ -6,6 +6,7 @@ next-env.d.ts
 .vinext/
 .cloudflare/
 *.tsbuildinfo
-.dev.vars*
+.dev.vars
+!.dev.vars.example
 .wrangler/
 .DS_Store

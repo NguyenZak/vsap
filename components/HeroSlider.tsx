@@ -2,31 +2,37 @@
 
 import { useRef, useState, type KeyboardEvent, type TouchEvent } from "react";
 import { ArrowDown, ArrowLeft, ArrowRight, Pause, Play, Star } from "lucide-react";
-import type { Dictionary, Locale } from "@/lib/i18n";
-import type { ImageKey } from "@/lib/images";
 import { gsap, prefersReducedMotion, useGSAP } from "@/lib/gsap";
-import { Photo } from "./Photo";
 import { Button, Tag } from "./ui";
-
-// Photo and link for each slide, in the same order as `hero.slides` in lib/content.
-const media: { image: ImageKey; href: string; /** Tailwind object-position class */ focus?: string }[] = [
-  { image: "highlands", href: "/products" },
-  { image: "cashew", href: "/products/cashew" },
-  { image: "macadamia", href: "/products/macadamia" },
-  { image: "shipping", href: "/contact" },
-];
-
-/** Seconds each slide stays before autoplay moves on. */
-const AUTOPLAY = 7;
 
 const pad = (n: number) => String(n).padStart(2, "0");
 
+type Img = { src: string; alt: string };
+
+export type HeroSlide = {
+  label: string;
+  eyebrow: string;
+  title: string;
+  accent: string;
+  lead: string;
+  image: Img;
+  buttonLabel: string;
+  buttonHref: string;
+  secondaryLabel: string;
+  secondaryHref: string;
+};
+
+/** Everything already resolved to the page language (see components/blocks). */
 type Props = {
-  locale: Locale;
-  hero: Dictionary["home"]["hero"];
-  /** Already-formatted "13 export grades" text for the proof pill. */
-  grades: string;
-  thumbs: ImageKey[];
+  slides: HeroSlide[];
+  /** Seconds each slide stays before autoplay moves on. */
+  autoplay: number;
+  scrollLabel: string;
+  rankValue: string;
+  rankLabel: string;
+  proofLabel: string;
+  proofImages: Img[];
+  labels: { prev: string; next: string; pause: string; play: string; slide: string };
 };
 
 type Controls = { go: (to: number, dir: number) => void; sync: () => void };
@@ -39,16 +45,15 @@ type Controls = { go: (to: number, dir: number) => void; sync: () => void };
  * fills the screen, so the pointer is almost always over it), and is off entirely
  * for visitors who prefer reduced motion.
  */
-export function HeroSlider({ locale, hero, grades, thumbs }: Props) {
+export function HeroSlider({ slides, autoplay: AUTOPLAY, scrollLabel, rankValue, rankLabel, proofLabel, proofImages, labels }: Props) {
   const root = useRef<HTMLElement>(null);
   const controls = useRef<Controls>({ go: () => {}, sync: () => {} });
   const flags = useRef({ focus: false, user: false });
   const touchX = useRef<number | null>(null);
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
-  const [autoplay, setAutoplay] = useState(true);
-  const slides = hero.slides;
   const n = slides.length;
+  const [autoplay, setAutoplay] = useState(n > 1);
 
   useGSAP(
     (_, contextSafe) => {
@@ -63,7 +68,7 @@ export function HeroSlider({ locale, hero, grades, thumbs }: Props) {
 
       // Take over from the CSS failsafe that keeps intro elements hidden until JS runs.
       q("[data-intro]").forEach((el) => el.removeAttribute("data-intro"));
-      if (reduce) setAutoplay(false);
+      if (reduce || n < 2) setAutoplay(false);
 
       let current = 0;
       let busy: gsap.core.Timeline | null = null;
@@ -140,7 +145,7 @@ export function HeroSlider({ locale, hero, grades, thumbs }: Props) {
       const startTimer = (i: number) => {
         timer?.kill();
         bars.forEach((bar, j) => gsap.set(bar, { scaleX: j < i || (reduce && j === i) ? 1 : 0 }));
-        if (reduce) return;
+        if (reduce || n < 2) return;
         timer = gsap.fromTo(
           bars[i],
           { scaleX: 0 },
@@ -214,18 +219,20 @@ export function HeroSlider({ locale, hero, grades, thumbs }: Props) {
       className="relative isolate flex min-h-[100svh] flex-col overflow-hidden bg-forest-900 lg:min-h-[46rem]"
     >
       <div className="absolute inset-0 -z-10 overflow-hidden">
-        {media.map((m, i) => (
+        {slides.map((s, i) => (
           <div
-            key={m.image}
+            key={i}
             data-media
             aria-hidden={i !== index}
             className={`absolute inset-0 overflow-hidden ${i === 0 ? "" : "invisible"}`}
           >
-            <Photo
-              name={m.image}
-              locale={locale}
-              priority={i === 0}
-              className={`size-full will-change-transform ${m.focus ?? ""}`}
+            <img
+              src={s.image.src}
+              alt={s.image.alt}
+              loading={i === 0 ? "eager" : "lazy"}
+              fetchPriority={i === 0 ? "high" : undefined}
+              decoding="async"
+              className="size-full object-cover will-change-transform"
             />
           </div>
         ))}
@@ -241,7 +248,7 @@ export function HeroSlider({ locale, hero, grades, thumbs }: Props) {
               const intro = i === 0 || undefined;
               return (
                 <div
-                  key={s.label}
+                  key={i}
                   data-text
                   role="group"
                   aria-roledescription="slide"
@@ -269,10 +276,10 @@ export function HeroSlider({ locale, hero, grades, thumbs }: Props) {
                     {s.lead}
                   </p>
                   <div data-fade data-intro={intro} className="mt-8 flex flex-wrap gap-3">
-                    <Button href={`/${locale}${media[i].href}`}>{s.cta}</Button>
-                    {media[i].href !== "/contact" && (
-                      <Button href={`/${locale}/contact`} variant="glass">
-                        {hero.secondaryCta}
+                    {s.buttonLabel && s.buttonHref && <Button href={s.buttonHref}>{s.buttonLabel}</Button>}
+                    {s.secondaryLabel && s.secondaryHref && (
+                      <Button href={s.secondaryHref} variant="glass">
+                        {s.secondaryLabel}
                       </Button>
                     )}
                   </div>
@@ -281,7 +288,7 @@ export function HeroSlider({ locale, hero, grades, thumbs }: Props) {
             })}
           </div>
 
-          <div data-chrome data-intro className="flex shrink-0 items-center gap-2.5">
+          <div data-chrome data-intro className={`flex shrink-0 items-center gap-2.5 ${n < 2 ? "hidden" : ""}`}>
             <p className="mr-2 text-white tabular-nums" aria-hidden="true">
               <span className="text-3xl font-medium tracking-tight">{pad(index + 1)}</span>
               <span className="text-sm text-white/60"> / {pad(n)}</span>
@@ -290,7 +297,7 @@ export function HeroSlider({ locale, hero, grades, thumbs }: Props) {
               <button
                 type="button"
                 className={round}
-                aria-label={paused ? hero.play : hero.pause}
+                aria-label={paused ? labels.play : labels.pause}
                 onClick={() => {
                   setPaused(!paused);
                   hold("user", !paused);
@@ -299,10 +306,10 @@ export function HeroSlider({ locale, hero, grades, thumbs }: Props) {
                 {paused ? <Play className="size-4" /> : <Pause className="size-4" />}
               </button>
             )}
-            <button type="button" className={round} aria-label={hero.prev} onClick={() => go(index - 1, -1)}>
+            <button type="button" className={round} aria-label={labels.prev} onClick={() => go(index - 1, -1)}>
               <ArrowLeft className="size-4" />
             </button>
-            <button type="button" className={round} aria-label={hero.next} onClick={() => go(index + 1, 1)}>
+            <button type="button" className={round} aria-label={labels.next} onClick={() => go(index + 1, 1)}>
               <ArrowRight className="size-4" />
             </button>
           </div>
@@ -310,13 +317,13 @@ export function HeroSlider({ locale, hero, grades, thumbs }: Props) {
       </div>
 
       <div className="container-page" data-chrome data-intro>
-        <div className="grid grid-cols-4 gap-2">
+        <div className={`grid gap-2 ${n < 2 ? "hidden" : ""}`} style={{ gridTemplateColumns: `repeat(${n}, minmax(0, 1fr))` }}>
           {slides.map((s, i) => (
             <button
-              key={s.label}
+              key={i}
               type="button"
               onClick={() => go(i, i > index ? 1 : -1)}
-              aria-label={`${hero.slide} ${i + 1}: ${s.label}`}
+              aria-label={`${labels.slide} ${i + 1}: ${s.label}`}
               aria-current={i === index || undefined}
               className="group pt-1 pb-3 text-left"
             >
@@ -330,31 +337,47 @@ export function HeroSlider({ locale, hero, grades, thumbs }: Props) {
           ))}
         </div>
         <div className="flex items-center justify-between gap-4 pb-5 text-white">
-          <a href="#about" className="inline-flex shrink-0 items-center gap-2 text-xs whitespace-nowrap uppercase tracking-wider sm:text-sm">
-            {hero.scroll}
+          <button
+            type="button"
+            onClick={() => {
+              // Scroll to whatever section follows the hero on this page.
+              const next = root.current?.closest("[data-type]")?.nextElementSibling ?? root.current?.nextElementSibling;
+              next?.scrollIntoView({ behavior: prefersReducedMotion() ? "auto" : "smooth" });
+            }}
+            className={`inline-flex shrink-0 items-center gap-2 text-xs whitespace-nowrap uppercase tracking-wider sm:text-sm ${scrollLabel ? "" : "invisible"}`}
+          >
+            {scrollLabel}
             <ArrowDown className="size-4 animate-bounce" />
-          </a>
+          </button>
           <div className="flex items-center gap-3 sm:gap-4">
-            <p className="hidden items-center gap-1.5 text-sm sm:flex">
-              <Star className="size-4 fill-sun-500 text-sun-500" />
-              <span className="font-medium">No.1</span>
-              <span className="text-white/75">{hero.rank}</span>
-            </p>
-            <span className="hidden h-5 w-px bg-white/30 sm:block" />
-            <p className="flex items-center gap-2 rounded-full bg-white/15 py-1 pl-1 pr-3 text-xs whitespace-nowrap backdrop-blur-md sm:text-sm">
-              <span className="flex -space-x-2.5">
-                {thumbs.map((t) => (
-                  <Photo key={t} name={t} locale={locale} decorative className="size-7 rounded-full ring-2 ring-white/70 sm:size-8" />
-                ))}
-              </span>
-              {grades}
-            </p>
+            {(rankValue || rankLabel) && (
+              <>
+                <p className="hidden items-center gap-1.5 text-sm sm:flex">
+                  <Star className="size-4 fill-sun-500 text-sun-500" />
+                  <span className="font-medium">{rankValue}</span>
+                  <span className="text-white/75">{rankLabel}</span>
+                </p>
+                {proofLabel && <span className="hidden h-5 w-px bg-white/30 sm:block" />}
+              </>
+            )}
+            {proofLabel && (
+              <p className="flex items-center gap-2 rounded-full bg-white/15 py-1 pl-1 pr-3 text-xs whitespace-nowrap backdrop-blur-md sm:text-sm">
+                {proofImages.length > 0 && (
+                  <span className="flex -space-x-2.5">
+                    {proofImages.map((t, i) => (
+                      <img key={i} src={t.src} alt="" loading="lazy" className="size-7 rounded-full object-cover ring-2 ring-white/70 sm:size-8" />
+                    ))}
+                  </span>
+                )}
+                {proofLabel}
+              </p>
+            )}
           </div>
         </div>
       </div>
 
       <p className="sr-only" aria-live={paused || !autoplay ? "polite" : "off"}>
-        {`${hero.slide} ${index + 1} / ${n}: ${slides[index].label}`}
+        {`${labels.slide} ${index + 1} / ${n}: ${slides[index].label}`}
       </p>
     </section>
   );

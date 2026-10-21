@@ -6,8 +6,8 @@ import { staticAssetsAdapter } from "@vinext/cloudflare/cache/static-assets-adap
 export default defineConfig({
   plugins: [
     vinext({
+      // Pages render per request from CMS content (lib/cms/store.ts), so nothing is prerendered.
       cache: { cdn: staticAssetsAdapter() },
-      prerender: { routes: "*" },
     }),
     cloudflare({
       viteEnvironment: {
