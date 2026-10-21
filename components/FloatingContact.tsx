@@ -1,7 +1,7 @@
 "use client";
 
-import { useRef } from "react";
-import { Phone } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { MessageCircle, Phone, X } from "lucide-react";
 import type { UiStrings } from "@/lib/cms/types";
 import { gsap, MOTION_OK, useGSAP } from "@/lib/gsap";
 
@@ -10,6 +10,20 @@ type Links = { zalo: string; whatsapp: string; phone: string; phoneE164: string 
 
 export function FloatingContact({ t, links: site }: { t: UiStrings["chat"]; links: Links }) {
   const root = useRef<HTMLDivElement>(null);
+  const [open, setOpen] = useState(false);
+
+  // Close the phone menu on Escape or a tap anywhere else.
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
+    const onDown = (e: PointerEvent) => !root.current?.contains(e.target as Node) && setOpen(false);
+    window.addEventListener("keydown", onKey);
+    window.addEventListener("pointerdown", onDown);
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      window.removeEventListener("pointerdown", onDown);
+    };
+  }, [open]);
 
   useGSAP(
     () => {
@@ -37,30 +51,47 @@ export function FloatingContact({ t, links: site }: { t: UiStrings["chat"]; link
       aria-label={t.label}
       className="fixed right-4 bottom-4 z-30 flex flex-col items-end gap-3 sm:right-6 sm:bottom-6"
     >
-      {items.map((item) => (
-        <a
-          key={item.label}
-          data-fab
-          href={item.href}
-          target={item.href.startsWith("http") ? "_blank" : undefined}
-          rel={item.href.startsWith("http") ? "noopener noreferrer" : undefined}
-          aria-label={item.label}
-          className="group relative flex items-center"
-        >
-          {/* Label slides out to the left on hover / keyboard focus. */}
-          <span className="pointer-events-none absolute right-full mr-3 translate-x-2 rounded-full bg-ink-900 px-3 py-1.5 text-xs font-medium whitespace-nowrap text-white opacity-0 shadow-lg transition group-hover:translate-x-0 group-hover:opacity-100 group-focus-visible:translate-x-0 group-focus-visible:opacity-100">
-            {item.label}
-          </span>
-          <span
-            className={`relative inline-flex size-12 items-center justify-center rounded-full text-white shadow-lg shadow-black/20 transition group-hover:scale-110 group-focus-visible:ring-2 group-focus-visible:ring-offset-2 group-focus-visible:ring-forest-600 ${item.className}`}
-          >
-            {item.ping && (
-              <span aria-hidden="true" className={`absolute inset-0 rounded-full opacity-30 motion-safe:animate-ping ${item.ping}`} />
-            )}
-            <span className="relative">{item.icon}</span>
-          </span>
-        </a>
-      ))}
+      {/* On phones the buttons sit behind one toggle so they don't cover the page; from sm up they're always shown. */}
+      <ul id="floating-contact" className={`flex-col items-end gap-3 ${open ? "flex" : "hidden"} sm:flex`}>
+        {items.map((item) => (
+          <li key={item.label}>
+            <a
+              data-fab
+              href={item.href}
+              target={item.href.startsWith("http") ? "_blank" : undefined}
+              rel={item.href.startsWith("http") ? "noopener noreferrer" : undefined}
+              aria-label={item.label}
+              onClick={() => setOpen(false)}
+              className="group relative flex items-center"
+            >
+              {/* Label: always visible in the opened phone menu, slides out on hover / keyboard focus on larger screens. */}
+              <span
+                className={`pointer-events-none absolute right-full mr-3 rounded-full bg-ink-900 px-3 py-1.5 text-xs font-medium whitespace-nowrap text-white shadow-lg transition sm:translate-x-2 sm:opacity-0 sm:group-hover:translate-x-0 sm:group-hover:opacity-100 sm:group-focus-visible:translate-x-0 sm:group-focus-visible:opacity-100`}
+              >
+                {item.label}
+              </span>
+              <span
+                className={`relative inline-flex size-12 items-center justify-center rounded-full text-white shadow-lg shadow-black/20 transition group-hover:scale-110 group-focus-visible:ring-2 group-focus-visible:ring-offset-2 group-focus-visible:ring-forest-600 ${item.className}`}
+              >
+                {item.ping && <span aria-hidden="true" className={`absolute inset-0 rounded-full opacity-30 motion-safe:animate-ping ${item.ping}`} />}
+                <span className="relative">{item.icon}</span>
+              </span>
+            </a>
+          </li>
+        ))}
+      </ul>
+      <button
+        type="button"
+        data-fab
+        onClick={() => setOpen((o) => !o)}
+        aria-expanded={open}
+        aria-controls="floating-contact"
+        aria-label={open ? t.close : t.label}
+        className="relative inline-flex size-12 items-center justify-center rounded-full bg-forest-900 text-lime-300 shadow-lg shadow-black/20 transition active:scale-95 sm:hidden"
+      >
+        {!open && <span aria-hidden="true" className="absolute inset-0 rounded-full bg-forest-900 opacity-30 motion-safe:animate-ping" />}
+        {open ? <X className="relative size-5" /> : <MessageCircle className="relative size-5" />}
+      </button>
     </div>
   );
 }

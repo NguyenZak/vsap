@@ -38,7 +38,7 @@ export type UiStrings = {
   nav: { home: string; about: string; products: string; quality: string; contact: string; quote: string; menu: string; close: string };
   common: { viewProduct: string; requestQuote: string; allProducts: string; prev: string; next: string; pause: string; play: string; slide: string; step: string; photo: string };
   footer: { explore: string; products: string; contact: string; rights: string; brandOf: string };
-  chat: { label: string; zalo: string; whatsapp: string; call: string };
+  chat: { label: string; zalo: string; whatsapp: string; call: string; close: string };
   contactInfo: { email: string; phone: string; website: string };
   form: {
     name: string; company: string; email: string; phone: string; country: string; product: string;

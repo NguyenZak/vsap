@@ -364,7 +364,7 @@ export function HeroSlider({ slides, autoplay: AUTOPLAY, scrollLabel, rankValue,
               </>
             )}
             {proofLabel && (
-              <p className="flex items-center gap-2 rounded-full bg-white/15 py-1 pl-1 pr-3 text-xs whitespace-nowrap backdrop-blur-md sm:text-sm">
+              <p className="hidden items-center gap-2 rounded-full bg-white/15 py-1 pl-1 pr-3 text-xs whitespace-nowrap backdrop-blur-md sm:flex sm:text-sm">
                 {proofImages.length > 0 && (
                   <span className="flex -space-x-2.5">
                     {proofImages.map((t, i) => (

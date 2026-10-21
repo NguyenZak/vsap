@@ -352,6 +352,7 @@ export const vi = {
     zalo: "Chat Zalo",
     whatsapp: "Chat WhatsApp",
     call: "Gọi ngay",
+    close: "Đóng",
   },
   footer: {
     brandOf: "Sản phẩm của",

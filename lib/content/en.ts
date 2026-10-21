@@ -348,6 +348,7 @@ export const en: Dictionary = {
     zalo: "Chat on Zalo",
     whatsapp: "Chat on WhatsApp",
     call: "Call us",
+    close: "Close",
   },
   footer: {
     brandOf: "A brand of",
