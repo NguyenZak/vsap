@@ -22,6 +22,7 @@ import {
   Mail,
   Megaphone,
   MessageCircleQuestion,
+  Newspaper,
   Package,
   PanelLeft,
   Plus,
@@ -64,6 +65,7 @@ const defIcons: Record<string, LucideIcon> = {
   text: Text,
   "layout-panel-left": LayoutPanelLeft,
   images: Images,
+  newspaper: Newspaper,
 };
 
 function DefIcon({ name, className }: { name: string; className?: string }) {

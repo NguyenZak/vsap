@@ -21,9 +21,13 @@ type SeoInput = {
   /** Use the title as-is instead of the "%s | VSAP" template. */
   absoluteTitle?: boolean;
   type?: "website" | "article";
+  /** Languages this page exists in (default: all); drives hreflang. */
+  available?: Locale[];
+  /** For articles: YYYY-MM-DD publication date. */
+  publishedTime?: string;
 };
 
-export function seoMetadata({ content, locale, path, title, description, image, imageAlt, noindex, absoluteTitle, type = "website" }: SeoInput): Metadata {
+export function seoMetadata({ content, locale, path, title, description, image, imageAlt, noindex, absoluteTitle, type = "website", available = [...locales], publishedTime }: SeoInput): Metadata {
   const { settings } = content;
   const shareImage = image || settings.seo.image;
   const fullTitle = absoluteTitle || !title ? title || pick(settings.seo.title, locale) : `${title} | ${settings.name}`;
@@ -34,18 +38,19 @@ export function seoMetadata({ content, locale, path, title, description, image, 
     alternates: {
       canonical: `/${locale}${path}`,
       languages: {
-        ...Object.fromEntries(locales.map((l) => [l, `/${l}${path}`])),
-        "x-default": `/${defaultLocale}${path}`,
+        ...Object.fromEntries(available.map((l) => [l, `/${l}${path}`])),
+        "x-default": `/${available.includes(defaultLocale) ? defaultLocale : available[0] ?? locale}${path}`,
       },
     },
     openGraph: {
       type,
+      ...(type === "article" && publishedTime ? { publishedTime } : {}),
       siteName: settings.name,
       title: fullTitle,
       description,
       url: `/${locale}${path}`,
       locale: ogLocale[locale],
-      alternateLocale: locales.filter((l) => l !== locale).map((l) => ogLocale[l]),
+      alternateLocale: available.filter((l) => l !== locale).map((l) => ogLocale[l]),
       images,
     },
     twitter: { card: images ? "summary_large_image" : "summary", title: fullTitle, description, images: images?.map((i) => i.url) },
@@ -128,6 +133,27 @@ export function breadcrumbJsonLd(content: SiteContent, locale: Locale, trail: { 
       name: t.name,
       item: `${base}/${locale}${t.path}`,
     })),
+  };
+}
+
+export function articleJsonLd(
+  content: SiteContent,
+  locale: Locale,
+  a: { path: string; headline: string; description: string; image?: string; date: string; author: string; section?: string },
+) {
+  const base = content.settings.url;
+  return {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: a.headline.slice(0, 110),
+    description: a.description,
+    image: a.image ? [abs(base, a.image)] : undefined,
+    datePublished: a.date,
+    inLanguage: locale,
+    articleSection: a.section || undefined,
+    author: a.author && a.author !== content.settings.name ? { "@type": "Person", name: a.author } : { "@id": `${base}/#organization` },
+    publisher: { "@id": `${base}/#organization` },
+    mainEntityOfPage: `${base}/${locale}${a.path}`,
   };
 }
 

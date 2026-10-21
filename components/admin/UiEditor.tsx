@@ -14,6 +14,7 @@ const groups: Record<keyof UiStrings, string> = {
   contactInfo: "Thẻ liên hệ",
   form: "Form yêu cầu báo giá",
   productDetail: "Trang chi tiết sản phẩm",
+  news: "Tin tức",
   retail: "Thông tin bao bì bán lẻ",
 };
 
@@ -86,6 +87,15 @@ const keyLabels: Record<string, string> = {
   storage: "Bảo quản",
   packedBy: "Đóng gói tại",
   view: "Xem chi tiết",
+  news: "Tin tức",
+  readMore: "Đọc tiếp",
+  published: "“Đăng ngày”",
+  minutes: "“phút đọc”",
+  more: "Tiêu đề “Bài viết khác”",
+  empty: "Khi chưa có bài",
+  ctaTitle: "Tiêu đề khối báo giá cuối bài",
+  ctaBody: "Mô tả khối báo giá cuối bài",
+  share: "Chia sẻ",
   zalo: "Zalo",
   whatsapp: "WhatsApp",
 };

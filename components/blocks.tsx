@@ -3,9 +3,10 @@
 import { Globe, Mail, MapPin, Phone } from "lucide-react";
 import type { Locale } from "@/lib/i18n";
 import { localHref, pick } from "@/lib/cms/links";
-import type { CmsImage, L, Section, SiteContent, UiStrings } from "@/lib/cms/types";
+import type { CmsImage, L, Post, Section, SiteContent, UiStrings } from "@/lib/cms/types";
 import { HeroSlider } from "./HeroSlider";
 import { InquiryForm } from "./InquiryForm";
+import { FeaturedPost, PostGrid } from "./PostCards";
 import { ProcessTabs } from "./ProcessTabs";
 import { StatementSlider } from "./StatementSlider";
 import { ValuesShowcase } from "./ValuesShowcase";
@@ -25,7 +26,14 @@ import { SIZES } from "@/lib/responsive";
 import { CmsIcon } from "./cms/Icon";
 import { Button, Tag, Title } from "./ui";
 
-export type BlockCtx = { locale: Locale; content: SiteContent; ui: UiStrings };
+export type BlockCtx = {
+  locale: Locale;
+  content: SiteContent;
+  ui: UiStrings;
+  /** Live news posts for this language, loaded only when the page has a "posts" section. */
+  posts?: Post[];
+  preview?: boolean;
+};
 
 // Section props are free-form JSON from the CMS; these readers keep the renderers tolerant
 // of missing or half-filled fields instead of crashing the page.
@@ -481,6 +489,31 @@ const renderers: Record<string, Renderer> = {
               <Button href={href(p.buttonHref)}>{t(p.buttonLabel)}</Button>
             </div>
           )}
+        </div>
+      </div>
+    );
+  },
+
+  posts(p, ctx) {
+    const { t, href } = makeT(ctx);
+    const tone = toneOf({ id: "", type: "posts", props: p }) as Tone;
+    const limit = num(p.limit, 0);
+    const posts = limit ? (ctx.posts ?? []).slice(0, limit) : (ctx.posts ?? []);
+    const labels = { readMore: ctx.ui.news.readMore, minutes: ctx.ui.news.minutes };
+    // A "latest news" strip disappears until there is something to show; the
+    // full list (limit 0, the News page) says so instead.
+    if (posts.length === 0 && limit) return null;
+    const [first, ...rest] = p.featured === true ? posts : [undefined, ...posts];
+    return (
+      <div className="block-pad container-page">
+        <div className="flex flex-wrap items-end justify-between gap-6">
+          {heading(p, ctx, tone)}
+          {t(p.buttonLabel) && str(p.buttonHref) && <Button href={href(p.buttonHref)} variant={tone === "dark" ? "lime" : "dark"}>{t(p.buttonLabel)}</Button>}
+        </div>
+        <div className={`space-y-4 ${hasHeading(p, ctx) || t(p.buttonLabel) ? "mt-12" : ""}`}>
+          {posts.length === 0 && <p className={`rounded-3xl px-6 py-16 text-center text-ink-600 ${tone === "white" ? "bg-mist-50" : "bg-white"}`}>{ctx.ui.news.empty}</p>}
+          {first && <FeaturedPost post={first} locale={ctx.locale} labels={labels} />}
+          {rest.length > 0 && <PostGrid posts={rest as Post[]} locale={ctx.locale} labels={labels} onMuted={tone !== "white"} />}
         </div>
       </div>
     );

@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { Eye, EyeOff, Loader2, LockKeyhole } from "lucide-react";
+import { Eye, EyeOff, Loader2, LockKeyhole, UserRound } from "lucide-react";
 import { api } from "./api";
 
 export function LoginForm({ configured }: { configured: boolean }) {
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [show, setShow] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -19,7 +20,7 @@ export function LoginForm({ configured }: { configured: boolean }) {
           setBusy(true);
           setError("");
           try {
-            await api.login(password);
+            await api.login(username, password);
             const next = new URLSearchParams(location.search).get("next");
             location.href = next && next.startsWith("/admin") ? next : "/admin";
           } catch (err) {
@@ -38,6 +39,23 @@ export function LoginForm({ configured }: { configured: boolean }) {
           </p>
         )}
         <label className="mt-6 block">
+          <span className="text-xs font-medium text-ink-900">Tên đăng nhập</span>
+          <span className="relative mt-1 block">
+            <UserRound className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-ink-400" />
+            <input
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              autoComplete="username"
+              autoCapitalize="none"
+              spellCheck={false}
+              autoFocus
+              required
+              placeholder="admin"
+              className="w-full rounded-lg border border-mist-200 py-2.5 pr-3 pl-9 text-sm outline-none placeholder:text-ink-400 focus:border-forest-600 focus:ring-2 focus:ring-lime-300/50"
+            />
+          </span>
+        </label>
+        <label className="mt-4 block">
           <span className="text-xs font-medium text-ink-900">Mật khẩu</span>
           <span className="relative mt-1 block">
             <LockKeyhole className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-ink-400" />
@@ -46,7 +64,6 @@ export function LoginForm({ configured }: { configured: boolean }) {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               autoComplete="current-password"
-              autoFocus
               required
               className="w-full rounded-lg border border-mist-200 py-2.5 pr-10 pl-9 text-sm outline-none focus:border-forest-600 focus:ring-2 focus:ring-lime-300/50"
             />

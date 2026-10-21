@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { ChevronDown, ChevronUp, Copy, GripVertical, ImageIcon, Plus, Trash2 } from "lucide-react";
+import { useRef, useState } from "react";
+import { Bold, ChevronDown, ChevronUp, Copy, GripVertical, Heading2, Heading3, ImageIcon, Italic, Link2, List, ListOrdered, Minus, Plus, Quote, Trash2 } from "lucide-react";
 import { getIn, type FieldDef } from "@/lib/cms/fields";
 import { iconNames } from "@/lib/cms/icons";
 import { CmsIcon } from "@/components/cms/Icon";
@@ -15,7 +15,7 @@ const inputCls =
   "w-full rounded-lg border border-mist-200 bg-white px-3 py-2 text-sm text-ink-900 outline-none transition placeholder:text-ink-400 focus:border-forest-600 focus:ring-2 focus:ring-lime-300/50";
 
 /** Site paths offered as suggestions in link fields. */
-export const LINK_SUGGESTIONS = ["/", "/about", "/products", "/products/cashew", "/products/macadamia", "/quality", "/contact", "#inquiry"];
+export const LINK_SUGGESTIONS = ["/", "/about", "/products", "/products/cashew", "/products/macadamia", "/quality", "/news", "/contact", "#inquiry"];
 
 const asL = (v: unknown): L => (v && typeof v === "object" ? { vi: String((v as L).vi ?? ""), en: String((v as L).en ?? "") } : { vi: String(v ?? ""), en: "" });
 
@@ -218,6 +218,90 @@ function ListField({ field, value, path, onChange }: { field: Extract<FieldDef, 
   );
 }
 
+type Edit = { before: string; after?: string; placeholder?: string; line?: boolean };
+
+const tools: { label: string; icon: typeof Bold; edit: Edit }[] = [
+  { label: "Tiêu đề lớn", icon: Heading2, edit: { before: "## ", placeholder: "Tiêu đề", line: true } },
+  { label: "Tiêu đề nhỏ", icon: Heading3, edit: { before: "### ", placeholder: "Tiêu đề nhỏ", line: true } },
+  { label: "Đậm", icon: Bold, edit: { before: "**", after: "**", placeholder: "chữ đậm" } },
+  { label: "Nghiêng", icon: Italic, edit: { before: "*", after: "*", placeholder: "chữ nghiêng" } },
+  { label: "Liên kết", icon: Link2, edit: { before: "[", after: "](/contact)", placeholder: "chữ liên kết" } },
+  { label: "Danh sách", icon: List, edit: { before: "- ", placeholder: "Mục", line: true } },
+  { label: "Danh sách số", icon: ListOrdered, edit: { before: "1. ", placeholder: "Mục", line: true } },
+  { label: "Trích dẫn", icon: Quote, edit: { before: "> ", placeholder: "Trích dẫn", line: true } },
+  { label: "Đường kẻ", icon: Minus, edit: { before: "---", line: true } },
+];
+
+/** Bilingual Markdown editor: a language switch, a formatting toolbar and a tall textarea. */
+function MarkdownField({ value, onChange }: { value: L; onChange: (v: L) => void }) {
+  const [lang, setLang] = useState<"vi" | "en">("vi");
+  const [picking, setPicking] = useState(false);
+  const area = useRef<HTMLTextAreaElement>(null);
+  const text = value[lang];
+
+  const apply = ({ before, after = "", placeholder = "", line }: Edit) => {
+    const el = area.current;
+    const start = el?.selectionStart ?? text.length;
+    const end = el?.selectionEnd ?? text.length;
+    const picked = text.slice(start, end) || placeholder;
+    // Block-level marks go on their own line.
+    const pre = line && start > 0 && text[start - 1] !== "\n" ? "\n\n" : "";
+    const post = line && text[end] !== undefined && text[end] !== "\n" ? "\n\n" : "";
+    const next = `${text.slice(0, start)}${pre}${before}${picked}${after}${post}${text.slice(end)}`;
+    onChange({ ...value, [lang]: next });
+    requestAnimationFrame(() => {
+      if (!el) return;
+      el.focus();
+      const from = start + pre.length + before.length;
+      el.setSelectionRange(from, from + picked.length);
+    });
+  };
+
+  return (
+    <div className="overflow-hidden rounded-lg border border-mist-200 focus-within:border-forest-600 focus-within:ring-2 focus-within:ring-lime-300/50">
+      <div className="flex flex-wrap items-center gap-0.5 border-b border-mist-200 bg-mist-50 px-1.5 py-1">
+        <div className="mr-1 flex rounded-md bg-white p-0.5 shadow-sm">
+          {(["vi", "en"] as const).map((l) => (
+            <button key={l} type="button" onClick={() => setLang(l)} className={`rounded px-2 py-0.5 text-[11px] font-semibold uppercase ${lang === l ? "bg-forest-900 text-white" : "text-ink-600"}`}>
+              {l}
+              {!value[l].trim() && <span className="ml-1 text-[9px] font-normal opacity-70">trống</span>}
+            </button>
+          ))}
+        </div>
+        {tools.map((t) => (
+          <button key={t.label} type="button" title={t.label} aria-label={t.label} onClick={() => apply(t.edit)} className="rounded p-1.5 text-ink-600 hover:bg-white hover:text-ink-900">
+            <t.icon className="size-4" />
+          </button>
+        ))}
+        <button type="button" title="Chèn ảnh" aria-label="Chèn ảnh" onClick={() => setPicking(true)} className="rounded p-1.5 text-ink-600 hover:bg-white hover:text-ink-900">
+          <ImageIcon className="size-4" />
+        </button>
+      </div>
+      <textarea
+        ref={area}
+        value={text}
+        rows={18}
+        onChange={(e) => onChange({ ...value, [lang]: e.target.value })}
+        placeholder={lang === "en" ? "English version (optional). Leave empty to show the post only in Vietnamese." : "Nội dung bài viết…"}
+        className="block w-full resize-y px-3 py-2.5 font-mono text-[13px] leading-relaxed text-ink-900 outline-none placeholder:text-ink-400"
+      />
+      <p className="border-t border-mist-200 bg-mist-50 px-3 py-1.5 text-[11px] text-ink-400">
+        ## Tiêu đề · **đậm** · *nghiêng* · [chữ](/contact) · - danh sách · &gt; trích dẫn. Để một dòng trống giữa các đoạn.
+      </p>
+      {picking && (
+        <MediaPicker
+          onClose={() => setPicking(false)}
+          onPick={(p) => {
+            setPicking(false);
+            const alt = (p.alt?.[lang] || "").replace(/[[\]]/g, "");
+            apply({ before: `![${alt}](${p.src} "`, after: `")`, placeholder: "Chú thích ảnh", line: true });
+          }}
+        />
+      )}
+    </div>
+  );
+}
+
 function Field({ field, value, path, onChange }: { field: FieldDef; value: unknown; path: Path; onChange: OnChange }) {
   const set = (v: unknown) => onChange(path, v);
   switch (field.type) {
@@ -261,6 +345,22 @@ function Field({ field, value, path, onChange }: { field: FieldDef; value: unkno
           <input type="checkbox" checked={value !== false} onChange={(e) => set(e.target.checked)} className="peer sr-only" />
           <span className="relative h-5 w-9 rounded-full bg-mist-200 transition peer-checked:bg-forest-600 after:absolute after:top-0.5 after:left-0.5 after:size-4 after:rounded-full after:bg-white after:transition peer-checked:after:translate-x-4" />
         </label>
+      );
+    case "date":
+      return (
+        <label className="block">
+          <Label field={field} />
+          <input type="date" value={String(value ?? "")} onChange={(e) => set(e.target.value)} className={`${inputCls} w-48`} />
+          <Help text={field.help} />
+        </label>
+      );
+    case "markdown":
+      return (
+        <div>
+          <Label field={field} />
+          <MarkdownField value={asL(value)} onChange={set} />
+          <Help text={field.help} />
+        </div>
       );
     case "select":
       return (

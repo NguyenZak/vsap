@@ -1,47 +1,19 @@
 // Server-side CMS storage. Content lives in D1 as two JSON documents ("draft" and
 // "published") plus a revision history; uploaded files live in R2 with a row in
 // cms_media. Tables are created on first use, so a fresh database needs no setup.
-import { env } from "cloudflare:workers";
 import { headers } from "next/headers";
 import { cache } from "react";
+import { bindings, CmsUnavailableError, db } from "./db";
 import { defaultContent } from "./defaults";
 import { isObject, normalize } from "./normalize";
 import type { SiteContent } from "./types";
 
-export { normalize };
-
-type Bindings = { DB?: D1Database; MEDIA?: R2Bucket };
-const bindings = () => env as unknown as Bindings;
-
-const SCHEMA = [
-  `CREATE TABLE IF NOT EXISTS cms_documents (key TEXT PRIMARY KEY, data TEXT NOT NULL, updated_at INTEGER NOT NULL)`,
-  `CREATE TABLE IF NOT EXISTS cms_revisions (id INTEGER PRIMARY KEY AUTOINCREMENT, data TEXT NOT NULL, created_at INTEGER NOT NULL, note TEXT)`,
-  `CREATE TABLE IF NOT EXISTS cms_media (key TEXT PRIMARY KEY, name TEXT NOT NULL, type TEXT NOT NULL, size INTEGER NOT NULL, created_at INTEGER NOT NULL)`,
-];
+export { normalize, CmsUnavailableError };
 
 /** How many published versions to keep for restore. */
 const KEEP_REVISIONS = 50;
 /** Guard against runaway documents (D1 rows max out around 2 MB). */
 const MAX_DOC_BYTES = 1_500_000;
-
-let ready: Promise<unknown> | null = null;
-
-export class CmsUnavailableError extends Error {
-  constructor() {
-    super("CMS storage (D1 binding DB) is not configured.");
-  }
-}
-
-async function db(): Promise<D1Database> {
-  const d = bindings().DB;
-  if (!d) throw new CmsUnavailableError();
-  ready ??= d.batch(SCHEMA.map((q) => d.prepare(q))).catch((e) => {
-    ready = null;
-    throw e;
-  });
-  await ready;
-  return d;
-}
 
 async function readDoc(key: "draft" | "published"): Promise<{ content: SiteContent; updatedAt: number } | null> {
   const row = await (await db()).prepare("SELECT data, updated_at FROM cms_documents WHERE key = ?").bind(key).first<{ data: string; updated_at: number }>();
@@ -111,13 +83,13 @@ export async function saveDraft(content: unknown) {
 }
 
 /** Publish the draft (or the given content): becomes live and is added to history. */
-export async function publish(note = "") {
+export async function publish(note = "", author = "") {
   const d = await db();
   const draft = await readDoc("draft");
   const content = draft?.content ?? (await readDoc("published"))?.content ?? defaultContent();
   const now = await writeDoc("published", content);
   await d.batch([
-    d.prepare("INSERT INTO cms_revisions (data, created_at, note) VALUES (?, ?, ?)").bind(JSON.stringify(content), now, note.slice(0, 200)),
+    d.prepare("INSERT INTO cms_revisions (data, created_at, note, author) VALUES (?, ?, ?, ?)").bind(JSON.stringify(content), now, note.slice(0, 200), author || null),
     d.prepare("DELETE FROM cms_documents WHERE key = 'draft'"),
     d.prepare("DELETE FROM cms_revisions WHERE id NOT IN (SELECT id FROM cms_revisions ORDER BY id DESC LIMIT ?)").bind(KEEP_REVISIONS),
   ]);
@@ -130,9 +102,9 @@ export async function discardDraft() {
 
 export async function listRevisions() {
   const { results } = await (await db())
-    .prepare("SELECT id, created_at, note, length(data) AS size FROM cms_revisions ORDER BY id DESC LIMIT ?")
+    .prepare("SELECT id, created_at, note, author, length(data) AS size FROM cms_revisions ORDER BY id DESC LIMIT ?")
     .bind(KEEP_REVISIONS)
-    .all<{ id: number; created_at: number; note: string | null; size: number }>();
+    .all<{ id: number; created_at: number; note: string | null; author: string | null; size: number }>();
   return results;
 }
 

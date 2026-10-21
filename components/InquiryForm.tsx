@@ -21,7 +21,7 @@ export function InquiryForm({ t, defaultProduct }: { t: UiStrings["form"]; defau
       const res = await fetch("/api/inquiry", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify(Object.fromEntries(new FormData(form))),
+        body: JSON.stringify({ ...Object.fromEntries(new FormData(form)), locale: document.documentElement.lang, page: location.pathname }),
       });
       if (!res.ok) throw new Error(String(res.status));
       form.reset();

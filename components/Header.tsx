@@ -95,6 +95,7 @@ export function Header({ locale, nav, contact: site, logoAlt }: Props) {
     { href: `/${locale}/about`, label: nav.about },
     { href: `/${locale}/products`, label: nav.products },
     { href: `/${locale}/quality`, label: nav.quality },
+    { href: `/${locale}/news`, label: nav.news },
     { href: `/${locale}/contact`, label: nav.contact },
   ];
 

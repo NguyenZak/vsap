@@ -1,4 +1,4 @@
-// Edit forms for the non-page content: products, retail packs, partners and settings.
+// Edit forms for the non-page content: products, retail packs, partners, settings and news posts.
 import { img, l, type FieldDef } from "./fields";
 
 export const productFields: FieldDef[] = [
@@ -189,3 +189,35 @@ export const pageSeoFields: FieldDef[] = [
   { key: "image", label: "Ảnh chia sẻ (Facebook, Zalo…)", type: "media", help: "Tỉ lệ 1200×630. Để trống thì dùng ảnh đầu trang." },
   { key: "noindex", label: "Ẩn trang khỏi Google (noindex)", type: "boolean" },
 ];
+
+export const postFields: FieldDef[] = [
+  { key: "title", label: "Tiêu đề", type: "text", help: "Để trống bản tiếng Anh nếu bài chỉ có tiếng Việt: bài sẽ không hiện ở trang /en." },
+  { key: "slug", label: "Đường dẫn (slug)", type: "string", help: "Chữ thường không dấu và gạch ngang. Đổi slug sau khi đã đăng sẽ đổi URL bài." },
+  { key: "date", label: "Ngày đăng", type: "date", help: "Chọn ngày trong tương lai để hẹn giờ: bài đã xuất bản chỉ hiện từ ngày đó." },
+  { key: "category", label: "Chuyên mục", type: "text" },
+  { key: "cover", label: "Ảnh bìa", type: "image" },
+  { key: "excerpt", label: "Tóm tắt", type: "textarea", rows: 3, help: "Hiện trên thẻ bài và làm mô tả mặc định khi chia sẻ." },
+  { key: "body", label: "Nội dung", type: "markdown" },
+  { key: "author", label: "Tác giả", type: "string", placeholder: "VSAP" },
+  {
+    key: "seo",
+    label: "SEO",
+    type: "group",
+    fields: [
+      { key: "title", label: "Tiêu đề trên Google", type: "text", help: "Để trống để dùng tiêu đề bài." },
+      { key: "description", label: "Mô tả trên Google", type: "textarea", rows: 2, help: "Để trống để dùng phần tóm tắt." },
+    ],
+  },
+];
+
+export const newPost = (date: string) => ({
+  slug: "",
+  title: l("Bài viết mới", ""),
+  excerpt: l(""),
+  cover: img("/images/highland-farmers.webp", "Nông dân Tây Nguyên thu hoạch nông sản", "Central Highlands farmers at harvest"),
+  body: l("Viết nội dung ở đây. Dùng thanh công cụ để thêm tiêu đề, ảnh, danh sách…", ""),
+  category: l("Tin công ty", "Company news"),
+  date,
+  author: "VSAP",
+  seo: { title: l(""), description: l("") },
+});

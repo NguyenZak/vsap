@@ -12,6 +12,10 @@ export type FieldDef =
   | (Base & { type: "string"; placeholder?: string })
   | (Base & { type: "number"; min?: number; max?: number; step?: number })
   | (Base & { type: "boolean" })
+  /** Calendar date stored as YYYY-MM-DD. */
+  | (Base & { type: "date" })
+  /** Long bilingual text with a Markdown toolbar (news post bodies). */
+  | (Base & { type: "markdown" })
   | (Base & { type: "select"; options: { value: string; label: string }[] })
   /** { src, alt } picked from the media library. */
   | (Base & { type: "image" })

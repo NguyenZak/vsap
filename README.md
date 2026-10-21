@@ -64,6 +64,9 @@ Toàn bộ nội dung website (các trang, section, sản phẩm, bao bì bán l
 - **Sản phẩm, Bán lẻ, Đối tác** — danh sách + form. Sản phẩm mới tự có trang `/products/<slug>`.
 - **Công ty** — tên, liên hệ, văn phòng, link Zalo/WhatsApp, SEO mặc định. **Chữ giao diện** — nhãn nút, menu, form.
 - **Thư viện ảnh** — tải ảnh lên (lưu trên R2), dùng ở mọi trường ảnh.
+- **Tin tức** — bài viết song ngữ (`/news`, `/news/<slug>`), soạn bằng Markdown có thanh công cụ (tiêu đề, đậm, liên kết, ảnh, danh sách, trích dẫn). Mỗi bài có bản nháp riêng và chỉ hiện khi được xuất bản; ngày đăng ở tương lai = hẹn giờ. Bài thiếu tiêu đề tiếng Anh chỉ hiện ở `/vi`. Section *Tin tức* đặt được trên bất kỳ trang nào.
+- **Báo giá** — hộp thư các yêu cầu gửi từ form: lọc theo trạng thái (Mới / Đang xử lý / Đã xong / Spam), tìm kiếm, ghi chú nội bộ, trả lời email/WhatsApp, xuất CSV mở bằng Excel. Huy hiệu đỏ báo số yêu cầu mới.
+- **Tài khoản** và **Nhật ký** — xem mục *Đăng nhập & phân quyền* bên dưới.
 - **Bản nháp → Xuất bản.** Mọi thay đổi tự lưu vào bản nháp (khách không thấy); bấm *Xuất bản* để đưa lên website. *Lịch sử* giữ 50 lần xuất bản gần nhất để khôi phục. Hoàn tác/làm lại: Ctrl/Cmd + Z / Shift + Z.
 
 Kỹ thuật: nội dung là một tài liệu JSON (`lib/cms/types.ts`) lưu trong D1 (bản nháp + bản đang chạy + lịch sử), ảnh tải lên lưu trong R2 và phục vụ ở `/media/...`. Lần đầu chưa có gì trong D1, site dùng nội dung mặc định dựng từ `lib/content/*`, `lib/products.ts`, `lib/retail.ts`… (`lib/cms/defaults.ts`). Bảng D1 tự tạo khi dùng lần đầu.
@@ -74,12 +77,21 @@ Kỹ thuật: nội dung là một tài liệu JSON (`lib/cms/types.ts`) lưu tr
 | Trường mới cho sản phẩm/cài đặt | `lib/cms/types.ts` + `lib/cms/collections.ts` + giá trị mặc định trong `lib/cms/defaults.ts` |
 | Biểu tượng chọn được | `lib/cms/icons.ts` + `components/cms/Icon.tsx` |
 
-### Đăng nhập
+### Đăng nhập & phân quyền
 
-Một mật khẩu chung, lưu trong secret của Worker:
+- Tài khoản chủ sở hữu **`admin`**: mật khẩu là secret `ADMIN_PASSWORD` của Worker. Luôn đăng nhập được (kể cả khi D1 trống) để không ai bị khoá ngoài. Đổi secret này sẽ đăng xuất mọi phiên của `admin`.
+  - Local: file `.dev.vars` (không commit; mẫu ở `.dev.vars.example`) gồm `ADMIN_PASSWORD` và `ADMIN_SESSION_SECRET`.
+  - Production: `npx cf workers secrets update ADMIN_PASSWORD` và `npx cf workers secrets update ADMIN_SESSION_SECRET` (chuỗi ngẫu nhiên dài).
+- Studio › **Tài khoản**: Quản trị tạo tài khoản riêng cho từng người, mật khẩu băm PBKDF2-SHA256 trong D1. Đổi vai trò, khoá hay đặt lại mật khẩu sẽ đăng xuất người đó ngay.
 
-- Local: file `.dev.vars` (không commit; mẫu ở `.dev.vars.example`) gồm `ADMIN_PASSWORD` và `ADMIN_SESSION_SECRET`.
-- Production: `npx cf workers secrets update ADMIN_PASSWORD` và `npx cf workers secrets update ADMIN_SESSION_SECRET` (chuỗi ngẫu nhiên dài). Đổi mật khẩu sẽ đăng xuất mọi phiên.
+| Vai trò | Được làm |
+|---|---|
+| Quản trị | Mọi thứ, kể cả quản lý tài khoản và xem nhật ký |
+| Biên tập chính | Sửa và xuất bản nội dung, tin tức; khôi phục phiên bản; xoá ảnh; xử lý báo giá |
+| Biên tập viên | Sửa bản nháp, viết bài, tải ảnh; không xuất bản |
+| Kinh doanh | Chỉ hộp thư báo giá |
+
+Quyền được kiểm tra ở từng API (`lib/cms/roles.ts`, `lib/cms/api.ts`); giao diện chỉ ẩn những nút không dùng được. Studio › **Nhật ký** ghi lại đăng nhập (cả sai mật khẩu), xuất bản, sửa, xoá, đổi trạng thái báo giá, thay đổi tài khoản. Sai mật khẩu 8 lần trong 15 phút sẽ khoá tạm tên đăng nhập đó.
 
 ### Deploy lần đầu
 
@@ -88,21 +100,21 @@ Binding `DB` (D1 `vsap-cms`) và `MEDIA` (R2 `vsap-media`) khai báo trong `clou
 ### Test
 
 ```sh
-npm test   # kiểm tra nội dung mặc định, registry section, đường dẫn ảnh, gộp dữ liệu cũ
+npm test   # nội dung mặc định, registry section, đường dẫn ảnh, gộp dữ liệu cũ, phân quyền, mật khẩu, Markdown, CSV
 ```
 
 ## SEO
 
 - Mỗi trang: tiêu đề, mô tả, ảnh chia sẻ, ẩn khỏi Google (noindex) — sửa trong Studio › Trang › *Cài đặt trang (SEO)*, có xem trước kết quả Google / thẻ chia sẻ và đo độ dài. Sản phẩm có trường SEO riêng.
 - Tự sinh: canonical, hreflang vi/en + `x-default`, Open Graph + Twitter card (ảnh lớn), `sitemap.xml` (bỏ trang noindex, có `lastmod` từ lần xuất bản), `robots.txt`, `manifest.webmanifest`, icon iPhone, trang 404 song ngữ.
-- Dữ liệu có cấu trúc (JSON-LD): Organization + WebSite (mọi trang), BreadcrumbList (trang con, sản phẩm), Product (trang sản phẩm), FAQPage (khi trang có section câu hỏi). Code ở `lib/seo.ts`.
+- Dữ liệu có cấu trúc (JSON-LD): Organization + WebSite (mọi trang), BreadcrumbList (trang con, sản phẩm, bài viết), Product (trang sản phẩm), BlogPosting (bài viết), FAQPage (khi trang có section câu hỏi). Code ở `lib/seo.ts`.
 - Studio › Công ty: mạng xã hội (hiện ở chân trang + `sameAs`), mã xác minh Google Search Console / Bing, Google Analytics 4 (chỉ tải khi có mã).
 - `/` chuyển tới `/vi` hoặc `/en` theo ngôn ngữ trình duyệt (`proxy.ts`).
 - Ảnh có sẵn có thêm bản 640/1280px cho `srcset`: sau khi thêm/đổi ảnh trong `public/images`, chạy `python3 scripts/responsive-images.py`.
 
 ## Form báo giá
 
-`POST /api/inquiry` kiểm tra dữ liệu và chuyển tiếp JSON tới webhook nếu có biến `INQUIRY_WEBHOOK_URL` (Slack, Google Apps Script → Google Sheet, CRM…):
+`POST /api/inquiry` kiểm tra dữ liệu, lưu vào D1 (Studio › Báo giá; tối đa 5 yêu cầu / 10 phút / địa chỉ, IP chỉ lưu dạng băm) và chuyển tiếp JSON tới webhook nếu có biến `INQUIRY_WEBHOOK_URL` (Slack, Google Apps Script → Google Sheet, CRM…):
 
 ```sh
 npx cf workers secrets update INQUIRY_WEBHOOK_URL

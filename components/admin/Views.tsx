@@ -8,7 +8,7 @@ import { DropZone, useMedia } from "./MediaPicker";
 const kb = (n: number) => (n > 1024 * 1024 ? `${(n / 1024 / 1024).toFixed(1)} MB` : `${Math.max(1, Math.round(n / 1024))} KB`);
 
 /** Uploaded files: drop to upload, copy a link, delete. */
-export function MediaView() {
+export function MediaView({ canDelete }: { canDelete: boolean }) {
   const media = useMedia();
   const [copied, setCopied] = useState("");
   return (
@@ -48,14 +48,16 @@ export function MediaView() {
                     >
                       {copied === m.key ? <Check className="size-3.5" /> : <Copy className="size-3.5" />} {copied === m.key ? "Đã chép" : "Chép link"}
                     </button>
-                    <button
-                      type="button"
-                      title="Xoá"
-                      onClick={() => confirm(`Xoá ảnh “${m.name}”? Các chỗ đang dùng ảnh này sẽ bị trống.`) && media.remove(m.key)}
-                      className="rounded-md px-2 text-ink-400 hover:bg-red-50 hover:text-chili-600"
-                    >
-                      <Trash2 className="size-3.5" />
-                    </button>
+                    {canDelete && (
+                      <button
+                        type="button"
+                        title="Xoá"
+                        onClick={() => confirm(`Xoá ảnh “${m.name}”? Các chỗ đang dùng ảnh này sẽ bị trống.`) && media.remove(m.key)}
+                        className="rounded-md px-2 text-ink-400 hover:bg-red-50 hover:text-chili-600"
+                      >
+                        <Trash2 className="size-3.5" />
+                      </button>
+                    )}
                   </div>
                 </div>
               </li>
@@ -68,7 +70,7 @@ export function MediaView() {
 }
 
 /** Published versions; restoring one loads it into the draft for review. */
-export function HistoryView({ onRestored }: { onRestored: () => void }) {
+export function HistoryView({ onRestored, canRestore }: { onRestored: () => void; canRestore: boolean }) {
   const [revisions, setRevisions] = useState<Revision[] | null>(null);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState<number | null>(null);
@@ -98,27 +100,32 @@ export function HistoryView({ onRestored }: { onRestored: () => void }) {
                 <p className="text-sm text-ink-900">
                   {formatTime(r.created_at)} {i === 0 && <span className="ml-1 rounded-full bg-lime-300 px-2 py-0.5 text-[11px] font-medium text-forest-950">Đang chạy</span>}
                 </p>
-                <p className="truncate text-xs text-ink-400">{r.note || "Không có ghi chú"}</p>
+                <p className="truncate text-xs text-ink-400">
+                  {r.author && <span className="text-ink-600">{r.author} · </span>}
+                  {r.note || "Không có ghi chú"}
+                </p>
               </div>
-              <button
-                type="button"
-                disabled={busy !== null}
-                onClick={async () => {
-                  if (!confirm("Nạp phiên bản này vào bản nháp? Bản nháp hiện tại sẽ bị thay thế.")) return;
-                  setBusy(r.id);
-                  try {
-                    await api.restore(r.id);
-                    onRestored();
-                  } catch (e) {
-                    setError((e as Error).message);
-                  } finally {
-                    setBusy(null);
-                  }
-                }}
-                className="inline-flex items-center gap-1.5 rounded-lg border border-mist-200 px-3 py-1.5 text-sm text-ink-900 hover:bg-mist-50 disabled:opacity-50"
-              >
-                {busy === r.id ? <Loader2 className="size-4 animate-spin" /> : <RotateCcw className="size-4" />} Khôi phục
-              </button>
+              {canRestore && (
+                <button
+                  type="button"
+                  disabled={busy !== null}
+                  onClick={async () => {
+                    if (!confirm("Nạp phiên bản này vào bản nháp? Bản nháp hiện tại sẽ bị thay thế.")) return;
+                    setBusy(r.id);
+                    try {
+                      await api.restore(r.id);
+                      onRestored();
+                    } catch (e) {
+                      setError((e as Error).message);
+                    } finally {
+                      setBusy(null);
+                    }
+                  }}
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-mist-200 px-3 py-1.5 text-sm text-ink-900 hover:bg-mist-50 disabled:opacity-50"
+                >
+                  {busy === r.id ? <Loader2 className="size-4 animate-spin" /> : <RotateCcw className="size-4" />} Khôi phục
+                </button>
+              )}
             </li>
           ))}
         </ol>

@@ -35,7 +35,7 @@ export type Settings = {
 
 /** Interface strings that are not part of any one section (nav, buttons, form labels…). */
 export type UiStrings = {
-  nav: { home: string; about: string; products: string; quality: string; contact: string; quote: string; menu: string; close: string };
+  nav: { home: string; about: string; products: string; quality: string; news: string; contact: string; quote: string; menu: string; close: string };
   common: { viewProduct: string; requestQuote: string; allProducts: string; prev: string; next: string; pause: string; play: string; slide: string; step: string; photo: string };
   footer: { explore: string; products: string; contact: string; rights: string; brandOf: string };
   chat: { label: string; zalo: string; whatsapp: string; call: string; close: string };
@@ -50,6 +50,7 @@ export type UiStrings = {
     origin: string; grades: string; packaging: string; specs: string; applications: string; back: string;
     inquireTitle: string; inquireBody: string; specsNote: string; packsEyebrow: string; packsTitle: string; packsAccent: string;
   };
+  news: { readMore: string; back: string; published: string; minutes: string; more: string; empty: string; ctaTitle: string; ctaBody: string; share: string };
   retail: {
     sizes: string; ingredients: string; nutrition: string; energy: string; fat: string; carbs: string; protein: string;
     shelfLife: string; serving: string; storage: string; packedBy: string; view: string;
@@ -111,7 +112,7 @@ export type RetailPack = {
 
 export type Partner = { name: string; logo: string; url: string };
 
-export type PageId = "home" | "about" | "products" | "quality" | "contact";
+export type PageId = "home" | "about" | "products" | "quality" | "news" | "contact";
 
 export type SiteContent = {
   schema: 1;
@@ -121,4 +122,19 @@ export type SiteContent = {
   products: Product[];
   retailPacks: RetailPack[];
   partners: Partner[];
+};
+
+/** A news post. Stored in its own D1 row (cms_posts), with a draft and a published copy. */
+export type Post = {
+  slug: string;
+  title: L;
+  excerpt: L;
+  cover: CmsImage;
+  /** Markdown subset, see lib/markdown.ts. */
+  body: L;
+  category: L;
+  /** Display date, YYYY-MM-DD. A future date keeps a published post hidden until that day. */
+  date: string;
+  author: string;
+  seo: { title: L; description: L };
 };

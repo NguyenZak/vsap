@@ -416,6 +416,20 @@ export const sectionDefs: SectionDef[] = [
     ],
     create: () => ({ ...sampleHeading(), images: [{ image: img("/images/cashew.webp") }, { image: img("/images/macadamia.webp") }, { image: img("/images/highlands.webp") }], columns: "3", tone: "white" }),
   },
+  {
+    type: "posts",
+    label: "Tin tức",
+    description: "Bài viết mới nhất từ mục Tin tức.",
+    icon: "newspaper",
+    fields: [
+      ...headingFields(),
+      { key: "limit", label: "Số bài hiển thị", type: "number", min: 0, max: 60, help: "0 = tất cả bài (dùng cho trang Tin tức)." },
+      { key: "featured", label: "Bài đầu tiên hiển thị lớn", type: "boolean" },
+      ...button(),
+      toneField,
+    ],
+    create: () => ({ ...sampleHeading(), title: l("Cập nhật mới", "Latest updates"), limit: 3, featured: false, buttonLabel: l("Xem tất cả tin", "See all news"), buttonHref: "/news", tone: "white" }),
+  },
 ];
 
 export const sectionDef = (type: string) => sectionDefs.find((d) => d.type === type);

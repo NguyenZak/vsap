@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { RenderSections } from "@/components/blocks";
 import { pick } from "@/lib/cms/links";
+import { getPosts } from "@/lib/cms/posts";
 import { getContent, isPreview } from "@/lib/cms/store";
 import type { L, PageId } from "@/lib/cms/types";
 import { metadataLocale, resolveLocale } from "@/lib/i18n";
@@ -14,6 +15,7 @@ export async function CmsPage({ id, params }: { id: PageId; params: Params }) {
   const [content, preview] = await Promise.all([getContent(), isPreview()]);
   const page = content.pages[id];
   const ui = content.ui[locale];
+  const posts = page.sections.some((s) => s.type === "posts" && !s.hidden) ? await getPosts(locale, preview) : undefined;
 
   const jsonLd: unknown[] = [];
   if (id !== "home") jsonLd.push(breadcrumbJsonLd(content, locale, [{ name: ui.nav[id], path: page.path }]));
@@ -25,7 +27,7 @@ export async function CmsPage({ id, params }: { id: PageId; params: Params }) {
 
   return (
     <>
-      <RenderSections sections={page.sections} ctx={{ locale, content, ui }} preview={preview} />
+      <RenderSections sections={page.sections} ctx={{ locale, content, ui, posts, preview }} preview={preview} />
       {jsonLd.map((d, i) => (
         <script key={i} type="application/ld+json" dangerouslySetInnerHTML={jsonLdHtml(d)} />
       ))}

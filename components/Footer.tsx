@@ -36,6 +36,7 @@ export function Footer({ locale, content, ui }: Props) {
               {[
                 [`/${locale}/about`, nav.about],
                 [`/${locale}/quality`, nav.quality],
+                [`/${locale}/news`, nav.news],
                 [`/${locale}/contact`, nav.contact],
               ].map(([href, label]) => (
                 <li key={href}>
