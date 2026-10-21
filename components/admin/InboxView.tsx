@@ -4,7 +4,6 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { BellRing, Building2, Download, Globe2, Inbox, Loader2, Mail, MessageCircle, Package, Phone, RefreshCw, Search, Trash2 } from "lucide-react";
 import { inquiryStatuses, inquiryStatusInfo, type Inquiry, type InquiryStatus } from "@/lib/cms/inquiry-format";
 import { api, formatTime, type TelegramStatus } from "./api";
-import { TelegramSettings } from "./TelegramSettings";
 
 const productLabel: Record<string, string> = { cashew: "Hạt điều", macadamia: "Hạt macca", other: "Khác" };
 
@@ -22,7 +21,8 @@ function StatusPill({ status }: { status: InquiryStatus }) {
 const digits = (s = "") => s.replace(/[^\d]/g, "");
 
 /** Quote requests from the website: triage by status, reply, keep internal notes, export to CSV. */
-export function InboxView({ onCounts, canConfigure = false }: { onCounts?: (c: Record<InquiryStatus, number>) => void; canConfigure?: boolean }) {
+/** `onConfigure`: open Studio › Cài đặt (admins only). */
+export function InboxView({ onCounts, onConfigure }: { onCounts?: (c: Record<InquiryStatus, number>) => void; onConfigure?: () => void }) {
   const [status, setStatus] = useState<InquiryStatus | "">("");
   const [q, setQ] = useState("");
   const [query, setQuery] = useState("");
@@ -30,7 +30,6 @@ export function InboxView({ onCounts, canConfigure = false }: { onCounts?: (c: R
   const [counts, setCounts] = useState<Record<InquiryStatus, number> | null>(null);
   // A Telegram alert links to /admin?view=inbox&id=… to open that request directly.
   const [selected, setSelected] = useState<number | null>(() => (typeof window === "undefined" ? null : Number(new URLSearchParams(location.search).get("id")) || null));
-  const [telegramOpen, setTelegramOpen] = useState(false);
   const [telegram, setTelegram] = useState<TelegramStatus | null>(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -57,8 +56,8 @@ export function InboxView({ onCounts, canConfigure = false }: { onCounts?: (c: R
   }, [status, query, onCounts]);
 
   useEffect(() => {
-    if (canConfigure) api.telegram().then(setTelegram).catch(() => {});
-  }, [canConfigure]);
+    if (onConfigure) api.telegram().then(setTelegram).catch(() => {});
+  }, [onConfigure]);
 
   useEffect(() => {
     load();
@@ -114,11 +113,11 @@ export function InboxView({ onCounts, canConfigure = false }: { onCounts?: (c: R
               <p className="mt-0.5 text-xs leading-snug text-ink-600">Gửi từ form trên website. Mở một yêu cầu mới sẽ chuyển nó sang “Đang xử lý”.</p>
             </div>
             <div className="flex shrink-0 gap-1">
-              {canConfigure && (
+              {onConfigure && (
                 <button
                   type="button"
                   title={telegram?.chat ? `Đang báo về Telegram: ${telegram.chat.title}` : "Cài đặt thông báo Telegram"}
-                  onClick={() => setTelegramOpen(true)}
+                  onClick={onConfigure}
                   className="relative inline-flex items-center gap-1 rounded-lg border border-mist-200 px-2 py-1.5 text-xs text-ink-900 hover:bg-mist-50"
                 >
                   <BellRing className="size-3.5" /> Telegram
@@ -180,8 +179,6 @@ export function InboxView({ onCounts, canConfigure = false }: { onCounts?: (c: R
           ))}
         </ol>
       </aside>
-
-      {telegramOpen && <TelegramSettings onClose={() => setTelegramOpen(false)} onChange={setTelegram} />}
 
       <section className="min-h-0 flex-1 overflow-y-auto bg-mist-50">
         {current ? (

@@ -22,6 +22,7 @@ import {
   Redo2,
   Rocket,
   ScrollText,
+  Settings,
   ShoppingBag,
   Undo2,
   Users,
@@ -44,11 +45,12 @@ import { HistoryView, MediaView } from "./Views";
 import { InboxView } from "./InboxView";
 import { PostsView } from "./PostsView";
 import { AuditView, ChangePassword, RoleBadge, UsersView } from "./TeamViews";
+import { TelegramSettings } from "./TelegramSettings";
 
 type Path = (string | number)[];
 type View =
   | { kind: "page"; id: PageId }
-  | { kind: "products" | "retail" | "partners" | "settings" | "ui" | "media" | "history" | "news" | "inbox" | "users" | "audit" };
+  | { kind: "products" | "retail" | "partners" | "settings" | "ui" | "media" | "history" | "news" | "inbox" | "users" | "audit" | "system" };
 
 type SaveState = "idle" | "pending" | "saving" | "saved" | "error";
 
@@ -67,10 +69,11 @@ const nav: { kind: View["kind"]; label: string; icon: typeof FileText; perm: Per
   { kind: "inbox", label: "Báo giá", icon: Inbox, perm: "inquiries" },
   { kind: "users", label: "Tài khoản", icon: Users, perm: "users" },
   { kind: "audit", label: "Nhật ký", icon: ScrollText, perm: "audit" },
+  { kind: "system", label: "Cài đặt", icon: Settings, perm: "users" },
 ];
 
 /** Views that don't use the site preview pane. */
-const NO_PREVIEW: View["kind"][] = ["media", "history", "news", "inbox", "users", "audit"];
+const NO_PREVIEW: View["kind"][] = ["media", "history", "news", "inbox", "users", "audit", "system"];
 
 function viewFromUrl(): View {
   if (typeof window === "undefined") return { kind: "page", id: "home" };
@@ -156,6 +159,10 @@ export function Studio() {
     return () => clearInterval(t);
   }, [canInbox]);
   const onInboxCounts = useCallback((c: { new: number }) => setNewInquiries(c.new), []);
+  const openSystem = useCallback(() => {
+    setView({ kind: "system" });
+    setSelected(null);
+  }, []);
 
   // Mirror the view in the URL, but only once the user is known: until then the
   // initial view is a placeholder and would overwrite a deep link like ?view=inbox.
@@ -624,7 +631,18 @@ export function Studio() {
         {view.kind === "news" && content && (
           <PostsView settings={content.settings} canWrite={canWrite} canPublish={canPublish} locale={locale} onLocale={setLocale} />
         )}
-        {view.kind === "inbox" && <InboxView onCounts={onInboxCounts} canConfigure={can("users")} />}
+        {view.kind === "inbox" && <InboxView onCounts={onInboxCounts} onConfigure={can("users") ? openSystem : undefined} />}
+        {view.kind === "system" && (
+          <div className="min-h-0 flex-1 overflow-y-auto bg-mist-50 p-6">
+            <div className="mx-auto max-w-2xl space-y-5">
+              <div>
+                <h2 className="text-xl font-medium text-ink-900">Cài đặt</h2>
+                <p className="mt-1 text-sm text-ink-600">Kết nối và thông báo của hệ thống. Chỉ Quản trị thấy mục này.</p>
+              </div>
+              <TelegramSettings />
+            </div>
+          </div>
+        )}
         {view.kind === "users" && <UsersView me={me} />}
         {view.kind === "audit" && <AuditView />}
         {view.kind === "history" && (

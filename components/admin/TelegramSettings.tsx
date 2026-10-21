@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { Check, Loader2, RefreshCw, Send, Unplug, Users } from "lucide-react";
 import { api, type TelegramChat, type TelegramStatus } from "./api";
-import { Modal } from "./TeamViews";
 
 const inputCls = "w-full rounded-lg border border-mist-200 bg-white px-3 py-2 text-sm outline-none focus:border-forest-600 focus:ring-2 focus:ring-lime-300/50";
 
@@ -22,7 +21,7 @@ function Step({ n, done, title, children }: { n: number; done: boolean; title: s
 }
 
 /** Connect quote-request alerts to a Telegram group: bot token → pick the group → test. */
-export function TelegramSettings({ onClose, onChange }: { onClose: () => void; onChange: (s: TelegramStatus) => void }) {
+export function TelegramSettings({ onChange }: { onChange?: (s: TelegramStatus) => void }) {
   const [status, setStatus] = useState<TelegramStatus | null>(null);
   const [token, setToken] = useState("");
   const [chats, setChats] = useState<TelegramChat[] | null>(null);
@@ -32,7 +31,7 @@ export function TelegramSettings({ onClose, onChange }: { onClose: () => void; o
 
   const update = (s: TelegramStatus) => {
     setStatus(s);
-    onChange(s);
+    onChange?.(s);
   };
   useEffect(() => {
     api
@@ -58,8 +57,18 @@ export function TelegramSettings({ onClose, onChange }: { onClose: () => void; o
   const connected = Boolean(hasToken && status?.chat);
 
   return (
-    <Modal title="Thông báo qua Telegram" onClose={onClose}>
-      <p className="mt-1 text-sm text-ink-600">Mỗi khi khách gửi yêu cầu báo giá, nhóm Telegram được chọn sẽ nhận tin ngay, kèm nút mở trong Studio, WhatsApp và Zalo.</p>
+    <section className="rounded-2xl border border-mist-200 bg-white p-6">
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h3 className="text-base font-medium text-ink-900">Thông báo yêu cầu báo giá qua Telegram</h3>
+          <p className="mt-1 text-sm text-ink-600">Mỗi khi khách gửi yêu cầu báo giá, nhóm Telegram được chọn sẽ nhận tin ngay, kèm nút mở trong Studio, WhatsApp và Zalo.</p>
+        </div>
+        {status && (
+          <span className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-medium ${status.tokenSource && status.chat ? "bg-lime-300 text-forest-950" : "bg-mist-100 text-ink-600"}`}>
+            {status.tokenSource && status.chat ? "Đang hoạt động" : "Chưa kết nối"}
+          </span>
+        )}
+      </div>
       {!status && !error && <Loader2 className="mx-auto my-8 size-6 animate-spin text-ink-400" />}
       {status && (
         <ol className="mt-5">
@@ -169,8 +178,8 @@ export function TelegramSettings({ onClose, onChange }: { onClose: () => void; o
       {note && <p className="rounded-lg bg-lime-300/30 px-3 py-2 text-sm text-forest-900">{note}</p>}
       {error && <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-chili-600">{error}</p>}
 
-      <div className="mt-4 flex items-center justify-between gap-2">
-        {connected && status?.tokenSource === "studio" ? (
+      {connected && status?.tokenSource === "studio" && (
+        <div className="mt-2 border-t border-mist-200 pt-4">
           <button
             type="button"
             onClick={() => confirm("Ngắt kết nối Telegram? Yêu cầu báo giá vẫn được lưu trong Studio.") && run("disconnect", async () => update(await api.telegramDisconnect()))}
@@ -178,13 +187,8 @@ export function TelegramSettings({ onClose, onChange }: { onClose: () => void; o
           >
             <Unplug className="size-4" /> Ngắt kết nối
           </button>
-        ) : (
-          <span />
-        )}
-        <button type="button" onClick={onClose} className="rounded-lg bg-forest-900 px-4 py-2 text-sm font-medium text-white hover:bg-forest-800">
-          Xong
-        </button>
-      </div>
-    </Modal>
+        </div>
+      )}
+    </section>
   );
 }
