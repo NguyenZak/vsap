@@ -1,12 +1,11 @@
 // Ảnh minh họa dùng trên site, lưu ở public/images (ảnh bao bì thật nằm riêng ở public/images/products).
-// Nguồn: Pexels (giấy phép Pexels — dùng miễn phí, kể cả thương mại, không bắt buộc ghi nguồn)
-// và Wikimedia Commons (CC0 / Public Domain). Link gốc ở `source` của từng ảnh.
+// Nguồn: Pexels (giấy phép Pexels — dùng miễn phí, kể cả thương mại, không bắt buộc ghi nguồn).
+// Link gốc ở `source` của từng ảnh.
 // TODO: thay dần bằng ảnh chụp thật vùng trồng, nhà máy của VSAP — giữ nguyên key, chỉ đổi file.
 
 type Img = { src: string; alt: { vi: string; en: string }; source: string };
 
 const pexels = (id: number) => `https://www.pexels.com/photo/${id}/`;
-const commons = (file: string) => `https://commons.wikimedia.org/wiki/File:${file}`;
 
 export const images = {
   highlands: {
@@ -46,8 +45,13 @@ export const images = {
   },
   cashewProcessing: {
     src: "/images/cashew-processing.webp",
-    alt: { vi: "Công nhân tách vỏ và phân loại nhân điều", en: "Workers shelling and separating cashew kernels" },
-    source: commons("Factory_workers_engaged_in_deshelling,_scooping,_and_kernel_separation_of_cashew_nuts.jpg"),
+    alt: { vi: "Dây chuyền băng tải chế biến và phân loại hạt", en: "Conveyor line processing and sorting nuts" },
+    source: pexels(11679685),
+  },
+  qualityInspection: {
+    src: "/images/quality-inspection.webp",
+    alt: { vi: "Bàn tay đeo găng kiểm tra, so sánh nhân điều đã bóc lụa và còn lụa", en: "Gloved hand inspecting peeled and unpeeled cashew kernels" },
+    source: pexels(36631826),
   },
   cashew: {
     src: "/images/cashew.webp",

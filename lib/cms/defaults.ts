@@ -37,7 +37,7 @@ const statementPills: ImageKey[] = ["paddyWork", "cashewHarvest", "macadamiaTree
 const valueIcons = ["badge-check", "leaf", "handshake", "globe", "factory", "sprout"];
 const valuePhotos: ImageKey[] = ["cashewKernels", "farmerWatering", "paddyWork", "shipping", "cashewProcessing", "highlandFarmers"];
 const stepIcons = ["sprout", "wheat", "factory", "scan-search", "package-check", "ship"];
-const stepPhotos: ImageKey[] = ["cashewGrove", "cashewHarvest", "cashewProcessing", "cashewKernels", "cashewRoasted", "shipping"];
+const stepPhotos: ImageKey[] = ["cashewGrove", "cashewHarvest", "cashewProcessing", "qualityInspection", "cashewRoasted", "shipping"];
 
 const valuesSection = (id: string) =>
   section(id, "values", {
@@ -196,7 +196,7 @@ const pages: Record<PageId, Page> = {
     path: "/quality",
     seo: { title: tr((d) => d.quality.metaTitle), description: tr((d) => d.quality.metaDescription), image: "", noindex: false },
     sections: [
-      pageHero("quality-hero", (d) => d.quality, "cashewProcessing"),
+      pageHero("quality-hero", (d) => d.quality, "qualityInspection"),
       processSection("quality-process"),
       section("quality-controls", "accordionImage", {
         eyebrow: tr((d) => d.quality.eyebrow),
