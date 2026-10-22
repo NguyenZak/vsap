@@ -1,6 +1,7 @@
 // Browser-side calls to /api/admin. Throws with the server's message on failure.
 import type { SessionUser } from "@/lib/cms/auth";
 import type { Inquiry, InquiryStatus } from "@/lib/cms/inquiry-format";
+import type { Order, OrderStatus } from "@/lib/cms/order-format";
 import type { PostRecord, PostSummary } from "@/lib/cms/posts";
 import type { Permission, Role } from "@/lib/cms/roles";
 import type { TelegramChat, TelegramStatus } from "@/lib/cms/notify";
@@ -22,7 +23,7 @@ async function call<T>(url: string, init?: RequestInit): Promise<T> {
 export type AdminState = { content: SiteContent; hasDraft: boolean; draftUpdatedAt: number | null; publishedAt: number | null };
 export type Revision = { id: number; created_at: number; note: string | null; author: string | null; size: number };
 export type Me = { user: SessionUser; permissions: Permission[] };
-export type { AuditEntry, Inquiry, InquiryStatus, PostRecord, PostSummary, PublicUser, TelegramChat, TelegramStatus };
+export type { AuditEntry, Inquiry, InquiryStatus, Order, OrderStatus, PostRecord, PostSummary, PublicUser, TelegramChat, TelegramStatus };
 
 const qs = (params: Record<string, string | number | undefined>) => {
   const q = new URLSearchParams();
@@ -60,6 +61,10 @@ export const api = {
   inquiriesCsvUrl: (params: { status?: string; q?: string }) => `/api/admin/inquiries${qs({ ...params, format: "csv" })}`,
   updateInquiry: (id: number, patch: { status?: InquiryStatus; note?: string }) => call<{ inquiry: Inquiry }>("/api/admin/inquiries", { method: "PATCH", body: JSON.stringify({ id, ...patch }) }),
   deleteInquiry: (id: number) => call<{ ok: true }>(`/api/admin/inquiries?id=${id}`, { method: "DELETE" }),
+
+  orders: (params: { status?: string; q?: string }) => call<{ items: Order[]; counts: Record<OrderStatus, number> }>(`/api/admin/orders${qs(params)}`),
+  updateOrder: (id: number, patch: { status?: OrderStatus; note?: string }) => call<{ order: Order }>("/api/admin/orders", { method: "PATCH", body: JSON.stringify({ id, ...patch }) }),
+  deleteOrder: (id: number) => call<{ ok: true }>(`/api/admin/orders?id=${id}`, { method: "DELETE" }),
 
   telegram: () => call<TelegramStatus>("/api/admin/notify"),
   telegramToken: (token: string) => call<TelegramStatus>("/api/admin/notify", { method: "POST", body: JSON.stringify({ action: "token", token }) }),

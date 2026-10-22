@@ -15,6 +15,9 @@ const SCHEMA = [
   `CREATE INDEX IF NOT EXISTS cms_audit_user_action ON cms_audit (username, action, at)`,
   `CREATE TABLE IF NOT EXISTS cms_inquiries (id INTEGER PRIMARY KEY AUTOINCREMENT, created_at INTEGER NOT NULL, status TEXT NOT NULL DEFAULT 'new', data TEXT NOT NULL, locale TEXT, source TEXT, country TEXT, ip_hash TEXT, note TEXT, updated_at INTEGER, updated_by TEXT)`,
   `CREATE INDEX IF NOT EXISTS cms_inquiries_ip ON cms_inquiries (ip_hash, created_at)`,
+  // Retail orders from the website cart (cash on delivery); `data` holds the customer and the priced items.
+  `CREATE TABLE IF NOT EXISTS cms_orders (id INTEGER PRIMARY KEY AUTOINCREMENT, created_at INTEGER NOT NULL, status TEXT NOT NULL DEFAULT 'new', data TEXT NOT NULL, locale TEXT, source TEXT, ip_hash TEXT, note TEXT, updated_at INTEGER, updated_by TEXT)`,
+  `CREATE INDEX IF NOT EXISTS cms_orders_ip ON cms_orders (ip_hash, created_at)`,
   // News posts: `draft` is what editors change, `published` is what visitors see (null = not live).
   `CREATE TABLE IF NOT EXISTS cms_posts (id TEXT PRIMARY KEY, slug TEXT NOT NULL UNIQUE, draft TEXT NOT NULL, published TEXT, published_at INTEGER, created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL, updated_by TEXT)`,
 ];

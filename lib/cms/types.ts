@@ -55,6 +55,18 @@ export type UiStrings = {
     sizes: string; ingredients: string; nutrition: string; energy: string; fat: string; carbs: string; protein: string;
     shelfLife: string; serving: string; storage: string; packedBy: string; view: string;
   };
+  /** Retail shop: product cards, quick view, product page, cart and checkout. */
+  shop: {
+    addToCart: string; buyNow: string; quickView: string; askPrice: string; contactPrice: string; from: string;
+    inStock: string; soldOut: string; status: string; brand: string; size: string; quantity: string; price: string;
+    description: string; showMore: string; showLess: string; related: string; recent: string; details: string;
+    perk1: string; perk2: string; perk3: string; perk4: string;
+    cart: string; cartEmpty: string; continueShopping: string; subtotal: string; shippingNote: string; checkout: string;
+    remove: string; decrease: string; increase: string;
+    checkoutTitle: string; checkoutLead: string; yourOrder: string; name: string; phone: string; email: string; address: string;
+    note: string; notePlaceholder: string; payment: string; placeOrder: string; placing: string;
+    successTitle: string; successBody: string; error: string; required: string;
+  };
 };
 
 export type Section = {
@@ -90,6 +102,9 @@ export type Product = {
   seo: { title: L; description: L };
 };
 
+/** One size of a retail pack. No price = sold on request ("Liên hệ"). Prices are in VND. */
+export type PackVariant = { weight: string; price?: number };
+
 export type RetailPack = {
   id: string;
   /** Product slug this pack belongs to. */
@@ -97,7 +112,11 @@ export type RetailPack = {
   name: L;
   flavor: L;
   pack: L;
-  weights: string;
+  variants: PackVariant[];
+  /** Hides the buy buttons and shows "sold out". */
+  soldOut: boolean;
+  /** Longer text for the pack's own page; blank lines start new paragraphs. */
+  description: L;
   images: { src: string }[];
   ingredients: L;
   highlight: L;

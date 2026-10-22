@@ -4,6 +4,7 @@
 // target chat is picked in Studio from the groups the bot has been added to.
 import { env } from "cloudflare:workers";
 import { db } from "./db";
+import { orderAlert, type OrderData } from "./order-format";
 import { esc, inquiryAlert, type InquiryAlert } from "./telegram-format";
 
 const KEY = "notify:telegram";
@@ -141,6 +142,11 @@ async function send(text: string, buttons: { text: string; url: string }[][]) {
 
 export async function notifyInquiry(inq: InquiryAlert, origin: string) {
   const { text, buttons } = inquiryAlert(inq, origin);
+  return send(text, buttons);
+}
+
+export async function notifyOrder(order: { id: number | null; data: OrderData; locale?: string }, origin: string) {
+  const { text, buttons } = orderAlert(order, origin);
   return send(text, buttons);
 }
 

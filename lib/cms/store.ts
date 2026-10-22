@@ -36,6 +36,16 @@ export const getContent = cache(async (): Promise<SiteContent> => {
   }
 });
 
+/** The published content (or defaults), ignoring any preview request: what customers are charged from. */
+export async function getPublishedContent(): Promise<SiteContent> {
+  try {
+    return (await readDoc("published"))?.content ?? defaultContent();
+  } catch (e) {
+    if (!(e instanceof CmsUnavailableError)) console.error("[cms] read failed, using defaults", e);
+    return defaultContent();
+  }
+}
+
 /** When the live content was last published (null before the first publish). */
 export const getPublishedAt = cache(async (): Promise<number | null> => {
   try {

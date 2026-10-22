@@ -8,6 +8,7 @@ import { gsap, prefersReducedMotion, useGSAP } from "@/lib/gsap";
 import type { UiStrings } from "@/lib/cms/types";
 import type { Locale } from "@/lib/i18n";
 import { LocaleSwitcher } from "./LocaleSwitcher";
+import { CartButton } from "./shop/CartButton";
 
 type Props = { locale: Locale; nav: UiStrings["nav"]; contact: { phone: string; phoneE164: string; email: string }; logoAlt: string };
 
@@ -142,9 +143,10 @@ export function Header({ locale, nav, contact: site, logoAlt }: Props) {
 
         <div className="flex items-center gap-1.5 sm:gap-2">
           <LocaleSwitcher locale={locale} />
+          <CartButton />
           <Link
             href={`/${locale}/contact`}
-            className="hidden rounded-full bg-white px-3.5 py-2 text-sm font-medium whitespace-nowrap min-[360px]:inline-flex text-ink-900 transition hover:bg-mist-100 group-data-solid/header:bg-forest-900 group-data-solid/header:text-white sm:px-5 sm:py-2.5"
+            className="hidden rounded-full bg-white px-3.5 py-2 text-sm font-medium whitespace-nowrap min-[420px]:inline-flex text-ink-900 transition hover:bg-mist-100 group-data-solid/header:bg-forest-900 group-data-solid/header:text-white sm:px-5 sm:py-2.5"
           >
             {nav.quote}
           </Link>

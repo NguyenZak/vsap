@@ -1,6 +1,6 @@
 // Pure helpers for stored CMS documents (no Cloudflare imports, so they are unit-testable).
 import { defaultContent } from "./defaults";
-import type { SiteContent } from "./types";
+import type { RetailPack, SiteContent } from "./types";
 
 export function isObject(v: unknown): v is Record<string, unknown> {
   return typeof v === "object" && v !== null && !Array.isArray(v);
@@ -20,6 +20,33 @@ export function withDefaults<T>(value: unknown, base: T): T {
  * of sections, products…) are taken as stored.
  */
 export function normalize(raw: unknown): SiteContent {
-  return withDefaults(raw, defaultContent());
+  const content = withDefaults(raw, defaultContent());
+  return { ...content, retailPacks: content.retailPacks.map(normalizePack) };
 }
+
+/**
+ * Retail packs are list items, so withDefaults leaves them as stored. Packs saved
+ * before prices existed had `weights: "250 g, 500 g"`; turn that into variants.
+ */
+export function normalizePack(raw: RetailPack): RetailPack {
+  const legacy = raw as RetailPack & { weights?: unknown };
+  const { weights, ...pack } = legacy;
+  const variants = Array.isArray(pack.variants)
+    ? pack.variants
+        .filter(isObject)
+        .map((v) => ({ weight: String(v.weight ?? "").trim(), ...(validPrice(v.price) ? { price: v.price } : {}) }))
+        .filter((v) => v.weight)
+    : String(weights ?? "")
+        .split(",")
+        .map((w) => ({ weight: w.trim() }))
+        .filter((v) => v.weight);
+  return {
+    ...pack,
+    variants,
+    soldOut: pack.soldOut === true,
+    description: isObject(pack.description) ? { vi: String(pack.description.vi ?? ""), en: String(pack.description.en ?? "") } : { vi: "", en: "" },
+  };
+}
+
+const validPrice = (v: unknown): v is number => typeof v === "number" && Number.isFinite(v) && v > 0;
 

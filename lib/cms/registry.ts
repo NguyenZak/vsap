@@ -227,8 +227,8 @@ export const sectionDefs: SectionDef[] = [
   },
   {
     type: "retail",
-    label: "Sản phẩm bán lẻ (trượt ngang)",
-    description: "Thẻ ảnh bao bì lấy từ mục Sản phẩm bán lẻ.",
+    label: "Sản phẩm bán lẻ (lưới cửa hàng)",
+    description: "Lưới thẻ sản phẩm có giá, nút thêm vào giỏ và xem nhanh, lấy từ mục Bán lẻ.",
     icon: "package",
     fields: [...headingFields(), ...button(), toneField],
     create: () => ({ ...sampleHeading(), buttonLabel: l("Tất cả sản phẩm", "All products"), buttonHref: "/products", tone: "muted" }),

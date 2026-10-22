@@ -364,6 +364,8 @@ const actionLabel: Record<string, string> = {
   "inquiry.status": "Đổi trạng thái yêu cầu",
   "inquiry.delete": "Xoá yêu cầu báo giá",
   "inquiry.export": "Xuất CSV yêu cầu báo giá",
+  "order.status": "Đổi trạng thái đơn hàng",
+  "order.delete": "Xoá đơn hàng",
   "user.create": "Tạo tài khoản",
   "user.update": "Sửa tài khoản",
   "user.delete": "Xoá tài khoản",

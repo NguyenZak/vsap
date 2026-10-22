@@ -318,6 +318,7 @@ function ui(d: Dict): UiStrings {
       packedBy: home.retail.packedBy,
       view: home.retail.view,
     },
+    shop: { ...d.shop },
   };
 }
 
@@ -370,7 +371,9 @@ export function defaultContent(): SiteContent {
       name: { ...r.name },
       flavor: { ...r.flavor },
       pack: { ...r.pack },
-      weights: r.weights.join(", "),
+      variants: r.weights.map((weight) => ({ weight })),
+      soldOut: false,
+      description: { vi: "", en: "" },
       images: r.images.map((src) => ({ src })),
       ingredients: { ...r.ingredients },
       highlight: r.highlight ? { ...r.highlight } : { vi: "", en: "" },

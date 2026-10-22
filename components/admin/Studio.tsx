@@ -24,6 +24,7 @@ import {
   ScrollText,
   Settings,
   ShoppingBag,
+  ShoppingCart,
   Undo2,
   Users,
   X,
@@ -43,6 +44,7 @@ import { UiEditor } from "./UiEditor";
 import { pageImage } from "@/lib/seo";
 import { HistoryView, MediaView } from "./Views";
 import { InboxView } from "./InboxView";
+import { OrdersView } from "./OrdersView";
 import { PostsView } from "./PostsView";
 import { AuditView, ChangePassword, RoleBadge, UsersView } from "./TeamViews";
 import { TelegramSettings } from "./TelegramSettings";
@@ -50,7 +52,7 @@ import { TelegramSettings } from "./TelegramSettings";
 type Path = (string | number)[];
 type View =
   | { kind: "page"; id: PageId }
-  | { kind: "products" | "retail" | "partners" | "settings" | "ui" | "media" | "history" | "news" | "inbox" | "users" | "audit" | "system" };
+  | { kind: "products" | "retail" | "partners" | "settings" | "ui" | "media" | "history" | "news" | "inbox" | "orders" | "users" | "audit" | "system" };
 
 type SaveState = "idle" | "pending" | "saving" | "saved" | "error";
 
@@ -67,13 +69,14 @@ const nav: { kind: View["kind"]; label: string; icon: typeof FileText; perm: Per
   { kind: "media", label: "Thư viện ảnh", icon: ImageIcon, perm: "content.read" },
   { kind: "history", label: "Lịch sử", icon: History, perm: "content.read" },
   { kind: "inbox", label: "Báo giá", icon: Inbox, perm: "inquiries" },
+  { kind: "orders", label: "Đơn hàng", icon: ShoppingCart, perm: "inquiries" },
   { kind: "users", label: "Tài khoản", icon: Users, perm: "users" },
   { kind: "audit", label: "Nhật ký", icon: ScrollText, perm: "audit" },
   { kind: "system", label: "Cài đặt", icon: Settings, perm: "users" },
 ];
 
 /** Views that don't use the site preview pane. */
-const NO_PREVIEW: View["kind"][] = ["media", "history", "news", "inbox", "users", "audit", "system"];
+const NO_PREVIEW: View["kind"][] = ["media", "history", "news", "inbox", "orders", "users", "audit", "system"];
 
 function viewFromUrl(): View {
   if (typeof window === "undefined") return { kind: "page", id: "home" };
@@ -105,6 +108,7 @@ export function Studio() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [passwordOpen, setPasswordOpen] = useState(false);
   const [newInquiries, setNewInquiries] = useState(0);
+  const [newOrders, setNewOrders] = useState(0);
   const preview = useRef<PreviewHandle>(null);
 
   // Undo / redo of whole-content snapshots; rapid edits (typing) collapse into one step.
@@ -159,6 +163,16 @@ export function Studio() {
     return () => clearInterval(t);
   }, [canInbox]);
   const onInboxCounts = useCallback((c: { new: number }) => setNewInquiries(c.new), []);
+
+  // New website orders, for the badge on "Đơn hàng".
+  useEffect(() => {
+    if (!canInbox) return;
+    const poll = () => api.orders({ status: "new" }).then((r) => setNewOrders(r.counts.new)).catch(() => {});
+    poll();
+    const t = setInterval(poll, 120_000);
+    return () => clearInterval(t);
+  }, [canInbox]);
+  const onOrderCounts = useCallback((c: { new: number }) => setNewOrders(c.new), []);
   const openSystem = useCallback(() => {
     setView({ kind: "system" });
     setSelected(null);
@@ -172,7 +186,7 @@ export function Studio() {
     if (view.kind === "page") q.set("page", view.id);
     else q.set("view", view.kind);
     const id = new URLSearchParams(location.search).get("id");
-    if (view.kind === "inbox" && id) q.set("id", id);
+    if ((view.kind === "inbox" || view.kind === "orders") && id) q.set("id", id);
     history.replaceState(null, "", `/admin?${q}`);
   }, [view, me]);
 
@@ -337,7 +351,7 @@ export function Studio() {
   if (content) {
     if (view.kind === "page") previewPath = content.pages[view.id].path || "/";
     if (view.kind === "products" && content.products[itemIndex]) previewPath = `/products/${content.products[itemIndex].slug}`;
-    if (view.kind === "retail" && content.retailPacks[itemIndex]) previewPath = `/products/${content.retailPacks[itemIndex].product}#packs`;
+    if (view.kind === "retail" && content.retailPacks[itemIndex]) previewPath = `/products/${content.retailPacks[itemIndex].product}/${content.retailPacks[itemIndex].id}`;
     if (view.kind === "settings") previewPath = "/contact";
   }
 
@@ -459,7 +473,7 @@ export function Studio() {
             .filter((n) => can(n.perm))
             .map((n) => {
               const active = view.kind === n.kind;
-              const badge = n.kind === "inbox" && newInquiries > 0 ? newInquiries : 0;
+              const badge = n.kind === "inbox" ? newInquiries : n.kind === "orders" ? newOrders : 0;
               return (
                 <button
                   key={n.kind}
@@ -470,7 +484,7 @@ export function Studio() {
                   <n.icon className="size-[18px]" />
                   {n.label}
                   {badge > 0 && (
-                    <span className="absolute top-1 right-1 min-w-4 rounded-full bg-chili-600 px-1 text-[10px] leading-4 font-semibold text-white" aria-label={`${badge} yêu cầu mới`}>
+                    <span className="absolute top-1 right-1 min-w-4 rounded-full bg-chili-600 px-1 text-[10px] leading-4 font-semibold text-white" aria-label={`${badge} ${n.kind === "orders" ? "đơn" : "yêu cầu"} mới`}>
                       {badge > 99 ? "99+" : badge}
                     </span>
                   )}
@@ -575,16 +589,20 @@ export function Studio() {
         {view.kind === "retail" && content && (
           <CollectionEditor<RetailPack>
             title="Sản phẩm bán lẻ"
-            description="Hộp, hũ, túi mang thương hiệu VSAP; hiện ở băng trượt và trang chi tiết sản phẩm."
+            description="Hộp, hũ, túi mang thương hiệu VSAP; hiện ở lưới cửa hàng, trang riêng của từng sản phẩm và giỏ hàng."
             items={content.retailPacks}
             basePath={["retailPacks"]}
             fields={retailFields}
             selected={itemIndex}
             onSelect={setItemIndex}
             label={(p) => tr(p.name)}
-            sublabel={(p) => [tr(p.flavor), tr(p.pack), p.weights].filter(Boolean).join(" · ")}
+            sublabel={(p) =>
+              [tr(p.flavor), tr(p.pack), p.variants.map((v) => (v.price ? `${v.weight} ${v.price.toLocaleString("vi-VN")}₫` : v.weight)).join(", "), p.soldOut && "Hết hàng"]
+                .filter(Boolean)
+                .join(" · ")
+            }
             thumb={(p) => p.images[0]?.src}
-            newItem={() => newRetailPack() as RetailPack}
+            newItem={newRetailPack}
             onItems={(items) => onField(["retailPacks"], items)}
             onChange={onField}
             validate={(p, all) =>
@@ -632,6 +650,7 @@ export function Studio() {
           <PostsView settings={content.settings} canWrite={canWrite} canPublish={canPublish} locale={locale} onLocale={setLocale} />
         )}
         {view.kind === "inbox" && <InboxView onCounts={onInboxCounts} onConfigure={can("users") ? openSystem : undefined} />}
+        {view.kind === "orders" && <OrdersView onCounts={onOrderCounts} />}
         {view.kind === "system" && (
           <div className="min-h-0 flex-1 overflow-y-auto bg-mist-50 p-6">
             <div className="mx-auto max-w-2xl space-y-5">

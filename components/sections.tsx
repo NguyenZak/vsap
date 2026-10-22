@@ -157,63 +157,6 @@ export function StatCards({ stats }: { stats: { value: string; label: string }[]
   );
 }
 
-export type RetailCardView = { href: string; name: string; meta: string; weights: string[]; images: string[]; view: string };
-
-/** Packshot card: front of pack, swapping to the next shot on hover. */
-export function RetailCard({ card }: { card: RetailCardView }) {
-  const [front, alt] = card.images;
-  return (
-    <Link href={card.href} className="group block">
-      <div className="relative aspect-[4/5] overflow-hidden rounded-2xl bg-white">
-        {front && (
-          <img
-            src={front}
-            alt={card.name}
-            loading="lazy"
-            decoding="async"
-            className={`absolute inset-0 size-full object-contain transition duration-700 group-hover:scale-105 ${alt ? "group-hover:opacity-0" : ""}`}
-          />
-        )}
-        {alt && (
-          <img
-            src={alt}
-            alt=""
-            loading="lazy"
-            decoding="async"
-            className="absolute inset-0 size-full scale-95 object-contain opacity-0 transition duration-700 group-hover:scale-100 group-hover:opacity-100"
-          />
-        )}
-        <ul className="absolute top-3 left-3 flex flex-wrap gap-1.5">
-          {card.weights.map((w) => (
-            <li key={w} className="rounded-full bg-forest-900 px-2.5 py-1 text-xs font-medium text-white">
-              {w}
-            </li>
-          ))}
-        </ul>
-      </div>
-      <h3 className="mt-4 flex items-center justify-between gap-3 text-base font-medium text-ink-900">
-        {card.name}
-        <ArrowUpRight className="size-4 shrink-0 text-ink-400 transition group-hover:rotate-45 group-hover:text-forest-600" />
-      </h3>
-      <p className="mt-1 text-sm text-ink-600">{card.meta}</p>
-      <span className="sr-only">{card.view}</span>
-    </Link>
-  );
-}
-
-/** Horizontally scrolling cards that bleed off the right edge. */
-export function CardScroller({ cards }: { cards: RetailCardView[] }) {
-  return (
-    <ul className="no-scrollbar page-inset-left flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 pr-[var(--page-gutter)]">
-      {cards.map((c, i) => (
-        <li key={i} data-reveal className="w-[78%] shrink-0 snap-start sm:w-80 lg:w-[22rem] 2xl:w-[26rem]">
-          <RetailCard card={c} />
-        </li>
-      ))}
-    </ul>
-  );
-}
-
 export type ProductCardView = { href: string; name: string; latin: string; short: string; image?: { src: string; alt: string }; grades: string[]; cta: string };
 
 export function ProductCard({ card }: { card: ProductCardView }) {

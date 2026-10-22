@@ -209,3 +209,39 @@ body {
     animation: none;
   }
 }
+
+/*
+ * Shop dialogs (components/shop/Dialog.tsx): the cart slides in from the right,
+ * quick view rises in. Page scroll is locked while either is open.
+ */
+html:has(dialog[open]) {
+  overflow: hidden;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .shop-drawer[open] {
+    animation: shop-drawer-in 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .shop-modal[open] {
+    animation: shop-modal-in 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .shop-drawer[open]::backdrop,
+  .shop-modal[open]::backdrop {
+    animation: shop-fade-in 0.3s ease-out;
+  }
+}
+@keyframes shop-drawer-in {
+  from {
+    transform: translateX(100%);
+  }
+}
+@keyframes shop-modal-in {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.98);
+  }
+}
+@keyframes shop-fade-in {
+  from {
+    opacity: 0;
+  }
+}

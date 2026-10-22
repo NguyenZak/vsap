@@ -3,13 +3,14 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, MapPin, Package } from "lucide-react";
 import { InquiryForm } from "@/components/InquiryForm";
-import { RetailPackDetail } from "@/components/RetailPackDetail";
+import { ProductGrid } from "@/components/shop/ProductGrid";
 import { CmsImg, SectionHeading } from "@/components/sections";
 import { Button, Title } from "@/components/ui";
 import { pick } from "@/lib/cms/links";
 import { getContent } from "@/lib/cms/store";
 import { metadataLocale, resolveLocale } from "@/lib/i18n";
 import { breadcrumbJsonLd, jsonLdHtml, seoMetadata } from "@/lib/seo";
+import { toShopItem } from "@/lib/shop";
 
 type Props = { params: Promise<{ locale: string; slug: string }> };
 
@@ -199,31 +200,8 @@ export default async function ProductPage({ params }: Props) {
         <section id="packs" className="scroll-mt-24 pb-16 sm:pb-24">
           <div className="container-page">
             <SectionHeading eyebrow={t.packsEyebrow} title={t.packsTitle} accent={t.packsAccent} />
-            <div className="mt-10 space-y-4">
-              {packs.map((pack, i) => (
-                <div key={pack.id} data-reveal>
-                  <RetailPackDetail
-                    pack={{
-                      name: tr(pack.name),
-                      flavor: tr(pack.flavor),
-                      pack: tr(pack.pack),
-                      weights: pack.weights.split(",").map((w) => w.trim()).filter(Boolean),
-                      images: pack.images.map((im) => im.src).filter(Boolean),
-                      ingredients: tr(pack.ingredients),
-                      highlight: tr(pack.highlight),
-                      shelfLife: tr(pack.shelfLife),
-                      serving: tr(pack.serving),
-                      storage: tr(pack.storage),
-                      packer: pack.packer,
-                      packerAddress: tr(pack.packerAddress),
-                      nutrition: pack.nutrition,
-                    }}
-                    t={ui.retail}
-                    photoLabel={ui.common.photo}
-                    flip={i % 2 === 1}
-                  />
-                </div>
-              ))}
+            <div className="mt-10">
+              <ProductGrid items={packs.map((pack) => toShopItem(pack, locale))} />
             </div>
           </div>
         </section>

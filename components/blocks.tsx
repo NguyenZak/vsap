@@ -8,11 +8,12 @@ import { HeroSlider } from "./HeroSlider";
 import { InquiryForm } from "./InquiryForm";
 import { FeaturedPost, PostGrid } from "./PostCards";
 import { ProcessTabs } from "./ProcessTabs";
+import { ProductGrid } from "./shop/ProductGrid";
+import { toShopItem } from "@/lib/shop";
 import { StatementSlider } from "./StatementSlider";
 import { ValuesShowcase } from "./ValuesShowcase";
 import {
   AccordionCards,
-  CardScroller,
   CmsImg,
   LogoWall,
   Paragraphs,
@@ -217,24 +218,17 @@ const renderers: Record<string, Renderer> = {
   retail(p, ctx) {
     const { t, href } = makeT(ctx);
     const tone = toneOf({ id: "", type: "retail", props: p }) as Tone;
-    const cards = ctx.content.retailPacks.map((r) => ({
-      href: localHref(`/products/${r.product}#packs`, ctx.locale),
-      name: t(r.name),
-      meta: [t(r.flavor), t(r.pack)].filter(Boolean).join(" · "),
-      weights: r.weights.split(",").map((w) => w.trim()).filter(Boolean),
-      images: r.images.map((i) => i.src).filter(Boolean),
-      view: ctx.ui.retail.view,
-    }));
+    const items = ctx.content.retailPacks.map((r) => toShopItem(r, ctx.locale));
     return (
-      <div className="block-pad">
-        <div className="container-page">{heading(p, ctx, tone)}</div>
-        {cards.length > 0 && (
+      <div className="block-pad container-page">
+        {heading(p, ctx, tone)}
+        {items.length > 0 && (
           <div className={hasHeading(p, ctx) ? "mt-12" : ""}>
-            <CardScroller cards={cards} />
+            <ProductGrid items={items} />
           </div>
         )}
         {t(p.buttonLabel) && str(p.buttonHref) && (
-          <div data-reveal className="container-page mt-10">
+          <div data-reveal className="mt-10">
             <Button href={href(p.buttonHref)} variant={tone === "dark" ? "lime" : "dark"}>
               {t(p.buttonLabel)}
             </Button>

@@ -5,10 +5,12 @@ import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { MotionMain } from "@/components/MotionMain";
 import { PreviewBridge } from "@/components/cms/PreviewBridge";
+import { CartProvider } from "@/components/shop/CartProvider";
 import { pick } from "@/lib/cms/links";
 import { getContent, isPreview } from "@/lib/cms/store";
 import { localeParams, locales, resolveLocale, metadataLocale } from "@/lib/i18n";
 import { jsonLdHtml, ogLocale, seoMetadata, siteJsonLd } from "@/lib/seo";
+import { toShopItem } from "@/lib/shop";
 import "../globals.css";
 
 const font = Inter({
@@ -75,9 +77,16 @@ export default async function LocaleLayout({ children, params }: Props) {
         <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js')" }} />
       </head>
       <body className="flex min-h-dvh flex-col">
-        <Header locale={locale} nav={ui.nav} contact={site} logoAlt={`${site.name} – ${site.tagline}`} />
-        <MotionMain>{children}</MotionMain>
-        <Footer locale={locale} content={content} ui={ui} />
+        <CartProvider
+          locale={locale}
+          t={ui.shop}
+          common={{ prev: ui.common.prev, next: ui.common.next, photo: ui.common.photo }}
+          catalog={content.retailPacks.map((p) => toShopItem(p, locale))}
+        >
+          <Header locale={locale} nav={ui.nav} contact={site} logoAlt={`${site.name} – ${site.tagline}`} />
+          <MotionMain>{children}</MotionMain>
+          <Footer locale={locale} content={content} ui={ui} />
+        </CartProvider>
         {!preview && <FloatingContact t={ui.chat} links={site} />}
         {preview && <PreviewBridge />}
         {/* vinext doesn't emit openGraph.alternateLocale; React 19 hoists this <meta> into <head>. */}
