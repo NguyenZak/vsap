@@ -35,5 +35,5 @@ export function postProblem(post: Post): string | null {
 export function formatDate(date: string, locale: Locale) {
   const d = new Date(`${date}T00:00:00Z`);
   if (Number.isNaN(d.getTime())) return date;
-  return new Intl.DateTimeFormat(locale === "vi" ? "vi-VN" : "en-GB", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" }).format(d);
+  return new Intl.DateTimeFormat(locale === "vi" ? "vi-VN" : locale === "zh" ? "zh-CN" : "en-GB", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" }).format(d);
 }

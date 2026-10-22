@@ -6,7 +6,7 @@ import { pick } from "./cms/links";
 import type { Page, SiteContent } from "./cms/types";
 import { defaultLocale, locales, type Locale } from "./locales";
 
-export const ogLocale: Record<Locale, string> = { vi: "vi_VN", en: "en_US" };
+export const ogLocale: Record<Locale, string> = { vi: "vi_VN", en: "en_US", zh: "zh_CN" };
 
 type SeoInput = {
   content: SiteContent;

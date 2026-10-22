@@ -126,7 +126,7 @@ export default async function PackPage({ params }: Props) {
                     {c.name}
                   </span>
                 ) : (
-                  <Link href={`/${locale}${c.path}`} className="hover:text-lime-300">
+                  <Link href={`/${locale}${c.path}`} className="hover:text-sun-400">
                     {c.name}
                   </Link>
                 )}
@@ -157,7 +157,7 @@ export default async function PackPage({ params }: Props) {
             </span>
           </p>
           {item.highlight && (
-            <p className="mt-4 inline-flex w-fit rounded-full bg-lime-300 px-3 py-1 text-xs font-medium text-forest-950">{item.highlight}</p>
+            <p className="mt-4 inline-flex w-fit rounded-full bg-sun-400 px-3 py-1 text-xs font-medium text-forest-950">{item.highlight}</p>
           )}
 
           <div className="mt-6">

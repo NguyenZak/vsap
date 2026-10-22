@@ -1,7 +1,7 @@
 // Bài viết mẫu 1–5 (xem lib/content/posts.ts).
-import type { Post } from "../cms/types";
+import type { SeedPost } from "./posts";
 
-export const posts1: Post[] = [
+export const posts1: SeedPost[] = [
   {
     slug: "phan-loai-hat-dieu-w180-w240-w320",
     date: "2026-07-08",

@@ -28,7 +28,7 @@ export const generateStaticParams = localeParams;
 export const dynamic = "force-dynamic";
 
 export const viewport: Viewport = {
-  themeColor: "#17361a",
+  themeColor: "#115931",
   colorScheme: "light",
 };
 
@@ -71,7 +71,7 @@ export default async function LocaleLayout({ children, params }: Props) {
 
   return (
     // suppressHydrationWarning: the inline script below adds the `js` class before React hydrates.
-    <html lang={locale} className={font.variable} suppressHydrationWarning>
+    <html lang={locale === "zh" ? "zh-CN" : locale} className={font.variable} suppressHydrationWarning>
       <head>
         {/* Lets CSS hide intro elements before first paint, only when JS will animate them in. */}
         <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js')" }} />

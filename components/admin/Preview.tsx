@@ -1,6 +1,7 @@
 "use client";
 
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
+import { locales } from "@/lib/locales";
 import { ExternalLink, Monitor, RotateCw, Smartphone, Tablet } from "lucide-react";
 import type { Locale } from "@/lib/i18n";
 
@@ -80,7 +81,7 @@ export const Preview = forwardRef<PreviewHandle, Props>(function Preview({ path,
     <div className="flex min-h-0 min-w-0 flex-1 flex-col bg-mist-100">
       <div className="flex h-12 shrink-0 items-center gap-2 border-b border-mist-200 bg-white px-3">
         <div className="flex rounded-lg bg-mist-100 p-0.5">
-          {(["vi", "en"] as const).map((l) => (
+          {locales.map((l) => (
             <button key={l} type="button" onClick={() => onLocale(l)} className={`rounded-md px-2.5 py-1 text-xs font-semibold uppercase ${locale === l ? "bg-white shadow-sm" : "text-ink-600"}`}>
               {l}
             </button>

@@ -75,7 +75,7 @@ function ProductCard({ item, onQuickView }: { item: ShopItem; onQuickView: () =>
           type="button"
           onClick={onQuickView}
           aria-label={`${t.quickView}: ${item.name}`}
-          className="absolute top-2 right-2 grid size-9 place-items-center rounded-full bg-white/90 text-ink-900 shadow-sm ring-1 ring-mist-200 transition hover:bg-lime-300 sm:translate-y-1 sm:opacity-0 sm:group-hover/card:translate-y-0 sm:group-hover/card:opacity-100 sm:focus-visible:opacity-100"
+          className="absolute top-2 right-2 grid size-9 place-items-center rounded-full bg-white/90 text-ink-900 shadow-sm ring-1 ring-mist-200 transition hover:bg-sun-400 sm:translate-y-1 sm:opacity-0 sm:group-hover/card:translate-y-0 sm:group-hover/card:opacity-100 sm:focus-visible:opacity-100"
         >
           <Eye className="size-4" />
         </button>
@@ -89,7 +89,7 @@ function ProductCard({ item, onQuickView }: { item: ShopItem; onQuickView: () =>
           </Link>
         </h3>
         {item.flavor && <p className="mt-0.5 text-xs text-ink-600 sm:text-sm">{item.flavor}</p>}
-        <p className="mt-2 text-base font-medium text-forest-900 tabular-nums">
+        <p className={`mt-2 text-base font-semibold tabular-nums ${price === null ? "text-forest-900" : "text-chili-600"}`}>
           {price === null ? t.contactPrice : `${priced.length > 1 ? `${t.from} ` : ""}${formatPrice(price, locale)}`}
         </p>
 
@@ -99,7 +99,7 @@ function ProductCard({ item, onQuickView }: { item: ShopItem; onQuickView: () =>
               type="button"
               // One size: straight into the cart. Several: pick the size in quick view first.
               onClick={() => (multi ? onQuickView() : add(item.id, priced[0].weight))}
-              className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-lime-300 px-3 py-2.5 text-xs font-medium text-forest-950 transition hover:bg-lime-400 sm:text-sm"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-sun-400 px-3 py-2.5 text-xs font-medium text-forest-950 transition hover:bg-sun-500 sm:text-sm"
             >
               <ShoppingBag className="size-4" />
               {t.addToCart}

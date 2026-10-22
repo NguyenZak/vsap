@@ -1,4 +1,18 @@
 {
+  "/images/bird-nest-raw.webp": {
+    "width": 1512,
+    "sizes": [
+      640,
+      1280
+    ]
+  },
+  "/images/bird-nest.webp": {
+    "width": 2400,
+    "sizes": [
+      640,
+      1280
+    ]
+  },
   "/images/cashew-apple.webp": {
     "width": 1600,
     "sizes": [

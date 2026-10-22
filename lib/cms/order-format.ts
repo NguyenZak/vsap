@@ -1,6 +1,6 @@
 // Retail order types, labels and the Telegram alert, shared by the API and Studio (no Cloudflare imports).
 import type { OrderItem } from "../shop";
-import { esc, type Button } from "./telegram-format";
+import { esc, langLabel, type Button } from "./telegram-format";
 
 export const orderStatuses = ["new", "confirmed", "shipping", "done", "cancelled"] as const;
 export type OrderStatus = (typeof orderStatuses)[number];
@@ -46,7 +46,7 @@ export function orderAlert(order: { id: number | null; data: OrderData; locale?:
     c.note && "",
     c.note && `💬 <i>${esc(c.note.length > 600 ? `${c.note.slice(0, 600)}…` : c.note)}</i>`,
     "",
-    `🌐 ${order.locale === "en" ? "Tiếng Anh" : "Tiếng Việt"} · Thanh toán khi nhận hàng`,
+    `🌐 ${langLabel(order.locale)} · Thanh toán khi nhận hàng`,
   ] as (string | false | undefined)[]).filter((l): l is string => typeof l === "string");
 
   const phone = digits(c.phone);

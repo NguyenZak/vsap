@@ -7,7 +7,7 @@ import type { UiStrings } from "@/lib/cms/types";
 type Status = "idle" | "sending" | "success" | "error";
 
 const field =
-  "mt-1.5 block w-full rounded-xl border border-mist-200 bg-white px-4 py-3 text-ink-900 placeholder:text-ink-400 outline-none transition focus:border-forest-600 focus:ring-4 focus:ring-lime-300/50";
+  "mt-1.5 block w-full rounded-xl border border-mist-200 bg-white px-4 py-3 text-ink-900 placeholder:text-ink-400 outline-none transition focus:border-forest-600 focus:ring-4 focus:ring-sun-400/50";
 const label = "text-sm font-medium text-ink-900";
 
 export function InquiryForm({ t, defaultProduct }: { t: UiStrings["form"]; defaultProduct?: string }) {
@@ -34,7 +34,7 @@ export function InquiryForm({ t, defaultProduct }: { t: UiStrings["form"]; defau
   if (status === "success") {
     return (
       <div role="status" className="flex flex-col items-center rounded-2xl bg-forest-900 p-10 text-center">
-        <CheckCircle2 className="size-12 text-lime-300" />
+        <CheckCircle2 className="size-12 text-sun-400" />
         <p className="mt-4 text-lg font-medium text-white">{t.success}</p>
       </div>
     );
@@ -69,7 +69,7 @@ export function InquiryForm({ t, defaultProduct }: { t: UiStrings["form"]; defau
       </label>
       <label className="block">
         <span className={label}>{t.product}</span>
-        <select name="product" defaultValue={defaultProduct ?? "cashew"} className={field}>
+        <select name="product" defaultValue={productKey(defaultProduct, t.productOptions)} className={field}>
           {Object.entries(t.productOptions).map(([value, text]) => (
             <option key={value} value={value}>
               {text}
@@ -90,7 +90,7 @@ export function InquiryForm({ t, defaultProduct }: { t: UiStrings["form"]; defau
         <button
           type="submit"
           disabled={status === "sending"}
-          className="inline-flex items-center justify-center gap-2 rounded-full bg-lime-300 px-6 py-3 text-sm font-medium text-forest-950 transition hover:bg-lime-400 disabled:opacity-60"
+          className="inline-flex items-center justify-center gap-2 rounded-full bg-sun-400 px-6 py-3 text-sm font-medium text-forest-950 transition hover:bg-sun-500 disabled:opacity-60"
         >
           {status === "sending" ? t.sending : t.submit}
           {status === "sending" ? <Loader2 className="size-4 animate-spin" /> : <Send className="size-4" />}
@@ -103,4 +103,10 @@ export function InquiryForm({ t, defaultProduct }: { t: UiStrings["form"]; defau
       </div>
     </form>
   );
+}
+
+/** Product page slugs are kebab-case ("bird-nest"); the form's option keys are camelCase ("birdNest"). */
+function productKey(slug: string | undefined, options: Record<string, string>) {
+  const key = (slug ?? "").replace(/-(\w)/g, (_, c: string) => c.toUpperCase());
+  return key in options ? key : "cashew";
 }

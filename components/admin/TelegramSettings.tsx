@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Check, Loader2, RefreshCw, Send, Unplug, Users } from "lucide-react";
 import { api, type TelegramChat, type TelegramStatus } from "./api";
 
-const inputCls = "w-full rounded-lg border border-mist-200 bg-white px-3 py-2 text-sm outline-none focus:border-forest-600 focus:ring-2 focus:ring-lime-300/50";
+const inputCls = "w-full rounded-lg border border-mist-200 bg-white px-3 py-2 text-sm outline-none focus:border-forest-600 focus:ring-2 focus:ring-sun-400/50";
 
 function Step({ n, done, title, children }: { n: number; done: boolean; title: string; children: React.ReactNode }) {
   return (
@@ -64,7 +64,7 @@ export function TelegramSettings({ onChange }: { onChange?: (s: TelegramStatus) 
           <p className="mt-1 text-sm text-ink-600">Mỗi khi khách gửi yêu cầu báo giá, nhóm Telegram được chọn sẽ nhận tin ngay, kèm nút mở trong Studio, WhatsApp và Zalo.</p>
         </div>
         {status && (
-          <span className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-medium ${status.tokenSource && status.chat ? "bg-lime-300 text-forest-950" : "bg-mist-100 text-ink-600"}`}>
+          <span className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-medium ${status.tokenSource && status.chat ? "bg-sun-400 text-forest-950" : "bg-mist-100 text-ink-600"}`}>
             {status.tokenSource && status.chat ? "Đang hoạt động" : "Chưa kết nối"}
           </span>
         )}
@@ -144,7 +144,7 @@ export function TelegramSettings({ onChange }: { onChange?: (s: TelegramStatus) 
                       type="button"
                       disabled={busy === "chat"}
                       onClick={() => run("chat", async () => update(await api.telegramChat(c)))}
-                      className={`flex w-full items-center gap-2 rounded-lg border px-3 py-2 text-left text-sm ${status.chat?.id === c.id ? "border-forest-600 bg-lime-300/15" : "border-mist-200 hover:bg-mist-50"}`}
+                      className={`flex w-full items-center gap-2 rounded-lg border px-3 py-2 text-left text-sm ${status.chat?.id === c.id ? "border-forest-600 bg-sun-400/15" : "border-mist-200 hover:bg-mist-50"}`}
                     >
                       <Users className="size-4 shrink-0 text-ink-400" />
                       <span className="min-w-0 flex-1 truncate text-ink-900">{c.title}</span>
@@ -167,7 +167,7 @@ export function TelegramSettings({ onChange }: { onChange?: (s: TelegramStatus) 
                   setNote("Đã gửi. Kiểm tra nhóm Telegram trên điện thoại.");
                 })
               }
-              className="inline-flex items-center gap-1.5 rounded-lg bg-lime-300 px-3 py-1.5 text-sm font-medium text-forest-950 hover:bg-lime-400 disabled:opacity-40"
+              className="inline-flex items-center gap-1.5 rounded-lg bg-sun-400 px-3 py-1.5 text-sm font-medium text-forest-950 hover:bg-sun-500 disabled:opacity-40"
             >
               {busy === "test" ? <Loader2 className="size-4 animate-spin" /> : <Send className="size-4" />} Gửi tin thử
             </button>
@@ -175,7 +175,7 @@ export function TelegramSettings({ onChange }: { onChange?: (s: TelegramStatus) 
         </ol>
       )}
 
-      {note && <p className="rounded-lg bg-lime-300/30 px-3 py-2 text-sm text-forest-900">{note}</p>}
+      {note && <p className="rounded-lg bg-sun-400/30 px-3 py-2 text-sm text-forest-900">{note}</p>}
       {error && <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-chili-600">{error}</p>}
 
       {connected && status?.tokenSource === "studio" && (

@@ -19,10 +19,14 @@ export type ShopItem = {
 /** What the browser keeps in the cart: prices are always looked up again. */
 export type CartLine = { id: string; weight: string; qty: number };
 
+/** BCP 47 tags for number and date formatting. */
+export const intlLocale: Record<Locale, string> = { vi: "vi-VN", en: "en-US", zh: "zh-CN" };
+
 export const MAX_QTY = 99;
 export const MAX_LINES = 30;
 
-const pick = (v: L | undefined, locale: Locale) => v?.[locale] || v?.vi || "";
+// Same fallback as pick() in lib/cms/links.ts: missing Chinese shows English, then Vietnamese.
+const pick = (v: Partial<L> | undefined, locale: Locale) => (locale === "zh" ? v?.zh || v?.en : v?.[locale]) || v?.vi || "";
 
 export const packHref = (pack: Pick<RetailPack, "id" | "product">, locale: Locale) => `/${locale}/products/${pack.product}/${pack.id}`;
 
@@ -41,9 +45,9 @@ export function toShopItem(pack: RetailPack, locale: Locale): ShopItem {
   };
 }
 
-/** "330.000₫" (vi) or "₫330,000" (en). */
+/** "330.000 ₫" (vi), "₫330,000" (en) or "₫330,000" (zh). */
 export function formatPrice(vnd: number, locale: Locale) {
-  return new Intl.NumberFormat(locale === "en" ? "en-US" : "vi-VN", { style: "currency", currency: "VND", maximumFractionDigits: 0 }).format(vnd);
+  return new Intl.NumberFormat(intlLocale[locale], { style: "currency", currency: "VND", maximumFractionDigits: 0 }).format(vnd);
 }
 
 /** Lowest price among the sizes that have one; null when the pack is sold on request only. */

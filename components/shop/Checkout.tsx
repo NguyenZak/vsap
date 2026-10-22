@@ -119,7 +119,7 @@ export function Checkout() {
         <button
           type="submit"
           disabled={sending}
-          className="mt-6 w-full rounded-full bg-lime-300 px-6 py-4 font-medium text-forest-950 transition hover:bg-lime-400 disabled:opacity-60 sm:w-auto sm:min-w-64"
+          className="mt-6 w-full rounded-full bg-sun-400 px-6 py-4 font-medium text-forest-950 transition hover:bg-sun-500 disabled:opacity-60 sm:w-auto sm:min-w-64"
         >
           {sending ? t.placing : `${t.placeOrder} · ${formatPrice(subtotal, locale)}`}
         </button>

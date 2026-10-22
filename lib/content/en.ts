@@ -4,7 +4,7 @@ export const en: Dictionary = {
   meta: {
     title: "VSAP – Vietnamese Agricultural Products, International Standards",
     description:
-      "VSAP supplies export-grade Vietnamese cashew nuts and macadamia nuts, with quality controlled from farm to our partners worldwide.",
+      "VSAP supplies export-grade Vietnamese cashews, macadamias and edible bird’s nest, with quality controlled from source to our partners worldwide.",
   },
   nav: {
     home: "Home",
@@ -30,9 +30,9 @@ export const en: Dictionary = {
         {
           label: "Vietnamese produce",
           eyebrow: "Vietnamese produce · International standards",
-          title: "Vietnamese cashews & macadamias,",
+          title: "Cashews, macadamias & bird’s nest,",
           accent: "full flavour for every market.",
-          lead: "VSAP sources cashew and macadamia nuts from Vietnam’s finest growing regions, with strict control over cultivation, processing, packing and delivery to our international partners.",
+          lead: "VSAP sources cashews, macadamias and edible bird’s nest from Vietnam’s finest regions, with strict control over sourcing, processing, packing and delivery to our partners.",
           cta: "Explore products",
         },
         {
@@ -50,6 +50,14 @@ export const en: Dictionary = {
           accent: "naturally rich and creamy.",
           lead: "Grown on the red basalt soils of the Central Highlands: cracked in-shell macadamias and kernels graded to international styles.",
           cta: "View macadamias",
+        },
+        {
+          label: "Bird’s nest",
+          eyebrow: "Edible bird’s nest · Khanh Hoa",
+          title: "Khanh Hoa bird’s nest,",
+          accent: "a treasure from the sea.",
+          lead: "Raw whole nests, hand-cleaned nests and ready-to-drink bird’s nest, sourced from Vietnam’s best-known bird’s nest region.",
+          cta: "View bird’s nest",
         },
         {
           label: "Delivery",
@@ -92,7 +100,7 @@ export const en: Dictionary = {
         {
           strong: "Good Food – Good Health.",
           muted: "Good food brings good health,",
-          tail: "the promise VSAP puts into every cashew and macadamia nut.",
+          tail: "the promise VSAP puts into every cashew, macadamia and bird’s nest.",
         },
       ],
     },
@@ -120,7 +128,7 @@ export const en: Dictionary = {
     },
     products: {
       eyebrow: "Core products",
-      title: "Two nuts that put",
+      title: "Three lines that put",
       accent: "Vietnamese produce on the map",
       lead: "A full range of grades and flexible packing for importers, distributors and food manufacturers.",
     },
@@ -142,7 +150,7 @@ export const en: Dictionary = {
       eyebrow: "Global connection",
       title: "Putting Vietnamese produce",
       accent: "on the world map",
-      lead: "Vietnam is the world’s leading exporter of cashew kernels and a fast-growing macadamia origin in Asia. VSAP bridges Vietnamese growing regions and the global supply chain.",
+      lead: "Vietnam is the world’s leading exporter of cashew kernels, a fast-growing macadamia origin in Asia and home to the bird’s nest tradition of Khanh Hoa. VSAP bridges Vietnamese growing regions and the global supply chain.",
       points: [
         { title: "Reliable supply", body: "Direct links with growers and processors keep volumes steady all year round." },
         { title: "Flexible packing", body: "Bulk export packing or retail-ready private label (OEM) packaging." },
@@ -153,7 +161,7 @@ export const en: Dictionary = {
       eyebrow: "About VSAP",
       title: "From Vietnamese orchards",
       accent: "to the global market",
-      lead: "VSAP connects Vietnam’s finest cashew and macadamia growing regions with importers, distributors and food manufacturers worldwide.",
+      lead: "VSAP connects Vietnam’s finest cashew, macadamia and bird’s nest regions with importers, distributors and food manufacturers worldwide.",
       stats: [
         { value: "No.1", label: "Cashew kernel exporter" },
         { value: "{grades}", label: "Product grades" },
@@ -180,7 +188,7 @@ export const en: Dictionary = {
       items: [
         {
           q: "Which products does VSAP supply?",
-          a: "Our two core lines are cashews (white wholes W180 – W450, splits and pieces, roasted & salted) and macadamias (cracked in-shell and kernels in international styles). Full grade details are on the Products page.",
+          a: "Our three core lines are cashews (white wholes W180 – W450, splits and pieces, roasted & salted), macadamias (cracked in-shell and kernels in international styles) and Khanh Hoa bird’s nest (raw nests, cleaned nests, ready-to-drink). Full details are on the Products page.",
         },
         {
           q: "Can I get samples before ordering?",
@@ -206,7 +214,7 @@ export const en: Dictionary = {
     },
     cta: {
       title: "Looking for a reliable",
-      accent: "cashew or macadamia supplier?",
+      accent: "cashew, macadamia or bird’s nest supplier?",
       lead: "Send us your requirements and the VSAP team will reply with pricing, samples and matching specifications.",
       button: "Request a quote",
     },
@@ -255,7 +263,7 @@ export const en: Dictionary = {
     story: {
       title: "Our story",
       paragraphs: [
-        "Vietnam is home to some of the finest cashew and macadamia growing regions, yet the value that reaches growers remains modest. VSAP was built to close that gap.",
+        "Vietnam is home to some of the finest cashew, macadamia and bird’s nest regions, yet the value that reaches growers remains modest. VSAP was built to close that gap.",
         "We connect growers, processors and international buyers in a transparent chain where every shipment has a clear origin, controlled quality and on-time delivery.",
       ],
     },
@@ -269,13 +277,13 @@ export const en: Dictionary = {
     },
     slogan: {
       title: "Good Food – Good Health",
-      body: "Good food brings good health. That is the promise VSAP puts into every cashew and macadamia nut.",
+      body: "Good food brings good health. That is the promise VSAP puts into every cashew, macadamia and bird’s nest.",
     },
     valuesTitle: "Core values",
   },
   productsPage: {
-    metaTitle: "Export cashew & macadamia nuts",
-    metaDescription: "Export-grade Vietnamese cashew and macadamia nuts: a full range of grades and flexible packing.",
+    metaTitle: "Export cashews, macadamias & bird’s nest",
+    metaDescription: "Export-grade Vietnamese cashews, macadamias and Khanh Hoa bird’s nest: a full range of grades and flexible packing.",
     eyebrow: "Products",
     title: "Export-grade",
       accent: "Vietnamese nuts",
@@ -340,7 +348,7 @@ export const en: Dictionary = {
   },
   contact: {
     metaTitle: "Request a quote & samples",
-    metaDescription: "Contact VSAP for pricing and samples of Vietnamese cashew and macadamia nuts.",
+    metaDescription: "Contact VSAP for pricing and samples of Vietnamese cashews, macadamias and bird’s nest.",
     eyebrow: "Contact",
     title: "Start working",
       accent: "with VSAP",
@@ -353,7 +361,7 @@ export const en: Dictionary = {
       phone: "Phone",
       country: "Country",
       product: "Product of interest",
-      productOptions: { cashew: "Cashew nuts", macadamia: "Macadamia nuts", other: "Other" },
+      productOptions: { cashew: "Cashew nuts", macadamia: "Macadamia nuts", birdNest: "Bird’s nest", other: "Other" },
       quantity: "Estimated volume",
       quantityPlaceholder: "e.g. one 20ft container per month",
       message: "Your request",
@@ -424,7 +432,7 @@ export const en: Dictionary = {
   },
   footer: {
     brandOf: "A brand of",
-    about: "A Vietnamese agricultural brand at international standards, specialising in export cashew and macadamia nuts.",
+    about: "A Vietnamese agricultural brand at international standards, specialising in cashews, macadamias and bird’s nest.",
     explore: "Explore",
     products: "Products",
     contact: "Contact",

@@ -2,7 +2,7 @@ export const vi = {
   meta: {
     title: "VSAP – Nông sản Việt chuẩn quốc tế",
     description:
-      "VSAP cung cấp hạt điều và hạt macca Việt Nam đạt tiêu chuẩn xuất khẩu, kiểm soát chất lượng từ vùng trồng đến tay đối tác trên toàn cầu.",
+      "VSAP cung cấp hạt điều, hạt macca và yến sào Việt Nam đạt tiêu chuẩn xuất khẩu, kiểm soát chất lượng từ vùng nguyên liệu đến tay đối tác trên toàn cầu.",
   },
   nav: {
     home: "Trang chủ",
@@ -30,9 +30,9 @@ export const vi = {
         {
           label: "Nông sản Việt",
           eyebrow: "Nông sản Việt · Chuẩn quốc tế",
-          title: "Hạt điều & macca Việt Nam,",
+          title: "Hạt điều, macca & yến sào,",
           accent: "trọn vị đến mọi thị trường.",
-          lead: "VSAP tuyển chọn hạt điều và hạt macca từ những vùng nguyên liệu tốt nhất Việt Nam, kiểm soát nghiêm ngặt từ vùng trồng, chế biến, đóng gói đến giao hàng cho đối tác quốc tế.",
+          lead: "VSAP tuyển chọn hạt điều, hạt macca và yến sào từ những vùng nguyên liệu tốt nhất Việt Nam, kiểm soát nghiêm ngặt từ nguồn nguyên liệu, chế biến, đóng gói đến giao hàng cho đối tác.",
           cta: "Xem sản phẩm",
         },
         {
@@ -50,6 +50,14 @@ export const vi = {
           accent: "béo bùi tự nhiên.",
           lead: "Trồng trên đất đỏ bazan Tây Nguyên: macca nguyên vỏ sấy nứt và nhân macca phân loại theo style quốc tế.",
           cta: "Xem hạt macca",
+        },
+        {
+          label: "Yến sào",
+          eyebrow: "Yến sào · Khánh Hòa",
+          title: "Yến sào Khánh Hòa,",
+          accent: "tinh hoa từ biển.",
+          lead: "Yến thô nguyên tổ, yến tinh chế rút lông và yến chưng sẵn, tuyển chọn từ vùng yến nổi tiếng nhất Việt Nam.",
+          cta: "Xem yến sào",
         },
         {
           label: "Giao hàng",
@@ -95,7 +103,7 @@ export const vi = {
         {
           strong: "Good Food – Good Health.",
           muted: "Thực phẩm tốt mang đến sức khỏe tốt,",
-          tail: "đó là lời hứa VSAP gửi gắm trong từng hạt điều, hạt macca.",
+          tail: "đó là lời hứa VSAP gửi gắm trong từng hạt điều, hạt macca và tổ yến.",
         },
       ],
     },
@@ -123,7 +131,7 @@ export const vi = {
     },
     products: {
       eyebrow: "Sản phẩm chủ lực",
-      title: "Hai dòng hạt làm nên",
+      title: "Ba dòng sản phẩm làm nên",
       accent: "tên tuổi nông sản Việt",
       lead: "Đa dạng phân loại, quy cách đóng gói linh hoạt theo yêu cầu của nhà nhập khẩu, nhà phân phối và nhà sản xuất thực phẩm.",
     },
@@ -145,7 +153,7 @@ export const vi = {
       eyebrow: "Kết nối toàn cầu",
       title: "Đưa nông sản Việt",
       accent: "lên bản đồ thế giới",
-      lead: "Việt Nam là quốc gia xuất khẩu nhân hạt điều hàng đầu thế giới và là vùng trồng macca đang phát triển nhanh tại châu Á. VSAP là cầu nối giữa vùng nguyên liệu Việt và chuỗi cung ứng toàn cầu.",
+      lead: "Việt Nam là quốc gia xuất khẩu nhân hạt điều hàng đầu thế giới, là vùng trồng macca đang phát triển nhanh tại châu Á và có nghề yến sào truyền thống ở Khánh Hòa. VSAP là cầu nối giữa vùng nguyên liệu Việt và chuỗi cung ứng toàn cầu.",
       points: [
         { title: "Nguồn cung ổn định", body: "Liên kết trực tiếp với nhà vườn và cơ sở chế biến, chủ động sản lượng quanh năm." },
         { title: "Quy cách linh hoạt", body: "Đóng gói xuất khẩu số lượng lớn hoặc bao bì bán lẻ theo nhãn riêng (OEM/private label)." },
@@ -156,7 +164,7 @@ export const vi = {
       eyebrow: "Về VSAP",
       title: "Từ vườn Việt",
       accent: "đến thị trường toàn cầu",
-      lead: "VSAP kết nối vùng nguyên liệu hạt điều và macca tốt nhất Việt Nam với nhà nhập khẩu, nhà phân phối và nhà sản xuất thực phẩm trên thế giới.",
+      lead: "VSAP kết nối vùng nguyên liệu hạt điều, macca và yến sào tốt nhất Việt Nam với nhà nhập khẩu, nhà phân phối và nhà sản xuất thực phẩm trên thế giới.",
       // `{grades}` được thay bằng tổng số phân loại trong lib/products.ts.
       stats: [
         { value: "No.1", label: "Xuất khẩu nhân điều" },
@@ -184,7 +192,7 @@ export const vi = {
       items: [
         {
           q: "VSAP cung cấp những sản phẩm nào?",
-          a: "Hai dòng chủ lực là hạt điều (nhân trắng nguyên hạt W180 – W450, nhân vỡ, rang muối) và hạt macca (nguyên vỏ sấy nứt, nhân theo style quốc tế). Chi tiết phân loại có tại trang Sản phẩm.",
+          a: "Ba dòng chủ lực là hạt điều (nhân trắng nguyên hạt W180 – W450, nhân vỡ, rang muối), hạt macca (nguyên vỏ sấy nứt, nhân theo style quốc tế) và yến sào Khánh Hòa (yến thô, yến tinh chế rút lông, yến chưng sẵn). Chi tiết có tại trang Sản phẩm.",
         },
         {
           q: "Tôi có thể nhận mẫu thử trước khi đặt hàng không?",
@@ -209,8 +217,8 @@ export const vi = {
       ],
     },
     cta: {
-      title: "Bạn đang tìm nguồn hạt",
-      accent: "điều hoặc macca ổn định?",
+      title: "Bạn đang tìm nguồn",
+      accent: "điều, macca hay yến sào ổn định?",
       lead: "Gửi yêu cầu, đội ngũ VSAP sẽ phản hồi với báo giá, mẫu thử và thông số kỹ thuật phù hợp.",
       button: "Gửi yêu cầu báo giá",
     },
@@ -259,7 +267,7 @@ export const vi = {
     story: {
       title: "Câu chuyện VSAP",
       paragraphs: [
-        "Việt Nam sở hữu những vùng nguyên liệu hạt điều và macca có chất lượng hàng đầu, nhưng giá trị mà nhà vườn nhận được vẫn còn khiêm tốn. VSAP được xây dựng để thu hẹp khoảng cách đó.",
+        "Việt Nam sở hữu những vùng nguyên liệu hạt điều, macca và yến sào có chất lượng hàng đầu, nhưng giá trị mà nhà vườn nhận được vẫn còn khiêm tốn. VSAP được xây dựng để thu hẹp khoảng cách đó.",
         "Chúng tôi kết nối nhà vườn, cơ sở chế biến và đối tác quốc tế trong một chuỗi minh bạch, nơi mỗi lô hàng đều có nguồn gốc rõ ràng, được kiểm soát chất lượng và giao đúng cam kết.",
       ],
     },
@@ -273,13 +281,13 @@ export const vi = {
     },
     slogan: {
       title: "Good Food – Good Health",
-      body: "Thực phẩm tốt mang đến sức khỏe tốt. Đó là lời hứa VSAP gửi gắm trong từng hạt điều, hạt macca.",
+      body: "Thực phẩm tốt mang đến sức khỏe tốt. Đó là lời hứa VSAP gửi gắm trong từng hạt điều, hạt macca và tổ yến.",
     },
     valuesTitle: "Giá trị cốt lõi",
   },
   productsPage: {
-    metaTitle: "Hạt điều & hạt macca xuất khẩu",
-    metaDescription: "Hạt điều và hạt macca Việt Nam tiêu chuẩn xuất khẩu: đa dạng phân loại, quy cách đóng gói linh hoạt.",
+    metaTitle: "Hạt điều, hạt macca & yến sào xuất khẩu",
+    metaDescription: "Hạt điều, hạt macca và yến sào Khánh Hòa tiêu chuẩn xuất khẩu: đa dạng phân loại, quy cách đóng gói linh hoạt.",
     eyebrow: "Sản phẩm",
     title: "Hạt dinh dưỡng Việt Nam",
       accent: "tiêu chuẩn xuất khẩu",
@@ -344,7 +352,7 @@ export const vi = {
   },
   contact: {
     metaTitle: "Liên hệ nhận báo giá & mẫu thử",
-    metaDescription: "Liên hệ VSAP để nhận báo giá, mẫu thử hạt điều và hạt macca Việt Nam.",
+    metaDescription: "Liên hệ VSAP để nhận báo giá, mẫu thử hạt điều, hạt macca và yến sào Việt Nam.",
     eyebrow: "Liên hệ",
     title: "Bắt đầu hợp tác",
       accent: "cùng VSAP",
@@ -357,7 +365,7 @@ export const vi = {
       phone: "Số điện thoại",
       country: "Quốc gia",
       product: "Sản phẩm quan tâm",
-      productOptions: { cashew: "Hạt điều", macadamia: "Hạt macca", other: "Khác" },
+      productOptions: { cashew: "Hạt điều", macadamia: "Hạt macca", birdNest: "Yến sào", other: "Khác" },
       quantity: "Số lượng dự kiến",
       quantityPlaceholder: "VD: 1 container 20ft / tháng",
       message: "Nội dung yêu cầu",
@@ -428,7 +436,7 @@ export const vi = {
   },
   footer: {
     brandOf: "Sản phẩm của",
-    about: "Thương hiệu nông sản Việt chuẩn quốc tế, chuyên hạt điều và hạt macca xuất khẩu.",
+    about: "Thương hiệu nông sản Việt chuẩn quốc tế, chuyên hạt điều, hạt macca và yến sào.",
     explore: "Khám phá",
     products: "Sản phẩm",
     contact: "Liên hệ",

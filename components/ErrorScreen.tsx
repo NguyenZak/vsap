@@ -37,7 +37,7 @@ const copy = {
     linksTitle: "Có thể bạn đang tìm",
     help: "Cần hỗ trợ ngay?",
     links: [
-      { path: "/products", label: "Sản phẩm", note: "Nhân điều, macca và dòng bán lẻ" },
+      { path: "/products", label: "Sản phẩm", note: "Nhân điều, macca, yến sào và dòng bán lẻ" },
       { path: "/quality", label: "Chất lượng", note: "Quy trình, tiêu chuẩn và chứng nhận" },
       { path: "/news", label: "Tin tức", note: "Thị trường và hoạt động VSAP" },
       { path: "/contact", label: "Liên hệ", note: "Báo giá và hợp tác xuất khẩu" },
@@ -63,10 +63,36 @@ const copy = {
     linksTitle: "You might be looking for",
     help: "Need help right away?",
     links: [
-      { path: "/products", label: "Products", note: "Cashew kernels, macadamia and retail packs" },
+      { path: "/products", label: "Products", note: "Cashews, macadamia, bird’s nest and retail packs" },
       { path: "/quality", label: "Quality", note: "Process, standards and certifications" },
       { path: "/news", label: "News", note: "Market updates and VSAP stories" },
       { path: "/contact", label: "Contact", note: "Quotes and export partnerships" },
+    ],
+  },
+  zh: {
+    "404": {
+      tag: "错误 404",
+      title: "您好像走进了",
+      accent: "腰果园的小路",
+      body: "您要找的页面不存在、已更换地址或暂时下线。请返回首页，或从下方选择一个入口。",
+    },
+    "500": {
+      tag: "错误 500",
+      title: "生产线",
+      accent: "暂时停机",
+      body: "系统在加载此页面时出现意外错误，问题出在我们这边，与您无关。请稍后重试；如仍无法访问，请附上下方的错误编号联系 VSAP。",
+    },
+    home: "返回首页",
+    back: "返回上一页",
+    retry: "重试",
+    digest: "错误编号",
+    linksTitle: "您可能在找",
+    help: "需要即时帮助？",
+    links: [
+      { path: "/products", label: "产品", note: "腰果仁、夏威夷果、燕窝及零售产品" },
+      { path: "/quality", label: "品质", note: "流程、标准与认证" },
+      { path: "/news", label: "新闻", note: "市场动态与 VSAP 资讯" },
+      { path: "/contact", label: "联系", note: "报价与出口合作" },
     ],
   },
 } as const;
@@ -79,13 +105,13 @@ function Digits({ code }: { code: Kind }) {
   return (
     <p
       aria-hidden
-      className="accent flex items-center pr-[0.06em] text-[clamp(7.5rem,24vw,19rem)] leading-[0.8] tracking-[-0.04em] text-lime-300 select-none"
+      className="accent flex items-center pr-[0.06em] text-[clamp(7.5rem,24vw,19rem)] leading-[0.8] tracking-[-0.04em] text-sun-400 select-none"
     >
       {code.split("").map((ch, i) =>
         ch === "0" ? (
           <span
             key={i}
-            className="relative mx-[0.04em] inline-block size-[0.74em] shrink-0 overflow-hidden rounded-full ring-[0.025em] ring-lime-300/80 ring-offset-[0.03em] ring-offset-forest-950"
+            className="relative mx-[0.04em] inline-block size-[0.74em] shrink-0 overflow-hidden rounded-full ring-[0.025em] ring-sun-400/80 ring-offset-[0.03em] ring-offset-forest-950"
           >
             <img
               src={zeros[zero++ % zeros.length]}
@@ -162,7 +188,7 @@ export function ErrorScreen({
                   <button
                     type="button"
                     onClick={reset ?? (() => window.location.reload())}
-                    className="group inline-flex items-center justify-center gap-2 rounded-full bg-lime-300 px-5 py-3 text-sm font-medium text-forest-950 transition hover:bg-lime-400"
+                    className="group inline-flex items-center justify-center gap-2 rounded-full bg-sun-400 px-5 py-3 text-sm font-medium text-forest-950 transition hover:bg-sun-500"
                   >
                     <RotateCw className="size-4 transition-transform duration-500 group-hover:rotate-180" />
                     {t.retry}
@@ -229,7 +255,7 @@ export function ErrorScreen({
                     <span className="block text-base font-medium text-ink-900">{l.label}</span>
                     <span className="mt-1 block text-sm text-ink-600">{l.note}</span>
                   </span>
-                  <span className="grid size-9 shrink-0 place-items-center rounded-full bg-mist-100 text-forest-900 transition group-hover:bg-lime-300">
+                  <span className="grid size-9 shrink-0 place-items-center rounded-full bg-mist-100 text-forest-900 transition group-hover:bg-sun-400">
                     <ArrowUpRight className="size-4 transition-transform group-hover:rotate-45" />
                   </span>
                 </Link>

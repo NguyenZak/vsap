@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { UiStrings } from "@/lib/cms/types";
+import { locales, type Locale } from "@/lib/locales";
 import { Panel } from "./PageEditor";
 
 type Path = (string | number)[];
@@ -143,17 +144,21 @@ const keyLabels: Record<string, string> = {
   successBody: "Nội dung khi đặt hàng xong ({id} = mã đơn)",
 };
 
-const inputCls = "w-full rounded-lg border border-mist-200 bg-white px-3 py-2 text-sm outline-none focus:border-forest-600 focus:ring-2 focus:ring-lime-300/50";
+const inputCls = "w-full rounded-lg border border-mist-200 bg-white px-3 py-2 text-sm outline-none focus:border-forest-600 focus:ring-2 focus:ring-sun-400/50";
 
-function Rows({ vi, en, path, onChange }: { vi: Record<string, unknown>; en: Record<string, unknown>; path: Path; onChange: (path: Path, v: unknown) => void }) {
+type Strings = Record<string, unknown>;
+
+function Rows({ byLang, path, onChange }: { byLang: Record<Locale, Strings>; path: Path; onChange: (path: Path, v: unknown) => void }) {
+  // Keys come from the Vietnamese strings; the other languages are matched by key.
+  const sub = (k: string) => Object.fromEntries(locales.map((l) => [l, (byLang[l]?.[k] ?? {}) as Strings])) as Record<Locale, Strings>;
   return (
     <div className="space-y-3">
-      {Object.entries(vi).map(([k, v]) => {
+      {Object.entries(byLang.vi).map(([k, v]) => {
         if (v && typeof v === "object") {
           return (
             <fieldset key={k} className="rounded-lg border border-mist-200 p-3">
               <legend className="px-1 text-xs font-medium text-ink-900">{keyLabels[k] ?? k}</legend>
-              <Rows vi={v as Record<string, unknown>} en={(en?.[k] ?? {}) as Record<string, unknown>} path={[...path, k]} onChange={onChange} />
+              <Rows byLang={sub(k)} path={[...path, k]} onChange={onChange} />
             </fieldset>
           );
         }
@@ -162,12 +167,12 @@ function Rows({ vi, en, path, onChange }: { vi: Record<string, unknown>; en: Rec
             <p className="mb-1 text-xs font-medium text-ink-900">
               {keyLabels[k] ?? k} <span className="font-mono font-normal text-ink-400">· {k}</span>
             </p>
-            <div className="grid gap-2 sm:grid-cols-2">
-              {(["vi", "en"] as const).map((lang) => (
+            <div className="grid gap-2 sm:grid-cols-3">
+              {locales.map((lang) => (
                 <label key={lang} className="relative block">
                   <span className="pointer-events-none absolute top-2 left-2.5 rounded bg-mist-100 px-1 text-[10px] font-semibold text-ink-600 uppercase">{lang}</span>
                   <input
-                    value={String((lang === "vi" ? v : en?.[k]) ?? "")}
+                    value={String(byLang[lang]?.[k] ?? "")}
                     onChange={(e) => onChange(["ui", lang, ...path, k], e.target.value)}
                     className={`${inputCls} pl-10`}
                   />
@@ -181,8 +186,8 @@ function Rows({ vi, en, path, onChange }: { vi: Record<string, unknown>; en: Rec
   );
 }
 
-/** Every interface string, grouped, with Vietnamese and English side by side. */
-export function UiEditor({ ui, onChange }: { ui: Record<"vi" | "en", UiStrings>; onChange: (path: Path, v: unknown) => void }) {
+/** Every interface string, grouped, with the site languages side by side. */
+export function UiEditor({ ui, onChange }: { ui: Record<Locale, UiStrings>; onChange: (path: Path, v: unknown) => void }) {
   const keys = Object.keys(groups) as (keyof UiStrings)[];
   const [group, setGroup] = useState<keyof UiStrings>("nav");
   return (
@@ -202,7 +207,7 @@ export function UiEditor({ ui, onChange }: { ui: Record<"vi" | "en", UiStrings>;
       </aside>
       <section className="flex w-[34rem] shrink-0 flex-col border-r border-mist-200 bg-white">
         <Panel title={groups[group]}>
-          <Rows vi={ui.vi[group] as Record<string, unknown>} en={ui.en[group] as Record<string, unknown>} path={[group]} onChange={onChange} />
+          <Rows byLang={Object.fromEntries(locales.map((l) => [l, (ui[l]?.[group] ?? {}) as Strings])) as Record<Locale, Strings>} path={[group]} onChange={onChange} />
         </Panel>
       </section>
     </>

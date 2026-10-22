@@ -6,7 +6,7 @@ import { generatePassword } from "@/lib/cms/password";
 import { MIN_PASSWORD, permissionsOf, roleInfo, roles, type Permission, type Role } from "@/lib/cms/roles";
 import { api, formatTime, type AuditEntry, type Me, type PublicUser } from "./api";
 
-const inputCls = "w-full rounded-lg border border-mist-200 bg-white px-3 py-2 text-sm outline-none focus:border-forest-600 focus:ring-2 focus:ring-lime-300/50";
+const inputCls = "w-full rounded-lg border border-mist-200 bg-white px-3 py-2 text-sm outline-none focus:border-forest-600 focus:ring-2 focus:ring-sun-400/50";
 
 const permissionLabel: Record<Permission, string> = {
   "content.read": "Xem nội dung",
@@ -19,8 +19,8 @@ const permissionLabel: Record<Permission, string> = {
 };
 
 const roleTone: Record<Role, string> = {
-  admin: "bg-forest-900 text-lime-300",
-  publisher: "bg-lime-300 text-forest-950",
+  admin: "bg-forest-900 text-sun-400",
+  publisher: "bg-sun-400 text-forest-950",
   editor: "bg-mist-100 text-ink-900",
   sales: "bg-sun-500/15 text-ink-900",
 };
@@ -130,7 +130,7 @@ function CreateUser({ onClose, onCreated }: { onClose: () => void; onCreated: (u
           <legend className="text-xs font-medium text-ink-900">Vai trò</legend>
           <div className="mt-1 space-y-1.5">
             {roles.map((r) => (
-              <label key={r} className={`flex cursor-pointer gap-3 rounded-lg border p-2.5 ${role === r ? "border-forest-600 bg-lime-300/10" : "border-mist-200 hover:bg-mist-50"}`}>
+              <label key={r} className={`flex cursor-pointer gap-3 rounded-lg border p-2.5 ${role === r ? "border-forest-600 bg-sun-400/10" : "border-mist-200 hover:bg-mist-50"}`}>
                 <input type="radio" name="role" checked={role === r} onChange={() => setRole(r)} className="mt-0.5 accent-forest-600" />
                 <span>
                   <span className="block text-sm font-medium text-ink-900">{roleInfo[r].label}</span>
@@ -376,7 +376,7 @@ const actionLabel: Record<string, string> = {
 };
 
 const actionTone = (a: string) =>
-  a.endsWith(".publish") || a === "site.restore" ? "bg-lime-300 text-forest-950" : a.includes("delete") || a === "login.fail" ? "bg-red-50 text-chili-600" : a.startsWith("user.") ? "bg-forest-900 text-lime-300" : "bg-mist-100 text-ink-600";
+  a.endsWith(".publish") || a === "site.restore" ? "bg-sun-400 text-forest-950" : a.includes("delete") || a === "login.fail" ? "bg-red-50 text-chili-600" : a.startsWith("user.") ? "bg-forest-900 text-sun-400" : "bg-mist-100 text-ink-600";
 
 const filters = [
   { value: "", label: "Tất cả" },

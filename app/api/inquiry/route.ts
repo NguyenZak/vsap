@@ -3,6 +3,7 @@ import { clientHash } from "@/lib/cms/api";
 import type { InquiryData as Inquiry } from "@/lib/cms/inquiry-format";
 import { recentFrom, saveInquiry } from "@/lib/cms/inquiries";
 import { notifyInquiry } from "@/lib/cms/notify";
+import { isLocale } from "@/lib/locales";
 
 /** Submissions allowed per visitor address in the window below. */
 const MAX_PER_WINDOW = 5;
@@ -48,7 +49,7 @@ export async function POST(request: Request) {
   if (!inquiry) return Response.json({ ok: false }, { status: 422 });
 
   const raw = body as Record<string, unknown>;
-  const locale = raw.locale === "en" ? "en" : raw.locale === "vi" ? "vi" : undefined;
+  const locale = typeof raw.locale === "string" && isLocale(raw.locale) ? raw.locale : undefined;
   const source = typeof raw.page === "string" && raw.page.startsWith("/") ? raw.page.slice(0, 300) : undefined;
   const country = (request as Request & { cf?: { country?: string } }).cf?.country ?? request.headers.get("cf-ipcountry") ?? undefined;
 

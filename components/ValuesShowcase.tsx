@@ -99,7 +99,7 @@ export function ValuesShowcase({ items: values, autoplay: AUTOPLAY }: { items: S
               >
                 <span
                   className={`inline-flex size-10 shrink-0 items-center justify-center rounded-xl transition ${
-                    open ? "bg-lime-300 text-forest-950" : "bg-white text-ink-600"
+                    open ? "bg-sun-400 text-forest-950" : "bg-white text-ink-600"
                   }`}
                 >
                   <CmsIcon name={v.icon} className="size-[18px]" />
@@ -136,7 +136,7 @@ export function ValuesShowcase({ items: values, autoplay: AUTOPLAY }: { items: S
             <span className="text-white/60"> / {String(n).padStart(2, "0")}</span>
           </p>
           <span className="relative h-0.5 flex-1 overflow-hidden rounded-full bg-white/30">
-            <span data-vs-bar className="absolute inset-0 origin-left scale-x-0 rounded-full bg-lime-300" />
+            <span data-vs-bar className="absolute inset-0 origin-left scale-x-0 rounded-full bg-sun-400" />
           </span>
           <p className="max-w-[50%] truncate text-sm">{values[active].title}</p>
         </div>

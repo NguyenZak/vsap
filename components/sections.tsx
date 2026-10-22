@@ -12,7 +12,7 @@ export type Tone = "white" | "muted" | "dark";
 export const toneBg: Record<Tone, string> = {
   white: "bg-white",
   muted: "bg-mist-50",
-  dark: "bg-forest-950 text-white",
+  dark: "bg-forest-950 bg-dark-glow text-white",
 };
 
 /** Tag + two-style title on the left, short lead aligned to its baseline on the right. */
@@ -109,7 +109,7 @@ export function Paragraphs({ text, className = "" }: { text: string; className?:
 }
 
 /**
- * Accordion of rounded cards; the open one gets a lime icon and a white inner panel.
+ * Accordion of rounded cards; the open one gets a yellow icon and a white inner panel.
  * Uses <details name> so only one stays open, with no JavaScript.
  */
 export function AccordionCards({
@@ -126,7 +126,7 @@ export function AccordionCards({
       {items.map((item, i) => (
         <details key={i} name={name} open={openFirst && i === 0} data-reveal className="group rounded-2xl bg-mist-50 p-2 transition-colors hover:bg-mist-100">
           <summary className="flex cursor-pointer list-none items-center gap-3 p-1.5 [&::-webkit-details-marker]:hidden">
-            <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-xl bg-white text-ink-600 transition group-open:bg-lime-300 group-open:text-forest-950">
+            <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-xl bg-white text-ink-600 transition group-open:bg-sun-400 group-open:text-forest-950">
               <CmsIcon name={item.icon} className="size-[18px]" />
             </span>
             <h3 className="flex-1 text-base text-ink-900">{item.title}</h3>
@@ -141,16 +141,24 @@ export function AccordionCards({
 }
 
 /** Row of grey number cards; leading numbers count up (MotionMain data-count). */
+/** One logo colour per stat card: yellow, leaf green, chili red, deep green. */
+const statColors = [
+  "bg-sun-400/25 text-forest-950",
+  "bg-leaf-500/20 text-forest-900",
+  "bg-chili-600/10 text-chili-600",
+  "bg-forest-900 text-white",
+];
+
 export function StatCards({ stats }: { stats: { value: string; label: string }[] }) {
   const cols = stats.length >= 4 ? "lg:grid-cols-4" : stats.length === 3 ? "lg:grid-cols-3" : "";
   return (
     <ul className={`grid grid-cols-2 gap-3 ${cols}`}>
       {stats.map((s, i) => (
-        <li key={i} data-reveal className="rounded-2xl bg-mist-50 px-4 py-7 text-center">
-          <p data-count className="text-4xl font-medium tracking-tight text-ink-900 tabular-nums sm:text-5xl">
+        <li key={i} data-reveal className={`rounded-2xl px-4 py-7 text-center ${statColors[i % statColors.length]}`}>
+          <p data-count className="text-4xl font-medium tracking-tight tabular-nums sm:text-5xl">
             {s.value}
           </p>
-          <p className="mt-2 text-xs text-ink-600 sm:text-sm">{s.label}</p>
+          <p className="mt-2 text-xs opacity-80 sm:text-sm">{s.label}</p>
         </li>
       ))}
     </ul>
@@ -177,7 +185,7 @@ export function ProductCard({ card }: { card: ProductCardView }) {
               </li>
             ))}
           </ul>
-          <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-lime-300 px-4 py-2 text-sm font-medium text-forest-950">
+          <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-sun-400 px-4 py-2 text-sm font-medium text-forest-950">
             {card.cta}
             <ArrowUpRight className="size-4 transition-transform group-hover:rotate-45" />
           </span>

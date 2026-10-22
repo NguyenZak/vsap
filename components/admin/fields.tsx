@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { locales, type Locale } from "@/lib/locales";
 import { Bold, ChevronDown, ChevronUp, Copy, GripVertical, Heading2, Heading3, ImageIcon, Italic, Link2, List, ListOrdered, Minus, Plus, Quote, Trash2 } from "lucide-react";
 import { getIn, type FieldDef } from "@/lib/cms/fields";
 import { iconNames } from "@/lib/cms/icons";
@@ -9,15 +10,16 @@ import { MediaPicker } from "./MediaPicker";
 
 type Path = (string | number)[];
 type OnChange = (path: Path, value: unknown) => void;
-type L = { vi: string; en: string };
+type L = Record<Locale, string>;
 
 const inputCls =
-  "w-full rounded-lg border border-mist-200 bg-white px-3 py-2 text-sm text-ink-900 outline-none transition placeholder:text-ink-400 focus:border-forest-600 focus:ring-2 focus:ring-lime-300/50";
+  "w-full rounded-lg border border-mist-200 bg-white px-3 py-2 text-sm text-ink-900 outline-none transition placeholder:text-ink-400 focus:border-forest-600 focus:ring-2 focus:ring-sun-400/50";
 
 /** Site paths offered as suggestions in link fields. */
 export const LINK_SUGGESTIONS = ["/", "/about", "/products", "/products/cashew", "/products/macadamia", "/quality", "/news", "/contact", "#inquiry"];
 
-const asL = (v: unknown): L => (v && typeof v === "object" ? { vi: String((v as L).vi ?? ""), en: String((v as L).en ?? "") } : { vi: String(v ?? ""), en: "" });
+const asL = (v: unknown): L =>
+  Object.fromEntries(locales.map((l, i) => [l, v && typeof v === "object" ? String((v as Partial<L>)[l] ?? "") : i === 0 ? String(v ?? "") : ""])) as L;
 
 function Label({ field, children }: { field: FieldDef; children?: React.ReactNode }) {
   return (
@@ -32,11 +34,11 @@ function Help({ text }: { text?: string }) {
   return text ? <p className="mt-1 text-xs leading-snug text-ink-400">{text}</p> : null;
 }
 
-/** Two inputs for a bilingual value, labelled VI / EN. */
+/** One input per site language for a localized value, labelled VI / EN / ZH. */
 function Bilingual({ value, onChange, multiline, rows = 3 }: { value: L; onChange: (v: L) => void; multiline?: boolean; rows?: number }) {
   return (
     <div className="space-y-1.5">
-      {(["vi", "en"] as const).map((lang) => (
+      {locales.map((lang) => (
         <div key={lang} className="relative">
           <span className="pointer-events-none absolute top-2 left-2.5 rounded bg-mist-100 px-1 text-[10px] font-semibold text-ink-600 uppercase">{lang}</span>
           {multiline ? (
@@ -112,7 +114,7 @@ function IconField({ value, onChange }: { value: string; onChange: (v: string) =
   return (
     <div>
       <button type="button" onClick={() => setOpen((o) => !o)} className={`${inputCls} flex items-center gap-2 text-left`}>
-        <span className="inline-flex size-7 items-center justify-center rounded-md bg-lime-300 text-forest-950">
+        <span className="inline-flex size-7 items-center justify-center rounded-md bg-sun-400 text-forest-950">
           <CmsIcon name={value} className="size-4" />
         </span>
         <span className="flex-1 text-ink-600">{value || "Chọn biểu tượng"}</span>
@@ -129,7 +131,7 @@ function IconField({ value, onChange }: { value: string; onChange: (v: string) =
                 onChange(name);
                 setOpen(false);
               }}
-              className={`inline-flex aspect-square items-center justify-center rounded-md transition hover:bg-mist-100 ${value === name ? "bg-lime-300 text-forest-950" : "text-ink-600"}`}
+              className={`inline-flex aspect-square items-center justify-center rounded-md transition hover:bg-mist-100 ${value === name ? "bg-sun-400 text-forest-950" : "text-ink-600"}`}
             >
               <CmsIcon name={name} className="size-4" />
             </button>
@@ -210,7 +212,7 @@ function ListField({ field, value, path, onChange }: { field: Extract<FieldDef, 
           set([...items, field.newItem()]);
           setOpen(items.length);
         }}
-        className="flex w-full items-center justify-center gap-1.5 rounded-lg border border-dashed border-mist-200 py-2 text-sm text-forest-600 hover:border-forest-600 hover:bg-lime-300/10"
+        className="flex w-full items-center justify-center gap-1.5 rounded-lg border border-dashed border-mist-200 py-2 text-sm text-forest-600 hover:border-forest-600 hover:bg-sun-400/10"
       >
         <Plus className="size-4" /> Thêm {field.itemLabel}
       </button>
@@ -234,7 +236,7 @@ const tools: { label: string; icon: typeof Bold; edit: Edit }[] = [
 
 /** Bilingual Markdown editor: a language switch, a formatting toolbar and a tall textarea. */
 function MarkdownField({ value, onChange }: { value: L; onChange: (v: L) => void }) {
-  const [lang, setLang] = useState<"vi" | "en">("vi");
+  const [lang, setLang] = useState<Locale>("vi");
   const [picking, setPicking] = useState(false);
   const area = useRef<HTMLTextAreaElement>(null);
   const text = value[lang];
@@ -258,10 +260,10 @@ function MarkdownField({ value, onChange }: { value: L; onChange: (v: L) => void
   };
 
   return (
-    <div className="overflow-hidden rounded-lg border border-mist-200 focus-within:border-forest-600 focus-within:ring-2 focus-within:ring-lime-300/50">
+    <div className="overflow-hidden rounded-lg border border-mist-200 focus-within:border-forest-600 focus-within:ring-2 focus-within:ring-sun-400/50">
       <div className="flex flex-wrap items-center gap-0.5 border-b border-mist-200 bg-mist-50 px-1.5 py-1">
         <div className="mr-1 flex rounded-md bg-white p-0.5 shadow-sm">
-          {(["vi", "en"] as const).map((l) => (
+          {locales.map((l) => (
             <button key={l} type="button" onClick={() => setLang(l)} className={`rounded px-2 py-0.5 text-[11px] font-semibold uppercase ${lang === l ? "bg-forest-900 text-white" : "text-ink-600"}`}>
               {l}
               {!value[l].trim() && <span className="ml-1 text-[9px] font-normal opacity-70">trống</span>}
@@ -293,7 +295,7 @@ function MarkdownField({ value, onChange }: { value: L; onChange: (v: L) => void
           onClose={() => setPicking(false)}
           onPick={(p) => {
             setPicking(false);
-            const alt = (p.alt?.[lang] || "").replace(/[[\]]/g, "");
+            const alt = ((p.alt as Partial<L> | undefined)?.[lang] || p.alt?.vi || "").replace(/[[\]]/g, "");
             apply({ before: `![${alt}](${p.src} "`, after: `")`, placeholder: "Chú thích ảnh", line: true });
           }}
         />

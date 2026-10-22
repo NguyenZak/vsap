@@ -6,7 +6,7 @@ import { orderStatuses, orderStatusInfo, type Order, type OrderStatus } from "@/
 import { api, formatTime } from "./api";
 
 const statusTone: Record<OrderStatus, string> = {
-  new: "bg-lime-300 text-forest-950",
+  new: "bg-sun-400 text-forest-950",
   confirmed: "bg-sun-500/15 text-ink-900",
   shipping: "bg-forest-600/15 text-forest-900",
   done: "bg-mist-100 text-ink-600",
@@ -133,7 +133,7 @@ export function OrdersView({ onCounts }: { onCounts?: (c: Record<OrderStatus, nu
           )}
           {items?.map((o) => (
             <li key={o.id} className="border-b border-mist-200">
-              <button type="button" onClick={() => setSelected(o.id)} className={`block w-full px-4 py-3 text-left transition ${selected === o.id ? "bg-lime-300/15" : "hover:bg-mist-50"}`}>
+              <button type="button" onClick={() => setSelected(o.id)} className={`block w-full px-4 py-3 text-left transition ${selected === o.id ? "bg-sun-400/15" : "hover:bg-mist-50"}`}>
                 <span className="flex items-center gap-2">
                   {o.status === "new" && <span className="size-2 shrink-0 rounded-full bg-forest-600" aria-label="Mới" />}
                   <span className={`min-w-0 flex-1 truncate text-sm ${o.status === "new" ? "font-semibold text-ink-900" : "text-ink-900"}`}>

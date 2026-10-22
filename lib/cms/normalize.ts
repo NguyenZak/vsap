@@ -44,7 +44,7 @@ export function normalizePack(raw: RetailPack): RetailPack {
     ...pack,
     variants,
     soldOut: pack.soldOut === true,
-    description: isObject(pack.description) ? { vi: String(pack.description.vi ?? ""), en: String(pack.description.en ?? "") } : { vi: "", en: "" },
+    description: { vi: "", en: "", zh: "", ...(isObject(pack.description) ? pack.description : {}) } as RetailPack["description"],
   };
 }
 

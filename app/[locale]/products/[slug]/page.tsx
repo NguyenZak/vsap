@@ -103,7 +103,7 @@ export default async function ProductPage({ params }: Props) {
             <p className="heading text-2xl text-forest-900 sm:text-3xl">{tr(product.description)}</p>
             {tr(product.origin) && (
               <p className="mt-8 inline-flex items-start gap-3 rounded-2xl bg-white p-2 pr-5 text-sm text-ink-600">
-                <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-xl bg-lime-300 text-forest-950">
+                <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-xl bg-sun-400 text-forest-950">
                   <MapPin className="size-[18px]" />
                 </span>
                 <span className="py-1">

@@ -12,10 +12,12 @@ export function Footer({ locale, content, ui }: Props) {
   const site = content.settings;
   const products = content.products;
   const heading = "text-xs font-medium uppercase tracking-[0.18em] text-white/50";
-  const link = "text-white/80 transition hover:text-lime-300";
+  const link = "text-white/80 transition hover:text-sun-400";
 
   return (
-    <footer className="bg-forest-950 text-white">
+    <footer className="bg-forest-950 bg-dark-glow text-white">
+      {/* The logo's green → yellow → red sweep. */}
+      <div aria-hidden className="bg-brand-gradient h-1" />
       <div className="container-page pt-16 sm:pt-20">
         <div className="flex flex-col gap-8 border-b border-white/10 pb-12 md:flex-row md:items-end md:justify-between">
           <div>
@@ -65,20 +67,20 @@ export function Footer({ locale, content, ui }: Props) {
             <h2 className={heading}>{footer.contact}</h2>
             <ul className="mt-5 grid gap-4 text-sm sm:grid-cols-2">
               <li className="flex gap-3">
-                <Phone className="mt-0.5 size-4 shrink-0 text-lime-300" />
+                <Phone className="mt-0.5 size-4 shrink-0 text-sun-400" />
                 <a href={`tel:${site.phoneE164}`} className={link}>
                   {site.phone}
                 </a>
               </li>
               <li className="flex gap-3">
-                <Mail className="mt-0.5 size-4 shrink-0 text-lime-300" />
+                <Mail className="mt-0.5 size-4 shrink-0 text-sun-400" />
                 <a href={`mailto:${site.email}`} className={link}>
                   {site.email}
                 </a>
               </li>
               {site.offices.map((o, i) => (
                 <li key={i} className="flex gap-3">
-                  <MapPin className="mt-0.5 size-4 shrink-0 text-lime-300" />
+                  <MapPin className="mt-0.5 size-4 shrink-0 text-sun-400" />
                   <span className="text-white/80">
                     <span className="block text-white">{o.label[locale]}</span>
                     {o.address[locale]}
@@ -108,7 +110,7 @@ export function Footer({ locale, content, ui }: Props) {
                 .filter((x) => x.url)
                 .map((x) => (
                   <li key={x.url}>
-                    <a href={x.url} target="_blank" rel="noopener noreferrer me" className="text-white/70 transition hover:text-lime-300">
+                    <a href={x.url} target="_blank" rel="noopener noreferrer me" className="text-white/70 transition hover:text-sun-400">
                       {x.name}
                     </a>
                   </li>

@@ -15,7 +15,7 @@ export function CartButton() {
     >
       <ShoppingBag className="size-[18px]" />
       {count > 0 && (
-        <span className="absolute -top-1 -right-1 grid h-5 min-w-5 place-items-center rounded-full bg-lime-300 px-1 text-[0.7rem] font-semibold text-forest-950 tabular-nums">
+        <span className="absolute -top-1 -right-1 grid h-5 min-w-5 place-items-center rounded-full bg-chili-600 px-1 text-[0.7rem] font-semibold text-white tabular-nums">
           {count > 99 ? "99+" : count}
         </span>
       )}

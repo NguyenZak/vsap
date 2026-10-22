@@ -98,7 +98,7 @@ export function HistoryView({ onRestored, canRestore }: { onRestored: () => void
               </span>
               <div className="min-w-0 flex-1">
                 <p className="text-sm text-ink-900">
-                  {formatTime(r.created_at)} {i === 0 && <span className="ml-1 rounded-full bg-lime-300 px-2 py-0.5 text-[11px] font-medium text-forest-950">Đang chạy</span>}
+                  {formatTime(r.created_at)} {i === 0 && <span className="ml-1 rounded-full bg-sun-400 px-2 py-0.5 text-[11px] font-medium text-forest-950">Đang chạy</span>}
                 </p>
                 <p className="truncate text-xs text-ink-400">
                   {r.author && <span className="text-ink-600">{r.author} · </span>}

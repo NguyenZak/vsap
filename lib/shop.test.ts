@@ -19,7 +19,7 @@ describe("legacy retail packs", () => {
     const p = normalizePack(legacy);
     expect(p.variants).toEqual([{ weight: "250 g" }, { weight: "500 g" }]);
     expect(p.soldOut).toBe(false);
-    expect(p.description).toEqual({ vi: "", en: "" });
+    expect(p.description).toEqual({ vi: "", en: "", zh: "" });
     expect("weights" in p).toBe(false);
   });
 
@@ -114,5 +114,14 @@ describe("orderAlert", () => {
     expect(text).toContain("2 × Hạt macca (500 g) — 440.000₫");
     expect(buttons[0][0].url).toBe("https://vsap.com.vn/admin?view=orders&id=7");
     expect(buttons[1][0].url).toBe("https://zalo.me/0962874111");
+  });
+});
+
+describe("Chinese pages", () => {
+  it("fall back to English, then Vietnamese, when a text has no Chinese yet", () => {
+    const item = toShopItem(pack({ id: "x", name: { vi: "Hạt điều", en: "Cashews", zh: "" }, flavor: { vi: "Rang muối", en: "", zh: "" } }), "zh");
+    expect(item.name).toBe("Cashews");
+    expect(item.flavor).toBe("Rang muối");
+    expect(item.href).toBe(`/zh/products/${base.product}/x`);
   });
 });

@@ -159,13 +159,13 @@ export function SectionList({
                 setDrag(null);
                 setOver(null);
               }}
-              className={`group rounded-lg border transition ${active ? "border-forest-600 bg-lime-300/15" : "border-transparent bg-white hover:border-mist-200"} ${
+              className={`group rounded-lg border transition ${active ? "border-forest-600 bg-sun-400/15" : "border-transparent bg-white hover:border-mist-200"} ${
                 drag === i ? "opacity-40" : ""
               } ${over === i && drag !== null && drag !== i ? "ring-2 ring-forest-600/40" : ""}`}
             >
               <div className="flex items-center gap-1.5 py-1.5 pr-1.5 pl-1">
                 <GripVertical className="size-4 shrink-0 cursor-grab text-ink-400" />
-                <span className={`inline-flex size-7 shrink-0 items-center justify-center rounded-md ${active ? "bg-forest-900 text-lime-300" : "bg-mist-100 text-ink-600"}`}>
+                <span className={`inline-flex size-7 shrink-0 items-center justify-center rounded-md ${active ? "bg-forest-900 text-sun-400" : "bg-mist-100 text-ink-600"}`}>
                   <DefIcon name={def?.icon ?? "square"} className="size-3.5" />
                 </span>
                 <button type="button" onClick={() => onSelect(s.id)} className={`min-w-0 flex-1 text-left ${s.hidden ? "opacity-50" : ""}`}>
@@ -226,7 +226,7 @@ function SectionLibrary({ onPick, onClose }: { onPick: (type: string) => void; o
               key={d.type}
               type="button"
               onClick={() => onPick(d.type)}
-              className="flex items-start gap-3 rounded-xl border border-mist-200 p-4 text-left transition hover:border-forest-600 hover:bg-lime-300/10"
+              className="flex items-start gap-3 rounded-xl border border-mist-200 p-4 text-left transition hover:border-forest-600 hover:bg-sun-400/10"
             >
               <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-lg bg-mist-100 text-forest-900">
                 <DefIcon name={d.icon} className="size-5" />

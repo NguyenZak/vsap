@@ -4,8 +4,11 @@ import type { InquiryData } from "./inquiry-format";
 /** Telegram's HTML parse mode only needs &, < and > escaped. */
 export const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
-const productLabel: Record<string, string> = { cashew: "Hạt điều", macadamia: "Hạt macca", other: "Khác" };
+const productLabel: Record<string, string> = { cashew: "Hạt điều", macadamia: "Hạt macca", birdNest: "Yến sào", other: "Khác" };
 const digits = (s = "") => s.replace(/[^\d]/g, "");
+
+/** Site language of a submission, for the alert (Vietnamese when unknown). */
+export const langLabel = (locale?: string | null) => ({ vi: "Tiếng Việt", en: "Tiếng Anh", zh: "Tiếng Trung" } as Record<string, string>)[locale ?? ""] ?? "Tiếng Việt";
 
 export type InquiryAlert = { id: number | null; data: InquiryData; locale?: string; source?: string; country?: string };
 export type Button = { text: string; url: string };
@@ -23,7 +26,7 @@ export function inquiryAlert(inq: InquiryAlert, origin: string): { text: string;
     "",
     `💬 <i>${esc(d.message.length > 900 ? `${d.message.slice(0, 900)}…` : d.message)}</i>`,
     "",
-    `🌐 ${inq.locale === "en" ? "Tiếng Anh" : "Tiếng Việt"}${inq.source ? ` · ${esc(inq.source)}` : ""}`,
+    `🌐 ${langLabel(inq.locale)}${inq.source ? ` · ${esc(inq.source)}` : ""}`,
   ] as (string | false | undefined)[]).filter((l): l is string => typeof l === "string");
 
   const phone = digits(d.phone);

@@ -72,7 +72,7 @@ export function CollectionEditor<T extends object>({
               onDrop={() => drag !== null && move(drag, i)}
               onDragEnd={() => setDrag(null)}
               className={`group flex items-center gap-2 rounded-lg border p-1.5 transition ${
-                i === selected ? "border-forest-600 bg-lime-300/15" : "border-transparent hover:border-mist-200"
+                i === selected ? "border-forest-600 bg-sun-400/15" : "border-transparent hover:border-mist-200"
               } ${drag === i ? "opacity-40" : ""}`}
             >
               <GripVertical className="size-4 shrink-0 cursor-grab text-ink-400" />

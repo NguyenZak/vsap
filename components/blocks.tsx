@@ -257,7 +257,7 @@ const renderers: Record<string, Renderer> = {
           )}
           {t(p.buttonLabel) && str(p.buttonHref) && (
             <div data-reveal className={`mt-10 ${decor ? "text-center" : ""}`}>
-              <Button href={href(p.buttonHref)} variant={tone === "dark" ? "lime" : "dark"}>
+              <Button href={href(p.buttonHref)} variant={tone === "dark" ? "sun" : "dark"}>
                 {t(p.buttonLabel)}
               </Button>
             </div>
@@ -283,7 +283,7 @@ const renderers: Record<string, Renderer> = {
     return (
       <div className="block-pad container-page">
         {heading(p, ctx)}
-        <div className={`grid gap-4 md:grid-cols-2 ${hasHeading(p, ctx) ? "mt-12" : ""}`}>
+        <div className={`grid gap-4 md:grid-cols-2 ${cards.length % 3 === 0 ? "lg:grid-cols-3" : ""} ${hasHeading(p, ctx) ? "mt-12" : ""}`}>
           {cards.map((c, i) => (
             <ProductCard key={i} card={c} />
           ))}
@@ -377,7 +377,7 @@ const renderers: Record<string, Renderer> = {
         <ul className={`grid gap-3 ${cols} ${hasHeading(p, ctx) ? "mt-12" : ""}`}>
           {items.map((it, i) => (
             <li key={i} data-reveal className={`rounded-2xl p-7 ${tone === "dark" ? "bg-white/5" : tone === "muted" ? "bg-white" : "bg-mist-50"}`}>
-              <span className="inline-flex size-11 items-center justify-center rounded-xl bg-lime-300 text-forest-950">
+              <span className="inline-flex size-11 items-center justify-center rounded-xl bg-sun-400 text-forest-950">
                 <CmsIcon name={str(it.icon)} className="size-5" />
               </span>
               <h3 className={`heading mt-8 text-2xl ${tone === "dark" ? "text-white" : "text-forest-900"}`}>{t(it.title)}</h3>
@@ -453,7 +453,7 @@ const renderers: Record<string, Renderer> = {
           </li>
           {info.map(({ icon: Icon, label, value, href }, i) => (
             <li key={i} data-reveal className="flex items-center gap-3 rounded-2xl bg-mist-50 p-2 pr-5">
-              <span className="inline-flex size-11 shrink-0 items-center justify-center rounded-xl bg-lime-300 text-forest-950">
+              <span className="inline-flex size-11 shrink-0 items-center justify-center rounded-xl bg-sun-400 text-forest-950">
                 <Icon className="size-5" />
               </span>
               <div>
@@ -533,7 +533,7 @@ const renderers: Record<string, Renderer> = {
       <div className="block-pad container-page">
         <div className="flex flex-wrap items-end justify-between gap-6">
           {heading(p, ctx, tone)}
-          {t(p.buttonLabel) && str(p.buttonHref) && <Button href={href(p.buttonHref)} variant={tone === "dark" ? "lime" : "dark"}>{t(p.buttonLabel)}</Button>}
+          {t(p.buttonLabel) && str(p.buttonHref) && <Button href={href(p.buttonHref)} variant={tone === "dark" ? "sun" : "dark"}>{t(p.buttonLabel)}</Button>}
         </div>
         <div className={`space-y-4 ${hasHeading(p, ctx) || t(p.buttonLabel) ? "mt-12" : ""}`}>
           {posts.length === 0 && <p className={`rounded-3xl px-6 py-16 text-center text-ink-600 ${tone === "white" ? "bg-mist-50" : "bg-white"}`}>{ctx.ui.news.empty}</p>}

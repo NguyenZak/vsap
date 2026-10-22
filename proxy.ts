@@ -13,13 +13,14 @@ import { isLocale } from "@/lib/locales";
 export async function proxy(req: NextRequest) {
   const { pathname, searchParams } = req.nextUrl;
 
-  // Pick the visitor's language: Vietnamese (or no preference, e.g. crawlers) → /vi, anything else → /en.
+  // Pick the visitor's language: Vietnamese (or no preference, e.g. crawlers) → /vi, Chinese → /zh, anything else → /en.
   const head = pathname.split("/")[1] ?? "";
   if (!isLocale(head) && !["admin", "api", "media"].includes(head)) {
     const accept = (req.headers.get("accept-language") ?? "").toLowerCase();
     const first = accept.split(",")[0]?.trim() ?? "";
     const url = req.nextUrl.clone();
-    url.pathname = (!first || first.startsWith("vi") || first === "*" ? "/vi" : "/en") + (pathname === "/" ? "" : pathname);
+    const lang = !first || first.startsWith("vi") || first === "*" ? "vi" : first.startsWith("zh") ? "zh" : "en";
+    url.pathname = `/${lang}${pathname === "/" ? "" : pathname}`;
     const res = NextResponse.redirect(url, 302);
     res.headers.set("Vary", "Accept-Language");
     return res;
@@ -64,7 +65,9 @@ export const config = {
     "/vi/:path*",
     "/en",
     "/en/:path*",
+    "/zh",
+    "/zh/:path*",
     // Locale-less page paths (to redirect them). Skips files (anything with a dot) and framework/dev internals.
-    "/((?!(?:vi|en|admin|api|media|_next|cdn-cgi|node_modules)(?:/|$)|@|__|.*\\.).*)",
+    "/((?!(?:vi|en|zh|admin|api|media|_next|cdn-cgi|node_modules)(?:/|$)|@|__|.*\\.).*)",
   ],
 };

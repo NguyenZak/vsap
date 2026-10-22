@@ -28,7 +28,7 @@ export function BuyBox({ item, onAdded }: { item: ShopItem; onAdded?: () => void
     <div>
       <div className="rounded-2xl bg-mist-50 px-5 py-4">
         <p className="text-xs text-ink-400">{t.price}</p>
-        <p className="mt-0.5 text-3xl font-medium tracking-tight text-forest-900 tabular-nums">
+        <p className={`mt-0.5 text-3xl font-semibold tracking-tight tabular-nums ${variant?.price != null ? "text-chili-600" : "text-forest-900"}`}>
           {variant?.price != null ? formatPrice(variant.price, locale) : t.contactPrice}
         </p>
       </div>
@@ -71,7 +71,7 @@ export function BuyBox({ item, onAdded }: { item: ShopItem; onAdded?: () => void
                 addToCart(false);
                 router.push(`/${locale}/cart`);
               }}
-              className="inline-flex items-center justify-center rounded-full bg-lime-300 px-5 py-3.5 text-sm font-medium text-forest-950 transition hover:bg-lime-400"
+              className="inline-flex items-center justify-center rounded-full bg-sun-400 px-5 py-3.5 text-sm font-medium text-forest-950 transition hover:bg-sun-500"
             >
               {t.buyNow}
             </button>

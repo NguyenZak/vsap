@@ -10,13 +10,18 @@ export function localHref(href: string | undefined, locale: Locale): string {
   const h = (href ?? "").trim();
   if (!h) return "";
   if (!h.startsWith("/") || h.startsWith("//")) return h;
-  if (/^\/(vi|en)(\/|$|\?|#)/.test(h) || /^\/(media|images|fonts)\//.test(h)) return h;
+  if (/^\/(vi|en|zh)(\/|$|\?|#)/.test(h) || /^\/(media|images|fonts)\//.test(h)) return h;
   return `/${locale}${h === "/" ? "" : h}`;
 }
 
-/** Pick the current language from a localized value, tolerating missing data. */
-export function pick(value: L | string | undefined | null, locale: Locale): string {
+/**
+ * Pick the current language from a localized value, tolerating missing data.
+ * Chinese was added later, so an empty or missing Chinese text falls back to
+ * English (easier for Chinese readers than Vietnamese), then Vietnamese.
+ */
+export function pick(value: Partial<L> | string | undefined | null, locale: Locale): string {
   if (value == null) return "";
   if (typeof value === "string") return value;
+  if (locale === "zh") return value.zh || value.en || value.vi || "";
   return value[locale] ?? value.vi ?? "";
 }

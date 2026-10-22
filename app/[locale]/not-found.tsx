@@ -6,7 +6,7 @@ import { isLocale } from "@/lib/locales";
 export async function generateMetadata({ params }: { params?: Promise<{ locale?: string }> }): Promise<Metadata> {
   const locale = (await params)?.locale ?? "";
   if (!isLocale(locale)) return { title: "Không tìm thấy trang · Page not found" };
-  return { title: locale === "en" ? "Page not found" : "Không tìm thấy trang" };
+  return { title: { vi: "Không tìm thấy trang", en: "Page not found", zh: "页面未找到" }[locale] };
 }
 
 export default function NotFound() {

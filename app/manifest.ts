@@ -12,7 +12,7 @@ export default async function manifest(): Promise<MetadataRoute.Manifest> {
     start_url: "/vi",
     display: "standalone",
     background_color: "#ffffff",
-    theme_color: "#17361a",
+    theme_color: "#115931",
     lang: "vi",
     icons: [
       { src: "/icon.svg", sizes: "any", type: "image/svg+xml" },

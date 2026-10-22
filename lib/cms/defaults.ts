@@ -4,6 +4,7 @@
 // is typed twice.
 import { en } from "../content/en";
 import { vi } from "../content/vi";
+import { zh } from "../content/zh";
 import { images, type ImageKey } from "../images";
 import { partners } from "../partners";
 import { products } from "../products";
@@ -13,7 +14,8 @@ import type { CmsImage, L, Page, PageId, Section, SiteContent, UiStrings } from 
 
 type Dict = typeof vi;
 
-const tr = (get: (d: Dict) => string): L => ({ vi: get(vi), en: get(en as Dict) });
+const tr = (get: (d: Dict) => string): L => ({ vi: get(vi), en: get(en as Dict), zh: get(zh as Dict) });
+const blank = (): L => ({ vi: "", en: "", zh: "" });
 const pic = (key: ImageKey): CmsImage => ({ src: images[key].src, alt: { ...images[key].alt } });
 const section = (id: string, type: string, props: Record<string, unknown>): Section => ({ id, type, props });
 
@@ -31,6 +33,7 @@ const heroSlides: { image: ImageKey; href: string }[] = [
   { image: "highlands", href: "/products" },
   { image: "cashew", href: "/products/cashew" },
   { image: "macadamia", href: "/products/macadamia" },
+  { image: "birdNest", href: "/products/bird-nest" },
   { image: "shipping", href: "/contact" },
 ];
 const statementPills: ImageKey[] = ["paddyWork", "cashewHarvest", "macadamiaTree", "cashewKernels"];
@@ -101,7 +104,7 @@ const pages: Record<PageId, Page> = {
           image: pic(heroSlides[i].image),
           buttonLabel: tr((d) => d.home.hero.slides[i].cta),
           buttonHref: heroSlides[i].href,
-          secondaryLabel: heroSlides[i].href === "/contact" ? { vi: "", en: "" } : tr((d) => d.home.hero.secondaryCta),
+          secondaryLabel: heroSlides[i].href === "/contact" ? blank() : tr((d) => d.home.hero.secondaryCta),
           secondaryHref: "/contact",
         })),
         autoplay: 7,
@@ -141,7 +144,7 @@ const pages: Record<PageId, Page> = {
         eyebrow: tr((d) => d.news.latestEyebrow),
         title: tr((d) => d.news.latestTitle),
         accent: tr((d) => d.news.latestAccent),
-        lead: { vi: "", en: "" },
+        lead: blank(),
         limit: 3,
         featured: false,
         buttonLabel: tr((d) => d.news.all),
@@ -170,10 +173,10 @@ const pages: Record<PageId, Page> = {
         tone: "muted",
       }),
       section("about-pillars", "pillars", {
-        eyebrow: { vi: "", en: "" },
-        title: { vi: "", en: "" },
-        accent: { vi: "", en: "" },
-        lead: { vi: "", en: "" },
+        eyebrow: blank(),
+        title: blank(),
+        accent: blank(),
+        lead: blank(),
         tone: "white",
         items: (["mission", "vision", "slogan"] as const).map((k, i) => ({
           icon: ["target", "compass", "heart"][i],
@@ -192,10 +195,10 @@ const pages: Record<PageId, Page> = {
     sections: [
       pageHero("products-hero", (d) => d.productsPage, "cashewTreeSky"),
       section("products-cards", "productCards", {
-        eyebrow: { vi: "", en: "" },
-        title: { vi: "", en: "" },
-        accent: { vi: "", en: "" },
-        lead: { vi: "", en: "" },
+        eyebrow: blank(),
+        title: blank(),
+        accent: blank(),
+        lead: blank(),
         ctaLabel: tr((d) => d.common.viewProduct),
       }),
       retailSection("products-retail"),
@@ -212,8 +215,8 @@ const pages: Record<PageId, Page> = {
       section("quality-controls", "accordionImage", {
         eyebrow: tr((d) => d.quality.eyebrow),
         title: tr((d) => d.quality.controlsTitle),
-        accent: { vi: "", en: "" },
-        lead: { vi: "", en: "" },
+        accent: blank(),
+        lead: blank(),
         items: vi.quality.controls.map((_, i) => ({
           icon: ["qr-code", "scan-eye", "flask", "shield-check"][i % 4],
           title: tr((d) => d.quality.controls[i].title),
@@ -223,9 +226,9 @@ const pages: Record<PageId, Page> = {
         tone: "muted",
       }),
       section("quality-documents", "checklist", {
-        eyebrow: { vi: "", en: "" },
+        eyebrow: blank(),
         title: tr((d) => d.quality.documentsTitle),
-        accent: { vi: "", en: "" },
+        accent: blank(),
         lead: tr((d) => d.quality.documentsLead),
         items: vi.quality.documents.map((_, i) => ({ text: tr((d) => d.quality.documents[i]) })),
         tone: "white",
@@ -240,13 +243,13 @@ const pages: Record<PageId, Page> = {
     sections: [
       pageHero("news-hero", (d) => d.news, "highlandFarmers"),
       section("news-list", "posts", {
-        eyebrow: { vi: "", en: "" },
-        title: { vi: "", en: "" },
-        accent: { vi: "", en: "" },
-        lead: { vi: "", en: "" },
+        eyebrow: blank(),
+        title: blank(),
+        accent: blank(),
+        lead: blank(),
         limit: 0,
         featured: true,
-        buttonLabel: { vi: "", en: "" },
+        buttonLabel: blank(),
         buttonHref: "",
         tone: "white",
       }),
@@ -262,9 +265,10 @@ const pages: Record<PageId, Page> = {
 };
 
 /** Search titles for the seed products (the page heading stays the short product name). */
-const productSeoTitles: Record<string, { vi: string; en: string }> = {
-  cashew: { vi: "Nhân hạt điều Việt Nam xuất khẩu W180–W450", en: "Vietnamese cashew kernels W180–W450 for export" },
-  macadamia: { vi: "Hạt macca Tây Nguyên xuất khẩu", en: "Vietnamese macadamia nuts from the Central Highlands" },
+const productSeoTitles: Record<string, L> = {
+  cashew: { vi: "Nhân hạt điều Việt Nam xuất khẩu W180–W450", en: "Vietnamese cashew kernels W180–W450 for export", zh: "越南出口腰果仁 W180–W450" },
+  macadamia: { vi: "Hạt macca Tây Nguyên xuất khẩu", en: "Vietnamese macadamia nuts from the Central Highlands", zh: "越南西原出口夏威夷果" },
+  "bird-nest": { vi: "Yến sào Khánh Hòa: yến thô, yến tinh chế, yến chưng", en: "Khanh Hoa edible bird’s nest: raw, cleaned and ready-to-drink", zh: "越南庆和燕窝：毛燕、净燕、即食燕窝" },
 };
 
 function ui(d: Dict): UiStrings {
@@ -348,7 +352,7 @@ export function defaultContent(): SiteContent {
       verification: { google: "", bing: "" },
       analytics: { ga4: "" },
     },
-    ui: { vi: ui(vi), en: ui(en as Dict) },
+    ui: { vi: ui(vi), en: ui(en as Dict), zh: ui(zh as Dict) },
     pages,
     products: products.map((p) => ({
       slug: p.slug,
@@ -360,10 +364,10 @@ export function defaultContent(): SiteContent {
       image: pic(p.image),
       gallery: p.gallery.map(pic),
       grades: p.grades.map((g) => ({ code: g.code, label: { ...g.label } })),
-      packaging: p.packaging.vi.map((text, i) => ({ text: { vi: text, en: p.packaging.en[i] ?? text } })),
+      packaging: p.packaging.vi.map((text, i) => ({ text: { vi: text, en: p.packaging.en[i] ?? text, zh: p.packaging.zh[i] ?? "" } })),
       specs: p.specs.map((s) => ({ label: { ...s.label }, value: s.value })),
-      applications: p.applications.vi.map((text, i) => ({ text: { vi: text, en: p.applications.en[i] ?? text } })),
-      seo: { title: { ...(productSeoTitles[p.slug] ?? { vi: "", en: "" }) }, description: { vi: "", en: "" } },
+      applications: p.applications.vi.map((text, i) => ({ text: { vi: text, en: p.applications.en[i] ?? text, zh: p.applications.zh[i] ?? "" } })),
+      seo: { title: { ...(productSeoTitles[p.slug] ?? blank()) }, description: blank() },
     })),
     retailPacks: retailPacks.map((r) => ({
       id: r.id,
@@ -373,12 +377,12 @@ export function defaultContent(): SiteContent {
       pack: { ...r.pack },
       variants: r.weights.map((weight) => ({ weight })),
       soldOut: false,
-      description: { vi: "", en: "" },
+      description: blank(),
       images: r.images.map((src) => ({ src })),
       ingredients: { ...r.ingredients },
-      highlight: r.highlight ? { ...r.highlight } : { vi: "", en: "" },
+      highlight: r.highlight ? { ...r.highlight } : blank(),
       shelfLife: { ...retailFacts.shelfLife },
-      serving: r.slug === "macadamia" ? { ...retailFacts.serving } : { vi: "", en: "" },
+      serving: r.slug === "macadamia" ? { ...retailFacts.serving } : blank(),
       storage: { ...retailFacts.storage },
       packer: packers[r.packer ?? r.slug].name,
       packerAddress: { ...packers[r.packer ?? r.slug].address },

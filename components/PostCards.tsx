@@ -15,7 +15,7 @@ function Meta({ post, locale, labels, tone = "light" }: { post: Post; locale: Lo
   return (
     <p className={`flex flex-wrap items-center gap-x-2 gap-y-1 text-xs ${tone === "dark" ? "text-white/70" : "text-ink-400"}`}>
       {category && (
-        <span className={`rounded-full px-2.5 py-1 font-medium ${tone === "dark" ? "bg-white/15 text-white" : "bg-lime-300/50 text-forest-900"}`}>{category}</span>
+        <span className={`rounded-full px-2.5 py-1 font-medium ${tone === "dark" ? "bg-white/15 text-white" : "bg-sun-400/50 text-forest-900"}`}>{category}</span>
       )}
       {post.date && <time dateTime={post.date}>{formatDate(post.date, locale)}</time>}
       <span aria-hidden="true">·</span>
@@ -60,7 +60,7 @@ export function FeaturedPost({ post, locale, labels }: { post: Post; locale: Loc
         <Meta post={post} locale={locale} labels={labels} tone="dark" />
         <h3 className="heading mt-4 text-3xl text-white sm:text-5xl">{pick(post.title, locale)}</h3>
         <p className="mt-3 line-clamp-2 max-w-2xl text-sm leading-relaxed text-white/80 sm:text-base">{excerptOf(post, locale)}</p>
-        <span className="mt-6 inline-flex items-center gap-1.5 rounded-full bg-lime-300 px-4 py-2 text-sm font-medium text-forest-950">
+        <span className="mt-6 inline-flex items-center gap-1.5 rounded-full bg-sun-400 px-4 py-2 text-sm font-medium text-forest-950">
           {labels.readMore}
           <ArrowUpRight className="size-4 transition-transform group-hover:rotate-45" />
         </span>

@@ -270,7 +270,7 @@ export function HeroSlider({ slides, autoplay: AUTOPLAY, scrollLabel, rankValue,
                       </span>
                     </span>
                     <span className="-mt-[0.15em] -mb-[0.1em] block overflow-hidden pt-[0.15em] pb-[0.14em]">
-                      <span data-line data-intro={intro} className="accent block text-[1.1em] leading-[1]">
+                      <span data-line data-intro={intro} className="accent block text-[1.1em] leading-[1] text-sun-400">
                         {s.accent}
                       </span>
                     </span>
@@ -331,7 +331,7 @@ export function HeroSlider({ slides, autoplay: AUTOPLAY, scrollLabel, rankValue,
               className="group pt-1 pb-3 text-left"
             >
               <span className="relative block h-0.5 overflow-hidden rounded-full bg-white/25">
-                <span data-bar className="absolute inset-0 origin-left scale-x-0 rounded-full bg-lime-300" />
+                <span data-bar className="absolute inset-0 origin-left scale-x-0 rounded-full bg-brand-gradient" />
               </span>
               <span className="mt-2.5 hidden text-xs text-white/55 transition group-hover:text-white group-aria-[current=true]:text-white sm:block">
                 {pad(i + 1)} · {s.label}

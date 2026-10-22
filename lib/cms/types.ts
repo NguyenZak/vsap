@@ -42,7 +42,7 @@ export type UiStrings = {
   contactInfo: { email: string; phone: string; website: string };
   form: {
     name: string; company: string; email: string; phone: string; country: string; product: string;
-    productOptions: { cashew: string; macadamia: string; other: string };
+    productOptions: { cashew: string; macadamia: string; birdNest: string; other: string };
     quantity: string; quantityPlaceholder: string; message: string; messagePlaceholder: string;
     submit: string; sending: string; success: string; error: string; required: string;
   };

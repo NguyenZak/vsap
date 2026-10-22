@@ -87,7 +87,7 @@ export function FloatingContact({ t, links: site }: { t: UiStrings["chat"]; link
         aria-expanded={open}
         aria-controls="floating-contact"
         aria-label={open ? t.close : t.label}
-        className="relative inline-flex size-12 items-center justify-center rounded-full bg-forest-900 text-lime-300 shadow-lg shadow-black/20 transition active:scale-95 sm:hidden"
+        className="relative inline-flex size-12 items-center justify-center rounded-full bg-forest-900 text-sun-400 shadow-lg shadow-black/20 transition active:scale-95 sm:hidden"
       >
         {!open && <span aria-hidden="true" className="absolute inset-0 rounded-full bg-forest-900 opacity-30 motion-safe:animate-ping" />}
         {open ? <X className="relative size-5" /> : <MessageCircle className="relative size-5" />}

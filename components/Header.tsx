@@ -204,7 +204,7 @@ export function Header({ locale, nav, contact: site, logoAlt }: Props) {
             <Link
               href={`/${locale}/contact`}
               onClick={() => setOpen(false)}
-              className="flex items-center justify-center gap-2 rounded-full bg-lime-300 px-5 py-3.5 font-medium text-forest-950"
+              className="flex items-center justify-center gap-2 rounded-full bg-sun-400 px-5 py-3.5 font-medium text-forest-950"
             >
               {nav.quote}
               <ArrowUpRight className="size-4" />

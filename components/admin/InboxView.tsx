@@ -8,7 +8,7 @@ import { api, formatTime, type TelegramStatus } from "./api";
 const productLabel: Record<string, string> = { cashew: "Hạt điều", macadamia: "Hạt macca", other: "Khác" };
 
 const statusTone: Record<InquiryStatus, string> = {
-  new: "bg-lime-300 text-forest-950",
+  new: "bg-sun-400 text-forest-950",
   processing: "bg-sun-500/15 text-ink-900",
   done: "bg-mist-100 text-ink-600",
   spam: "bg-red-50 text-chili-600",
@@ -160,7 +160,7 @@ export function InboxView({ onCounts, onConfigure }: { onCounts?: (c: Record<Inq
           )}
           {items?.map((i) => (
             <li key={i.id} className="border-b border-mist-200">
-              <button type="button" onClick={() => open(i)} className={`block w-full px-4 py-3 text-left transition ${selected === i.id ? "bg-lime-300/15" : "hover:bg-mist-50"}`}>
+              <button type="button" onClick={() => open(i)} className={`block w-full px-4 py-3 text-left transition ${selected === i.id ? "bg-sun-400/15" : "hover:bg-mist-50"}`}>
                 <span className="flex items-center gap-2">
                   {i.status === "new" && <span className="size-2 shrink-0 rounded-full bg-forest-600" aria-label="Mới" />}
                   <span className={`min-w-0 flex-1 truncate text-sm ${i.status === "new" ? "font-semibold text-ink-900" : "text-ink-900"}`}>

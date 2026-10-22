@@ -33,19 +33,23 @@
 }
 
 @theme {
-  --color-forest-950: #0e2410;
-  --color-forest-900: #17361a;
-  --color-forest-800: #224a25;
-  --color-forest-600: #2f8a35;
+  /* Brand colours, taken from the VSAP logo (public/logo.svg): deep green #115931 / #0f6b3b,
+     leaf green #7cb442, sun yellow #ffc40d and chili red #d73e27. */
+  --color-forest-950: #082a17;
+  --color-forest-900: #115931;
+  --color-forest-800: #0f6b3b;
+  --color-forest-600: #2a8a45;
+  --color-leaf-500: #7cb442;
+  --color-leaf-300: #b9dc8f;
   --color-sage-500: #7f8c7b;
   --color-sage-400: #a2ac9e;
-  --color-lime-300: #d6f25c;
-  --color-lime-400: #c9ea3e;
-  --color-sun-500: #f59e0b;
+  --color-sun-400: #ffc40d;
+  --color-sun-500: #f2b300;
   --color-chili-600: #d73e27;
-  --color-mist-50: #f4f5f2;
-  --color-mist-100: #eceee9;
-  --color-mist-200: #dfe2db;
+  /* Warm cream neutrals, tinted toward the logo yellow. */
+  --color-mist-50: #fbf6e9;
+  --color-mist-100: #f4ecd8;
+  --color-mist-200: #e8dec5;
   --color-ink-900: #17231a;
   --color-ink-600: #59645b;
   --color-ink-400: #8d968d;
@@ -71,7 +75,7 @@ body {
 }
 
 ::selection {
-  background: var(--color-lime-300);
+  background: var(--color-sun-400);
   color: var(--color-forest-950);
 }
 
@@ -252,4 +256,51 @@ html:has(dialog[open]) {
     /* Keep Tailwind's -translate-x-1/4 (it also uses the translate property). */
     translate: var(--tw-translate-x, 0) calc(var(--tw-translate-y, 0px) - 14px);
   }
+}
+
+/* The logo's green → yellow → red sweep, as a thin brand line (footer top, hero progress). */
+@utility bg-brand-gradient {
+  background-image: linear-gradient(90deg, #115931 0%, #7cb442 38%, #ffc40d 72%, #d73e27 100%);
+}
+
+/* Dark sections and the footer: deep logo green lit by leaf-green and yellow glows. */
+@utility bg-dark-glow {
+  background-image:
+    radial-gradient(ellipse 60% 70% at 8% 0%, rgb(124 180 66 / 0.28), transparent 70%),
+    radial-gradient(ellipse 50% 60% at 95% 100%, rgb(255 196 13 / 0.16), transparent 70%);
+}
+
+/*
+ * Serif accent line of section titles (Title in components/ui.tsx), painted with
+ * the logo's colour sweep; lighter stops on dark backgrounds. The padding keeps
+ * italic overhangs and Vietnamese marks inside the clipped area.
+ */
+.title-accent {
+  width: fit-content;
+  padding: 0 0.1em 0.12em 0;
+  margin-bottom: -0.12em;
+  background-image: linear-gradient(90deg, #0f6b3b 0%, #4f9a2a 45%, #d4561f 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.text-center .title-accent {
+  margin-inline: auto;
+}
+.text-white > .title-accent {
+  background-image: linear-gradient(90deg, #b9dc8f 0%, #ffc40d 55%, #ff8f4d 100%);
+}
+
+/*
+ * Chinese pages: Han characters have no italic and need no tight tracking, so the
+ * serif accent line becomes an upright Song/Ming serif and headings keep normal spacing.
+ */
+:lang(zh) .accent {
+  font-family: "Noto Serif SC", "Source Han Serif SC", "Songti SC", "STSong", "SimSun", serif;
+  font-style: normal;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+:lang(zh) .heading {
+  letter-spacing: 0;
 }

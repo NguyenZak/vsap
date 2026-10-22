@@ -134,7 +134,7 @@ export function ProcessTabs({
             >
               <span
                 className={`inline-flex size-9 shrink-0 items-center justify-center rounded-lg ${
-                  selected ? "bg-lime-300 text-forest-950" : "bg-white text-ink-600"
+                  selected ? "bg-sun-400 text-forest-950" : "bg-white text-ink-600"
                 }`}
               >
                 <CmsIcon name={s.icon} className="size-4" />
@@ -146,7 +146,7 @@ export function ProcessTabs({
                 </span>
               </span>
               <span aria-hidden="true" className="absolute inset-x-0 bottom-0 h-0.5">
-                <span data-tab-bar className="block size-full origin-left scale-x-0 bg-lime-400" />
+                <span data-tab-bar className="block size-full origin-left scale-x-0 bg-sun-500" />
               </span>
             </button>
           );
@@ -182,7 +182,7 @@ export function ProcessTabs({
 
         <div className="absolute inset-x-4 bottom-14 space-y-2 sm:inset-x-auto sm:right-6 sm:top-1/2 sm:bottom-auto sm:w-72 sm:-translate-y-1/2">
           <div data-step-card className="rounded-2xl bg-white/95 p-5 text-center shadow-xl shadow-black/10 backdrop-blur-md">
-            <span className="mx-auto inline-flex size-11 items-center justify-center rounded-full bg-lime-300 text-forest-950">
+            <span className="mx-auto inline-flex size-11 items-center justify-center rounded-full bg-sun-400 text-forest-950">
               <CmsIcon name={step.icon} className="size-5" />
             </span>
             <p className="mt-3 text-3xl font-medium tracking-tight text-ink-900">{num(active)}</p>
@@ -199,7 +199,7 @@ export function ProcessTabs({
             <div className="mt-2.5 flex gap-1" aria-hidden="true">
               {steps.map((s, i) => (
                 <span key={i} className="h-1.5 flex-1 overflow-hidden rounded-full bg-mist-200">
-                  {i <= active && <span data-step-seg className="block size-full origin-left rounded-full bg-lime-400" />}
+                  {i <= active && <span data-step-seg className="block size-full origin-left rounded-full bg-sun-500" />}
                 </span>
               ))}
             </div>

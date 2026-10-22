@@ -7,8 +7,8 @@ import { Check, ChevronDown, Globe } from "lucide-react";
 import { locales, type Locale } from "@/lib/i18n";
 
 /** Each language is named in itself, so visitors can find theirs whatever page they are on. */
-const names: Record<Locale, string> = { vi: "Tiếng Việt", en: "English" };
-const label: Record<Locale, string> = { vi: "Chọn ngôn ngữ", en: "Choose language" };
+const names: Record<Locale, string> = { vi: "Tiếng Việt", en: "English", zh: "简体中文" };
+const label: Record<Locale, string> = { vi: "Chọn ngôn ngữ", en: "Choose language", zh: "选择语言" };
 
 /**
  * Language dropdown. Sits inside the header's `group/header`, so the button

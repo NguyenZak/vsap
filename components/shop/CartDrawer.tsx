@@ -71,7 +71,7 @@ export function CartDrawer() {
               <Link
                 href={`/${locale}/cart`}
                 onClick={close}
-                className="mt-4 flex items-center justify-center rounded-full bg-lime-300 px-5 py-3.5 font-medium text-forest-950 transition hover:bg-lime-400"
+                className="mt-4 flex items-center justify-center rounded-full bg-sun-400 px-5 py-3.5 font-medium text-forest-950 transition hover:bg-sun-500"
               >
                 {t.checkout}
               </Link>

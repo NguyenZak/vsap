@@ -3,6 +3,7 @@ import { notifyOrder } from "@/lib/cms/notify";
 import type { OrderCustomer } from "@/lib/cms/order-format";
 import { recentOrdersFrom, saveOrder } from "@/lib/cms/orders";
 import { getPublishedContent } from "@/lib/cms/store";
+import { isLocale } from "@/lib/locales";
 import { priceOrder } from "@/lib/shop";
 
 /** Orders allowed per visitor address in the window below. */
@@ -41,7 +42,7 @@ export async function POST(request: Request) {
   const priced = priceOrder(body.items, (await getPublishedContent()).retailPacks);
   if (!priced) return Response.json({ ok: false, reason: "items" }, { status: 409 });
 
-  const locale = body.locale === "en" ? "en" : body.locale === "vi" ? "vi" : undefined;
+  const locale = typeof body.locale === "string" && isLocale(body.locale) ? body.locale : undefined;
   const source = typeof body.page === "string" && body.page.startsWith("/") ? body.page.slice(0, 300) : undefined;
   const data = { customer, ...priced };
 

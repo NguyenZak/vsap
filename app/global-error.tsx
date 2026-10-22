@@ -7,7 +7,8 @@ import "./globals.css";
 
 // Errors in the [locale] layout itself (e.g. the CMS read failing): replaces the whole document.
 export default function GlobalError({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
-  const lang = usePathname()?.startsWith("/en") ? "en" : "vi";
+  const head = usePathname()?.split("/")[1];
+  const lang = head === "en" ? "en" : head === "zh" ? "zh-CN" : "vi";
   useEffect(() => {
     console.error(error);
   }, [error]);

@@ -33,7 +33,8 @@ import type { Permission } from "@/lib/cms/roles";
 import { newProduct, newRetailPack, partnerFields, productFields, retailFields, settingsFields } from "@/lib/cms/collections";
 import { setIn } from "@/lib/cms/fields";
 import type { Locale } from "@/lib/i18n";
-import type { PageId, Partner, Product, RetailPack, Section, SiteContent } from "@/lib/cms/types";
+import { pick } from "@/lib/cms/links";
+import type { L, PageId, Partner, Product, RetailPack, Section, SiteContent } from "@/lib/cms/types";
 import { api, formatTime, type Me } from "./api";
 import { CollectionEditor } from "./CollectionEditor";
 import { FieldForm, LinkSuggestions } from "./fields";
@@ -374,7 +375,7 @@ export function Studio() {
       {/* Top bar */}
       <header className="flex h-14 shrink-0 items-center gap-3 border-b border-mist-200 bg-white px-4">
         <img src="/logo.svg" alt="VSAP" className="h-8 w-auto" />
-        <span className="rounded-md bg-forest-900 px-2 py-0.5 text-[11px] font-semibold tracking-wider text-lime-300 uppercase">Studio</span>
+        <span className="rounded-md bg-forest-900 px-2 py-0.5 text-[11px] font-semibold tracking-wider text-sun-400 uppercase">Studio</span>
         {content && <SaveBadge state={save} error={saveError} hasDraft={hasDraft} canPublish={canPublish} />}
         <div className="ml-auto flex items-center gap-1.5">
           {content && canWrite && (
@@ -402,7 +403,7 @@ export function Studio() {
               type="button"
               onClick={() => setPublishOpen(true)}
               disabled={!hasDraft && save !== "pending"}
-              className="inline-flex items-center gap-1.5 rounded-lg bg-lime-300 px-4 py-2 text-sm font-medium text-forest-950 transition hover:bg-lime-400 disabled:bg-mist-100 disabled:text-ink-400"
+              className="inline-flex items-center gap-1.5 rounded-lg bg-sun-400 px-4 py-2 text-sm font-medium text-forest-950 transition hover:bg-sun-500 disabled:bg-mist-100 disabled:text-ink-400"
             >
               <Rocket className="size-4" /> Xuất bản
             </button>
@@ -415,7 +416,7 @@ export function Studio() {
               aria-haspopup="menu"
               className="flex items-center gap-2 rounded-lg py-1 pr-2 pl-1 hover:bg-mist-100"
             >
-              <span className="flex size-8 items-center justify-center rounded-full bg-forest-900 text-xs font-semibold text-lime-300">
+              <span className="flex size-8 items-center justify-center rounded-full bg-forest-900 text-xs font-semibold text-sun-400">
                 {me.user.name.trim().split(/\s+/).pop()?.[0]?.toUpperCase() ?? "?"}
               </span>
               <span className="hidden text-left leading-tight 2xl:block">
@@ -531,7 +532,7 @@ export function Studio() {
                 onSelect={setSelected}
                 seoPreview={(() => {
                   const page = content.pages[view.id];
-                  const t = (v: { vi: string; en: string }) => v[locale] || v.vi;
+                  const t = (v: Partial<L> | undefined) => pick(v, locale);
                   const title = t(page.seo.title) || (view.id === "home" ? t(content.settings.seo.title) : `${content.ui[locale].nav[view.id]}`);
                   return (
                     <SeoPreview
@@ -565,7 +566,7 @@ export function Studio() {
             onItems={(items) => onField(["products"], items)}
             onChange={onField}
             header={(p) => {
-              const t = (v: { vi: string; en: string } | undefined) => (v ? v[locale] || v.vi : "");
+              const t = (v: Partial<L> | undefined) => pick(v, locale);
               return (
                 <SeoPreview
                   siteName={content.settings.name}
@@ -723,7 +724,7 @@ export function Studio() {
                 type="button"
                 onClick={doPublish}
                 disabled={publishing}
-                className="inline-flex items-center gap-1.5 rounded-lg bg-lime-300 px-4 py-2 text-sm font-medium text-forest-950 hover:bg-lime-400 disabled:opacity-60"
+                className="inline-flex items-center gap-1.5 rounded-lg bg-sun-400 px-4 py-2 text-sm font-medium text-forest-950 hover:bg-sun-500 disabled:opacity-60"
               >
                 {publishing ? <Loader2 className="size-4 animate-spin" /> : <Rocket className="size-4" />} Xuất bản
               </button>
@@ -763,7 +764,7 @@ function SaveBadge({ state, error, hasDraft, canPublish }: { state: SaveState; e
       </span>
     );
   return (
-    <span className="ml-2 inline-flex items-center gap-1.5 rounded-full bg-lime-300/30 px-2.5 py-1 text-xs text-forest-900">
+    <span className="ml-2 inline-flex items-center gap-1.5 rounded-full bg-sun-400/30 px-2.5 py-1 text-xs text-forest-900">
       <Check className="size-3.5" /> Đang khớp với website
     </span>
   );

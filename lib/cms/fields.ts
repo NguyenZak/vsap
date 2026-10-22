@@ -29,7 +29,7 @@ export type FieldDef =
   /** Nested object rendered as an indented group. */
   | (Base & { type: "group"; fields: FieldDef[] });
 
-export const l = (vi: string, en = vi) => ({ vi, en });
+export const l = (vi: string, en = vi, zh = "") => ({ vi, en, zh });
 
 export const img = (src: string, vi = "", en = vi) => ({ src, alt: l(vi, en) });
 

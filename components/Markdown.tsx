@@ -40,7 +40,7 @@ function Inlines({ nodes, locale }: { nodes: Inline[]; locale: Locale }) {
                 key={i}
                 href={external ? n.href : localHref(n.href, locale)}
                 {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-                className="font-medium text-forest-600 underline decoration-lime-400 decoration-2 underline-offset-4 hover:text-forest-900"
+                className="font-medium text-forest-600 underline decoration-sun-500 decoration-2 underline-offset-4 hover:text-forest-900"
               >
                 <Inlines nodes={n.c} locale={locale} />
               </a>
@@ -89,7 +89,7 @@ export function Markdown({ source, locale }: { source: string; locale: Locale })
           }
           case "quote":
             return (
-              <blockquote key={i} className="accent border-l-2 border-lime-400 py-1 pl-6 text-2xl leading-snug text-forest-900">
+              <blockquote key={i} className="accent border-l-2 border-sun-500 py-1 pl-6 text-2xl leading-snug text-forest-900">
                 <Inlines nodes={b.c} locale={locale} />
               </blockquote>
             );

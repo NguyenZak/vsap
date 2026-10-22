@@ -10,18 +10,20 @@ type Office = {
 
 const offices: Office[] = [
   {
-    label: { vi: "Trụ sở", en: "Head office" },
+    label: { vi: "Trụ sở", en: "Head office", zh: "总部" },
     address: {
       vi: "Thôn 3, xã Ea Súp, tỉnh Đắk Lắk",
       en: "Hamlet 3, Ea Sup Commune, Dak Lak Province, Vietnam",
+      zh: "越南多乐省 Ea Súp 乡第3村",
     },
     postal: { streetAddress: "Thôn 3", addressLocality: "Xã Ea Súp", addressRegion: "Đắk Lắk" },
   },
   {
-    label: { vi: "Văn phòng Hà Nội", en: "Hanoi office" },
+    label: { vi: "Văn phòng Hà Nội", en: "Hanoi office", zh: "河内办事处" },
     address: {
       vi: "Tầng 1, Tòa nhà An Sinh B, số 106 Lưu Hữu Phước, phường Cầu Diễn, TP Hà Nội",
       en: "1st Floor, An Sinh B Building, 106 Luu Huu Phuoc, Cau Dien Ward, Hanoi, Vietnam",
+      zh: "越南河内市 Cầu Diễn 坊 Lưu Hữu Phước 街106号 An Sinh B 大厦1楼",
     },
     postal: {
       streetAddress: "Tầng 1, Tòa nhà An Sinh B, số 106 Lưu Hữu Phước",

@@ -58,7 +58,7 @@ export function DropZone({ onFiles, uploading, compact = false }: { onFiles: (f:
         onFiles([...e.dataTransfer.files]);
       }}
       className={`flex items-center justify-center gap-3 rounded-xl border-2 border-dashed text-sm transition ${
-        over ? "border-forest-600 bg-lime-300/20" : "border-mist-200 bg-mist-50"
+        over ? "border-forest-600 bg-sun-400/20" : "border-mist-200 bg-mist-50"
       } ${compact ? "px-4 py-3" : "px-6 py-8"}`}
     >
       {uploading ? <Loader2 className="size-5 animate-spin text-forest-600" /> : <Upload className="size-5 text-ink-400" />}

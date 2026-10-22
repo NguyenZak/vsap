@@ -5,7 +5,8 @@ import { AlertTriangle, CalendarClock, Check, Loader2, Newspaper, Plus, Rocket, 
 import { postFields } from "@/lib/cms/collections";
 import { setIn } from "@/lib/cms/fields";
 import { isScheduled, postProblem, slugify } from "@/lib/cms/post-format";
-import type { Post, Settings } from "@/lib/cms/types";
+import { pick } from "@/lib/cms/links";
+import type { L, Post, Settings } from "@/lib/cms/types";
 import type { Locale } from "@/lib/i18n";
 import { plainText } from "@/lib/markdown";
 import { api, formatTime, type PostRecord, type PostSummary } from "./api";
@@ -23,7 +24,7 @@ function StatusChip({ p }: { p: Pick<PostSummary, "status" | "scheduled"> }) {
   if (p.status === "draft") return <span className="rounded-full bg-mist-100 px-2 py-0.5 text-[11px] text-ink-600">Bản nháp</span>;
   if (p.scheduled) return <span className="rounded-full bg-sun-500/15 px-2 py-0.5 text-[11px] text-ink-900">Hẹn giờ</span>;
   if (p.status === "changed") return <span className="rounded-full bg-sun-500/15 px-2 py-0.5 text-[11px] text-ink-900">Có thay đổi chưa đăng</span>;
-  return <span className="rounded-full bg-lime-300 px-2 py-0.5 text-[11px] font-medium text-forest-950">Đang hiển thị</span>;
+  return <span className="rounded-full bg-sun-400 px-2 py-0.5 text-[11px] font-medium text-forest-950">Đang hiển thị</span>;
 }
 
 export function PostsView({ settings, canWrite, canPublish, locale, onLocale }: { settings: Settings; canWrite: boolean; canPublish: boolean; locale: Locale; onLocale: (l: Locale) => void }) {
@@ -182,7 +183,7 @@ export function PostsView({ settings, canWrite, canPublish, locale, onLocale }: 
   const summary = posts?.find((p) => p.id === selected);
   const live = Boolean(record?.published);
   const changed = live && summary?.status === "changed";
-  const t = (v: { vi: string; en: string } | undefined) => (v ? v[locale] || v.vi : "");
+  const t = (v: Partial<L> | undefined) => pick(v, locale);
 
   return (
     <>
@@ -205,7 +206,7 @@ export function PostsView({ settings, canWrite, canPublish, locale, onLocale }: 
               <button
                 type="button"
                 onClick={() => p.id !== selected && open(p.id)}
-                className={`flex w-full gap-2.5 rounded-lg border p-1.5 text-left transition ${p.id === selected ? "border-forest-600 bg-lime-300/15" : "border-transparent hover:border-mist-200"}`}
+                className={`flex w-full gap-2.5 rounded-lg border p-1.5 text-left transition ${p.id === selected ? "border-forest-600 bg-sun-400/15" : "border-transparent hover:border-mist-200"}`}
               >
                 <span className="size-12 shrink-0 overflow-hidden rounded-md bg-mist-100">{p.cover && <img src={p.cover} alt="" className="size-full object-cover" />}</span>
                 <span className="min-w-0 flex-1">
@@ -259,7 +260,7 @@ export function PostsView({ settings, canWrite, canPublish, locale, onLocale }: 
               {canPublish ? (
                 <div className="mt-3 flex flex-wrap gap-2">
                   {(!live || changed) && (
-                    <button type="button" onClick={() => act("publish")} disabled={!!busy} className="inline-flex items-center gap-1.5 rounded-lg bg-lime-300 px-3 py-1.5 text-sm font-medium text-forest-950 hover:bg-lime-400 disabled:opacity-60">
+                    <button type="button" onClick={() => act("publish")} disabled={!!busy} className="inline-flex items-center gap-1.5 rounded-lg bg-sun-400 px-3 py-1.5 text-sm font-medium text-forest-950 hover:bg-sun-500 disabled:opacity-60">
                       {busy === "publish" ? <Loader2 className="size-4 animate-spin" /> : <Rocket className="size-4" />} {live ? "Cập nhật bài đang hiển thị" : "Xuất bản"}
                     </button>
                   )}
