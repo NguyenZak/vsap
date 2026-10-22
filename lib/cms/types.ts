@@ -45,7 +45,7 @@ export type Settings = {
 
 /** Interface strings that are not part of any one section (nav, buttons, form labels…). */
 export type UiStrings = {
-  nav: { home: string; about: string; products: string; quality: string; news: string; contact: string; quote: string; menu: string; close: string };
+  nav: { home: string; about: string; products: string; quality: string; news: string; health: string; contact: string; quote: string; menu: string; close: string };
   common: { viewProduct: string; requestQuote: string; allProducts: string; prev: string; next: string; pause: string; play: string; slide: string; step: string; photo: string };
   footer: { explore: string; products: string; contact: string; rights: string; brandOf: string; taxId: string; registered: string; representative: string; policies: string; policyUpdated: string };
   chat: { label: string; zalo: string; whatsapp: string; call: string; close: string };
@@ -158,7 +158,7 @@ export type Policy = {
   updated: string;
 };
 
-export type PageId = "home" | "about" | "products" | "quality" | "news" | "contact";
+export type PageId = "home" | "about" | "products" | "quality" | "news" | "health" | "contact";
 
 export type SiteContent = {
   schema: 1;
@@ -172,8 +172,12 @@ export type SiteContent = {
 };
 
 /** A news post. Stored in its own D1 row (cms_posts), with a draft and a published copy. */
+/** Where a post is listed and lives: Tin tức (/news/…) or Sức khỏe và đời sống (/health/…). */
+export type PostChannel = "news" | "health";
+
 export type Post = {
   slug: string;
+  channel: PostChannel;
   title: L;
   excerpt: L;
   cover: CmsImage;

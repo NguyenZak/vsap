@@ -4,6 +4,7 @@ import type { SeedPost } from "./posts";
 export const posts1: SeedPost[] = [
   {
     slug: "phan-loai-hat-dieu-w180-w240-w320",
+    channel: "news",
     date: "2026-07-08",
     author: "VSAP",
     category: { vi: "Kiến thức sản phẩm", en: "Product guide" },
@@ -144,6 +145,7 @@ VSAP supplies white whole cashew kernels from W180 to W450, broken grades and ro
   },
   {
     slug: "quy-trinh-che-bien-hat-dieu-xuat-khau",
+    channel: "news",
     date: "2026-07-22",
     author: "VSAP",
     category: { vi: "Chế biến", en: "Processing" },
@@ -276,6 +278,7 @@ Want to see real specifications and samples? [Contact VSAP](/contact) for sample
   },
   {
     slug: "mua-vu-hat-dieu-viet-nam",
+    channel: "news",
     date: "2026-08-05",
     author: "VSAP",
     category: { vi: "Mùa vụ", en: "Harvest" },
@@ -404,6 +407,7 @@ VSAP plans its raw material around the crop calendar to keep supply steady throu
   },
   {
     slug: "hat-macca-tay-nguyen",
+    channel: "news",
     date: "2026-08-19",
     author: "VSAP",
     category: { vi: "Vùng nguyên liệu", en: "Origin" },
@@ -532,6 +536,7 @@ VSAP is headquartered in Dak Lak, in the heart of the Central Highlands macadami
   },
   {
     slug: "phan-loai-hat-macca-nis-style",
+    channel: "news",
     date: "2026-09-02",
     author: "VSAP",
     category: { vi: "Kiến thức sản phẩm", en: "Product guide" },

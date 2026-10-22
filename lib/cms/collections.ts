@@ -234,6 +234,16 @@ export const pageSeoFields: FieldDef[] = [
 export const postFields: FieldDef[] = [
   { key: "title", label: "Tiêu đề", type: "text", help: "Để trống bản tiếng Anh nếu bài chỉ có tiếng Việt: bài sẽ không hiện ở trang /en." },
   { key: "slug", label: "Đường dẫn (slug)", type: "string", help: "Chữ thường không dấu và gạch ngang. Đổi slug sau khi đã đăng sẽ đổi URL bài." },
+  {
+    key: "channel",
+    label: "Chuyên mục chính",
+    type: "select",
+    options: [
+      { value: "news", label: "Tin tức (/news)" },
+      { value: "health", label: "Sức khỏe và đời sống (/health)" },
+    ],
+    help: "Quyết định bài hiện ở trang nào và đường dẫn của bài.",
+  },
   { key: "date", label: "Ngày đăng", type: "date", help: "Chọn ngày trong tương lai để hẹn giờ: bài đã xuất bản chỉ hiện từ ngày đó." },
   { key: "category", label: "Chuyên mục", type: "text" },
   { key: "cover", label: "Ảnh bìa", type: "image" },
@@ -251,8 +261,9 @@ export const postFields: FieldDef[] = [
   },
 ];
 
-export const newPost = (date: string) => ({
+export const newPost = (date: string, channel: "news" | "health" = "news") => ({
   slug: "",
+  channel,
   title: l("Bài viết mới", ""),
   excerpt: l(""),
   cover: img("/images/cashew-harvest.webp", "Hạt điều thô vừa thu hoạch", "Freshly harvested raw cashew nuts"),

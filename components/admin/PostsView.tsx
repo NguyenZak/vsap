@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { AlertTriangle, CalendarClock, Check, Loader2, Newspaper, Plus, Rocket, RotateCcw, Trash2, Undo2 } from "lucide-react";
 import { postFields } from "@/lib/cms/collections";
 import { setIn } from "@/lib/cms/fields";
-import { isScheduled, postProblem, slugify } from "@/lib/cms/post-format";
+import { isScheduled, postPath, postProblem, slugify } from "@/lib/cms/post-format";
 import { pick } from "@/lib/cms/links";
 import type { L, Post, Settings } from "@/lib/cms/types";
 import type { Locale } from "@/lib/i18n";
@@ -213,6 +213,7 @@ export function PostsView({ settings, canWrite, canPublish, locale, onLocale }: 
                   <span className="line-clamp-2 text-sm leading-snug text-ink-900">{p.title.vi || p.title.en || "(chưa có tiêu đề)"}</span>
                   <span className="mt-1 flex items-center gap-1.5">
                     <StatusChip p={p} />
+                    {p.channel === "health" && <span className="rounded-full bg-forest-900/10 px-2 py-0.5 text-[11px] text-forest-900">Sức khỏe</span>}
                     <span className="text-[11px] text-ink-400">{p.date}</span>
                   </span>
                 </span>
@@ -233,7 +234,7 @@ export function PostsView({ settings, canWrite, canPublish, locale, onLocale }: 
         {draft && record ? (
           <Panel
             title={draft.title.vi || draft.title.en || "(chưa có tiêu đề)"}
-            subtitle={`/news/${draft.slug}`}
+            subtitle={postPath(draft)}
             actions={
               canPublish ? (
                 <button type="button" title="Xoá bài" onClick={remove} disabled={busy === "delete"} className="rounded-lg p-1.5 text-ink-600 hover:bg-red-50 hover:text-chili-600">
@@ -275,7 +276,7 @@ export function PostsView({ settings, canWrite, canPublish, locale, onLocale }: 
                     </button>
                   )}
                   {live && !changed && (
-                    <a href={`/${locale}/news/${record.published?.slug}`} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 px-1 py-1.5 text-sm text-forest-600 hover:underline">
+                    <a href={`/${locale}${record.published ? postPath(record.published) : ""}`} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 px-1 py-1.5 text-sm text-forest-600 hover:underline">
                       <Check className="size-4" /> Xem trên website
                     </a>
                   )}
@@ -289,7 +290,7 @@ export function PostsView({ settings, canWrite, canPublish, locale, onLocale }: 
               siteName={settings.name}
               title={`${t(draft.seo.title) || t(draft.title)} | ${settings.name}`}
               description={t(draft.seo.description) || t(draft.excerpt) || plainText(t(draft.body)).slice(0, 160)}
-              url={`${settings.url}/${locale}/news/${draft.slug}`}
+              url={`${settings.url}/${locale}${postPath(draft)}`}
               image={draft.cover?.src}
             />
             <fieldset disabled={!canWrite} className="disabled:opacity-70">
@@ -303,7 +304,7 @@ export function PostsView({ settings, canWrite, canPublish, locale, onLocale }: 
         )}
       </section>
 
-      <Preview ref={preview} path={draft ? `/news/${draft.slug}` : "/news"} locale={locale} onLocale={onLocale} />
+      <Preview ref={preview} path={draft ? postPath(draft) : "/news"} locale={locale} onLocale={onLocale} />
     </>
   );
 }

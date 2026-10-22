@@ -12,6 +12,7 @@ export const ko: Dictionary = {
     products: "제품",
     quality: "품질",
     news: "뉴스",
+    health: "건강과 생활",
     contact: "문의",
     quote: "견적 요청",
     menu: "메뉴 열기",
@@ -309,6 +310,14 @@ export const ko: Dictionary = {
     latestTitle: "최신 소식",
     latestAccent: "VSAP에서 전합니다",
     all: "전체 뉴스 보기",
+  },
+  health: {
+    metaTitle: "건강과 생활: 캐슈넛과 마카다미아의 영양",
+    metaDescription: "캐슈넛과 마카다미아의 영양 정보, 적정 섭취량, 온 가족을 위한 일상 속 활용법을 소개합니다.",
+    eyebrow: "건강과 생활",
+    title: "매일의 건강",
+    accent: "견과류와 함께",
+    lead: "캐슈넛과 마카다미아의 영양, 적정량, 온 가족을 위한 간단한 레시피.",
   },
   productDetail: {
     origin: "원료 산지",

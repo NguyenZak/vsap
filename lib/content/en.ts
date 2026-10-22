@@ -12,6 +12,7 @@ export const en: Dictionary = {
     products: "Products",
     quality: "Quality",
     news: "News",
+    health: "Health & living",
     contact: "Contact",
     quote: "Get a quote",
     menu: "Open menu",
@@ -309,6 +310,14 @@ export const en: Dictionary = {
     latestTitle: "Latest updates",
     latestAccent: "from VSAP",
     all: "See all news",
+  },
+  health: {
+    metaTitle: "Health & living: nutrition from cashews and macadamias",
+    metaDescription: "Nutrition facts, sensible servings and everyday ways to enjoy cashews and macadamias with your family.",
+    eyebrow: "Health & living",
+    title: "Everyday wellbeing",
+    accent: "from wholesome nuts",
+    lead: "Nutrition, servings and simple recipes with cashews and macadamias for the whole family.",
   },
   productDetail: {
     origin: "Sourcing region",

@@ -4,6 +4,7 @@ import type { SeedPost } from "./posts";
 export const posts2: SeedPost[] = [
   {
     slug: "tieu-chuan-chat-luong-nhan-dieu-xuat-khau",
+    channel: "news",
     date: "2026-09-16",
     author: "VSAP",
     category: { vi: "Chất lượng", en: "Quality" },
@@ -138,6 +139,7 @@ At VSAP, moisture, foreign matter and broken ratio are measured for every lot; m
   },
   {
     slug: "huong-dan-nhap-khau-hat-dieu-tu-viet-nam",
+    channel: "news",
     date: "2026-09-30",
     author: "VSAP",
     category: { vi: "Xuất khẩu", en: "Export" },
@@ -294,6 +296,7 @@ VSAP ships FOB or CIF and prepares the full document set each market requires. [
   },
   {
     slug: "dong-goi-bao-quan-hat-dieu-macca",
+    channel: "news",
     date: "2026-10-07",
     author: "VSAP",
     category: { vi: "Kiến thức sản phẩm", en: "Product guide" },
@@ -444,6 +447,7 @@ VSAP vacuum packs export lots with inert gas and offers private-label (OEM) reta
   },
   {
     slug: "gia-tri-dinh-duong-hat-dieu-hat-macca",
+    channel: "health",
     date: "2026-10-14",
     author: "VSAP",
     category: { vi: "Dinh dưỡng", en: "Nutrition" },
@@ -596,6 +600,7 @@ VSAP cashews and macadamias are selected from Vietnamese growing regions, with r
   },
   {
     slug: "chon-nha-cung-cap-hat-dieu-viet-nam",
+    channel: "news",
     date: "2026-10-20",
     author: "VSAP",
     category: { vi: "Xuất khẩu", en: "Export" },

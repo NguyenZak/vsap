@@ -3,6 +3,7 @@
 import { Globe, Mail, MapPin, Phone } from "lucide-react";
 import type { Locale } from "@/lib/i18n";
 import { localHref, pick } from "@/lib/cms/links";
+import { channelOf } from "@/lib/cms/post-format";
 import type { CmsImage, L, Post, Section, SiteContent, UiStrings } from "@/lib/cms/types";
 import { HeroSlider } from "./HeroSlider";
 import { InquiryForm } from "./InquiryForm";
@@ -523,7 +524,10 @@ const renderers: Record<string, Renderer> = {
     const { t, href } = makeT(ctx);
     const tone = toneOf({ id: "", type: "posts", props: p }) as Tone;
     const limit = num(p.limit, 0);
-    const posts = limit ? (ctx.posts ?? []).slice(0, limit) : (ctx.posts ?? []);
+    // Sections saved before channels existed list news, as they did then.
+    const channel = str(p.channel) || "news";
+    const pool = (ctx.posts ?? []).filter((x) => channel === "all" || channelOf(x) === channel);
+    const posts = limit ? pool.slice(0, limit) : pool;
     const labels = { readMore: ctx.ui.news.readMore, minutes: ctx.ui.news.minutes };
     // A "latest news" strip disappears until there is something to show; the
     // full list (limit 0, the News page) says so instead.

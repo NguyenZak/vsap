@@ -58,7 +58,7 @@ type View =
 
 type SaveState = "idle" | "pending" | "saving" | "saved" | "error";
 
-const PAGE_IDS: PageId[] = ["home", "about", "products", "quality", "news", "contact"];
+const PAGE_IDS: PageId[] = ["home", "about", "products", "quality", "news", "health", "contact"];
 
 const nav: { kind: View["kind"]; label: string; icon: typeof FileText; perm: Permission }[] = [
   { kind: "page", label: "Trang", icon: LayoutTemplate, perm: "content.read" },

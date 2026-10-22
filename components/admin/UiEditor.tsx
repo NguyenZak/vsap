@@ -90,6 +90,7 @@ const keyLabels: Record<string, string> = {
   packedBy: "Đóng gói tại",
   view: "Xem chi tiết",
   news: "Tin tức",
+  health: "Sức khỏe và đời sống",
   readMore: "Đọc tiếp",
   published: "“Đăng ngày”",
   minutes: "“phút đọc”",

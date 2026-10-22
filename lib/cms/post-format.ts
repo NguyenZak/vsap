@@ -1,6 +1,6 @@
 // Pure helpers for news posts, shared by the server and Studio.
 import { localeInfo, type Locale } from "../locales";
-import type { Post } from "./types";
+import type { Post, PostChannel } from "./types";
 
 export const SLUG_RE = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 
@@ -37,3 +37,15 @@ export function formatDate(date: string, locale: Locale) {
   if (Number.isNaN(d.getTime())) return date;
   return new Intl.DateTimeFormat(locale === "en" ? "en-GB" : localeInfo[locale].intl, { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" }).format(d);
 }
+
+export const postChannels: { value: PostChannel; label: string; path: string }[] = [
+  { value: "news", label: "Tin tức", path: "/news" },
+  { value: "health", label: "Sức khỏe và đời sống", path: "/health" },
+];
+
+/** Older posts have no channel: they are news. */
+export const channelOf = (post: Partial<Pick<Post, "channel">>): PostChannel => (post.channel === "health" ? "health" : "news");
+
+/** Site path of a post without the language prefix, e.g. /health/an-hat-moi-ngay. */
+export const postPath = (post: Pick<Post, "slug"> & Partial<Pick<Post, "channel">>) =>
+  `${postChannels.find((c) => c.value === channelOf(post))!.path}/${post.slug}`;

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { pick } from "@/lib/cms/links";
-import { formatDate } from "@/lib/cms/post-format";
+import { formatDate, postPath } from "@/lib/cms/post-format";
 import type { Post } from "@/lib/cms/types";
 import type { Locale } from "@/lib/locales";
 import { plainText, readingMinutes } from "@/lib/markdown";
@@ -32,7 +32,7 @@ const excerptOf = (post: Post, locale: Locale) => pick(post.excerpt, locale) || 
 export function PostCard({ post, locale, labels, onMuted = false }: { post: Post; locale: Locale; labels: Labels; onMuted?: boolean }) {
   const cover = post.cover?.src ? { src: post.cover.src, alt: pick(post.cover.alt, locale) } : undefined;
   return (
-    <Link href={`/${locale}/news/${post.slug}`} data-reveal className={`group flex h-full flex-col rounded-3xl p-2 transition ${onMuted ? "bg-white hover:bg-mist-100" : "bg-mist-50 hover:bg-mist-100"}`}>
+    <Link href={`/${locale}${postPath(post)}`} data-reveal className={`group flex h-full flex-col rounded-3xl p-2 transition ${onMuted ? "bg-white hover:bg-mist-100" : "bg-mist-50 hover:bg-mist-100"}`}>
       <div className="overflow-hidden rounded-2xl">
         <CmsImg image={cover} sizes={SIZES.third} className="aspect-[16/10] w-full transition duration-700 group-hover:scale-105" />
       </div>
@@ -53,7 +53,7 @@ export function PostCard({ post, locale, labels, onMuted = false }: { post: Post
 export function FeaturedPost({ post, locale, labels }: { post: Post; locale: Locale; labels: Labels }) {
   const cover = post.cover?.src ? { src: post.cover.src, alt: pick(post.cover.alt, locale) } : undefined;
   return (
-    <Link href={`/${locale}/news/${post.slug}`} data-reveal className="group relative isolate flex min-h-[26rem] items-end overflow-hidden rounded-3xl bg-forest-900 lg:min-h-[32rem]">
+    <Link href={`/${locale}${postPath(post)}`} data-reveal className="group relative isolate flex min-h-[26rem] items-end overflow-hidden rounded-3xl bg-forest-900 lg:min-h-[32rem]">
       <CmsImg image={cover} sizes={SIZES.full} className="absolute inset-0 -z-10 size-full transition duration-1000 group-hover:scale-105" />
       <div className="absolute inset-0 -z-10 bg-gradient-to-t from-black/75 via-black/30 to-transparent" />
       <div className="max-w-3xl p-6 sm:p-10">

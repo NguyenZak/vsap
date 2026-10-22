@@ -2,13 +2,13 @@
 // published, the copy visitors see, so a post can be revised without the live
 // version changing until someone with publish rights approves it.
 import { cache } from "react";
-import { samplePosts } from "../content/posts";
+import { SECOND_BATCH, samplePosts } from "../content/posts";
 import type { Locale } from "../locales";
 import { newPost } from "./collections";
 import { db } from "./db";
 import { isObject, withDefaults } from "./normalize";
-import { inLocale, isScheduled, postProblem, todayVN } from "./post-format";
-import type { Post } from "./types";
+import { channelOf, inLocale, isScheduled, postProblem, todayVN } from "./post-format";
+import type { Post, PostChannel } from "./types";
 
 const MAX_POST_BYTES = 400_000;
 
@@ -19,6 +19,7 @@ export type PostStatus = "draft" | "published" | "changed";
 export type PostSummary = {
   id: string;
   slug: string;
+  channel: PostChannel;
   title: Post["title"];
   cover: string;
   date: string;
@@ -48,6 +49,7 @@ function summary(r: Row): PostSummary {
   return {
     id: r.id,
     slug: d.slug,
+    channel: channelOf(d),
     title: d.title,
     cover: d.cover?.src ?? "",
     date: d.date,
@@ -76,18 +78,31 @@ const record = (r: Row): PostRecord => ({ id: r.id, draft: parse(r.draft)!, publ
  */
 async function seedSamplePosts() {
   const d = await db();
-  const done = await d.prepare("SELECT 1 AS x FROM cms_documents WHERE key = 'seed:posts'").first();
-  if (done) return;
+  const seeded = await d.prepare("SELECT key FROM cms_documents WHERE key IN ('seed:posts', 'seed:posts:2')").all<{ key: string }>();
+  const has = (key: string) => seeded.results.some((r) => r.key === key);
+  if (has("seed:posts") && has("seed:posts:2")) return;
   const now = Date.now();
-  await d.batch([
-    ...samplePosts.map((p, i) =>
-      d
-        .prepare("INSERT OR IGNORE INTO cms_posts (id, slug, draft, published, published_at, created_at, updated_at, updated_by) VALUES (?, ?, ?, NULL, NULL, ?, ?, 'VSAP')")
-        .bind(crypto.randomUUID(), p.slug, JSON.stringify(p), now + i, now + i),
-    ),
-    d.prepare("INSERT OR IGNORE INTO cms_documents (key, data, updated_at) VALUES ('seed:posts', '{}', ?)").bind(now),
-  ]);
+  const insert = (p: Post, i: number) =>
+    d
+      .prepare("INSERT OR IGNORE INTO cms_posts (id, slug, draft, published, published_at, created_at, updated_at, updated_by) VALUES (?, ?, ?, NULL, NULL, ?, ?, 'VSAP')")
+      .bind(crypto.randomUUID(), p.slug, JSON.stringify(p), now + i, now + i);
+  const mark = (key: string) => d.prepare("INSERT OR IGNORE INTO cms_documents (key, data, updated_at) VALUES (?, '{}', ?)").bind(key, now);
+  // A fresh database gets every sample; one seeded before the health channel existed gets
+  // the new health posts, and its nutrition post moves to that channel (old /news links redirect).
+  const batch = has("seed:posts")
+    ? [
+        ...samplePosts.filter((p) => SECOND_BATCH.includes(p.slug)).map(insert),
+        ...(["draft", "published"] as const).map((col) =>
+          d
+            .prepare(`UPDATE cms_posts SET ${col} = json_set(${col}, '$.channel', 'health') WHERE slug = ? AND ${col} IS NOT NULL AND json_extract(${col}, '$.channel') IS NULL`)
+            .bind(NUTRITION_SLUG),
+        ),
+      ]
+    : samplePosts.map(insert);
+  await d.batch([...batch, mark("seed:posts"), mark("seed:posts:2")]);
 }
+
+const NUTRITION_SLUG = "gia-tri-dinh-duong-hat-dieu-hat-macca";
 
 export async function listPostsAdmin(): Promise<PostSummary[]> {
   await seedSamplePosts();

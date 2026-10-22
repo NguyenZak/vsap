@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { postPath } from "@/lib/cms/post-format";
 import { allLivePosts } from "@/lib/cms/posts";
 import { getContent, getPublishedAt } from "@/lib/cms/store";
 import { locales } from "@/lib/i18n";
@@ -32,11 +33,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const postUrls = posts.flatMap((p) => {
     const langs = locales.filter((l) => p.title[l]?.trim());
     return langs.map((locale) => ({
-      url: `${settings.url}/${locale}/news/${p.slug}`,
+      url: `${settings.url}/${locale}${postPath(p)}`,
       lastModified: new Date(`${p.date}T00:00:00Z`),
       changeFrequency: "monthly" as const,
       priority: 0.6,
-      alternates: { languages: Object.fromEntries(langs.map((l) => [l, `${settings.url}/${l}/news/${p.slug}`])) },
+      alternates: { languages: Object.fromEntries(langs.map((l) => [l, `${settings.url}/${l}${postPath(p)}`])) },
     }));
   });
   return [...pageUrls, ...postUrls];

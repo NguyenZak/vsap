@@ -5,7 +5,7 @@ import { newPost } from "./collections";
 import { defaultContent } from "./defaults";
 import { inquiriesCsv, type Inquiry } from "./inquiry-format";
 import { generatePassword, hashPassword, verifyPassword } from "./password";
-import { formatDate, inLocale, isScheduled, postProblem, slugify, todayVN } from "./post-format";
+import { formatDate, inLocale, isScheduled, postPath, postProblem, slugify, todayVN } from "./post-format";
 import { can, permissionsOf, roles, USERNAME_RE } from "./roles";
 
 describe("roles", () => {
@@ -178,11 +178,16 @@ describe("sample posts", async () => {
   const { samplePosts } = await import("../content/posts");
   const root = fileURLToPath(new URL("../../", import.meta.url));
   const slugs = new Set(samplePosts.map((p) => p.slug));
-  const sitePaths = new Set(["/", "/products", "/products/cashew", "/products/macadamia", "/quality", "/about", "/contact", "/news"]);
+  const sitePaths = new Set(["/", "/products", "/products/cashew", "/products/macadamia", "/quality", "/about", "/contact", "/news", "/health"]);
 
-  it("are ten valid, unique, bilingual posts", () => {
-    expect(samplePosts).toHaveLength(10);
-    expect(slugs.size).toBe(10);
+  it("are twelve valid, unique, bilingual posts in both channels", () => {
+    expect(samplePosts).toHaveLength(12);
+    expect(slugs.size).toBe(12);
+    expect(samplePosts.filter((p) => p.channel === "health").map((p) => p.slug).sort()).toEqual([
+      "an-hat-moi-ngay-co-tot-khong",
+      "cach-dung-hat-dieu-hat-macca-trong-bua-an",
+      "gia-tri-dinh-duong-hat-dieu-hat-macca",
+    ]);
     for (const p of samplePosts) {
       expect(postProblem(p), p.slug).toBeNull();
       expect(inLocale(p, "vi") && inLocale(p, "en"), p.slug).toBe(true);
@@ -219,7 +224,9 @@ describe("sample posts", async () => {
     };
     for (const p of samplePosts) for (const l of ["vi", "en"] as const) walk(parseMarkdown(p.body[l]));
     for (const href of links.filter((h) => h.startsWith("/"))) {
-      const ok = sitePaths.has(href) || (href.startsWith("/news/") && slugs.has(href.slice(6)));
+      // A post link must use the post's own channel path, or it would only work through a redirect.
+      const post = samplePosts.find((p) => href === postPath(p));
+      const ok = sitePaths.has(href) || Boolean(post);
       expect(ok, href).toBe(true);
     }
     for (const src of images) expect(existsSync(`${root}public${src}`), src).toBe(true);
@@ -269,5 +276,34 @@ describe("telegram alert", async () => {
     const { text } = inquiryAlert({ ...base, data: { ...base.data, message: "x".repeat(2000) } }, "https://x.test");
     expect(text.length).toBeLessThan(1400);
     expect(text).toContain("…");
+  });
+});
+
+describe("post channels", () => {
+  it("builds each post's path from its channel", () => {
+    expect(postPath({ slug: "a", channel: "news" })).toBe("/news/a");
+    expect(postPath({ slug: "b", channel: "health" })).toBe("/health/b");
+    // Posts saved before channels existed are news.
+    expect(postPath({ slug: "c" })).toBe("/news/c");
+  });
+
+  it("ships the health page and footer labels in every language", () => {
+    const c = defaultContent();
+    expect(c.pages.health.path).toBe("/health");
+    expect(c.pages.health.sections.find((s) => s.type === "posts")?.props.channel).toBe("health");
+    expect(c.pages.news.sections.find((s) => s.type === "posts")?.props.channel).toBe("news");
+    for (const l of ["vi", "en", "zh", "ja", "ko"] as const) expect(c.ui[l].nav.health, l).toBeTruthy();
+    expect(c.ui.vi.nav.health).toBe("Sức khỏe và đời sống");
+  });
+
+  it("names the policies as listed for the footer", () => {
+    const titles = Object.fromEntries(defaultContent().policies.map((p) => [p.slug, p.title.vi]));
+    expect(titles).toMatchObject({
+      returns: "Chính sách đổi trả",
+      privacy: "Chính sách bảo mật",
+      shipping: "Chính sách vận chuyển và kiểm hàng",
+      payment: "Chính sách thanh toán",
+      terms: "Điều khoản dịch vụ",
+    });
   });
 });

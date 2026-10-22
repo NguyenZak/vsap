@@ -423,12 +423,22 @@ export const sectionDefs: SectionDef[] = [
     icon: "newspaper",
     fields: [
       ...headingFields(),
+      {
+        key: "channel",
+        label: "Lấy bài từ",
+        type: "select",
+        options: [
+          { value: "news", label: "Tin tức" },
+          { value: "health", label: "Sức khỏe và đời sống" },
+          { value: "all", label: "Cả hai chuyên mục" },
+        ],
+      },
       { key: "limit", label: "Số bài hiển thị", type: "number", min: 0, max: 60, help: "0 = tất cả bài (dùng cho trang Tin tức)." },
       { key: "featured", label: "Bài đầu tiên hiển thị lớn", type: "boolean" },
       ...button(),
       toneField,
     ],
-    create: () => ({ ...sampleHeading(), title: l("Cập nhật mới", "Latest updates"), limit: 3, featured: false, buttonLabel: l("Xem tất cả tin", "See all news"), buttonHref: "/news", tone: "white" }),
+    create: () => ({ ...sampleHeading(), title: l("Cập nhật mới", "Latest updates"), channel: "news", limit: 3, featured: false, buttonLabel: l("Xem tất cả tin", "See all news"), buttonHref: "/news", tone: "white" }),
   },
 ];
 

@@ -12,6 +12,7 @@ export const zh: Dictionary = {
     products: "产品",
     quality: "品质",
     news: "新闻",
+    health: "健康与生活",
     contact: "联系我们",
     quote: "获取报价",
     menu: "打开菜单",
@@ -309,6 +310,14 @@ export const zh: Dictionary = {
     latestTitle: "最新动态",
     latestAccent: "来自VSAP",
     all: "查看全部新闻",
+  },
+  health: {
+    metaTitle: "健康与生活：腰果与夏威夷果的营养",
+    metaDescription: "腰果与夏威夷果的营养知识、合理食用量以及适合全家的日常吃法。",
+    eyebrow: "健康与生活",
+    title: "每一天的健康",
+    accent: "从优质坚果开始",
+    lead: "关于腰果、夏威夷果的营养、份量与简单食谱，适合全家。",
   },
   productDetail: {
     origin: "原料产区",

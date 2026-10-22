@@ -16,7 +16,7 @@ const inputCls =
   "w-full rounded-lg border border-mist-200 bg-white px-3 py-2 text-sm text-ink-900 outline-none transition placeholder:text-ink-400 focus:border-forest-600 focus:ring-2 focus:ring-sun-400/50";
 
 /** Site paths offered as suggestions in link fields. */
-export const LINK_SUGGESTIONS = ["/", "/about", "/products", "/products/cashew", "/products/macadamia", "/quality", "/news", "/contact", "#inquiry"];
+export const LINK_SUGGESTIONS = ["/", "/about", "/products", "/products/cashew", "/products/macadamia", "/quality", "/news", "/health", "/contact", "#inquiry"];
 
 const asL = (v: unknown): L =>
   Object.fromEntries(locales.map((l, i) => [l, v && typeof v === "object" ? String((v as Partial<L>)[l] ?? "") : i === 0 ? String(v ?? "") : ""])) as L;

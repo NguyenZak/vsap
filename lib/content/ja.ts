@@ -12,6 +12,7 @@ export const ja: Dictionary = {
     products: "製品",
     quality: "品質",
     news: "ニュース",
+    health: "健康とくらし",
     contact: "お問い合わせ",
     quote: "お見積もり",
     menu: "メニューを開く",
@@ -309,6 +310,14 @@ export const ja: Dictionary = {
     latestTitle: "VSAPからの",
     latestAccent: "最新情報",
     all: "すべてのニュースを見る",
+  },
+  health: {
+    metaTitle: "健康とくらし：カシューナッツとマカダミアの栄養",
+    metaDescription: "カシューナッツとマカダミアナッツの栄養、適量、毎日の食べ方をご紹介します。",
+    eyebrow: "健康とくらし",
+    title: "毎日の健康を",
+    accent: "ナッツとともに",
+    lead: "カシューナッツとマカダミアの栄養、適量、家族で楽しめる簡単レシピ。",
   },
   productDetail: {
     origin: "原料産地",

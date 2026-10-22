@@ -96,6 +96,8 @@ export function Header({ locale, nav, contact: site, logoAlt }: Props) {
     { href: `/${locale}/about`, label: nav.about },
     { href: `/${locale}/products`, label: nav.products },
     { href: `/${locale}/quality`, label: nav.quality },
+    // Long label: in the desktop bar only from xl up (it stays in the mobile menu and the footer).
+    { href: `/${locale}/health`, label: nav.health, wide: true },
     { href: `/${locale}/news`, label: nav.news },
     { href: `/${locale}/contact`, label: nav.contact },
   ];
@@ -133,7 +135,7 @@ export function Header({ locale, nav, contact: site, logoAlt }: Props) {
               key={l.href}
               href={l.href}
               aria-current={isActive(l.href) ? "page" : undefined}
-              className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3.5 py-1.5 text-sm text-white/90 transition hover:bg-white/20 group-data-solid/header:bg-transparent group-data-solid/header:text-ink-600 group-data-solid/header:hover:bg-white aria-[current=page]:bg-white aria-[current=page]:text-ink-900 group-data-solid/header:aria-[current=page]:bg-white group-data-solid/header:aria-[current=page]:text-ink-900 group-data-solid/header:aria-[current=page]:shadow-sm"
+              className={`${"wide" in l ? "hidden xl:inline-flex" : "inline-flex"} items-center gap-1.5 rounded-full bg-white/10 px-3.5 py-1.5 text-sm whitespace-nowrap text-white/90 transition hover:bg-white/20 group-data-solid/header:bg-transparent group-data-solid/header:text-ink-600 group-data-solid/header:hover:bg-white aria-[current=page]:bg-white aria-[current=page]:text-ink-900 group-data-solid/header:aria-[current=page]:bg-white group-data-solid/header:aria-[current=page]:text-ink-900 group-data-solid/header:aria-[current=page]:shadow-sm`}
             >
               {i === 0 && <House className="size-3.5 text-forest-600" />}
               {l.label}

@@ -10,6 +10,7 @@ export const vi = {
     products: "Sản phẩm",
     quality: "Chất lượng",
     news: "Tin tức",
+    health: "Sức khỏe và đời sống",
     contact: "Liên hệ",
     quote: "Nhận báo giá",
     menu: "Mở menu",
@@ -313,6 +314,14 @@ export const vi = {
     latestTitle: "Cập nhật mới",
     latestAccent: "từ VSAP",
     all: "Xem tất cả tin",
+  },
+  health: {
+    metaTitle: "Sức khỏe và đời sống: dinh dưỡng từ hạt điều, hạt macca",
+    metaDescription: "Kiến thức dinh dưỡng, khẩu phần hợp lý và cách dùng hạt điều, hạt macca trong bữa ăn hằng ngày cho cả gia đình.",
+    eyebrow: "Sức khỏe và đời sống",
+    title: "Sống khỏe mỗi ngày",
+    accent: "từ những hạt dinh dưỡng",
+    lead: "Dinh dưỡng, khẩu phần và công thức đơn giản với hạt điều, hạt macca cho cả gia đình.",
   },
   productDetail: {
     origin: "Vùng nguyên liệu",

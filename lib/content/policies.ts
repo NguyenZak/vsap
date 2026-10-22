@@ -12,7 +12,7 @@ export const UPDATED = "2026-10-22";
 export const policies: Seed[] = [
   {
     slug: "terms",
-    title: { vi: "Điều khoản sử dụng", en: "Terms of use", zh: "使用条款", ja: "利用規約", ko: "이용약관" },
+    title: { vi: "Điều khoản dịch vụ", en: "Terms of service", zh: "服务条款", ja: "サービス利用規約", ko: "서비스 이용약관" },
     body: {
       vi: `Website {website} do **{company}** (mã số doanh nghiệp {taxId}) sở hữu và vận hành, giới thiệu và bán các sản phẩm mang thương hiệu VSAP: hạt điều, hạt macca và yến sào. Khi truy cập website hoặc đặt hàng, quý khách đồng ý với các điều khoản dưới đây.
 
@@ -74,7 +74,7 @@ Please contact {phone} or {email} with any question or complaint. Disputes are f
   },
   {
     slug: "privacy",
-    title: { vi: "Chính sách bảo mật thông tin", en: "Privacy policy", zh: "隐私政策", ja: "プライバシーポリシー", ko: "개인정보 처리방침" },
+    title: { vi: "Chính sách bảo mật", en: "Privacy policy", zh: "隐私政策", ja: "プライバシーポリシー", ko: "개인정보 처리방침" },
     body: {
       vi: `{company} ("VSAP") tôn trọng và bảo vệ thông tin cá nhân của quý khách theo quy định pháp luật Việt Nam về bảo vệ dữ liệu cá nhân.
 
@@ -172,7 +172,7 @@ VSAP **never** asks for passwords, OTP codes or bank card details. Any such requ
   },
   {
     slug: "shipping",
-    title: { vi: "Chính sách vận chuyển & giao nhận", en: "Shipping & delivery policy", zh: "配送政策", ja: "配送について", ko: "배송 정책" },
+    title: { vi: "Chính sách vận chuyển và kiểm hàng", en: "Shipping & inspection policy", zh: "配送与验货政策", ja: "配送・検品について", ko: "배송 및 검수 정책" },
     body: {
       vi: `## 1. Phạm vi giao hàng
 VSAP giao hàng toàn quốc, đến 34 tỉnh, thành phố, thông qua các đơn vị vận chuyển và chuyển phát.
@@ -208,7 +208,7 @@ Delivered on the agreed FOB or CIF terms. VSAP helps prepare export documents, c
   },
   {
     slug: "returns",
-    title: { vi: "Chính sách đổi trả & hoàn tiền", en: "Returns & refunds policy", zh: "退换货与退款政策", ja: "返品・返金について", ko: "교환·환불 정책" },
+    title: { vi: "Chính sách đổi trả", en: "Returns & refunds policy", zh: "退换货与退款政策", ja: "返品・返金について", ko: "교환·환불 정책" },
     body: {
       vi: `## 1. Trường hợp được đổi trả
 - Sản phẩm có lỗi chất lượng: ẩm mốc, có mùi lạ, có côn trùng hoặc dị vật.
