@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, permanentRedirect } from "next/navigation";
-import { BadgeCheck, Boxes, ChevronRight, Headset, Wallet } from "lucide-react";
+import { BadgeCheck, Boxes, ChevronRight, Headset, PackageOpen, RotateCcw, Wallet } from "lucide-react";
 import { BuyBox } from "@/components/shop/BuyBox";
 import { Gallery } from "@/components/shop/Gallery";
 import { MoreText } from "@/components/shop/MoreText";
 import { ProductGrid } from "@/components/shop/ProductGrid";
 import { RecentlyViewed } from "@/components/shop/RecentlyViewed";
+import { ShareBar } from "@/components/shop/ShareBar";
 import { pick } from "@/lib/cms/links";
 import { getContent } from "@/lib/cms/store";
 import { metadataLocale, resolveLocale } from "@/lib/i18n";
@@ -85,6 +86,8 @@ export default async function PackPage({ params }: Props) {
     [BadgeCheck, t.perk2],
     [Headset, t.perk3],
     [Boxes, t.perk4],
+    [PackageOpen, t.perk5],
+    [RotateCcw, t.perk6],
   ] as const;
 
   const productJsonLd = {
@@ -138,96 +141,93 @@ export default async function PackPage({ params }: Props) {
         </nav>
       </div>
 
-      <section className="container-page grid gap-8 py-10 sm:py-14 lg:grid-cols-12 lg:gap-12">
-        <div className="lg:col-span-7">
-          <Gallery images={item.images} alt={[item.name, item.flavor].filter(Boolean).join(" – ")} />
-        </div>
-
-        <div className="lg:col-span-5">
-          <h1 className="heading text-4xl text-forest-900 sm:text-5xl">
-            {item.name}
-            {item.flavor && <span className="accent block text-[1.05em] leading-tight text-ink-600">{item.flavor}</span>}
-          </h1>
-          <p className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-ink-600">
-            <span>
-              {t.status}: <span className={`font-medium ${pack.soldOut ? "text-chili-600" : "text-forest-600"}`}>{pack.soldOut ? t.soldOut : t.inStock}</span>
-            </span>
-            <span className="h-3.5 w-px bg-mist-200" />
-            <span>
-              {t.brand}: <span className="font-medium text-forest-600">{site.name}</span>
-            </span>
-          </p>
-          {item.highlight && (
-            <p className="mt-4 inline-flex w-fit rounded-full bg-sun-400 px-3 py-1 text-xs font-medium text-forest-950">{item.highlight}</p>
-          )}
-
-          <div className="mt-6">
-            <BuyBox item={item} />
+      {/* Kamina-style layout: white cards on the cream page, gallery left, buy box and description right. */}
+      <div className="bg-mist-50">
+        <section className="container-page grid gap-5 py-6 sm:py-8 lg:grid-cols-12 lg:items-start">
+          <div className="space-y-5 rounded-2xl bg-white p-3 sm:p-4 lg:sticky lg:top-24 lg:col-span-6">
+            <Gallery images={item.images} alt={[item.name, item.flavor].filter(Boolean).join(" – ")} />
+            <ShareBar title={item.name} />
           </div>
 
-          <ul className="mt-8 grid grid-cols-2 gap-x-4 gap-y-4 border-t border-mist-200 pt-6">
-            {perks.map(([Icon, text]) =>
-              text ? (
-                <li key={text} className="flex items-center gap-3 text-sm text-ink-600">
-                  <span className="grid size-9 shrink-0 place-items-center rounded-full bg-mist-100 text-forest-600">
-                    <Icon className="size-4" />
-                  </span>
-                  {text}
-                </li>
-              ) : null,
-            )}
-          </ul>
-        </div>
-      </section>
+          <div className="space-y-5 lg:col-span-6">
+            <div className="rounded-2xl bg-white p-5 sm:p-6">
+              <h1 className="heading text-2xl text-forest-900 sm:text-3xl">{item.name}</h1>
+              {item.flavor && <p className="mt-1 text-sm text-ink-600">{item.flavor}</p>}
+              <p className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-ink-600">
+                <span>
+                  {t.status}: <span className={`font-medium ${pack.soldOut ? "text-chili-600" : "text-forest-600"}`}>{pack.soldOut ? t.soldOut : t.inStock}</span>
+                </span>
+                <span className="h-3.5 w-px bg-mist-200" />
+                <span>
+                  {t.brand}: <span className="font-medium text-forest-600">{site.name}</span>
+                </span>
+              </p>
+              {item.highlight && (
+                <p className="mt-3 inline-flex w-fit rounded-full bg-sun-400 px-3 py-1 text-xs font-medium text-forest-950">{item.highlight}</p>
+              )}
 
-      <section className="container-page grid gap-10 pb-16 sm:pb-24 lg:grid-cols-12 lg:gap-12">
-        <div className="lg:col-span-7">
-          <h2 className="heading border-b border-mist-200 pb-4 text-2xl text-forest-900">{t.description}</h2>
-          <div className="mt-6">
-            {description ? (
-              <MoreText more={t.showMore} less={t.showLess}>
-                <div className="space-y-4 text-base leading-relaxed text-ink-600">
-                  {description.split(/\n\s*\n/).map((para, i) => (
-                    <p key={i} className="whitespace-pre-line">
-                      {para}
-                    </p>
-                  ))}
-                </div>
-              </MoreText>
-            ) : (
-              <p className="text-base leading-relaxed text-ink-600">{[item.name, item.flavor].filter(Boolean).join(" · ")}</p>
-            )}
-          </div>
-        </div>
-
-        <aside className="lg:col-span-5">
-          <h2 className="heading border-b border-mist-200 pb-4 text-2xl text-forest-900">{t.details}</h2>
-          <dl className="divide-y divide-mist-200 text-sm">
-            {facts.map(([label, value]) => (
-              <div key={label} className="grid grid-cols-[7.5rem_1fr] gap-4 py-3">
-                <dt className="text-ink-400">{label}</dt>
-                <dd className="text-ink-900">{value}</dd>
+              <div className="mt-5">
+                <BuyBox item={item} />
               </div>
-            ))}
-          </dl>
-          {nutrition.length > 0 && (
-            <div className="mt-6">
-              <p className="text-xs font-medium tracking-wider text-ink-400 uppercase">{r.nutrition}</p>
-              <dl className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-2 xl:grid-cols-4">
-                {nutrition.map(([label, value]) => (
-                  <div key={label} className="flex flex-col-reverse rounded-xl bg-mist-50 px-3 py-3 text-center">
-                    <dt className="text-xs text-ink-600">{label}</dt>
-                    <dd className="text-lg font-medium tracking-tight text-ink-900">{value}</dd>
-                  </div>
-                ))}
-              </dl>
+
+              <ul className="mt-6 grid grid-cols-2 gap-x-4 gap-y-4 border-t border-mist-200 pt-5 sm:grid-cols-3">
+                {perks.map(([Icon, text]) =>
+                  text ? (
+                    <li key={text} className="flex items-center gap-2.5 text-xs leading-snug text-ink-600 sm:text-sm">
+                      <Icon className="size-5 shrink-0 text-forest-600" strokeWidth={1.6} />
+                      {text}
+                    </li>
+                  ) : null,
+                )}
+              </ul>
             </div>
-          )}
-        </aside>
-      </section>
+
+            <div className="rounded-2xl bg-white p-5 sm:p-6">
+              <h2 className="inline-block border-b-2 border-forest-600 pb-2 text-sm font-semibold tracking-wider text-forest-900 uppercase">{t.description}</h2>
+              <div className="-mt-px border-t border-mist-200 pt-5">
+                <MoreText more={t.showMore} less={t.showLess}>
+                  <div className="space-y-4 text-sm leading-relaxed text-ink-600 sm:text-base">
+                    {description ? (
+                      description.split(/\n\s*\n/).map((para, i) => (
+                        <p key={i} className="whitespace-pre-line">
+                          {para}
+                        </p>
+                      ))
+                    ) : (
+                      <p>{[item.name, item.flavor].filter(Boolean).join(" · ")}</p>
+                    )}
+                    {facts.length > 0 && (
+                      <dl className="divide-y divide-mist-200 border-y border-mist-200 text-sm">
+                        {facts.map(([label, value]) => (
+                          <div key={label} className="grid grid-cols-[7.5rem_1fr] gap-4 py-2.5">
+                            <dt className="text-ink-400">{label}</dt>
+                            <dd className="text-ink-900">{value}</dd>
+                          </div>
+                        ))}
+                      </dl>
+                    )}
+                    {nutrition.length > 0 && (
+                      <div>
+                        <p className="text-xs font-medium tracking-wider text-ink-400 uppercase">{r.nutrition}</p>
+                        <dl className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
+                          {nutrition.map(([label, value]) => (
+                            <div key={label} className="flex flex-col-reverse rounded-xl bg-mist-50 px-3 py-2.5 text-center">
+                              <dt className="text-xs text-ink-600">{label}</dt>
+                              <dd className="text-base font-medium tracking-tight text-ink-900">{value}</dd>
+                            </div>
+                          ))}
+                        </dl>
+                      </div>
+                    )}
+                  </div>
+                </MoreText>
+              </div>
+            </div>
+          </div>
+        </section>
 
       {related.length > 0 && (
-        <section className="bg-mist-50 py-16 sm:py-20">
+        <section className="py-10 sm:py-14">
           <div className="container-page">
             <h2 className="heading text-3xl text-forest-900">{t.related}</h2>
             <div className="mt-8">
@@ -238,6 +238,7 @@ export default async function PackPage({ params }: Props) {
       )}
 
       <RecentlyViewed key={pack.id} current={pack.id} />
+      </div>
 
       <script type="application/ld+json" dangerouslySetInnerHTML={jsonLdHtml(productJsonLd)} />
       <script type="application/ld+json" dangerouslySetInnerHTML={jsonLdHtml(breadcrumbJsonLd(content, locale, trail))} />

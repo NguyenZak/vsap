@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Phudu } from "next/font/google";
 import { FloatingContact } from "@/components/FloatingContact";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
@@ -18,6 +18,14 @@ const font = Inter({
   subsets: ["latin", "vietnamese"],
   weight: ["400", "500", "600"],
   variable: "--font-inter",
+  display: "swap",
+});
+
+// Titles (the .heading utility and product names): Phudu, a Vietnamese-made display sans (SIL OFL).
+const display = Phudu({
+  subsets: ["latin", "vietnamese"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-phudu",
   display: "swap",
 });
 
@@ -72,7 +80,7 @@ export default async function LocaleLayout({ children, params }: Props) {
 
   return (
     // suppressHydrationWarning: the inline script below adds the `js` class before React hydrates.
-    <html lang={localeInfo[locale].html} className={font.variable} suppressHydrationWarning>
+    <html lang={localeInfo[locale].html} className={`${font.variable} ${display.variable}`} suppressHydrationWarning>
       <head>
         {/* Lets CSS hide intro elements before first paint, only when JS will animate them in. */}
         <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js')" }} />

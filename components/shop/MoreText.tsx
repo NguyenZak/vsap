@@ -25,7 +25,7 @@ export function MoreText({ children, more, less }: { children: React.ReactNode; 
           type="button"
           onClick={() => setOpen((v) => !v)}
           aria-expanded={open}
-          className="mt-4 inline-flex items-center gap-2 rounded-full border border-mist-200 px-4 py-2 text-sm font-medium text-forest-900 transition hover:border-forest-900"
+          className="mx-auto mt-4 flex items-center gap-2 rounded-lg border border-sun-500 px-5 py-2 text-sm font-medium text-sun-500 transition hover:bg-sun-400/10"
         >
           {open ? <Minus className="size-4" /> : <Plus className="size-4" />}
           {open ? less : more}

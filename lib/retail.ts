@@ -44,6 +44,10 @@ type MaccaSku = {
   nutrition?: RetailPack["nutrition"];
   /** The printed label lists 98% macadamia, 2% salt (the price list says 100% macadamia). */
   salted?: boolean;
+  /** Flavour printed on the label, when the same code comes in two. */
+  taste?: "plain" | "salt";
+  /** Page id when it differs from the code (two flavours share one price-list code). */
+  id?: string;
 };
 
 const maccaSkuList: MaccaSku[] = [
@@ -51,12 +55,18 @@ const maccaSkuList: MaccaSku[] = [
   { code: "HV250A", kind: "box", grams: 250, grade: "A", gift: true, salted: true, packing: { vi: "Hộp giấy lục giác, kích thước 70 × 70 × 200 mm", en: "Hexagonal paper box, 70 × 70 × 200 mm" }, carton: { vi: "40 – 100 hộp/thùng", en: "40 – 100 boxes per carton" }, images: [img("macca-hex-250a-front"), img("macca-hex-250a-top"), img("macca-hex-250a-nutrition"), img("macca-hex-250a-info"), img("macca-hex-250a-back"), img("macca-hex-250a-left")], nutrition: { energy: "750 kcal", fat: "72 g", carbs: "15 g", protein: "10 g" } },
   { code: "HV250B", kind: "box", grams: 250, grade: "B", gift: true, salted: true, packing: { vi: "Hộp giấy lục giác, kích thước 70 × 70 × 200 mm", en: "Hexagonal paper box, 70 × 70 × 200 mm" }, carton: { vi: "40 – 100 hộp/thùng", en: "40 – 100 boxes per carton" }, images: [img("macca-hex-250b-front"), img("macca-hex-250b-top"), img("macca-hex-250b-nutrition"), img("macca-hex-250b-info"), img("macca-hex-250b-back"), img("macca-hex-250b-left")], nutrition: { energy: "750 kcal", fat: "72 g", carbs: "15 g", protein: "10 g" } },
   { code: "HV160B", kind: "box", grams: 160, grade: "B", gift: true, salted: true, packing: { vi: "Hộp giấy lục giác", en: "Hexagonal paper box" }, carton: { vi: "40 – 120 hộp/thùng", en: "40 – 120 boxes per carton" }, images: [img("macca-hex-160b-front"), img("macca-hex-160b-top"), img("macca-hex-160b-nutrition"), img("macca-hex-160b-info"), img("macca-hex-160b-back"), img("macca-hex-160b-left")], nutrition: { energy: "750 kcal", fat: "72 g", carbs: "15 g", protein: "10 g" } },
-  { code: "ZV500A", kind: "inshell", grams: 500, grade: "A", size: "25 – 32 mm ±1", packing: { vi: "Túi zipper", en: "Zipper pouch" }, carton: { vi: "20 túi/thùng", en: "20 pouches per carton" }, images: ["/images/macadamia-spoon.webp"] },
-  { code: "ZV500B", kind: "inshell", grams: 500, grade: "B", size: "22 – 24 mm ±1", packing: { vi: "Túi zipper", en: "Zipper pouch" }, carton: { vi: "20 túi/thùng", en: "20 pouches per carton" }, images: ["/images/macadamia-spoon.webp"] },
-  { code: "PV500A", kind: "inshell", grams: 500, grade: "A", size: "25 – 32 mm ±1", packing: { vi: "Hũ nhựa PET", en: "PET jar" }, carton: { vi: "40 – 100 hũ/thùng", en: "40 – 100 jars per carton" }, images: [img("macca-inshell-500"), img("macca-inshell-250-back")] },
-  { code: "PV500B", kind: "inshell", grams: 500, grade: "B", size: "22 – 24 mm ±1", packing: { vi: "Hũ nhựa PET", en: "PET jar" }, carton: { vi: "40 – 100 hũ/thùng", en: "40 – 100 jars per carton" }, images: [img("macca-inshell-500"), img("macca-inshell-250-back")] },
-  { code: "PV250A", kind: "inshell", grams: 250, grade: "A", size: "25 – 32 mm ±1", gift: true, packing: { vi: "Hũ nhựa PET", en: "PET jar" }, carton: { vi: "40 – 100 hũ/thùng", en: "40 – 100 jars per carton" }, images: [img("macca-inshell-250"), img("macca-inshell-250-back")] },
-  { code: "PV250B", kind: "inshell", grams: 250, grade: "B", size: "22 – 24 mm ±1", gift: true, packing: { vi: "Hũ nhựa PET", en: "PET jar" }, carton: { vi: "40 – 100 hũ/thùng", en: "40 – 100 jars per carton" }, images: [img("macca-inshell-250"), img("macca-inshell-250-back")] },
+  { code: "ZV500A", taste: "plain", salted: true, kind: "inshell", grams: 500, grade: "A", size: "25 – 32 mm ±1", packing: { vi: "Túi zipper", en: "Zipper pouch" }, carton: { vi: "20 túi/thùng", en: "20 pouches per carton" }, images: [img("macca-zip-500a-front"), img("macca-zip-500a-right"), img("macca-zip-500a-left"), img("macca-zip-500a-top"), img("macca-zip-500a-back"), img("macca-zip-500a-back-angle")], nutrition: { energy: "759 kcal", fat: "74 g", carbs: "14 g", protein: "9 g" } },
+  { code: "ZV500A", id: "zv500a-rm", taste: "salt", salted: true, kind: "inshell", grams: 500, grade: "A", size: "25 – 32 mm ±1", packing: { vi: "Túi zipper", en: "Zipper pouch" }, carton: { vi: "20 túi/thùng", en: "20 pouches per carton" }, images: [img("macca-zip-500a-salt-front"), img("macca-zip-500a-salt-right"), img("macca-zip-500a-salt-left"), img("macca-zip-500a-salt-top"), img("macca-zip-500a-salt-back"), img("macca-zip-500a-salt-back-angle")], nutrition: { energy: "759 kcal", fat: "74 g", carbs: "14 g", protein: "9 g" } },
+  { code: "ZV500B", taste: "plain", salted: true, kind: "inshell", grams: 500, grade: "B", size: "22 – 24 mm ±1", packing: { vi: "Túi zipper", en: "Zipper pouch" }, carton: { vi: "20 túi/thùng", en: "20 pouches per carton" }, images: [img("macca-zip-500b-front"), img("macca-zip-500b-right"), img("macca-zip-500b-left"), img("macca-zip-500b-top"), img("macca-zip-500b-back"), img("macca-zip-500b-back-angle")], nutrition: { energy: "759 kcal", fat: "74 g", carbs: "14 g", protein: "9 g" } },
+  { code: "ZV500B", id: "zv500b-rm", taste: "salt", salted: true, kind: "inshell", grams: 500, grade: "B", size: "22 – 24 mm ±1", packing: { vi: "Túi zipper", en: "Zipper pouch" }, carton: { vi: "20 túi/thùng", en: "20 pouches per carton" }, images: [img("macca-zip-500b-salt-front"), img("macca-zip-500b-salt-right"), img("macca-zip-500b-salt-left"), img("macca-zip-500b-salt-top"), img("macca-zip-500b-salt-back"), img("macca-zip-500b-salt-back-angle")], nutrition: { energy: "759 kcal", fat: "74 g", carbs: "14 g", protein: "9 g" } },
+  { code: "PV500A", taste: "plain", salted: true, kind: "inshell", grams: 500, grade: "A", size: "25 – 32 mm ±1", packing: { vi: "Hũ nhựa PET", en: "PET jar" }, carton: { vi: "40 – 100 hũ/thùng", en: "40 – 100 jars per carton" }, images: [img("macca-jar-500a-front"), img("macca-jar-500a-left"), img("macca-jar-500a-right"), img("macca-jar-500a-back")], nutrition: { energy: "750 kcal", fat: "72 g", carbs: "15 g", protein: "10 g" } },
+  { code: "PV500A", id: "pv500a-rm", taste: "salt", salted: true, kind: "inshell", grams: 500, grade: "A", size: "25 – 32 mm ±1", packing: { vi: "Hũ nhựa PET", en: "PET jar" }, carton: { vi: "40 – 100 hũ/thùng", en: "40 – 100 jars per carton" }, images: [img("macca-jar-500a-salt-front"), img("macca-jar-500a-salt-left"), img("macca-jar-500a-salt-right"), img("macca-jar-500a-salt-back")], nutrition: { energy: "750 kcal", fat: "72 g", carbs: "15 g", protein: "10 g" } },
+  { code: "PV500B", taste: "plain", salted: true, kind: "inshell", grams: 500, grade: "B", size: "22 – 24 mm ±1", packing: { vi: "Hũ nhựa PET", en: "PET jar" }, carton: { vi: "40 – 100 hũ/thùng", en: "40 – 100 jars per carton" }, images: [img("macca-jar-500b-front"), img("macca-jar-500b-left"), img("macca-jar-500b-right"), img("macca-jar-500b-back")], nutrition: { energy: "750 kcal", fat: "72 g", carbs: "15 g", protein: "10 g" } },
+  { code: "PV500B", id: "pv500b-rm", taste: "salt", salted: true, kind: "inshell", grams: 500, grade: "B", size: "22 – 24 mm ±1", packing: { vi: "Hũ nhựa PET", en: "PET jar" }, carton: { vi: "40 – 100 hũ/thùng", en: "40 – 100 jars per carton" }, images: [img("macca-jar-500b-salt-front"), img("macca-jar-500b-salt-left"), img("macca-jar-500b-salt-right"), img("macca-jar-500b-salt-back")], nutrition: { energy: "750 kcal", fat: "72 g", carbs: "15 g", protein: "10 g" } },
+  { code: "PV250A", taste: "plain", salted: true, kind: "inshell", grams: 250, grade: "A", size: "25 – 32 mm ±1", gift: true, packing: { vi: "Hũ nhựa PET", en: "PET jar" }, carton: { vi: "40 – 100 hũ/thùng", en: "40 – 100 jars per carton" }, images: [img("macca-jar-250a-front"), img("macca-jar-250a-left"), img("macca-jar-250a-right"), img("macca-jar-250a-back")], nutrition: { energy: "750 kcal", fat: "72 g", carbs: "15 g", protein: "10 g" } },
+  { code: "PV250A", id: "pv250a-rm", taste: "salt", salted: true, kind: "inshell", grams: 250, grade: "A", size: "25 – 32 mm ±1", gift: true, packing: { vi: "Hũ nhựa PET", en: "PET jar" }, carton: { vi: "40 – 100 hũ/thùng", en: "40 – 100 jars per carton" }, images: [img("macca-jar-250a-salt-front"), img("macca-jar-250a-salt-left"), img("macca-jar-250a-salt-right"), img("macca-jar-250a-salt-back")], nutrition: { energy: "750 kcal", fat: "72 g", carbs: "15 g", protein: "10 g" } },
+  { code: "PV250B", taste: "plain", salted: true, kind: "inshell", grams: 250, grade: "B", size: "22 – 24 mm ±1", gift: true, packing: { vi: "Hũ nhựa PET", en: "PET jar" }, carton: { vi: "40 – 100 hũ/thùng", en: "40 – 100 jars per carton" }, images: [img("macca-jar-250b-front"), img("macca-jar-250b-left"), img("macca-jar-250b-right"), img("macca-jar-250b-back")], nutrition: { energy: "750 kcal", fat: "72 g", carbs: "15 g", protein: "10 g" } },
+  { code: "PV250B", id: "pv250b-rm", taste: "salt", salted: true, kind: "inshell", grams: 250, grade: "B", size: "22 – 24 mm ±1", gift: true, packing: { vi: "Hũ nhựa PET", en: "PET jar" }, carton: { vi: "40 – 100 hũ/thùng", en: "40 – 100 jars per carton" }, images: [img("macca-jar-250b-salt-front"), img("macca-jar-250b-salt-left"), img("macca-jar-250b-salt-right"), img("macca-jar-250b-salt-back")], nutrition: { energy: "750 kcal", fat: "72 g", carbs: "15 g", protein: "10 g" } },
 ];
 
 /**
@@ -68,19 +78,30 @@ const maccaSkuList: MaccaSku[] = [
 export const legacyPackIds: Record<string, string> = { "macca-box": "hv450b", "macca-inshell-jar": "pv250a" };
 
 /** Retail prices (VND) from the price list. */
-const maccaPrices: Record<string, number> = { HV450B: 155000, HV250A: 79000, HV250B: 74000, HV160B: 69000, ZV500A: 158000, ZV500B: 148000, PV500A: 168000, PV500B: 158000, PV250A: 93000, PV250B: 88000 };
+// The roasted & salted pouches and jars (*-RM) are not on the price list: same price as the plain one for now.
+const maccaPrices: Record<string, number> = {
+  HV450B: 155000, HV250A: 79000, HV250B: 74000, HV160B: 69000,
+  ZV500A: 158000, "ZV500A-RM": 158000, ZV500B: 148000, "ZV500B-RM": 148000,
+  PV500A: 168000, "PV500A-RM": 168000, PV500B: 158000, "PV500B-RM": 158000,
+  PV250A: 93000, "PV250A-RM": 93000, PV250B: 88000, "PV250B-RM": 88000,
+};
 
 function maccaSkus(): RetailPack[] {
   return maccaSkuList.map((k) => {
     const g = `${k.grams} g`;
     const box = k.kind === "box";
     const size = k.size ? ` (${k.size})` : "";
+    const taste = k.taste === "salt"
+      ? { vi: " – Vị rang muối", en: " – Roasted & salted", zh: " – 盐焗味", ja: " – 塩ロースト", ko: " – 소금 로스팅" }
+      : k.taste === "plain"
+        ? { vi: " – Vị nguyên bản", en: " – Original", zh: " – 原味", ja: " – プレーン", ko: " – 오리지널" }
+        : { vi: "", en: "", zh: "", ja: "", ko: "" };
     return {
-      id: k.code.toLowerCase(),
+      id: k.id ?? k.code.toLowerCase(),
       slug: "macadamia",
       name: box
         ? { vi: `Hộp hạt macca ${g}`, en: `Macadamia gift box ${g}`, zh: `夏威夷果礼盒 ${k.grams}克`, ja: `マカダミアナッツ ギフトボックス ${k.grams}g`, ko: `마카다미아 선물 상자 ${k.grams}g` }
-        : { vi: `Hạt macca nứt vỏ ${g}`, en: `Cracked in-shell macadamias ${g}`, zh: `开口带壳夏威夷果 ${k.grams}克`, ja: `殻付きマカダミアナッツ ${k.grams}g`, ko: `껍질째 마카다미아 ${k.grams}g` },
+        : { vi: `Hạt macca nứt vỏ ${g}${taste.vi}`, en: `Cracked in-shell macadamias ${g}${taste.en}`, zh: `开口带壳夏威夷果 ${k.grams}克${taste.zh}`, ja: `殻付きマカダミアナッツ ${k.grams}g${taste.ja}`, ko: `껍질째 마카다미아 ${k.grams}g${taste.ko}` },
       flavor: {
         vi: `Mã ${k.code} · Cỡ hạt ${k.grade}${size}`,
         en: `Code ${k.code} · Grade ${k.grade}${size}`,

@@ -77,7 +77,7 @@ function ProductCard({ item, onQuickView }: { item: ShopItem; onQuickView: () =>
       </div>
 
       <div className="flex flex-1 flex-col border-t border-mist-100 p-3.5 sm:p-4">
-        <h3 className="text-sm font-medium text-ink-900 sm:text-base">
+        <h3 className="font-display text-sm font-semibold text-ink-900 sm:text-base">
           <Link href={item.href} className="hover:text-forest-600">
             {item.name}
           </Link>

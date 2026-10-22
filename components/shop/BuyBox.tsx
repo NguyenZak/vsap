@@ -24,24 +24,22 @@ export function BuyBox({ item, onAdded }: { item: ShopItem; onAdded?: () => void
 
   return (
     <div>
-      <div className="rounded-2xl bg-mist-50 px-5 py-4">
-        <p className="text-xs text-ink-400">{t.price}</p>
-        <div className="mt-0.5">
-          <Price item={item} size="large" />
-        </div>
+      <div className="flex flex-wrap items-center gap-x-8 gap-y-1 rounded-xl bg-mist-50 px-5 py-4">
+        <p className="w-20 shrink-0 text-sm text-ink-600">{t.price}:</p>
+        <Price item={item} size="large" />
       </div>
 
       {buyable ? (
         <>
-          <div className="mt-5 flex items-center gap-4">
-            <span className="text-sm text-ink-600">{t.quantity}</span>
+          <div className="mt-5 flex items-center gap-8 px-5">
+            <span className="w-20 shrink-0 text-sm text-ink-600">{t.quantity}:</span>
             <QtyStepper value={qty} onChange={setQty} labels={t} />
           </div>
-          <div className="mt-6 grid gap-3 sm:grid-cols-2">
+          <div className="mt-6 grid grid-cols-2 gap-3">
             <button
               type="button"
               onClick={() => addToCart(true)}
-              className="inline-flex items-center justify-center gap-2 rounded-full border border-forest-900 px-5 py-3.5 text-sm font-medium text-forest-900 transition hover:bg-forest-900 hover:text-white"
+              className="inline-flex items-center justify-center gap-2 rounded-lg border-2 border-chili-600 px-3 py-3 text-sm font-semibold tracking-wide text-chili-600 uppercase transition hover:bg-chili-600/5"
             >
               <ShoppingBag className="size-4" />
               {t.addToCart}
@@ -52,7 +50,7 @@ export function BuyBox({ item, onAdded }: { item: ShopItem; onAdded?: () => void
                 addToCart(false);
                 router.push(`/${locale}/cart`);
               }}
-              className="inline-flex items-center justify-center rounded-full bg-sun-400 px-5 py-3.5 text-sm font-medium text-forest-950 transition hover:bg-sun-500"
+              className="inline-flex items-center justify-center rounded-lg border-2 border-chili-600 bg-chili-600 px-3 py-3 text-sm font-semibold tracking-wide text-white uppercase transition hover:bg-chili-600/90"
             >
               {t.buyNow}
             </button>
@@ -61,7 +59,7 @@ export function BuyBox({ item, onAdded }: { item: ShopItem; onAdded?: () => void
       ) : (
         <Link
           href={`/${locale}/contact`}
-          className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-full bg-forest-900 px-5 py-3.5 text-sm font-medium text-white transition hover:bg-forest-800"
+          className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-forest-900 px-5 py-3.5 text-sm font-semibold tracking-wide text-white uppercase transition hover:bg-forest-800"
         >
           <MessageCircle className="size-4" />
           {t.askPrice}

@@ -75,6 +75,7 @@ export type UiStrings = {
     note: string; notePlaceholder: string; payment: string; placeOrder: string; placing: string;
     successTitle: string; successBody: string; error: string; required: string;
     oldPrice: string;
+    perk5: string; perk6: string; share: string; copyLink: string; copied: string;
     /** Checkout note; {terms} and {privacy} become links to those policies. */
     agree: string;
     province: string; ward: string; street: string; streetPlaceholder: string; selectProvince: string; selectWard: string;

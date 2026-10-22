@@ -56,6 +56,7 @@
 
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-serif: "VSAP Serif", ui-serif, Georgia, serif;
+  --font-display: var(--font-phudu), var(--font-inter), ui-sans-serif, system-ui, sans-serif;
 }
 
 :root {
@@ -103,8 +104,9 @@ body {
 
 /* Sans đậm vừa, khít chữ — phần chính của mọi tiêu đề. */
 @utility heading {
-  font-weight: 500;
-  letter-spacing: -0.035em;
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.01em;
   line-height: 1.08;
   text-wrap: balance;
 }
