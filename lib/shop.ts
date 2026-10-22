@@ -9,7 +9,6 @@ export type ShopItem = {
   href: string;
   name: string;
   flavor: string;
-  pack: string;
   highlight: string;
   images: string[];
   /** VND; null = sold on request. */
@@ -36,7 +35,6 @@ export function toShopItem(pack: RetailPack, locale: Locale): ShopItem {
     href: packHref(pack, locale),
     name: pick(pack.name, locale),
     flavor: pick(pack.flavor, locale),
-    pack: pick(pack.pack, locale),
     highlight: pick(pack.highlight, locale),
     images: pack.images.map((i) => i.src).filter(Boolean),
     price: pack.price ?? null,

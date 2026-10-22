@@ -22,35 +22,111 @@ export type RetailPack = {
   highlight?: L;
   /** Who packed it, when the label names someone other than the product's usual packer. */
   packer?: keyof typeof packers;
+  /** Text for the product page (Vietnamese and English; the other languages show English). */
+  description?: Pick<L, "vi" | "en">;
 };
 
 const img = (name: string) => `/images/products/${name}.webp`;
 
+/** Cracked in-shell macadamia SKUs from VSAP's retail price list (bảng giá sản phẩm, 10/2026). */
+type MaccaSku = {
+  code: string;
+  kind: "box" | "inshell";
+  grams: number;
+  grade: "A" | "B";
+  /** Kernel size printed on the price list, when given. */
+  size?: string;
+  gift?: boolean;
+  /** Packing line and carton for the description. */
+  packing: { vi: string; en: string };
+  carton: { vi: string; en: string };
+  images: string[];
+  nutrition?: RetailPack["nutrition"];
+};
+
+const maccaSkuList: MaccaSku[] = [
+  { code: "HV450B", kind: "box", grams: 450, grade: "B", gift: true, packing: { vi: "Hộp giấy, kích thước 140 × 220 × 50 mm", en: "Paper box, 140 × 220 × 50 mm" }, carton: { vi: "40 – 80 hộp/thùng", en: "40 – 80 boxes per carton" }, images: [img("macca-box-450-front"), img("macca-box-450-angle"), img("macca-box-450-back")], nutrition: { energy: "759 kcal", fat: "74 g", carbs: "14 g", protein: "9 g" } },
+  { code: "HV250A", kind: "box", grams: 250, grade: "A", gift: true, packing: { vi: "Hộp giấy lục giác, kích thước 70 × 70 × 200 mm", en: "Hexagonal paper box, 70 × 70 × 200 mm" }, carton: { vi: "40 – 100 hộp/thùng", en: "40 – 100 boxes per carton" }, images: ["/images/macadamia.webp"] },
+  { code: "HV250B", kind: "box", grams: 250, grade: "B", gift: true, packing: { vi: "Hộp giấy lục giác, kích thước 70 × 70 × 200 mm", en: "Hexagonal paper box, 70 × 70 × 200 mm" }, carton: { vi: "40 – 100 hộp/thùng", en: "40 – 100 boxes per carton" }, images: ["/images/macadamia.webp"] },
+  { code: "HV160B", kind: "box", grams: 160, grade: "B", gift: true, packing: { vi: "Hộp giấy lục giác", en: "Hexagonal paper box" }, carton: { vi: "40 – 120 hộp/thùng", en: "40 – 120 boxes per carton" }, images: ["/images/macadamia.webp"] },
+  { code: "ZV500A", kind: "inshell", grams: 500, grade: "A", size: "25 – 32 mm ±1", packing: { vi: "Túi zipper", en: "Zipper pouch" }, carton: { vi: "20 túi/thùng", en: "20 pouches per carton" }, images: ["/images/macadamia-spoon.webp"] },
+  { code: "ZV500B", kind: "inshell", grams: 500, grade: "B", size: "22 – 24 mm ±1", packing: { vi: "Túi zipper", en: "Zipper pouch" }, carton: { vi: "20 túi/thùng", en: "20 pouches per carton" }, images: ["/images/macadamia-spoon.webp"] },
+  { code: "PV500A", kind: "inshell", grams: 500, grade: "A", size: "25 – 32 mm ±1", packing: { vi: "Hũ nhựa PET", en: "PET jar" }, carton: { vi: "40 – 100 hũ/thùng", en: "40 – 100 jars per carton" }, images: [img("macca-inshell-500"), img("macca-inshell-250-back")] },
+  { code: "PV500B", kind: "inshell", grams: 500, grade: "B", size: "22 – 24 mm ±1", packing: { vi: "Hũ nhựa PET", en: "PET jar" }, carton: { vi: "40 – 100 hũ/thùng", en: "40 – 100 jars per carton" }, images: [img("macca-inshell-500"), img("macca-inshell-250-back")] },
+  { code: "PV250A", kind: "inshell", grams: 250, grade: "A", size: "25 – 32 mm ±1", gift: true, packing: { vi: "Hũ nhựa PET", en: "PET jar" }, carton: { vi: "40 – 100 hũ/thùng", en: "40 – 100 jars per carton" }, images: [img("macca-inshell-250"), img("macca-inshell-250-back")] },
+  { code: "PV250B", kind: "inshell", grams: 250, grade: "B", size: "22 – 24 mm ±1", gift: true, packing: { vi: "Hũ nhựa PET", en: "PET jar" }, carton: { vi: "40 – 100 hũ/thùng", en: "40 – 100 jars per carton" }, images: [img("macca-inshell-250"), img("macca-inshell-250-back")] },
+];
+
+/** Pack ids used before the price-list SKUs, redirected to their closest SKU (old links and search results). */
+export const legacyPackIds: Record<string, string> = { "macca-box": "hv450b", "macca-inshell-jar": "pv250a" };
+
+/** Retail prices (VND) from the price list. */
+const maccaPrices: Record<string, number> = { HV450B: 155000, HV250A: 79000, HV250B: 74000, HV160B: 69000, ZV500A: 158000, ZV500B: 148000, PV500A: 168000, PV500B: 158000, PV250A: 93000, PV250B: 88000 };
+
+function maccaSkus(): RetailPack[] {
+  return maccaSkuList.map((k) => {
+    const g = `${k.grams} g`;
+    const box = k.kind === "box";
+    const size = k.size ? ` (${k.size})` : "";
+    return {
+      id: k.code.toLowerCase(),
+      slug: "macadamia",
+      name: box
+        ? { vi: `Hộp hạt macca ${g}`, en: `Macadamia gift box ${g}`, zh: `夏威夷果礼盒 ${k.grams}克`, ja: `マカダミアナッツ ギフトボックス ${k.grams}g`, ko: `마카다미아 선물 상자 ${k.grams}g` }
+        : { vi: `Hạt macca nứt vỏ ${g}`, en: `Cracked in-shell macadamias ${g}`, zh: `开口带壳夏威夷果 ${k.grams}克`, ja: `殻付きマカダミアナッツ ${k.grams}g`, ko: `껍질째 마카다미아 ${k.grams}g` },
+      flavor: {
+        vi: `Mã ${k.code} · Cỡ hạt ${k.grade}${size}`,
+        en: `Code ${k.code} · Grade ${k.grade}${size}`,
+        zh: `编号 ${k.code} · ${k.grade}级果${size}`,
+        ja: `品番 ${k.code} · ${k.grade}サイズ${size}`,
+        ko: `코드 ${k.code} · ${k.grade} 사이즈${size}`,
+      },
+      pack: { vi: k.packing.vi, en: k.packing.en, zh: "", ja: "", ko: "" },
+      weights: [g],
+      images: k.images,
+      ingredients: { vi: "100% hạt macca", en: "100% macadamia nuts", zh: "100%夏威夷果", ja: "マカダミアナッツ100%", ko: "마카다미아 100%" },
+      nutrition: k.nutrition,
+      highlight: k.gift
+        ? { vi: "Dùng làm quà tặng", en: "Made for gifting", zh: "送礼佳品", ja: "ギフトに最適", ko: "선물용" }
+        : { vi: "100% hạt macca từ Tây Nguyên", en: "100% Central Highlands macadamias", zh: "100%西原地区夏威夷果", ja: "中部高原産マカダミアナッツ100%", ko: "중부 고원산 마카다미아 100%" },
+      description: {
+        vi: `Hạt macca sấy nứt vỏ tự nhiên, kèm dụng cụ tách vỏ. Không chứa chất bảo quản và phẩm màu, an toàn cho sức khỏe của bạn và gia đình; có thể ăn trực tiếp hoặc dùng chế biến nhiều món.
+
+Thông số
+- Khối lượng tịnh: ${g}
+- Cỡ hạt: ${k.grade}${size}
+- Tỷ lệ hạt hư: ≤ 3%
+- Đóng gói: ${k.packing.vi}
+- Đóng thùng: ${k.carton.vi}
+
+Cách dùng
+1. Dùng dụng cụ tách vỏ có sẵn, đưa vào phần nứt trên vỏ hạt.
+2. Xoay vuông góc để tách đôi vỏ, thưởng thức nhân macca thơm ngon bên trong.
+3. Đóng kín sau mỗi lần sử dụng.
+
+Lưu ý: không sử dụng sản phẩm đã quá hạn.`,
+        en: `Naturally dried, cracked in-shell macadamias with a shell opener included. No preservatives or colourings, safe for you and your family; enjoy them as they are or cook with them.
+
+Specifications
+- Net weight: ${g}
+- Grade: ${k.grade}${size}
+- Damaged nuts: ≤ 3%
+- Packing: ${k.packing.en}
+- Carton: ${k.carton.en}
+
+How to open
+1. Put the included opener into the crack in the shell.
+2. Twist it at a right angle to split the shell and enjoy the kernel inside.
+3. Close the pack tightly after each use.
+
+Do not eat after the expiry date.`,
+      },
+    };
+  });
+}
+
 export const retailPacks: RetailPack[] = [
-  {
-    id: "macca-box",
-    slug: "macadamia",
-    name: { vi: "Hạt macca nứt vỏ", en: "Cracked in-shell macadamias", zh: "开口带壳夏威夷果", ja: "割れ目入り殻付きマカダミアナッツ", ko: "금 낸 껍질째 마카다미아" },
-    flavor: { vi: "Vị nguyên bản", en: "Original", zh: "原味", ja: "プレーン", ko: "오리지널" },
-    pack: { vi: "Hộp giấy", en: "Gift box", zh: "纸盒装", ja: "紙箱", ko: "종이 상자" },
-    weights: ["450 g"],
-    images: [img("macca-box-450-front"), img("macca-box-450-angle"), img("macca-box-450-back")],
-    ingredients: { vi: "100% hạt macca", en: "100% macadamia nuts", zh: "100%夏威夷果", ja: "マカダミアナッツ100%", ko: "마카다미아 100%" },
-    nutrition: { energy: "759 kcal", fat: "74 g", carbs: "14 g", protein: "9 g" },
-    highlight: { vi: "100% hạt macca từ Tây Nguyên", en: "100% Central Highlands macadamias", zh: "100%西原地区夏威夷果", ja: "中部高原産マカダミアナッツ100%", ko: "중부 고원산 마카다미아 100%" },
-  },
-  {
-    id: "macca-inshell-jar",
-    slug: "macadamia",
-    name: { vi: "Hạt macca nứt vỏ", en: "Cracked in-shell macadamias", zh: "开口带壳夏威夷果", ja: "割れ目入り殻付きマカダミアナッツ", ko: "금 낸 껍질째 마카다미아" },
-    flavor: { vi: "Rang muối hồng Himalaya", en: "Himalayan pink salt roasted", zh: "喜马拉雅粉盐烘烤", ja: "ヒマラヤピンクソルトでロースト", ko: "히말라야 핑크 솔트 로스팅" },
-    pack: { vi: "Hũ nhựa", en: "Jar", zh: "塑料罐装", ja: "プラスチックジャー", ko: "플라스틱 병" },
-    weights: ["250 g", "500 g"],
-    images: [img("macca-inshell-250"), img("macca-inshell-500"), img("macca-inshell-250-back")],
-    ingredients: { vi: "98% hạt macca, 2% muối", en: "98% macadamia nuts, 2% salt", zh: "98%夏威夷果，2%食盐", ja: "マカダミアナッツ98%、食塩2%", ko: "마카다미아 98%, 소금 2%" },
-    nutrition: { energy: "750 kcal", fat: "72 g", carbs: "15 g", protein: "10 g" },
-    highlight: { vi: "100% hạt macca từ Tây Nguyên", en: "100% Central Highlands macadamias", zh: "100%西原地区夏威夷果", ja: "中部高原産マカダミアナッツ100%", ko: "중부 고원산 마카다미아 100%" },
-  },
+  ...maccaSkus(),
   {
     id: "macca-kernel-jar",
     slug: "macadamia",
@@ -139,12 +215,11 @@ export const retailFacts = {
 };
 
 /**
- * GIÁ TẠM (VNĐ), đặt theo mặt bằng giá bán lẻ trên thị trường để chạy thử cửa hàng.
- * Chưa phải giá VSAP công bố: thay bằng giá thật trong Studio › Bán lẻ rồi xuất bản.
+ * Giá bán lẻ (VNĐ). Macca nứt vỏ: theo bảng giá VSAP. Các mã còn lại là GIÁ TẠM theo
+ * mặt bằng thị trường, chưa phải giá VSAP công bố: thay trong Studio › Bán lẻ rồi xuất bản.
  */
 export const tempPrices: Record<string, number> = {
-  "macca-box": 165000,
-  "macca-inshell-jar": 185000,
+  ...Object.fromEntries(Object.entries(maccaPrices).map(([code, price]) => [code.toLowerCase(), price])),
   "macca-kernel-jar": 225000,
   "cashew-roasted": 195000,
   "cashew-hex": 75000,

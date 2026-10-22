@@ -23,15 +23,15 @@ const offices: Office[] = [
   {
     label: { vi: "Văn phòng Hà Nội", en: "Hanoi office", zh: "河内办事处", ja: "ハノイ事務所", ko: "하노이 사무소" },
     address: {
-      vi: "Tầng 1, Tòa nhà An Sinh B, số 106 Lưu Hữu Phước, phường Cầu Diễn, TP Hà Nội",
-      en: "1st Floor, An Sinh B Building, 106 Luu Huu Phuoc, Cau Dien Ward, Hanoi, Vietnam",
-      zh: "越南河内市 Cầu Diễn 坊 Lưu Hữu Phước 街106号 An Sinh B 大厦1楼",
-      ja: "ベトナム ハノイ市 Cầu Diễn 坊 Lưu Hữu Phước 通り106番地 An Sinh B ビル1階",
-      ko: "베트남 하노이시 Cầu Diễn 동 Lưu Hữu Phước 거리 106번지 An Sinh B 빌딩 1층",
+      vi: "Tầng 1, Tòa nhà An Sinh B, số 106 Lưu Hữu Phước, phường Từ Liêm, TP Hà Nội",
+      en: "1st Floor, An Sinh B Building, 106 Luu Huu Phuoc, Tu Liem Ward, Hanoi, Vietnam",
+      zh: "越南河内市 Từ Liêm 坊 Lưu Hữu Phước 街106号 An Sinh B 大厦1楼",
+      ja: "ベトナム ハノイ市 Từ Liêm 坊 Lưu Hữu Phước 通り106番地 An Sinh B ビル1階",
+      ko: "베트남 하노이시 Từ Liêm 동 Lưu Hữu Phước 거리 106번지 An Sinh B 빌딩 1층",
     },
     postal: {
       streetAddress: "Tầng 1, Tòa nhà An Sinh B, số 106 Lưu Hữu Phước",
-      addressLocality: "Phường Cầu Diễn",
+      addressLocality: "Phường Từ Liêm",
       addressRegion: "Hà Nội",
     },
   },

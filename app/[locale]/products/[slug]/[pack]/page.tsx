@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import { BadgeCheck, Boxes, ChevronRight, Headset, Wallet } from "lucide-react";
 import { BuyBox } from "@/components/shop/BuyBox";
 import { Gallery } from "@/components/shop/Gallery";
@@ -11,6 +11,7 @@ import { pick } from "@/lib/cms/links";
 import { getContent } from "@/lib/cms/store";
 import { metadataLocale, resolveLocale } from "@/lib/i18n";
 import { breadcrumbJsonLd, jsonLdHtml, seoMetadata } from "@/lib/seo";
+import { legacyPackIds } from "@/lib/retail";
 import { packHref, toShopItem } from "@/lib/shop";
 
 type Props = { params: Promise<{ locale: string; slug: string; pack: string }> };
@@ -36,7 +37,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     locale,
     path: `/products/${pack.product}/${pack.id}`,
     title: name,
-    description: pick(pack.description, locale).split(/\n\s*\n/)[0] || [name, pick(pack.pack, locale)].filter(Boolean).join(" · "),
+    description: pick(pack.description, locale).split(/\n\s*\n/)[0] || name,
     image: pack.images[0]?.src,
     imageAlt: name,
   });
@@ -45,7 +46,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function PackPage({ params }: Props) {
   const { raw, content, pack, product } = await load(params);
   const locale = resolveLocale(raw);
-  if (!pack) notFound();
+  if (!pack) {
+    const { slug, pack: id } = await params;
+    if (legacyPackIds[id]) permanentRedirect(`/${locale}/products/${slug}/${legacyPackIds[id]}`);
+    notFound();
+  }
   const ui = content.ui[locale];
   const t = ui.shop;
   const r = ui.retail;
@@ -139,8 +144,7 @@ export default async function PackPage({ params }: Props) {
         </div>
 
         <div className="lg:col-span-5">
-          <p className="text-sm text-forest-600">{item.pack}</p>
-          <h1 className="heading mt-1 text-4xl text-forest-900 sm:text-5xl">
+          <h1 className="heading text-4xl text-forest-900 sm:text-5xl">
             {item.name}
             {item.flavor && <span className="accent block text-[1.05em] leading-tight text-ink-600">{item.flavor}</span>}
           </h1>
@@ -191,7 +195,7 @@ export default async function PackPage({ params }: Props) {
                 </div>
               </MoreText>
             ) : (
-              <p className="text-base leading-relaxed text-ink-600">{[item.name, item.flavor, item.pack].filter(Boolean).join(" · ")}</p>
+              <p className="text-base leading-relaxed text-ink-600">{[item.name, item.flavor].filter(Boolean).join(" · ")}</p>
             )}
           </div>
         </div>

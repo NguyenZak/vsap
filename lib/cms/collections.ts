@@ -68,7 +68,7 @@ export const retailFields: FieldDef[] = [
   { key: "product", label: "Thuộc sản phẩm (slug)", type: "string", help: "Slug của sản phẩm chính, ví dụ: macadamia. Gói này hiện ở trang chi tiết sản phẩm đó." },
   { key: "name", label: "Tên", type: "text" },
   { key: "flavor", label: "Hương vị", type: "text" },
-  { key: "pack", label: "Loại bao bì", type: "text" },
+  { key: "pack", label: "Loại bao bì (chỉ dùng nội bộ, không hiện trên website)", type: "text" },
   { key: "price", label: "Giá bán (VNĐ)", type: "number", min: 0, step: 1000, help: "Để trống = hiện “Liên hệ” và nút “Hỏi giá”, sản phẩm không bán qua giỏ hàng." },
   { key: "oldPrice", label: "Giá cũ (VNĐ)", type: "number", min: 0, step: 1000, help: "Giá trước khi giảm, hiện gạch ngang cạnh giá bán kèm nhãn “-%”. Để trống nếu không giảm giá." },
   { key: "soldOut", label: "Tạm hết hàng (ẩn nút mua)", type: "boolean" },

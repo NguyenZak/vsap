@@ -400,7 +400,7 @@ export function defaultContent(): SiteContent {
       price: tempPrices[r.id] ?? null,
       oldPrice: null,
       soldOut: false,
-      description: blank(),
+      description: r.description ? { ...blank(), ...r.description } : blank(),
       images: r.images.map((src) => ({ src })),
       ingredients: { ...r.ingredients },
       highlight: r.highlight ? { ...r.highlight } : blank(),

@@ -77,8 +77,7 @@ function ProductCard({ item, onQuickView }: { item: ShopItem; onQuickView: () =>
       </div>
 
       <div className="flex flex-1 flex-col border-t border-mist-100 p-3.5 sm:p-4">
-        <p className="text-[0.7rem] tracking-[0.14em] text-ink-400 uppercase">{item.pack}</p>
-        <h3 className="mt-1 text-sm font-medium text-ink-900 sm:text-base">
+        <h3 className="text-sm font-medium text-ink-900 sm:text-base">
           <Link href={item.href} className="hover:text-forest-600">
             {item.name}
           </Link>
@@ -121,8 +120,7 @@ function QuickView({ item, onClose }: { item: ShopItem; onClose: () => void }) {
       <div className="flex flex-col">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <p className="text-sm text-forest-600">{item.pack}</p>
-            <h2 className="heading mt-1 text-3xl text-forest-900">
+            <h2 className="heading text-3xl text-forest-900">
               {item.name}
               {item.flavor && <span className="accent block text-[1.05em] leading-tight text-ink-600">{item.flavor}</span>}
             </h2>
