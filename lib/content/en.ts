@@ -430,6 +430,7 @@ export const en: Dictionary = {
     error: "We couldn’t send your order. Please try again or call VSAP.",
     required: "Required",
     oldPrice: "Was",
+    agree: "By placing an order you agree to VSAP’s {terms} and {privacy}.",
     province: "Province / city",
     ward: "Ward / commune",
     street: "House number and street",
@@ -447,5 +448,7 @@ export const en: Dictionary = {
     taxId: "Business registration no.",
     registered: "First registered",
     representative: "Legal representative",
+    policies: "Policies",
+    policyUpdated: "Last updated",
   },
 };

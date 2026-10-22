@@ -14,7 +14,9 @@ const input =
   "mt-1.5 w-full rounded-xl border border-mist-200 bg-white px-4 py-3 text-sm text-ink-900 outline-none transition placeholder:text-ink-400 focus:border-forest-600 focus:ring-2 focus:ring-forest-600/15";
 
 /** Cart review and delivery form; the order is priced again on the server. */
-export function Checkout() {
+type PolicyLink = { href: string; label: string } | null;
+
+export function Checkout({ terms, privacy }: { terms: PolicyLink; privacy: PolicyLink }) {
   const { t, locale, priced, subtotal, setQty, remove, clear, ready } = useShop();
   const [state, setState] = useState<State>({ kind: "idle" });
 
@@ -115,6 +117,21 @@ export function Checkout() {
             {t.payment} <span className="text-ink-600">{t.shippingNote}</span>
           </span>
         </p>
+
+        {terms && privacy && (
+          <p className="mt-4 text-xs leading-relaxed text-ink-600">
+            {t.agree.split(/(\{terms\}|\{privacy\})/).map((part, i) => {
+              const link = part === "{terms}" ? terms : part === "{privacy}" ? privacy : null;
+              return link ? (
+                <Link key={i} href={link.href} target="_blank" className="font-medium text-forest-900 underline underline-offset-2 hover:text-forest-600">
+                  {link.label}
+                </Link>
+              ) : (
+                part
+              );
+            })}
+          </p>
+        )}
 
         {state.kind === "error" && (
           <p role="alert" className="mt-4 rounded-xl bg-chili-600/10 px-4 py-3 text-sm text-chili-600">

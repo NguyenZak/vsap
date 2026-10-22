@@ -430,6 +430,7 @@ export const ko: Dictionary = {
     error: "주문을 보내지 못했습니다. 다시 시도하시거나 VSAP로 전화해 주세요.",
     required: "필수",
     oldPrice: "정가",
+    agree: "주문하시면 VSAP의 {terms} 및 {privacy}에 동의하는 것으로 간주됩니다.",
     province: "성/시",
     ward: "동/사",
     street: "번지 및 도로명",
@@ -447,5 +448,7 @@ export const ko: Dictionary = {
     taxId: "사업자 번호(세금 코드)",
     registered: "최초 등록",
     representative: "법정 대표자",
+    policies: "정책",
+    policyUpdated: "최종 업데이트",
   },
 };

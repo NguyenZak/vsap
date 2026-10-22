@@ -170,3 +170,24 @@ describe("old price (discount)", () => {
     expect(order?.total).toBe(250000);
   });
 });
+
+describe("policies", () => {
+  const all = defaultContent().policies;
+  it("ships the five pages an online shop must publish, in Vietnamese and English", () => {
+    expect(all.map((p) => p.slug)).toEqual(["terms", "privacy", "payment", "shipping", "returns"]);
+    for (const p of all) {
+      expect(p.body.vi.length).toBeGreaterThan(200);
+      expect(p.body.en.length).toBeGreaterThan(200);
+      expect(p.updated).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+    }
+  });
+
+  it("only uses placeholders the policy page knows how to fill", () => {
+    const known = new Set(["company", "taxId", "address", "phone", "email", "website"]);
+    for (const p of all) {
+      for (const text of [p.body.vi, p.body.en]) {
+        for (const [, key] of text.matchAll(/\{(\w+)\}/g)) expect(known.has(key)).toBe(true);
+      }
+    }
+  });
+});

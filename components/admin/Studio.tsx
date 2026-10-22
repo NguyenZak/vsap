@@ -10,6 +10,7 @@ import {
   ExternalLink,
   FileText,
   Handshake,
+  Scale,
   History,
   ImageIcon,
   Inbox,
@@ -30,11 +31,11 @@ import {
   X,
 } from "lucide-react";
 import type { Permission } from "@/lib/cms/roles";
-import { newProduct, newRetailPack, partnerFields, productFields, retailFields, settingsFields } from "@/lib/cms/collections";
+import { newPolicy, newProduct, newRetailPack, partnerFields, policyFields, productFields, retailFields, settingsFields } from "@/lib/cms/collections";
 import { setIn } from "@/lib/cms/fields";
 import type { Locale } from "@/lib/i18n";
 import { pick } from "@/lib/cms/links";
-import type { L, PageId, Partner, Product, RetailPack, Section, SiteContent } from "@/lib/cms/types";
+import type { L, PageId, Partner, Policy, Product, RetailPack, Section, SiteContent } from "@/lib/cms/types";
 import { api, formatTime, type Me } from "./api";
 import { CollectionEditor } from "./CollectionEditor";
 import { FieldForm, LinkSuggestions } from "./fields";
@@ -53,7 +54,7 @@ import { TelegramSettings } from "./TelegramSettings";
 type Path = (string | number)[];
 type View =
   | { kind: "page"; id: PageId }
-  | { kind: "products" | "retail" | "partners" | "settings" | "ui" | "media" | "history" | "news" | "inbox" | "orders" | "users" | "audit" | "system" };
+  | { kind: "products" | "retail" | "partners" | "policies" | "settings" | "ui" | "media" | "history" | "news" | "inbox" | "orders" | "users" | "audit" | "system" };
 
 type SaveState = "idle" | "pending" | "saving" | "saved" | "error";
 
@@ -65,6 +66,7 @@ const nav: { kind: View["kind"]; label: string; icon: typeof FileText; perm: Per
   { kind: "products", label: "Sản phẩm", icon: Boxes, perm: "content.read" },
   { kind: "retail", label: "Bán lẻ", icon: ShoppingBag, perm: "content.read" },
   { kind: "partners", label: "Đối tác", icon: Handshake, perm: "content.read" },
+  { kind: "policies", label: "Chính sách", icon: Scale, perm: "content.read" },
   { kind: "settings", label: "Công ty", icon: Building2, perm: "content.read" },
   { kind: "ui", label: "Chữ giao diện", icon: Languages, perm: "content.read" },
   { kind: "media", label: "Thư viện ảnh", icon: ImageIcon, perm: "content.read" },
@@ -353,6 +355,7 @@ export function Studio() {
     if (view.kind === "page") previewPath = content.pages[view.id].path || "/";
     if (view.kind === "products" && content.products[itemIndex]) previewPath = `/products/${content.products[itemIndex].slug}`;
     if (view.kind === "retail" && content.retailPacks[itemIndex]) previewPath = `/products/${content.retailPacks[itemIndex].product}/${content.retailPacks[itemIndex].id}`;
+    if (view.kind === "policies" && content.policies[itemIndex]) previewPath = `/policies/${content.policies[itemIndex].slug}`;
     if (view.kind === "settings") previewPath = "/contact";
   }
 
@@ -612,6 +615,22 @@ export function Studio() {
           />
         )}
 
+        {view.kind === "policies" && content && (
+          <CollectionEditor<Policy>
+            title="Chính sách"
+            description="Điều khoản, bảo mật, thanh toán, vận chuyển, đổi trả: bắt buộc với website bán hàng. Nhớ cập nhật ngày khi sửa nội dung."
+            items={content.policies}
+            basePath={["policies"]}
+            fields={policyFields}
+            selected={itemIndex}
+            onSelect={setItemIndex}
+            label={(p) => tr(p.title)}
+            sublabel={(p) => `/policies/${p.slug} · ${p.updated}`}
+            newItem={() => newPolicy() as Policy}
+            onItems={(items) => onField(["policies"], items)}
+            onChange={onField}
+          />
+        )}
         {view.kind === "partners" && content && (
           <CollectionEditor<Partner>
             title="Đối tác"

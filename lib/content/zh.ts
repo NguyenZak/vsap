@@ -430,6 +430,7 @@ export const zh: Dictionary = {
     error: "订单提交失败，请重试或致电VSAP。",
     required: "必填",
     oldPrice: "原价",
+    agree: "提交订单即表示您同意 VSAP 的{terms}和{privacy}。",
     province: "省/直辖市",
     ward: "坊/社",
     street: "门牌号和街道",
@@ -447,5 +448,7 @@ export const zh: Dictionary = {
     taxId: "企业代码（税号）",
     registered: "首次登记",
     representative: "法定代表人",
+    policies: "政策条款",
+    policyUpdated: "最后更新",
   },
 };

@@ -134,6 +134,19 @@ export function Footer({ locale, content, ui }: Props) {
           <p>
             © {new Date().getFullYear()} {site.name}. {footer.rights}
           </p>
+          {content.policies.length > 0 && (
+            <nav aria-label={footer.policies}>
+              <ul className="flex flex-wrap gap-x-4 gap-y-1">
+                {content.policies.map((p) => (
+                  <li key={p.slug}>
+                    <Link href={`/${locale}/policies/${p.slug}`} className="text-white/70 transition hover:text-sun-400">
+                      {pick(p.title, locale)}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          )}
           {site.social.length > 0 && (
             <ul className="flex flex-wrap gap-x-5 gap-y-1">
               {site.social

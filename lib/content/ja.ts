@@ -430,6 +430,7 @@ export const ja: Dictionary = {
     error: "ご注文を送信できませんでした。もう一度お試しいただくか、VSAPまでお電話ください。",
     required: "必須",
     oldPrice: "通常価格",
+    agree: "ご注文により、VSAPの{terms}および{privacy}に同意したものとみなされます。",
     province: "省・中央直轄市",
     ward: "坊・社",
     street: "番地・通り名",
@@ -447,5 +448,7 @@ export const ja: Dictionary = {
     taxId: "企業コード（税番号）",
     registered: "初回登記",
     representative: "法定代表者",
+    policies: "ポリシー",
+    policyUpdated: "最終更新日",
   },
 };

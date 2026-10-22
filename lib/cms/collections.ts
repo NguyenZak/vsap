@@ -116,6 +116,20 @@ export const newRetailPack = () => ({
   nutrition: { energy: "", fat: "", carbs: "", protein: "" },
 });
 
+export const policyFields: FieldDef[] = [
+  { key: "slug", label: "Đường dẫn (slug)", type: "string", help: "Ví dụ: privacy → /vi/policies/privacy. Đổi slug sẽ đổi URL trang." },
+  { key: "title", label: "Tiêu đề", type: "text" },
+  { key: "updated", label: "Ngày cập nhật", type: "date" },
+  {
+    key: "body",
+    label: "Nội dung",
+    type: "markdown",
+    help: "Mã {company} {taxId} {address} {phone} {email} {website} tự lấy từ mục Công ty. Để trống một ngôn ngữ thì trang đó hiện bản tiếng Anh.",
+  },
+];
+
+export const newPolicy = () => ({ slug: "chinh-sach-moi", title: l("Chính sách mới", "New policy"), body: l(""), updated: new Date().toISOString().slice(0, 10) });
+
 export const partnerFields: FieldDef[] = [
   { key: "name", label: "Tên đối tác", type: "string" },
   { key: "logo", label: "Logo", type: "media", help: "Ưu tiên SVG hoặc PNG nền trong suốt. Để trống thì hiện tên dạng chữ." },

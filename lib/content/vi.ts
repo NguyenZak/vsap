@@ -434,6 +434,7 @@ export const vi = {
     error: "Không gửi được đơn hàng. Vui lòng thử lại hoặc gọi cho VSAP.",
     required: "Bắt buộc",
     oldPrice: "Giá cũ",
+    agree: "Khi đặt hàng, bạn đồng ý với {terms} và {privacy} của VSAP.",
     province: "Tỉnh/Thành phố",
     ward: "Phường/Xã",
     street: "Số nhà, tên đường",
@@ -451,5 +452,7 @@ export const vi = {
     taxId: "Mã số doanh nghiệp",
     registered: "Đăng ký lần đầu",
     representative: "Người đại diện",
+    policies: "Chính sách",
+    policyUpdated: "Cập nhật lần cuối",
   },
 };

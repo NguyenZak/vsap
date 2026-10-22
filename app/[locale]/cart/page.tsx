@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Checkout } from "@/components/shop/Checkout";
+import { pick } from "@/lib/cms/links";
 import { getContent } from "@/lib/cms/store";
 import { metadataLocale, resolveLocale } from "@/lib/i18n";
 
@@ -13,7 +14,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function CartPage({ params }: Props) {
   const locale = resolveLocale((await params).locale);
-  const t = (await getContent()).ui[locale].shop;
+  const content = await getContent();
+  const t = content.ui[locale].shop;
+  // Links for the "you agree to the terms and privacy policy" note; missing policies are left out.
+  const link = (slug: string) => {
+    const p = content.policies.find((x) => x.slug === slug);
+    return p ? { href: `/${locale}/policies/${p.slug}`, label: pick(p.title, locale) } : null;
+  };
 
   return (
     <>
@@ -24,7 +31,7 @@ export default async function CartPage({ params }: Props) {
         </div>
       </div>
       <section className="container-page py-10 sm:py-14">
-        <Checkout />
+        <Checkout terms={link("terms")} privacy={link("privacy")} />
       </section>
     </>
   );

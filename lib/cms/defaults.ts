@@ -9,6 +9,7 @@ import { ko } from "../content/ko";
 import { zh } from "../content/zh";
 import { images, type ImageKey } from "../images";
 import { partners } from "../partners";
+import { policies, UPDATED as POLICIES_UPDATED } from "../content/policies";
 import { products } from "../products";
 import { packers, retailFacts, retailPacks, tempPrices } from "../retail";
 import { site } from "../site";
@@ -302,6 +303,8 @@ function ui(d: Dict): UiStrings {
       taxId: d.footer.taxId,
       registered: d.footer.registered,
       representative: d.footer.representative,
+      policies: d.footer.policies,
+      policyUpdated: d.footer.policyUpdated,
     },
     chat: { ...d.chat },
     contactInfo: { ...d.contact.info },
@@ -409,5 +412,6 @@ export function defaultContent(): SiteContent {
       nutrition: r.nutrition ? { ...r.nutrition } : { energy: "", fat: "", carbs: "", protein: "" },
     })),
     partners: partners.map((p) => ({ name: p.name, logo: p.logo ?? "", url: p.url ?? "" })),
+    policies: policies.map((p) => ({ slug: p.slug, title: { ...p.title }, body: { ...emptyL(), ...p.body }, updated: POLICIES_UPDATED })),
   };
 }

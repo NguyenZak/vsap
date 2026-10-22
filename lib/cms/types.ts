@@ -45,7 +45,7 @@ export type Settings = {
 export type UiStrings = {
   nav: { home: string; about: string; products: string; quality: string; news: string; contact: string; quote: string; menu: string; close: string };
   common: { viewProduct: string; requestQuote: string; allProducts: string; prev: string; next: string; pause: string; play: string; slide: string; step: string; photo: string };
-  footer: { explore: string; products: string; contact: string; rights: string; brandOf: string; taxId: string; registered: string; representative: string };
+  footer: { explore: string; products: string; contact: string; rights: string; brandOf: string; taxId: string; registered: string; representative: string; policies: string; policyUpdated: string };
   chat: { label: string; zalo: string; whatsapp: string; call: string; close: string };
   contactInfo: { email: string; phone: string; website: string };
   form: {
@@ -75,6 +75,8 @@ export type UiStrings = {
     note: string; notePlaceholder: string; payment: string; placeOrder: string; placing: string;
     successTitle: string; successBody: string; error: string; required: string;
     oldPrice: string;
+    /** Checkout note; {terms} and {privacy} become links to those policies. */
+    agree: string;
     province: string; ward: string; street: string; streetPlaceholder: string; selectProvince: string; selectWard: string;
   };
 };
@@ -141,6 +143,16 @@ export type RetailPack = {
 
 export type Partner = { name: string; logo: string; url: string };
 
+/** A legal page (terms, privacy, payment, shipping, returns) at /[locale]/policies/[slug]. */
+export type Policy = {
+  slug: string;
+  title: L;
+  /** Markdown (lib/markdown.ts); {company} {taxId} {address} {phone} {email} {website} are filled from Settings. */
+  body: L;
+  /** Last updated, YYYY-MM-DD. */
+  updated: string;
+};
+
 export type PageId = "home" | "about" | "products" | "quality" | "news" | "contact";
 
 export type SiteContent = {
@@ -151,6 +163,7 @@ export type SiteContent = {
   products: Product[];
   retailPacks: RetailPack[];
   partners: Partner[];
+  policies: Policy[];
 };
 
 /** A news post. Stored in its own D1 row (cms_posts), with a draft and a published copy. */

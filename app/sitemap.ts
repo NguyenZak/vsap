@@ -6,7 +6,7 @@ import { locales } from "@/lib/i18n";
 export const dynamic = "force-dynamic";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [{ settings, pages, products, retailPacks }, publishedAt, posts] = await Promise.all([getContent(), getPublishedAt(), allLivePosts()]);
+  const [{ settings, pages, products, retailPacks, policies }, publishedAt, posts] = await Promise.all([getContent(), getPublishedAt(), allLivePosts()]);
   const lastModified = publishedAt ? new Date(publishedAt) : undefined;
   const entries = [
     // Pages hidden from search (noindex) stay out of the sitemap.
@@ -15,6 +15,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       .map((p) => ({ path: p.path, priority: p.path === "" ? 1 : 0.8 })),
     ...products.map((p) => ({ path: `/products/${p.slug}`, priority: 0.9 })),
     ...retailPacks.map((p) => ({ path: `/products/${p.product}/${p.id}`, priority: 0.7 })),
+    ...policies.map((p) => ({ path: `/policies/${p.slug}`, priority: 0.3 })),
   ];
   const pageUrls = entries.flatMap(({ path, priority }) =>
     locales.map((locale) => ({
