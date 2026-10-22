@@ -230,8 +230,8 @@ export const sectionDefs: SectionDef[] = [
     label: "Sản phẩm bán lẻ (lưới cửa hàng)",
     description: "Lưới thẻ sản phẩm có giá, nút thêm vào giỏ và xem nhanh, lấy từ mục Bán lẻ.",
     icon: "package",
-    fields: [...headingFields(), ...button(), toneField],
-    create: () => ({ ...sampleHeading(), buttonLabel: l("Tất cả sản phẩm", "All products"), buttonHref: "/products", tone: "muted" }),
+    fields: [...headingFields(), ...button(), toneField, { key: "decor", label: "Ảnh hạt macca trang trí hai bên (tiêu đề căn giữa)", type: "boolean" }],
+    create: () => ({ ...sampleHeading(), buttonLabel: l("Tất cả sản phẩm", "All products"), buttonHref: "/products", tone: "muted", decor: true }),
   },
   {
     type: "productCards",

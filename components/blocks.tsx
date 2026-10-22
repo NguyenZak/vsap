@@ -219,21 +219,45 @@ const renderers: Record<string, Renderer> = {
     const { t, href } = makeT(ctx);
     const tone = toneOf({ id: "", type: "retail", props: p }) as Tone;
     const items = ctx.content.retailPacks.map((r) => toShopItem(r, ctx.locale));
+    // Nut photos at both edges, beside a centred heading (on unless switched off in Studio).
+    const decor = p.decor !== false;
     return (
-      <div className="block-pad container-page">
-        {heading(p, ctx, tone)}
-        {items.length > 0 && (
-          <div className={hasHeading(p, ctx) ? "mt-12" : ""}>
-            <ProductGrid items={items} />
-          </div>
+      <div className="block-pad relative overflow-x-clip">
+        {decor && (
+          <>
+            <img
+              src="/images/bg/home_coll_1_banner.webp"
+              alt=""
+              aria-hidden
+              loading="lazy"
+              decoding="async"
+              className="pointer-events-none absolute top-6 left-0 hidden w-[clamp(10rem,16vw,16rem)] -translate-x-1/4 -rotate-6 select-none motion-safe:animate-[decor-float_9s_ease-in-out_infinite] lg:block"
+            />
+            <img
+              src="/images/bg/home_coll_2_banner.webp"
+              alt=""
+              aria-hidden
+              loading="lazy"
+              decoding="async"
+              className="pointer-events-none absolute top-2 right-0 hidden w-[clamp(11rem,18vw,18rem)] translate-x-1/4 select-none motion-safe:animate-[decor-float_11s_ease-in-out_-4s_infinite] lg:block"
+            />
+          </>
         )}
-        {t(p.buttonLabel) && str(p.buttonHref) && (
-          <div data-reveal className="mt-10">
-            <Button href={href(p.buttonHref)} variant={tone === "dark" ? "lime" : "dark"}>
-              {t(p.buttonLabel)}
-            </Button>
-          </div>
-        )}
+        <div className="container-page relative">
+          {decor ? <SectionHeading eyebrow={t(p.eyebrow)} title={t(p.title)} accent={t(p.accent)} lead={t(p.lead)} tone={tone} align="center" /> : heading(p, ctx, tone)}
+          {items.length > 0 && (
+            <div className={hasHeading(p, ctx) ? "mt-12" : ""}>
+              <ProductGrid items={items} />
+            </div>
+          )}
+          {t(p.buttonLabel) && str(p.buttonHref) && (
+            <div data-reveal className={`mt-10 ${decor ? "text-center" : ""}`}>
+              <Button href={href(p.buttonHref)} variant={tone === "dark" ? "lime" : "dark"}>
+                {t(p.buttonLabel)}
+              </Button>
+            </div>
+          )}
+        </div>
       </div>
     );
   },

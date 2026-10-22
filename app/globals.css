@@ -245,3 +245,11 @@ html:has(dialog[open]) {
     opacity: 0;
   }
 }
+
+/* Decorative nut photos beside the shop heading (components/blocks.tsx, retail). */
+@keyframes decor-float {
+  50% {
+    /* Keep Tailwind's -translate-x-1/4 (it also uses the translate property). */
+    translate: var(--tw-translate-x, 0) calc(var(--tw-translate-y, 0px) - 14px);
+  }
+}
