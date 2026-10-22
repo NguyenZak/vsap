@@ -42,13 +42,15 @@ type MaccaSku = {
   carton: { vi: string; en: string };
   images: string[];
   nutrition?: RetailPack["nutrition"];
+  /** The printed label lists 98% macadamia, 2% salt (the price list says 100% macadamia). */
+  salted?: boolean;
 };
 
 const maccaSkuList: MaccaSku[] = [
   { code: "HV450B", kind: "box", grams: 450, grade: "B", gift: true, packing: { vi: "Hộp giấy, kích thước 140 × 220 × 50 mm", en: "Paper box, 140 × 220 × 50 mm" }, carton: { vi: "40 – 80 hộp/thùng", en: "40 – 80 boxes per carton" }, images: [img("macca-box-450-front"), img("macca-box-450-angle"), img("macca-box-450-back")], nutrition: { energy: "759 kcal", fat: "74 g", carbs: "14 g", protein: "9 g" } },
-  { code: "HV250A", kind: "box", grams: 250, grade: "A", gift: true, packing: { vi: "Hộp giấy lục giác, kích thước 70 × 70 × 200 mm", en: "Hexagonal paper box, 70 × 70 × 200 mm" }, carton: { vi: "40 – 100 hộp/thùng", en: "40 – 100 boxes per carton" }, images: ["/images/macadamia.webp"] },
-  { code: "HV250B", kind: "box", grams: 250, grade: "B", gift: true, packing: { vi: "Hộp giấy lục giác, kích thước 70 × 70 × 200 mm", en: "Hexagonal paper box, 70 × 70 × 200 mm" }, carton: { vi: "40 – 100 hộp/thùng", en: "40 – 100 boxes per carton" }, images: ["/images/macadamia.webp"] },
-  { code: "HV160B", kind: "box", grams: 160, grade: "B", gift: true, packing: { vi: "Hộp giấy lục giác", en: "Hexagonal paper box" }, carton: { vi: "40 – 120 hộp/thùng", en: "40 – 120 boxes per carton" }, images: ["/images/macadamia.webp"] },
+  { code: "HV250A", kind: "box", grams: 250, grade: "A", gift: true, salted: true, packing: { vi: "Hộp giấy lục giác, kích thước 70 × 70 × 200 mm", en: "Hexagonal paper box, 70 × 70 × 200 mm" }, carton: { vi: "40 – 100 hộp/thùng", en: "40 – 100 boxes per carton" }, images: [img("macca-hex-250a-front"), img("macca-hex-250a-top"), img("macca-hex-250a-nutrition"), img("macca-hex-250a-info"), img("macca-hex-250a-back"), img("macca-hex-250a-left")], nutrition: { energy: "750 kcal", fat: "72 g", carbs: "15 g", protein: "10 g" } },
+  { code: "HV250B", kind: "box", grams: 250, grade: "B", gift: true, salted: true, packing: { vi: "Hộp giấy lục giác, kích thước 70 × 70 × 200 mm", en: "Hexagonal paper box, 70 × 70 × 200 mm" }, carton: { vi: "40 – 100 hộp/thùng", en: "40 – 100 boxes per carton" }, images: [img("macca-hex-250b-front"), img("macca-hex-250b-top"), img("macca-hex-250b-nutrition"), img("macca-hex-250b-info"), img("macca-hex-250b-back"), img("macca-hex-250b-left")], nutrition: { energy: "750 kcal", fat: "72 g", carbs: "15 g", protein: "10 g" } },
+  { code: "HV160B", kind: "box", grams: 160, grade: "B", gift: true, salted: true, packing: { vi: "Hộp giấy lục giác", en: "Hexagonal paper box" }, carton: { vi: "40 – 120 hộp/thùng", en: "40 – 120 boxes per carton" }, images: [img("macca-hex-160b-front"), img("macca-hex-160b-top"), img("macca-hex-160b-nutrition"), img("macca-hex-160b-info"), img("macca-hex-160b-back"), img("macca-hex-160b-left")], nutrition: { energy: "750 kcal", fat: "72 g", carbs: "15 g", protein: "10 g" } },
   { code: "ZV500A", kind: "inshell", grams: 500, grade: "A", size: "25 – 32 mm ±1", packing: { vi: "Túi zipper", en: "Zipper pouch" }, carton: { vi: "20 túi/thùng", en: "20 pouches per carton" }, images: ["/images/macadamia-spoon.webp"] },
   { code: "ZV500B", kind: "inshell", grams: 500, grade: "B", size: "22 – 24 mm ±1", packing: { vi: "Túi zipper", en: "Zipper pouch" }, carton: { vi: "20 túi/thùng", en: "20 pouches per carton" }, images: ["/images/macadamia-spoon.webp"] },
   { code: "PV500A", kind: "inshell", grams: 500, grade: "A", size: "25 – 32 mm ±1", packing: { vi: "Hũ nhựa PET", en: "PET jar" }, carton: { vi: "40 – 100 hũ/thùng", en: "40 – 100 jars per carton" }, images: [img("macca-inshell-500"), img("macca-inshell-250-back")] },
@@ -56,6 +58,11 @@ const maccaSkuList: MaccaSku[] = [
   { code: "PV250A", kind: "inshell", grams: 250, grade: "A", size: "25 – 32 mm ±1", gift: true, packing: { vi: "Hũ nhựa PET", en: "PET jar" }, carton: { vi: "40 – 100 hũ/thùng", en: "40 – 100 jars per carton" }, images: [img("macca-inshell-250"), img("macca-inshell-250-back")] },
   { code: "PV250B", kind: "inshell", grams: 250, grade: "B", size: "22 – 24 mm ±1", gift: true, packing: { vi: "Hũ nhựa PET", en: "PET jar" }, carton: { vi: "40 – 100 hũ/thùng", en: "40 – 100 jars per carton" }, images: [img("macca-inshell-250"), img("macca-inshell-250-back")] },
 ];
+
+/**
+ * Hexagonal box shots: white title = large nuts (grade A), gold title = small nuts (grade B).
+ * macca-hex-160a-*.webp (160 g, grade A) is ready for when an HV160A is listed.
+ */
 
 /** Pack ids used before the price-list SKUs, redirected to their closest SKU (old links and search results). */
 export const legacyPackIds: Record<string, string> = { "macca-box": "hv450b", "macca-inshell-jar": "pv250a" };
@@ -84,7 +91,9 @@ function maccaSkus(): RetailPack[] {
       pack: { vi: k.packing.vi, en: k.packing.en, zh: "", ja: "", ko: "" },
       weights: [g],
       images: k.images,
-      ingredients: { vi: "100% hạt macca", en: "100% macadamia nuts", zh: "100%夏威夷果", ja: "マカダミアナッツ100%", ko: "마카다미아 100%" },
+      ingredients: k.salted
+        ? { vi: "98% hạt macca, 2% muối", en: "98% macadamia nuts, 2% salt", zh: "98%夏威夷果，2%食盐", ja: "マカダミアナッツ98%、食塩2%", ko: "마카다미아 98%, 소금 2%" }
+        : { vi: "100% hạt macca", en: "100% macadamia nuts", zh: "100%夏威夷果", ja: "マカダミアナッツ100%", ko: "마카다미아 100%" },
       nutrition: k.nutrition,
       highlight: k.gift
         ? { vi: "Dùng làm quà tặng", en: "Made for gifting", zh: "送礼佳品", ja: "ギフトに最適", ko: "선물용" }
