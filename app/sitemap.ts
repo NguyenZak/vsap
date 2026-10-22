@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 import { allLivePosts } from "@/lib/cms/posts";
 import { getContent, getPublishedAt } from "@/lib/cms/store";
 import { locales } from "@/lib/i18n";
+import { visiblePacks } from "@/lib/shop";
 
 export const dynamic = "force-dynamic";
 
@@ -14,7 +15,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       .filter((p) => !p.seo.noindex)
       .map((p) => ({ path: p.path, priority: p.path === "" ? 1 : 0.8 })),
     ...products.map((p) => ({ path: `/products/${p.slug}`, priority: 0.9 })),
-    ...retailPacks.map((p) => ({ path: `/products/${p.product}/${p.id}`, priority: 0.7 })),
+    ...visiblePacks(retailPacks).map((p) => ({ path: `/products/${p.product}/${p.id}`, priority: 0.7 })),
     ...policies.map((p) => ({ path: `/policies/${p.slug}`, priority: 0.3 })),
   ];
   const pageUrls = entries.flatMap(({ path, priority }) =>

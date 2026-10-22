@@ -11,7 +11,7 @@ import { getContent, isPreview } from "@/lib/cms/store";
 import { localeParams, locales, resolveLocale, metadataLocale } from "@/lib/i18n";
 import { localeInfo } from "@/lib/locales";
 import { jsonLdHtml, ogLocale, seoMetadata, siteJsonLd } from "@/lib/seo";
-import { toShopItem } from "@/lib/shop";
+import { toShopItem, visiblePacks } from "@/lib/shop";
 import "../globals.css";
 
 const font = Inter({
@@ -90,7 +90,7 @@ export default async function LocaleLayout({ children, params }: Props) {
           locale={locale}
           t={ui.shop}
           common={{ prev: ui.common.prev, next: ui.common.next, photo: ui.common.photo }}
-          catalog={content.retailPacks.map((p) => toShopItem(p, locale))}
+          catalog={visiblePacks(content.retailPacks).map((p) => toShopItem(p, locale))}
         >
           <Header locale={locale} nav={ui.nav} contact={site} logoAlt={`${site.name} – ${site.tagline}`} />
           <MotionMain>{children}</MotionMain>

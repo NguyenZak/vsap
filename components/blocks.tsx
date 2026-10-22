@@ -9,7 +9,7 @@ import { InquiryForm } from "./InquiryForm";
 import { FeaturedPost, PostGrid } from "./PostCards";
 import { ProcessTabs } from "./ProcessTabs";
 import { ProductGrid } from "./shop/ProductGrid";
-import { toShopItem } from "@/lib/shop";
+import { toShopItem, visiblePacks } from "@/lib/shop";
 import { StatementSlider } from "./StatementSlider";
 import { ValuesShowcase } from "./ValuesShowcase";
 import {
@@ -230,7 +230,7 @@ const renderers: Record<string, Renderer> = {
   retail(p, ctx) {
     const { t, href } = makeT(ctx);
     const tone = toneOf({ id: "", type: "retail", props: p }) as Tone;
-    const items = ctx.content.retailPacks.map((r) => toShopItem(r, ctx.locale));
+    const items = visiblePacks(ctx.content.retailPacks).map((r) => toShopItem(r, ctx.locale));
     // Nut photos at both edges (on unless switched off in Studio); the heading is centred between them.
     const decor = p.decor !== false;
     return (

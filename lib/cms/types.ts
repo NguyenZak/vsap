@@ -128,6 +128,8 @@ export type RetailPack = {
   oldPrice: number | null;
   /** Hides the buy buttons and shows "sold out". */
   soldOut: boolean;
+  /** Kept in Studio but not shown or sold on the website. */
+  hidden: boolean;
   /** Longer text for the pack's own page; blank lines start new paragraphs. */
   description: L;
   images: { src: string }[];

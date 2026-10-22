@@ -13,7 +13,7 @@ import { getContent } from "@/lib/cms/store";
 import { metadataLocale, resolveLocale } from "@/lib/i18n";
 import { breadcrumbJsonLd, jsonLdHtml, seoMetadata } from "@/lib/seo";
 import { legacyPackIds } from "@/lib/retail";
-import { packHref, toShopItem } from "@/lib/shop";
+import { packHref, toShopItem, visiblePacks } from "@/lib/shop";
 
 type Props = { params: Promise<{ locale: string; slug: string; pack: string }> };
 
@@ -23,7 +23,7 @@ export const dynamicParams = true;
 async function load(params: Props["params"]) {
   const { locale: raw, slug, pack: id } = await params;
   const content = await getContent();
-  const pack = content.retailPacks.find((p) => p.id === id && p.product === slug);
+  const pack = visiblePacks(content.retailPacks).find((p) => p.id === id && p.product === slug);
   const product = content.products.find((p) => p.slug === slug);
   return { raw, content, pack, product };
 }
@@ -61,7 +61,8 @@ export default async function PackPage({ params }: Props) {
   const productName = product ? tr(product.name) : "";
 
   // Same product line first, then the rest of the range.
-  const related = [...content.retailPacks.filter((p) => p.product === pack.product), ...content.retailPacks.filter((p) => p.product !== pack.product)]
+  const shown = visiblePacks(content.retailPacks);
+  const related = [...shown.filter((p) => p.product === pack.product), ...shown.filter((p) => p.product !== pack.product)]
     .filter((p) => p.id !== pack.id)
     .slice(0, 4)
     .map((p) => toShopItem(p, locale));

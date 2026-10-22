@@ -74,6 +74,12 @@ const maccaSkuList: MaccaSku[] = [
  * macca-hex-160a-*.webp (160 g, grade A) is ready for when an HV160A is listed.
  */
 
+/**
+ * The ten packs on VSAP's retail price list (bảng giá sản phẩm, 10/2026). Every other seed pack
+ * (roasted & salted versions, macadamia kernels, cashews) starts hidden; Studio can show it again.
+ */
+export const priceListIds = new Set(maccaSkuList.filter((k) => !k.id).map((k) => k.code.toLowerCase()));
+
 /** Pack ids used before the price-list SKUs, redirected to their closest SKU (old links and search results). */
 export const legacyPackIds: Record<string, string> = { "macca-box": "hv450b", "macca-inshell-jar": "pv250a" };
 

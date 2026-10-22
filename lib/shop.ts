@@ -26,6 +26,9 @@ export const MAX_LINES = 30;
 
 const pick = (v: Partial<L> | undefined, locale: Locale) => pickText(v, locale);
 
+/** Packs shown and sold on the website (Studio can hide a pack without deleting it). */
+export const visiblePacks = <P extends Pick<RetailPack, "hidden">>(packs: P[]) => packs.filter((p) => !p.hidden);
+
 export const packHref = (pack: Pick<RetailPack, "id" | "product">, locale: Locale) => `/${locale}/products/${pack.product}/${pack.id}`;
 
 export function toShopItem(pack: RetailPack, locale: Locale): ShopItem {
@@ -79,7 +82,7 @@ export function priceOrder(lines: unknown, packs: RetailPack[]): { items: OrderI
     const { id, qty } = raw as Record<string, unknown>;
     if (typeof id !== "string" || typeof qty !== "number" || !Number.isInteger(qty) || qty < 1 || qty > MAX_QTY) return null;
     const pack = packs.find((p) => p.id === id);
-    if (!pack || pack.soldOut || !pack.price) return null;
+    if (!pack || pack.hidden || pack.soldOut || !pack.price) return null;
     const name = [pack.name.vi, pack.flavor.vi].filter(Boolean).join(" – ");
     const same = items.find((i) => i.id === id);
     if (same) same.qty = Math.min(MAX_QTY, same.qty + qty);

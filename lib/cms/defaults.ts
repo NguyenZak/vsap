@@ -11,7 +11,7 @@ import { images, type ImageKey } from "../images";
 import { partners } from "../partners";
 import { policies, UPDATED as POLICIES_UPDATED } from "../content/policies";
 import { products } from "../products";
-import { packers, retailFacts, retailPacks, tempPrices } from "../retail";
+import { packers, priceListIds, retailFacts, retailPacks, tempPrices } from "../retail";
 import { site } from "../site";
 import { emptyL, locales, type Locale } from "../locales";
 import type { CmsImage, L, Page, PageId, Section, SiteContent, UiStrings } from "./types";
@@ -400,6 +400,7 @@ export function defaultContent(): SiteContent {
       price: tempPrices[r.id] ?? null,
       oldPrice: null,
       soldOut: false,
+      hidden: !priceListIds.has(r.id),
       description: r.description ? { ...blank(), ...r.description } : blank(),
       images: r.images.map((src) => ({ src })),
       ingredients: { ...r.ingredients },

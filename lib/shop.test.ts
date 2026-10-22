@@ -4,7 +4,7 @@ import { emptyL, preferredLocale } from "./locales";
 import { normalize, normalizePack } from "./cms/normalize";
 import { orderAlert } from "./cms/order-format";
 import type { RetailPack } from "./cms/types";
-import { canBuy, discountPercent, formatPrice, priceOrder, resolveLine, toShopItem } from "./shop";
+import { canBuy, discountPercent, formatPrice, priceOrder, resolveLine, toShopItem, visiblePacks } from "./shop";
 
 const base = defaultContent().retailPacks[0];
 const pack = (over: Partial<RetailPack>): RetailPack => ({ ...base, ...over });
@@ -189,5 +189,16 @@ describe("policies", () => {
         for (const [, key] of text.matchAll(/\{(\w+)\}/g)) expect(known.has(key)).toBe(true);
       }
     }
+  });
+});
+
+describe("price-list catalogue", () => {
+  it("shows exactly the ten price-list packs and hides the rest", () => {
+    const shown = visiblePacks(defaultContent().retailPacks).map((p) => p.id);
+    expect(shown.sort()).toEqual(["hv160b", "hv250a", "hv250b", "hv450b", "pv250a", "pv250b", "pv500a", "pv500b", "zv500a", "zv500b"]);
+  });
+
+  it("cannot order a hidden pack", () => {
+    expect(priceOrder([{ id: "x", qty: 1 }], [pack({ id: "x", price: 100000, hidden: true })])).toBeNull();
   });
 });

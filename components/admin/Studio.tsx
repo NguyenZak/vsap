@@ -601,7 +601,7 @@ export function Studio() {
             onSelect={setItemIndex}
             label={(p) => tr(p.name)}
             sublabel={(p) =>
-              [tr(p.flavor), tr(p.pack), p.price ? `${p.price.toLocaleString("vi-VN")}₫` : "Chưa có giá", p.soldOut && "Hết hàng"]
+              [tr(p.flavor), tr(p.pack), p.hidden && "Đang ẩn", p.price ? `${p.price.toLocaleString("vi-VN")}₫` : "Chưa có giá", p.soldOut && "Hết hàng"]
                 .filter(Boolean)
                 .join(" · ")
             }

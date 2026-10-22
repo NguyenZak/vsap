@@ -10,7 +10,7 @@ import { pick } from "@/lib/cms/links";
 import { getContent } from "@/lib/cms/store";
 import { metadataLocale, resolveLocale } from "@/lib/i18n";
 import { breadcrumbJsonLd, jsonLdHtml, seoMetadata } from "@/lib/seo";
-import { toShopItem } from "@/lib/shop";
+import { toShopItem, visiblePacks } from "@/lib/shop";
 
 type Props = { params: Promise<{ locale: string; slug: string }> };
 
@@ -47,7 +47,7 @@ export default async function ProductPage({ params }: Props) {
   const t = ui.productDetail;
   const tr = (v: Parameters<typeof pick>[0]) => pick(v, locale);
   const site = content.settings;
-  const packs = content.retailPacks.filter((p) => p.product === product.slug);
+  const packs = visiblePacks(content.retailPacks).filter((p) => p.product === product.slug);
   const gallery = product.gallery.filter((g) => g.src);
 
   const productJsonLd = {
