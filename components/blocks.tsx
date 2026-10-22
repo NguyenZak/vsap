@@ -81,6 +81,18 @@ function heading(p: P, ctx: BlockCtx, tone: Tone = "white") {
   return <SectionHeading eyebrow={t(p.eyebrow)} title={t(p.title)} accent={t(p.accent)} lead={t(p.lead)} tone={tone} />;
 }
 
+/**
+ * Decorative nut photos around the retail shop grid, pushed half off the screen
+ * edges and kept behind the cards: macadamias beside the heading, cashews lower down.
+ */
+const shopDecor = [
+  { src: "/images/bg/home_coll_1_banner.webp", className: "top-6 left-0 w-[clamp(10rem,16vw,16rem)] -translate-x-1/4 -rotate-6", delay: "0s" },
+  { src: "/images/bg/home_coll_2_banner.webp", className: "top-2 right-0 w-[clamp(11rem,18vw,18rem)] translate-x-1/4", delay: "-4s" },
+  { src: "/images/bg/cashew-loose.webp", className: "top-[52%] left-0 w-[clamp(8rem,11vw,12rem)] -translate-x-1/2 rotate-12", delay: "-2s" },
+  { src: "/images/bg/cashew-bowl.webp", className: "bottom-0 left-0 w-[clamp(12rem,19vw,19rem)] -translate-x-1/4", delay: "-6s" },
+  { src: "/images/bg/cashew-roasted-pile.webp", className: "bottom-6 right-0 w-[clamp(13rem,22vw,22rem)] translate-x-[18%]", delay: "-8s" },
+];
+
 const hasHeading = (p: P, ctx: BlockCtx) => ["eyebrow", "title", "accent", "lead"].some((k) => pick(p[k] as L, ctx.locale));
 
 type Renderer = (p: P, ctx: BlockCtx, section: Section) => React.ReactNode;
@@ -219,30 +231,23 @@ const renderers: Record<string, Renderer> = {
     const { t, href } = makeT(ctx);
     const tone = toneOf({ id: "", type: "retail", props: p }) as Tone;
     const items = ctx.content.retailPacks.map((r) => toShopItem(r, ctx.locale));
-    // Nut photos at both edges, beside a centred heading (on unless switched off in Studio).
+    // Nut photos at both edges (on unless switched off in Studio); the heading is centred between them.
     const decor = p.decor !== false;
     return (
       <div className="block-pad relative overflow-x-clip">
-        {decor && (
-          <>
+        {decor &&
+          shopDecor.map((d) => (
             <img
-              src="/images/bg/home_coll_1_banner.webp"
+              key={d.src}
+              src={d.src}
               alt=""
               aria-hidden
               loading="lazy"
               decoding="async"
-              className="pointer-events-none absolute top-6 left-0 hidden w-[clamp(10rem,16vw,16rem)] -translate-x-1/4 -rotate-6 select-none motion-safe:animate-[decor-float_9s_ease-in-out_infinite] lg:block"
+              className={`pointer-events-none absolute hidden select-none motion-safe:animate-[decor-float_10s_ease-in-out_infinite] lg:block ${d.className}`}
+              style={{ animationDelay: d.delay }}
             />
-            <img
-              src="/images/bg/home_coll_2_banner.webp"
-              alt=""
-              aria-hidden
-              loading="lazy"
-              decoding="async"
-              className="pointer-events-none absolute top-2 right-0 hidden w-[clamp(11rem,18vw,18rem)] translate-x-1/4 select-none motion-safe:animate-[decor-float_11s_ease-in-out_-4s_infinite] lg:block"
-            />
-          </>
-        )}
+          ))}
         <div className="container-page relative">
           {decor ? <SectionHeading eyebrow={t(p.eyebrow)} title={t(p.title)} accent={t(p.accent)} lead={t(p.lead)} tone={tone} align="center" /> : heading(p, ctx, tone)}
           {items.length > 0 && (
@@ -257,6 +262,8 @@ const renderers: Record<string, Renderer> = {
               </Button>
             </div>
           )}
+          {/* Room under the grid for the cashew photos, even when the next section shares this background. */}
+          {decor && <div aria-hidden className="hidden h-24 lg:block" />}
         </div>
       </div>
     );
