@@ -111,6 +111,7 @@ const pages: Record<PageId, Page> = {
         proofLabel: tr((d) => d.home.hero.grades),
         proofImages: (["cashew", "macadamia", "cashewKernels"] as ImageKey[]).map((k) => ({ image: pic(k) })),
       }),
+      retailSection("home-retail"),
       section("home-strip", "strip", {
         lead: tr((d) => d.home.strip.lead),
         strong: tr((d) => d.home.strip.strong),
@@ -131,7 +132,6 @@ const pages: Record<PageId, Page> = {
       section("home-stats", "stats", {
         items: vi.home.intro.stats.map((s, i) => ({ value: s.value, label: tr((d) => d.home.intro.stats[i].label) })),
       }),
-      retailSection("home-retail"),
       section("home-partners", "partners", {
         ...heading((d) => d.home.partners),
         joinLabel: tr((d) => d.home.partners.join.cta),
