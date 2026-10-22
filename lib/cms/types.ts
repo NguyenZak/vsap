@@ -39,6 +39,8 @@ export type Settings = {
   verification: { google: string; bing: string };
   /** Optional GA4 measurement ID (G-XXXXXXX); analytics loads only when set. */
   analytics: { ga4: string };
+  /** Decorative overlay (transparent PNG) laid over every product card photo; empty = no frame. */
+  productFrame: string;
 };
 
 /** Interface strings that are not part of any one section (nav, buttons, form labels…). */

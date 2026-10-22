@@ -141,6 +141,12 @@ export const partnerFields: FieldDef[] = [
 export const settingsFields: FieldDef[] = [
   { key: "name", label: "Tên thương hiệu", type: "string" },
   { key: "legalName", label: "Tên công ty", type: "string" },
+  {
+    key: "productFrame",
+    label: "Khung ảnh sản phẩm",
+    type: "media",
+    help: "Ảnh SVG hoặc PNG nền trong suốt, tỉ lệ 3:4 (dọc), phủ lên ảnh của mọi thẻ sản phẩm. Giữ phần giữa trống để không che sản phẩm. Để trống để bỏ khung.",
+  },
   { key: "legalNameEn", label: "Tên công ty bằng tiếng Anh", type: "string", help: "Theo giấy chứng nhận đăng ký doanh nghiệp; hiện ở các trang không phải tiếng Việt." },
   { key: "taxId", label: "Mã số doanh nghiệp (MST)", type: "string" },
   { key: "registeredAt", label: "Ngày đăng ký lần đầu", type: "date" },

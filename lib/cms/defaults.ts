@@ -373,6 +373,7 @@ export function defaultContent(): SiteContent {
       social: [],
       verification: { google: "", bing: "" },
       analytics: { ga4: "" },
+      productFrame: "/images/frames/khung-chinh-hang.svg",
     },
     ui: Object.fromEntries(locales.map((l) => [l, ui(dicts[l])])) as Record<Locale, UiStrings>,
     pages,

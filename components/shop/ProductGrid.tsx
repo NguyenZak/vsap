@@ -33,13 +33,16 @@ export function ProductGrid({ items, reveal = true }: { items: ShopItem[]; revea
 }
 
 function ProductCard({ item, onQuickView }: { item: ShopItem; onQuickView: () => void }) {
-  const { t, locale, add } = useShop();
+  const { t, locale, add, frame } = useShop();
+  // With a frame the photo shrinks into the frame's open area, clear of its bottom badges.
+  // (an <img> ignores opposite insets, so the box needs an explicit width and height)
+  const fit = frame ? "left-[9%] top-[5%] h-[75%] w-[82%]" : "inset-0 size-full p-3";
   const [front, back] = item.images;
   const discount = discountPercent(item);
 
   return (
     <article className="group/card flex h-full flex-col overflow-hidden rounded-2xl bg-white ring-1 ring-mist-200 transition hover:shadow-lg hover:shadow-forest-950/5 hover:ring-forest-600/30">
-      <div className="relative aspect-square overflow-hidden bg-white">
+      <div className="relative aspect-[3/4] overflow-hidden bg-white">
         <Link href={item.href} tabIndex={-1} aria-hidden className="absolute inset-0">
           {front && (
             <img
@@ -47,7 +50,7 @@ function ProductCard({ item, onQuickView }: { item: ShopItem; onQuickView: () =>
               alt=""
               loading="lazy"
               decoding="async"
-              className={`absolute inset-0 size-full object-contain p-3 transition duration-700 group-hover/card:scale-105 ${back ? "group-hover/card:opacity-0" : ""}`}
+              className={`absolute ${fit} object-contain transition duration-700 group-hover/card:scale-105 ${back ? "group-hover/card:opacity-0" : ""}`}
             />
           )}
           {back && (
@@ -56,15 +59,16 @@ function ProductCard({ item, onQuickView }: { item: ShopItem; onQuickView: () =>
               alt=""
               loading="lazy"
               decoding="async"
-              className="absolute inset-0 size-full scale-95 object-contain p-3 opacity-0 transition duration-700 group-hover/card:scale-100 group-hover/card:opacity-100"
+              className={`absolute ${fit} scale-95 object-contain opacity-0 transition duration-700 group-hover/card:scale-100 group-hover/card:opacity-100`}
             />
           )}
         </Link>
+        {frame && <img src={frame} alt="" aria-hidden decoding="async" className="pointer-events-none absolute inset-0 size-full select-none" />}
         {discount !== null && !item.soldOut && (
           <span className="pointer-events-none absolute top-2.5 left-2.5 rounded-full bg-chili-600 px-2.5 py-1 text-xs font-semibold text-white tabular-nums">-{discount}%</span>
         )}
         {item.soldOut && (
-          <span className="absolute right-2.5 bottom-2.5 rounded-full bg-chili-600 px-2.5 py-1 text-xs font-medium text-white">{t.soldOut}</span>
+          <span className="absolute top-1/2 left-1/2 -translate-1/2 rounded-full bg-chili-600 px-3 py-1.5 text-xs font-medium text-white shadow">{t.soldOut}</span>
         )}
         <button
           type="button"

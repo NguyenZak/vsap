@@ -10,6 +10,8 @@ type Shop = {
   locale: Locale;
   t: UiStrings["shop"];
   common: Pick<UiStrings["common"], "prev" | "next" | "photo">;
+  /** Overlay laid over product card photos (Studio › Công ty), or "". */
+  frame: string;
   /** Every retail pack, in the page language; cart lines are priced from this. */
   catalog: ShopItem[];
   lines: CartLine[];
@@ -61,12 +63,14 @@ export function CartProvider({
   locale,
   t,
   common,
+  frame,
   catalog,
   children,
 }: {
   locale: Locale;
   t: UiStrings["shop"];
   common: Shop["common"];
+  frame: string;
   catalog: ShopItem[];
   children: React.ReactNode;
 }) {
@@ -131,6 +135,7 @@ export function CartProvider({
       locale,
       t,
       common,
+      frame,
       catalog,
       lines,
       priced,
@@ -146,7 +151,7 @@ export function CartProvider({
       viewed,
       ready: loaded,
     };
-  }, [locale, t, common, catalog, lines, cartOpen, recent, loaded, add, setQty, remove, clear, viewed]);
+  }, [locale, t, common, frame, catalog, lines, cartOpen, recent, loaded, add, setQty, remove, clear, viewed]);
 
   return (
     <ShopContext.Provider value={value}>

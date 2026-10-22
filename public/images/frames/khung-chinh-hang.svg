@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1333" width="1000" height="1333">
+  <!-- Product photo frame (3:4): "Sản phẩm chính hãng". Redrawn from the campaign artwork; the centre stays transparent. -->
+  <defs>
+    <linearGradient id="red" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#c8102e"/>
+      <stop offset="1" stop-color="#9b0c1e"/>
+    </linearGradient>
+    <linearGradient id="redH" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#9b0c1e"/>
+      <stop offset="0.55" stop-color="#d7102b"/>
+      <stop offset="1" stop-color="#b30d24"/>
+    </linearGradient>
+    <radialGradient id="flag" cx="0.42" cy="0.35" r="0.75">
+      <stop offset="0" stop-color="#f03a3a"/>
+      <stop offset="0.6" stop-color="#da1f26"/>
+      <stop offset="1" stop-color="#a5121a"/>
+    </radialGradient>
+    <linearGradient id="fold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fff" stop-opacity="0"/>
+      <stop offset="0.5" stop-color="#fff" stop-opacity="0.22"/>
+      <stop offset="1" stop-color="#000" stop-opacity="0.18"/>
+    </linearGradient>
+    <linearGradient id="star" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffe14d"/>
+      <stop offset="1" stop-color="#f5b800"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000" flood-opacity="0.28"/>
+    </filter>
+    <!-- open centre, so the product photo shows through -->
+    <mask id="border">
+      <rect width="1000" height="1333" fill="#fff"/>
+      <rect x="30" y="30" width="940" height="1273" rx="6" fill="#000"/>
+    </mask>
+  </defs>
+
+  <!-- red border -->
+  <rect width="1000" height="1333" fill="url(#red)" mask="url(#border)"/>
+  <rect x="30" y="30" width="940" height="1273" rx="6" fill="none" stroke="#fff" stroke-opacity="0.35" stroke-width="2"/>
+
+  <!-- bottom decorations, drawn for a 1000-high frame and moved to the foot of the 3:4 frame -->
+  <g transform="translate(0 333)">
+  <!-- waving flag behind the centre circle -->
+  <path d="M330 1000 C360 930 420 905 470 920 C520 935 560 925 600 900 L620 1000 Z" fill="#b8121c"/>
+  <!-- centre flag circle with gold star -->
+  <g filter="url(#shadow)">
+    <circle cx="470" cy="1000" r="125" fill="url(#flag)"/>
+    <path d="M370 935 C430 900 520 905 590 950 C520 930 440 930 370 970 Z" fill="url(#fold)"/>
+    <polygon points="470,890 488,945 546,945 499,979 517,1034 470,1000 423,1034 441,979 394,945 452,945" fill="url(#star)"/>
+  </g>
+
+  <!-- bottom-left badge: genuine product -->
+  <g filter="url(#shadow)">
+    <path d="M0 790 C80 762 185 778 258 838 C312 884 338 945 342 1000 H0 Z" fill="url(#redH)"/>
+  </g>
+  <!-- confetti -->
+  <g fill="#ffd34d">
+    <circle cx="30" cy="760" r="6"/><circle cx="118" cy="752" r="4"/><circle cx="218" cy="785" r="5"/>
+    <rect x="292" y="840" width="12" height="5" rx="2" transform="rotate(25 298 842)"/>
+    <polygon points="268,905 272,914 282,914 274,920 277,930 268,924 259,930 262,920 254,914 264,914"/>
+  </g>
+  <!-- shield with check -->
+  <g transform="translate(46 822)">
+    <path d="M30 0 L60 11 V36 C60 56 47 70 30 77 C13 70 0 56 0 36 V11 Z" fill="#ffd34d"/>
+    <path d="M16 38 L26 48 L45 27" fill="none" stroke="#b30d24" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <text x="122" y="868" font-family="'Arial Black','Helvetica Neue',Arial,sans-serif" font-style="italic" font-weight="900" font-size="38" fill="#ffd34d" textLength="150" lengthAdjust="spacingAndGlyphs">SẢN PHẨM</text>
+  <text x="38" y="944" font-family="'Arial Black','Helvetica Neue',Arial,sans-serif" font-style="italic" font-weight="900" font-size="50" fill="#fff" textLength="262" lengthAdjust="spacingAndGlyphs">CHÍNH HÃNG</text>
+  </g>
+</svg>

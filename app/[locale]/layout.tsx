@@ -90,6 +90,7 @@ export default async function LocaleLayout({ children, params }: Props) {
           locale={locale}
           t={ui.shop}
           common={{ prev: ui.common.prev, next: ui.common.next, photo: ui.common.photo }}
+          frame={content.settings.productFrame}
           catalog={visiblePacks(content.retailPacks).map((p) => toShopItem(p, locale))}
         >
           <Header locale={locale} nav={ui.nav} contact={site} logoAlt={`${site.name} – ${site.tagline}`} />
