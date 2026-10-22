@@ -1,46 +1,55 @@
 import { describe, expect, it } from "vitest";
 import { defaultContent } from "./cms/defaults";
+import { emptyL, preferredLocale } from "./locales";
 import { normalize, normalizePack } from "./cms/normalize";
 import { orderAlert } from "./cms/order-format";
 import type { RetailPack } from "./cms/types";
-import { canBuy, formatPrice, minPrice, priceOrder, resolveLine, toShopItem } from "./shop";
+import { canBuy, discountPercent, formatPrice, priceOrder, resolveLine, toShopItem } from "./shop";
 
 const base = defaultContent().retailPacks[0];
 const pack = (over: Partial<RetailPack>): RetailPack => ({ ...base, ...over });
 const packs = [
-  pack({ id: "jar", variants: [{ weight: "250 g", price: 120000 }, { weight: "500 g", price: 220000 }] }),
-  pack({ id: "box", variants: [{ weight: "450 g" }] }),
-  pack({ id: "gone", soldOut: true, variants: [{ weight: "250 g", price: 99000 }] }),
+  pack({ id: "jar", price: 120000 }),
+  pack({ id: "box", price: null }),
+  pack({ id: "gone", soldOut: true, price: 99000 }),
 ];
 
-describe("legacy retail packs", () => {
-  it("turns the old comma-separated weights into variants without prices", () => {
-    const legacy = { ...base, variants: undefined, weights: "250 g, 500 g ,", soldOut: undefined, description: undefined } as unknown as RetailPack;
+describe("legacy retail packs (sizes before single prices)", () => {
+  it("drops the old comma-separated weights", () => {
+    const legacy = { ...base, price: undefined, weights: "250 g, 500 g", soldOut: undefined, description: undefined } as unknown as RetailPack;
     const p = normalizePack(legacy);
-    expect(p.variants).toEqual([{ weight: "250 g" }, { weight: "500 g" }]);
+    expect(p.price).toBeNull();
     expect(p.soldOut).toBe(false);
-    expect(p.description).toEqual({ vi: "", en: "", zh: "" });
+    expect(p.description).toEqual({ vi: "", en: "", zh: "", ja: "", ko: "" });
     expect("weights" in p).toBe(false);
   });
 
-  it("drops empty sizes and prices that aren't positive numbers", () => {
-    const p = normalizePack(pack({ variants: [{ weight: " 1 kg ", price: 0 }, { weight: "", price: 5 }, { weight: "2 kg", price: null as unknown as number }, { weight: "3 kg", price: 300000 }] }));
-    expect(p.variants).toEqual([{ weight: "1 kg" }, { weight: "2 kg" }, { weight: "3 kg", price: 300000 }]);
+  it("keeps the first size's price and drops the sizes", () => {
+    const legacy = { ...base, price: undefined, variants: [{ weight: "250 g", price: 125000 }, { weight: "500 g", price: 235000 }] } as unknown as RetailPack;
+    const p = normalizePack(legacy);
+    expect(p.price).toBe(125000);
+    expect("variants" in p).toBe(false);
+  });
+
+  it("ignores prices that aren't positive numbers", () => {
+    expect(normalizePack(pack({ price: 0 })).price).toBeNull();
+    expect(normalizePack(pack({ price: null })).price).toBeNull();
+    expect(normalizePack(pack({ price: 300000 })).price).toBe(300000);
   });
 
   it("is applied to whole stored documents", () => {
     const raw = JSON.parse(JSON.stringify(defaultContent()));
-    raw.retailPacks = [{ ...raw.retailPacks[0], variants: undefined, weights: "450 g" }];
-    expect(normalize(raw).retailPacks[0].variants).toEqual([{ weight: "450 g" }]);
+    raw.retailPacks = [{ ...raw.retailPacks[0], price: undefined, variants: [{ weight: "450 g", price: 215000 }] }];
+    expect(normalize(raw).retailPacks[0].price).toBe(215000);
   });
 });
 
 describe("shop view", () => {
-  it("shows the lowest price and knows when a pack can be bought", () => {
+  it("shows the price and knows when a pack can be bought", () => {
     const [jar, box, gone] = packs.map((p) => toShopItem(p, "vi"));
-    expect(minPrice(jar)).toBe(120000);
+    expect(jar.price).toBe(120000);
     expect(canBuy(jar)).toBe(true);
-    expect(minPrice(box)).toBeNull();
+    expect(box.price).toBeNull();
     expect(canBuy(box)).toBe(false);
     expect(canBuy(gone)).toBe(false);
     expect(jar.href).toBe(`/vi/products/${base.product}/jar`);
@@ -53,43 +62,38 @@ describe("shop view", () => {
 
   it("drops cart lines that can no longer be bought", () => {
     const items = packs.map((p) => toShopItem(p, "vi"));
-    expect(resolveLine({ id: "jar", weight: "500 g", qty: 3 }, items)?.price).toBe(220000);
-    expect(resolveLine({ id: "jar", weight: "1 kg", qty: 1 }, items)).toBeNull();
-    expect(resolveLine({ id: "box", weight: "450 g", qty: 1 }, items)).toBeNull();
-    expect(resolveLine({ id: "gone", weight: "250 g", qty: 1 }, items)).toBeNull();
-    expect(resolveLine({ id: "jar", weight: "250 g", qty: 500 }, items)?.qty).toBe(99);
+    expect(resolveLine({ id: "jar", qty: 3 }, items)?.price).toBe(120000);
+    expect(resolveLine({ id: "box", qty: 1 }, items)).toBeNull();
+    expect(resolveLine({ id: "gone", qty: 1 }, items)).toBeNull();
+    expect(resolveLine({ id: "nope", qty: 1 }, items)).toBeNull();
+    expect(resolveLine({ id: "jar", qty: 500 }, items)?.qty).toBe(99);
   });
 });
 
 describe("priceOrder", () => {
-  it("prices from the catalogue and merges repeated lines", () => {
+  it("prices from the catalogue, ignores prices sent by the browser and merges repeated lines", () => {
     const order = priceOrder(
       [
-        { id: "jar", weight: "250 g", qty: 2 },
-        { id: "jar", weight: "500 g", qty: 1, price: 1 },
-        { id: "jar", weight: "250 g", qty: 1 },
+        { id: "jar", qty: 2 },
+        { id: "jar", qty: 1, price: 1 },
       ],
       packs,
     );
-    expect(order?.items.map((i) => [i.weight, i.qty, i.price])).toEqual([
-      ["250 g", 3, 120000],
-      ["500 g", 1, 220000],
-    ]);
-    expect(order?.total).toBe(3 * 120000 + 220000);
+    expect(order?.items.map((i) => [i.id, i.qty, i.price])).toEqual([["jar", 3, 120000]]);
+    expect(order?.total).toBe(3 * 120000);
   });
 
   it("rejects anything the customer could not have bought", () => {
     const bad = [
       [],
       "x",
-      [{ id: "box", weight: "450 g", qty: 1 }],
-      [{ id: "gone", weight: "250 g", qty: 1 }],
-      [{ id: "jar", weight: "9 kg", qty: 1 }],
-      [{ id: "nope", weight: "250 g", qty: 1 }],
-      [{ id: "jar", weight: "250 g", qty: 0 }],
-      [{ id: "jar", weight: "250 g", qty: 1.5 }],
-      [{ id: "jar", weight: "250 g", qty: 100 }],
-      Array.from({ length: 31 }, () => ({ id: "jar", weight: "250 g", qty: 1 })),
+      [{ id: "box", qty: 1 }],
+      [{ id: "gone", qty: 1 }],
+      [{ id: "nope", qty: 1 }],
+      [{ id: "jar", qty: 0 }],
+      [{ id: "jar", qty: 1.5 }],
+      [{ id: "jar", qty: 100 }],
+      Array.from({ length: 31 }, () => ({ id: "jar", qty: 1 })),
     ];
     for (const lines of bad) expect(priceOrder(lines, packs)).toBeNull();
   });
@@ -115,13 +119,54 @@ describe("orderAlert", () => {
     expect(buttons[0][0].url).toBe("https://vsap.com.vn/admin?view=orders&id=7");
     expect(buttons[1][0].url).toBe("https://zalo.me/0962874111");
   });
+
+  it("leaves out the size on orders placed without one", () => {
+    const { text } = orderAlert(
+      { id: 8, data: { customer: { name: "An", phone: "0900000000", address: "Hà Nội" }, items: [{ id: "jar", name: "Hạt macca", price: 220000, qty: 1 }], total: 220000 } },
+      "https://vsap.com.vn",
+    );
+    expect(text).toContain("1 × Hạt macca — 220.000₫");
+  });
 });
 
-describe("Chinese pages", () => {
-  it("fall back to English, then Vietnamese, when a text has no Chinese yet", () => {
-    const item = toShopItem(pack({ id: "x", name: { vi: "Hạt điều", en: "Cashews", zh: "" }, flavor: { vi: "Rang muối", en: "", zh: "" } }), "zh");
+describe("languages added later (zh, ja, ko)", () => {
+  it("fall back to English, then Vietnamese, when a text is not translated yet", () => {
+    const item = toShopItem(pack({ id: "x", name: { ...emptyL(), vi: "Hạt điều", en: "Cashews" }, flavor: { ...emptyL(), vi: "Rang muối" } }), "zh");
     expect(item.name).toBe("Cashews");
     expect(item.flavor).toBe("Rang muối");
     expect(item.href).toBe(`/zh/products/${base.product}/x`);
+  });
+});
+
+describe("preferredLocale (device language)", () => {
+  it("picks the first site language in the device list, by q-value", () => {
+    expect(preferredLocale("fr-FR,fr;q=0.9,ja;q=0.8,en;q=0.7")).toBe("ja");
+    expect(preferredLocale("en-US;q=0.5, ko-KR")).toBe("ko");
+    expect(preferredLocale("zh-TW,zh;q=0.9")).toBe("zh");
+    expect(preferredLocale("de-DE,fr;q=0.8")).toBe("en");
+    expect(preferredLocale("")).toBe("vi");
+    expect(preferredLocale(null)).toBe("vi");
+  });
+
+  it("lets a saved choice from the language menu win", () => {
+    expect(preferredLocale("ja-JP", "vi")).toBe("vi");
+    expect(preferredLocale("ja-JP", "xx")).toBe("ja");
+  });
+});
+
+describe("old price (discount)", () => {
+  it("shows the old price and a rounded discount only when it is higher than the price", () => {
+    const sale = toShopItem(pack({ price: 125000, oldPrice: 150000 }), "vi");
+    expect(sale.oldPrice).toBe(150000);
+    expect(discountPercent(sale)).toBe(17);
+    const same = toShopItem(pack({ price: 125000, oldPrice: 100000 }), "vi");
+    expect(same.oldPrice).toBeNull();
+    expect(discountPercent(same)).toBeNull();
+    expect(toShopItem(pack({ price: null, oldPrice: 150000 }), "vi").oldPrice).toBeNull();
+  });
+
+  it("charges the new price", () => {
+    const order = priceOrder([{ id: "sale", qty: 2 }], [pack({ id: "sale", price: 125000, oldPrice: 150000 })]);
+    expect(order?.total).toBe(250000);
   });
 });

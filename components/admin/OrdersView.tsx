@@ -240,9 +240,10 @@ function Detail({ item, onStatus, onSaved, onDeleted }: { item: Order; onStatus:
             </thead>
             <tbody className="divide-y divide-mist-200">
               {items.map((i) => (
-                <tr key={`${i.id}-${i.weight}`}>
+                <tr key={`${i.id}-${i.weight ?? ""}`}>
                   <td className="px-4 py-2.5 text-ink-900">
-                    <span className="font-medium tabular-nums">{i.qty} ×</span> {i.name} <span className="text-ink-600">({i.weight})</span>
+                    <span className="font-medium tabular-nums">{i.qty} ×</span> {i.name}
+                    {i.weight && <span className="text-ink-600"> ({i.weight})</span>}
                   </td>
                   <td className="px-4 py-2.5 text-right text-ink-600 tabular-nums">{vnd(i.price)}</td>
                   <td className="px-4 py-2.5 text-right text-ink-900 tabular-nums">{vnd(i.price * i.qty)}</td>

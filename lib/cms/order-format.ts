@@ -13,7 +13,8 @@ export const orderStatusInfo: Record<OrderStatus, { label: string }> = {
   cancelled: { label: "Đã huỷ" },
 };
 
-export type OrderCustomer = { name: string; phone: string; email?: string; address: string; note?: string };
+/** `address` is the full line ("street, ward, province"); the parts are kept on orders placed since the address picker. */
+export type OrderCustomer = { name: string; phone: string; email?: string; address: string; province?: string; ward?: string; street?: string; note?: string };
 
 export type OrderData = { customer: OrderCustomer; items: OrderItem[]; total: number };
 
@@ -42,7 +43,7 @@ export function orderAlert(order: { id: number | null; data: OrderData; locale?:
     c.email && `✉️ ${esc(c.email)}`,
     `📍 ${esc(c.address)}`,
     "",
-    ...items.map((i) => `• ${i.qty} × ${esc(i.name)} (${esc(i.weight)}) — ${vnd(i.price * i.qty)}`),
+    ...items.map((i) => `• ${i.qty} × ${esc(i.name)}${i.weight ? ` (${esc(i.weight)})` : ""} — ${vnd(i.price * i.qty)}`),
     c.note && "",
     c.note && `💬 <i>${esc(c.note.length > 600 ? `${c.note.slice(0, 600)}…` : c.note)}</i>`,
     "",

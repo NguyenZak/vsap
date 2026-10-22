@@ -599,7 +599,7 @@ VSAP cashews and macadamias are selected from Vietnamese growing regions, with r
     date: "2026-10-20",
     author: "VSAP",
     category: { vi: "Xuất khẩu", en: "Export" },
-    cover: { src: "/images/farmer-watering.webp", alt: { vi: "Nông dân Việt Nam đội nón lá sàng nông sản dưới nắng", en: "Vietnamese farmer in a conical hat winnowing crops in the sun" } },
+    cover: { src: "/images/cashew-harvest.webp", alt: { vi: "Hạt điều thô vừa thu hoạch", en: "Freshly harvested raw cashew nuts" } },
     title: {
       vi: "Cách chọn nhà cung cấp hạt điều Việt Nam uy tín: 10 điều cần kiểm tra",
       en: "How to choose a reliable Vietnamese cashew supplier: a 10-point checklist",

@@ -429,6 +429,13 @@ export const en: Dictionary = {
     successBody: "VSAP has received order #{id} and will call you to confirm it during business hours.",
     error: "We couldn’t send your order. Please try again or call VSAP.",
     required: "Required",
+    oldPrice: "Was",
+    province: "Province / city",
+    ward: "Ward / commune",
+    street: "House number and street",
+    streetPlaceholder: "e.g. 12 Le Loi Street",
+    selectProvince: "Select a province or city",
+    selectWard: "Select a ward or commune",
   },
   footer: {
     brandOf: "A brand of",
@@ -437,5 +444,8 @@ export const en: Dictionary = {
     products: "Products",
     contact: "Contact",
     rights: "All rights reserved.",
+    taxId: "Business registration no.",
+    registered: "First registered",
+    representative: "Legal representative",
   },
 };

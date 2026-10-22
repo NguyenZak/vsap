@@ -142,6 +142,16 @@ const keyLabels: Record<string, string> = {
   placing: "Đang gửi đơn",
   successTitle: "Tiêu đề khi đặt hàng xong",
   successBody: "Nội dung khi đặt hàng xong ({id} = mã đơn)",
+  oldPrice: "Nhãn giá cũ (đọc màn hình)",
+  taxId: "Nhãn mã số doanh nghiệp",
+  registered: "Nhãn ngày đăng ký",
+  representative: "Nhãn người đại diện",
+  province: "Ô tỉnh/thành phố",
+  ward: "Ô phường/xã",
+  street: "Ô số nhà, tên đường",
+  streetPlaceholder: "Gợi ý số nhà, tên đường",
+  selectProvince: "Chữ khi chưa chọn tỉnh",
+  selectWard: "Chữ khi chưa chọn phường/xã",
 };
 
 const inputCls = "w-full rounded-lg border border-mist-200 bg-white px-3 py-2 text-sm outline-none focus:border-forest-600 focus:ring-2 focus:ring-sun-400/50";
@@ -167,7 +177,7 @@ function Rows({ byLang, path, onChange }: { byLang: Record<Locale, Strings>; pat
             <p className="mb-1 text-xs font-medium text-ink-900">
               {keyLabels[k] ?? k} <span className="font-mono font-normal text-ink-400">· {k}</span>
             </p>
-            <div className="grid gap-2 sm:grid-cols-3">
+            <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
               {locales.map((lang) => (
                 <label key={lang} className="relative block">
                   <span className="pointer-events-none absolute top-2 left-2.5 rounded bg-mist-100 px-1 text-[10px] font-semibold text-ink-600 uppercase">{lang}</span>

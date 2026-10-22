@@ -36,7 +36,7 @@ export function CartDrawer() {
           <>
             <ul className="flex-1 divide-y divide-mist-200 overflow-y-auto px-5 sm:px-6">
               {priced.map(({ line, item, price, qty }) => (
-                <li key={`${line.id}-${line.weight}`} className="flex gap-4 py-4">
+                <li key={line.id} className="flex gap-4 py-4">
                   <Link href={item.href} onClick={close} className="size-20 shrink-0 overflow-hidden rounded-xl bg-mist-50">
                     {item.images[0] && <img src={item.images[0]} alt="" className="size-full object-contain p-1" />}
                   </Link>
@@ -44,16 +44,16 @@ export function CartDrawer() {
                     <Link href={item.href} onClick={close} className="block text-sm font-medium text-ink-900 hover:text-forest-600">
                       {item.name}
                     </Link>
-                    <p className="mt-0.5 text-xs text-ink-600">{[item.flavor, line.weight].filter(Boolean).join(" · ")}</p>
+                    <p className="mt-0.5 text-xs text-ink-600">{item.flavor}</p>
                     <div className="mt-2.5 flex items-center justify-between gap-3">
-                      <QtyStepper size="sm" value={qty} onChange={(n) => setQty(line.id, line.weight, n)} labels={t} />
+                      <QtyStepper size="sm" value={qty} onChange={(n) => setQty(line.id, n)} labels={t} />
                       <p className="text-sm font-medium tabular-nums">{formatPrice(price * qty, locale)}</p>
                     </div>
                   </div>
                   <button
                     type="button"
-                    onClick={() => remove(line.id, line.weight)}
-                    aria-label={`${t.remove} ${item.name} ${line.weight}`}
+                    onClick={() => remove(line.id)}
+                    aria-label={`${t.remove} ${item.name}`}
                     className="-mr-1 grid size-8 shrink-0 place-items-center self-start rounded-full text-ink-400 transition hover:bg-mist-100 hover:text-chili-600"
                   >
                     <Trash2 className="size-4" />

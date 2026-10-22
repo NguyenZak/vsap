@@ -3,11 +3,12 @@
 import Link from "next/link";
 import { useState } from "react";
 import { ArrowUpRight, Eye, MessageCircle, ShoppingBag } from "lucide-react";
-import { canBuy, formatPrice, minPrice, type ShopItem } from "@/lib/shop";
+import { canBuy, discountPercent, type ShopItem } from "@/lib/shop";
 import { BuyBox } from "./BuyBox";
 import { useShop } from "./CartProvider";
 import { CloseButton, Dialog } from "./Dialog";
 import { Gallery } from "./Gallery";
+import { Price } from "./Price";
 
 /** Retail packs as shop cards, with a quick-view popup for picking a size without leaving the page. */
 export function ProductGrid({ items, reveal = true }: { items: ShopItem[]; reveal?: boolean }) {
@@ -34,9 +35,7 @@ export function ProductGrid({ items, reveal = true }: { items: ShopItem[]; revea
 function ProductCard({ item, onQuickView }: { item: ShopItem; onQuickView: () => void }) {
   const { t, locale, add } = useShop();
   const [front, back] = item.images;
-  const price = minPrice(item);
-  const priced = item.variants.filter((v) => v.price !== null);
-  const multi = item.variants.length > 1;
+  const discount = discountPercent(item);
 
   return (
     <article className="group/card flex h-full flex-col overflow-hidden rounded-2xl bg-white ring-1 ring-mist-200 transition hover:shadow-lg hover:shadow-forest-950/5 hover:ring-forest-600/30">
@@ -61,13 +60,9 @@ function ProductCard({ item, onQuickView }: { item: ShopItem; onQuickView: () =>
             />
           )}
         </Link>
-        <ul className="pointer-events-none absolute top-2.5 left-2.5 flex flex-wrap gap-1">
-          {item.variants.map((v) => (
-            <li key={v.weight} className="rounded-full bg-forest-900 px-2 py-0.5 text-[0.7rem] font-medium text-white sm:text-xs">
-              {v.weight}
-            </li>
-          ))}
-        </ul>
+        {discount !== null && !item.soldOut && (
+          <span className="pointer-events-none absolute top-2.5 left-2.5 rounded-full bg-chili-600 px-2.5 py-1 text-xs font-semibold text-white tabular-nums">-{discount}%</span>
+        )}
         {item.soldOut && (
           <span className="absolute right-2.5 bottom-2.5 rounded-full bg-chili-600 px-2.5 py-1 text-xs font-medium text-white">{t.soldOut}</span>
         )}
@@ -89,16 +84,15 @@ function ProductCard({ item, onQuickView }: { item: ShopItem; onQuickView: () =>
           </Link>
         </h3>
         {item.flavor && <p className="mt-0.5 text-xs text-ink-600 sm:text-sm">{item.flavor}</p>}
-        <p className={`mt-2 text-base font-semibold tabular-nums ${price === null ? "text-forest-900" : "text-chili-600"}`}>
-          {price === null ? t.contactPrice : `${priced.length > 1 ? `${t.from} ` : ""}${formatPrice(price, locale)}`}
-        </p>
+        <div className="mt-2">
+          <Price item={item} size="card" />
+        </div>
 
         <div className="mt-auto pt-3">
           {canBuy(item) ? (
             <button
               type="button"
-              // One size: straight into the cart. Several: pick the size in quick view first.
-              onClick={() => (multi ? onQuickView() : add(item.id, priced[0].weight))}
+              onClick={() => add(item.id)}
               className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-sun-400 px-3 py-2.5 text-xs font-medium text-forest-950 transition hover:bg-sun-500 sm:text-sm"
             >
               <ShoppingBag className="size-4" />

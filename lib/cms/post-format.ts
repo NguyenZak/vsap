@@ -1,5 +1,5 @@
 // Pure helpers for news posts, shared by the server and Studio.
-import type { Locale } from "../locales";
+import { localeInfo, type Locale } from "../locales";
 import type { Post } from "./types";
 
 export const SLUG_RE = /^[a-z0-9]+(-[a-z0-9]+)*$/;
@@ -35,5 +35,5 @@ export function postProblem(post: Post): string | null {
 export function formatDate(date: string, locale: Locale) {
   const d = new Date(`${date}T00:00:00Z`);
   if (Number.isNaN(d.getTime())) return date;
-  return new Intl.DateTimeFormat(locale === "vi" ? "vi-VN" : locale === "zh" ? "zh-CN" : "en-GB", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" }).format(d);
+  return new Intl.DateTimeFormat(locale === "en" ? "en-GB" : localeInfo[locale].intl, { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" }).format(d);
 }

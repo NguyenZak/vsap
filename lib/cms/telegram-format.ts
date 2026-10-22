@@ -1,4 +1,5 @@
 // Text and buttons of the Telegram alert for a new quote request. Pure, so it is unit-tested.
+import { isLocale, localeInfo } from "../locales";
 import type { InquiryData } from "./inquiry-format";
 
 /** Telegram's HTML parse mode only needs &, < and > escaped. */
@@ -8,7 +9,7 @@ const productLabel: Record<string, string> = { cashew: "Hạt điều", macadami
 const digits = (s = "") => s.replace(/[^\d]/g, "");
 
 /** Site language of a submission, for the alert (Vietnamese when unknown). */
-export const langLabel = (locale?: string | null) => ({ vi: "Tiếng Việt", en: "Tiếng Anh", zh: "Tiếng Trung" } as Record<string, string>)[locale ?? ""] ?? "Tiếng Việt";
+export const langLabel = (locale?: string | null) => (locale && isLocale(locale) ? localeInfo[locale].vn : localeInfo.vi.vn);
 
 export type InquiryAlert = { id: number | null; data: InquiryData; locale?: string; source?: string; country?: string };
 export type Button = { text: string; url: string };

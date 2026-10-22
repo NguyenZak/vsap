@@ -4,9 +4,9 @@
 import type { Metadata } from "next";
 import { pick } from "./cms/links";
 import type { Page, SiteContent } from "./cms/types";
-import { defaultLocale, locales, type Locale } from "./locales";
+import { defaultLocale, localeInfo, locales, type Locale } from "./locales";
 
-export const ogLocale: Record<Locale, string> = { vi: "vi_VN", en: "en_US", zh: "zh_CN" };
+export const ogLocale = Object.fromEntries(locales.map((l) => [l, localeInfo[l].og])) as Record<Locale, string>;
 
 type SeoInput = {
   content: SiteContent;
@@ -84,6 +84,9 @@ export function siteJsonLd(content: SiteContent, locale: Locale) {
         "@id": org,
         name: s.name,
         legalName: s.legalName,
+        ...(s.legalNameEn ? { alternateName: s.legalNameEn } : {}),
+        ...(s.taxId ? { taxID: s.taxId } : {}),
+        ...(s.registeredAt ? { foundingDate: s.registeredAt } : {}),
         url: s.url,
         logo: { "@type": "ImageObject", url: abs(s.url, "/logo.svg") },
         slogan: s.tagline,

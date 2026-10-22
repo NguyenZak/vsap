@@ -429,6 +429,13 @@ export const zh: Dictionary = {
     successBody: "VSAP已收到订单#{id}，将在工作时间内致电与您确认。",
     error: "订单提交失败，请重试或致电VSAP。",
     required: "必填",
+    oldPrice: "原价",
+    province: "省/直辖市",
+    ward: "坊/社",
+    street: "门牌号和街道",
+    streetPlaceholder: "例如：12 Le Loi 街",
+    selectProvince: "请选择省/市",
+    selectWard: "请选择坊/社",
   },
   footer: {
     brandOf: "隶属于",
@@ -437,5 +444,8 @@ export const zh: Dictionary = {
     products: "产品",
     contact: "联系我们",
     rights: "保留所有权利。",
+    taxId: "企业代码（税号）",
+    registered: "首次登记",
+    representative: "法定代表人",
   },
 };

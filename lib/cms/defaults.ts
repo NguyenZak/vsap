@@ -4,18 +4,23 @@
 // is typed twice.
 import { en } from "../content/en";
 import { vi } from "../content/vi";
+import { ja } from "../content/ja";
+import { ko } from "../content/ko";
 import { zh } from "../content/zh";
 import { images, type ImageKey } from "../images";
 import { partners } from "../partners";
 import { products } from "../products";
-import { packers, retailFacts, retailPacks } from "../retail";
+import { packers, retailFacts, retailPacks, tempPrices } from "../retail";
 import { site } from "../site";
+import { emptyL, locales, type Locale } from "../locales";
 import type { CmsImage, L, Page, PageId, Section, SiteContent, UiStrings } from "./types";
 
 type Dict = typeof vi;
 
-const tr = (get: (d: Dict) => string): L => ({ vi: get(vi), en: get(en as Dict), zh: get(zh as Dict) });
-const blank = (): L => ({ vi: "", en: "", zh: "" });
+/** Every site language's dictionary (lib/content/*). */
+const dicts: Record<Locale, Dict> = { vi, en: en as Dict, zh: zh as Dict, ja: ja as Dict, ko: ko as Dict };
+const tr = (get: (d: Dict) => string): L => Object.fromEntries(locales.map((l) => [l, get(dicts[l])])) as L;
+const blank = (): L => emptyL();
 const pic = (key: ImageKey): CmsImage => ({ src: images[key].src, alt: { ...images[key].alt } });
 const section = (id: string, type: string, props: Record<string, unknown>): Section => ({ id, type, props });
 
@@ -36,9 +41,10 @@ const heroSlides: { image: ImageKey; href: string }[] = [
   { image: "birdNest", href: "/products/bird-nest" },
   { image: "shipping", href: "/contact" },
 ];
-const statementPills: ImageKey[] = ["paddyWork", "cashewHarvest", "macadamiaTree", "cashewKernels"];
+const statementPills: ImageKey[] = ["birdNest", "cashewHarvest", "macadamiaTree", "cashewKernels"];
 const valueIcons = ["badge-check", "leaf", "handshake", "globe", "factory", "sprout"];
-const valuePhotos: ImageKey[] = ["cashewKernels", "farmerWatering", "paddyWork", "shipping", "cashewProcessing", "highlandFarmers"];
+// Only photos of VSAP's own lines (cashew, macadamia, bird's nest) and their regions: no rice or coffee.
+const valuePhotos: ImageKey[] = ["cashewKernels", "cashewTreeSky", "highlands", "shipping", "cashewProcessing", "cashewGrove"];
 const stepIcons = ["sprout", "wheat", "factory", "scan-search", "package-check", "ship"];
 const stepPhotos: ImageKey[] = ["cashewGrove", "cashewHarvest", "cashewProcessing", "qualityInspection", "cashewRoasted", "shipping"];
 
@@ -241,7 +247,7 @@ const pages: Record<PageId, Page> = {
     path: "/news",
     seo: { title: tr((d) => d.news.metaTitle), description: tr((d) => d.news.metaDescription), image: "", noindex: false },
     sections: [
-      pageHero("news-hero", (d) => d.news, "highlandFarmers"),
+      pageHero("news-hero", (d) => d.news, "cashewHarvest"),
       section("news-list", "posts", {
         eyebrow: blank(),
         title: blank(),
@@ -266,9 +272,9 @@ const pages: Record<PageId, Page> = {
 
 /** Search titles for the seed products (the page heading stays the short product name). */
 const productSeoTitles: Record<string, L> = {
-  cashew: { vi: "Nhân hạt điều Việt Nam xuất khẩu W180–W450", en: "Vietnamese cashew kernels W180–W450 for export", zh: "越南出口腰果仁 W180–W450" },
-  macadamia: { vi: "Hạt macca Tây Nguyên xuất khẩu", en: "Vietnamese macadamia nuts from the Central Highlands", zh: "越南西原出口夏威夷果" },
-  "bird-nest": { vi: "Yến sào Khánh Hòa: yến thô, yến tinh chế, yến chưng", en: "Khanh Hoa edible bird’s nest: raw, cleaned and ready-to-drink", zh: "越南庆和燕窝：毛燕、净燕、即食燕窝" },
+  cashew: { vi: "Nhân hạt điều Việt Nam xuất khẩu W180–W450", en: "Vietnamese cashew kernels W180–W450 for export", zh: "越南出口腰果仁 W180–W450", ja: "ベトナム産輸出用カシューナッツ W180–W450", ko: "베트남 수출용 캐슈넛 W180–W450" },
+  macadamia: { vi: "Hạt macca Tây Nguyên xuất khẩu", en: "Vietnamese macadamia nuts from the Central Highlands", zh: "越南西原出口夏威夷果", ja: "ベトナム中部高原産 輸出用マカダミアナッツ", ko: "베트남 중부 고원 수출용 마카다미아" },
+  "bird-nest": { vi: "Yến sào Khánh Hòa: yến thô, yến tinh chế, yến chưng", en: "Khanh Hoa edible bird’s nest: raw, cleaned and ready-to-drink", zh: "越南庆和燕窝：毛燕、净燕、即食燕窝", ja: "カインホア産ツバメの巣：原巣・毛取り済み・ドリンク", ko: "카인호아 제비집: 원물·손질·음료" },
 };
 
 function ui(d: Dict): UiStrings {
@@ -287,7 +293,16 @@ function ui(d: Dict): UiStrings {
       step: home.process.step,
       photo: home.retail.photo,
     },
-    footer: { explore: d.footer.explore, products: d.footer.products, contact: d.footer.contact, rights: d.footer.rights, brandOf: d.footer.brandOf },
+    footer: {
+      explore: d.footer.explore,
+      products: d.footer.products,
+      contact: d.footer.contact,
+      rights: d.footer.rights,
+      brandOf: d.footer.brandOf,
+      taxId: d.footer.taxId,
+      registered: d.footer.registered,
+      representative: d.footer.representative,
+    },
     chat: { ...d.chat },
     contactInfo: { ...d.contact.info },
     form: { ...d.contact.form, productOptions: { ...d.contact.form.productOptions } },
@@ -332,6 +347,10 @@ export function defaultContent(): SiteContent {
     settings: {
       name: site.name,
       legalName: site.legalName,
+      legalNameEn: site.legalNameEn,
+      taxId: site.taxId,
+      registeredAt: site.registeredAt,
+      representative: { name: site.representative.name, title: { ...site.representative.title } },
       tagline: site.tagline,
       url: site.url,
       email: site.email,
@@ -352,7 +371,7 @@ export function defaultContent(): SiteContent {
       verification: { google: "", bing: "" },
       analytics: { ga4: "" },
     },
-    ui: { vi: ui(vi), en: ui(en as Dict), zh: ui(zh as Dict) },
+    ui: Object.fromEntries(locales.map((l) => [l, ui(dicts[l])])) as Record<Locale, UiStrings>,
     pages,
     products: products.map((p) => ({
       slug: p.slug,
@@ -364,9 +383,9 @@ export function defaultContent(): SiteContent {
       image: pic(p.image),
       gallery: p.gallery.map(pic),
       grades: p.grades.map((g) => ({ code: g.code, label: { ...g.label } })),
-      packaging: p.packaging.vi.map((text, i) => ({ text: { vi: text, en: p.packaging.en[i] ?? text, zh: p.packaging.zh[i] ?? "" } })),
+      packaging: p.packaging.vi.map((_, i) => ({ text: Object.fromEntries(locales.map((l) => [l, p.packaging[l][i] ?? ""])) as L })),
       specs: p.specs.map((s) => ({ label: { ...s.label }, value: s.value })),
-      applications: p.applications.vi.map((text, i) => ({ text: { vi: text, en: p.applications.en[i] ?? text, zh: p.applications.zh[i] ?? "" } })),
+      applications: p.applications.vi.map((_, i) => ({ text: Object.fromEntries(locales.map((l) => [l, p.applications[l][i] ?? ""])) as L })),
       seo: { title: { ...(productSeoTitles[p.slug] ?? blank()) }, description: blank() },
     })),
     retailPacks: retailPacks.map((r) => ({
@@ -375,7 +394,8 @@ export function defaultContent(): SiteContent {
       name: { ...r.name },
       flavor: { ...r.flavor },
       pack: { ...r.pack },
-      variants: r.weights.map((weight) => ({ weight })),
+      price: tempPrices[r.id] ?? null,
+      oldPrice: null,
       soldOut: false,
       description: blank(),
       images: r.images.map((src) => ({ src })),

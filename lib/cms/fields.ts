@@ -1,5 +1,6 @@
 // Field definitions: the admin builds every edit form from these, so a section or
 // collection only has to declare its fields once.
+import { emptyL } from "../locales";
 
 type Base = { key: string; label: string; help?: string };
 
@@ -29,7 +30,8 @@ export type FieldDef =
   /** Nested object rendered as an indented group. */
   | (Base & { type: "group"; fields: FieldDef[] });
 
-export const l = (vi: string, en = vi, zh = "") => ({ vi, en, zh });
+/** A text for new items: Vietnamese and English given, the other languages left empty (they fall back to English). */
+export const l = (vi: string, en = vi) => ({ ...emptyL(), vi, en });
 
 export const img = (src: string, vi = "", en = vi) => ({ src, alt: l(vi, en) });
 

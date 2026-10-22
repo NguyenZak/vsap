@@ -11,7 +11,7 @@ import { pick } from "@/lib/cms/links";
 import { getContent } from "@/lib/cms/store";
 import { metadataLocale, resolveLocale } from "@/lib/i18n";
 import { breadcrumbJsonLd, jsonLdHtml, seoMetadata } from "@/lib/seo";
-import { minPrice, packHref, toShopItem } from "@/lib/shop";
+import { packHref, toShopItem } from "@/lib/shop";
 
 type Props = { params: Promise<{ locale: string; slug: string; pack: string }> };
 
@@ -36,7 +36,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     locale,
     path: `/products/${pack.product}/${pack.id}`,
     title: name,
-    description: pick(pack.description, locale).split(/\n\s*\n/)[0] || [name, pick(pack.pack, locale), pack.variants.map((v) => v.weight).join(", ")].filter(Boolean).join(" · "),
+    description: pick(pack.description, locale).split(/\n\s*\n/)[0] || [name, pick(pack.pack, locale)].filter(Boolean).join(" · "),
     image: pack.images[0]?.src,
     imageAlt: name,
   });
@@ -82,7 +82,6 @@ export default async function PackPage({ params }: Props) {
     [Boxes, t.perk4],
   ] as const;
 
-  const prices = item.variants.map((v) => v.price).filter((p): p is number => p !== null);
   const productJsonLd = {
     "@context": "https://schema.org",
     "@type": "Product",
@@ -92,14 +91,12 @@ export default async function PackPage({ params }: Props) {
     brand: { "@type": "Brand", name: site.name },
     sku: pack.id,
     url: `${site.url}${packHref(pack, locale)}`,
-    ...(prices.length
+    ...(item.price !== null
       ? {
           offers: {
-            "@type": "AggregateOffer",
+            "@type": "Offer",
             priceCurrency: "VND",
-            lowPrice: minPrice(item),
-            highPrice: Math.max(...prices),
-            offerCount: prices.length,
+            price: item.price,
             availability: pack.soldOut ? "https://schema.org/OutOfStock" : "https://schema.org/InStock",
             seller: { "@id": `${site.url}/#organization` },
           },
@@ -202,12 +199,6 @@ export default async function PackPage({ params }: Props) {
         <aside className="lg:col-span-5">
           <h2 className="heading border-b border-mist-200 pb-4 text-2xl text-forest-900">{t.details}</h2>
           <dl className="divide-y divide-mist-200 text-sm">
-            {item.variants.length > 0 && (
-              <div className="grid grid-cols-[7.5rem_1fr] gap-4 py-3">
-                <dt className="text-ink-400">{r.sizes}</dt>
-                <dd className="text-ink-900">{item.variants.map((v) => v.weight).join(" · ")}</dd>
-              </div>
-            )}
             {facts.map(([label, value]) => (
               <div key={label} className="grid grid-cols-[7.5rem_1fr] gap-4 py-3">
                 <dt className="text-ink-400">{label}</dt>

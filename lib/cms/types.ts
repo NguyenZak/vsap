@@ -13,6 +13,14 @@ export type Office = { label: L; address: L; street: string; locality: string; r
 export type Settings = {
   name: string;
   legalName: string;
+  /** Registered English name, shown instead of legalName on the non-Vietnamese pages. */
+  legalNameEn: string;
+  /** Mã số doanh nghiệp (also the tax code). */
+  taxId: string;
+  /** First registration date, YYYY-MM-DD. */
+  registeredAt: string;
+  /** Legal representative named on the business registration. */
+  representative: { name: string; title: L };
   tagline: string;
   url: string;
   email: string;
@@ -37,7 +45,7 @@ export type Settings = {
 export type UiStrings = {
   nav: { home: string; about: string; products: string; quality: string; news: string; contact: string; quote: string; menu: string; close: string };
   common: { viewProduct: string; requestQuote: string; allProducts: string; prev: string; next: string; pause: string; play: string; slide: string; step: string; photo: string };
-  footer: { explore: string; products: string; contact: string; rights: string; brandOf: string };
+  footer: { explore: string; products: string; contact: string; rights: string; brandOf: string; taxId: string; registered: string; representative: string };
   chat: { label: string; zalo: string; whatsapp: string; call: string; close: string };
   contactInfo: { email: string; phone: string; website: string };
   form: {
@@ -66,6 +74,8 @@ export type UiStrings = {
     checkoutTitle: string; checkoutLead: string; yourOrder: string; name: string; phone: string; email: string; address: string;
     note: string; notePlaceholder: string; payment: string; placeOrder: string; placing: string;
     successTitle: string; successBody: string; error: string; required: string;
+    oldPrice: string;
+    province: string; ward: string; street: string; streetPlaceholder: string; selectProvince: string; selectWard: string;
   };
 };
 
@@ -102,9 +112,6 @@ export type Product = {
   seo: { title: L; description: L };
 };
 
-/** One size of a retail pack. No price = sold on request ("Liên hệ"). Prices are in VND. */
-export type PackVariant = { weight: string; price?: number };
-
 export type RetailPack = {
   id: string;
   /** Product slug this pack belongs to. */
@@ -112,7 +119,10 @@ export type RetailPack = {
   name: L;
   flavor: L;
   pack: L;
-  variants: PackVariant[];
+  /** Retail price in VND; null = sold on request ("Liên hệ"), not through the cart. */
+  price: number | null;
+  /** Price before the discount (VND), shown struck through when higher than `price`; null = no discount. */
+  oldPrice: number | null;
   /** Hides the buy buttons and shows "sold out". */
   soldOut: boolean;
   /** Longer text for the pack's own page; blank lines start new paragraphs. */

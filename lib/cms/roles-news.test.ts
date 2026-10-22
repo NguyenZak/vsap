@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { emptyL } from "../locales";
 import { faqFromMarkdown, parseMarkdown, parseInline, plainText, readingMinutes, safeHref } from "../markdown";
 import { newPost } from "./collections";
 import { defaultContent } from "./defaults";
@@ -107,7 +108,7 @@ describe("posts", () => {
     const p = { ...newPost("2026-01-01"), slug: "mua-dieu-2026" };
     expect(postProblem(p)).toBeNull();
     expect(postProblem({ ...p, slug: "Mua Dieu" })).toMatch(/Slug/);
-    expect(postProblem({ ...p, title: { vi: "", en: "", zh: "" } })).toMatch(/tiêu đề/);
+    expect(postProblem({ ...p, title: emptyL() })).toMatch(/tiêu đề/);
   });
 
   it("slugifies Vietnamese titles", () => {

@@ -433,6 +433,13 @@ export const vi = {
     successBody: "VSAP đã nhận đơn #{id} và sẽ gọi cho bạn để xác nhận trong giờ làm việc.",
     error: "Không gửi được đơn hàng. Vui lòng thử lại hoặc gọi cho VSAP.",
     required: "Bắt buộc",
+    oldPrice: "Giá cũ",
+    province: "Tỉnh/Thành phố",
+    ward: "Phường/Xã",
+    street: "Số nhà, tên đường",
+    streetPlaceholder: "Ví dụ: 106 Lưu Hữu Phước",
+    selectProvince: "Chọn tỉnh/thành phố",
+    selectWard: "Chọn phường/xã",
   },
   footer: {
     brandOf: "Sản phẩm của",
@@ -441,5 +448,8 @@ export const vi = {
     products: "Sản phẩm",
     contact: "Liên hệ",
     rights: "Bảo lưu mọi quyền.",
+    taxId: "Mã số doanh nghiệp",
+    registered: "Đăng ký lần đầu",
+    representative: "Người đại diện",
   },
 };

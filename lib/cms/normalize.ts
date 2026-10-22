@@ -1,4 +1,5 @@
 // Pure helpers for stored CMS documents (no Cloudflare imports, so they are unit-testable).
+import { emptyL } from "../locales";
 import { defaultContent } from "./defaults";
 import type { RetailPack, SiteContent } from "./types";
 
@@ -26,25 +27,20 @@ export function normalize(raw: unknown): SiteContent {
 
 /**
  * Retail packs are list items, so withDefaults leaves them as stored. Packs saved
- * before prices existed had `weights: "250 g, 500 g"`; turn that into variants.
+ * before they had a single price carried `weights` ("250 g, 500 g") or `variants`
+ * ([{ weight, price }]); keep the first size's price and drop the sizes.
  */
 export function normalizePack(raw: RetailPack): RetailPack {
-  const legacy = raw as RetailPack & { weights?: unknown };
-  const { weights, ...pack } = legacy;
-  const variants = Array.isArray(pack.variants)
-    ? pack.variants
-        .filter(isObject)
-        .map((v) => ({ weight: String(v.weight ?? "").trim(), ...(validPrice(v.price) ? { price: v.price } : {}) }))
-        .filter((v) => v.weight)
-    : String(weights ?? "")
-        .split(",")
-        .map((w) => ({ weight: w.trim() }))
-        .filter((v) => v.weight);
+  const legacy = raw as RetailPack & { weights?: unknown; variants?: unknown };
+  const { weights: _weights, variants, ...pack } = legacy;
+  const first = Array.isArray(variants) ? variants.find(isObject) : undefined;
+  const price = validPrice(pack.price) ? pack.price : first && validPrice(first.price) ? first.price : undefined;
   return {
     ...pack,
-    variants,
+    price: price ?? null,
+    oldPrice: validPrice(pack.oldPrice) ? pack.oldPrice : null,
     soldOut: pack.soldOut === true,
-    description: { vi: "", en: "", zh: "", ...(isObject(pack.description) ? pack.description : {}) } as RetailPack["description"],
+    description: { ...emptyL(), ...(isObject(pack.description) ? pack.description : {}) } as RetailPack["description"],
   };
 }
 

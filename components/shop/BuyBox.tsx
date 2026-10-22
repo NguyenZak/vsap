@@ -4,23 +4,21 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { MessageCircle, ShoppingBag } from "lucide-react";
-import { formatPrice, type ShopItem } from "@/lib/shop";
+import { canBuy, type ShopItem } from "@/lib/shop";
 import { useShop } from "./CartProvider";
 import { QtyStepper } from "./Dialog";
+import { Price } from "./Price";
 
-/** Size picker, price, quantity and the two buy buttons (product page and quick view). */
+/** Price, quantity and the two buy buttons (product page and quick view). */
 export function BuyBox({ item, onAdded }: { item: ShopItem; onAdded?: () => void }) {
   const { t, locale, add } = useShop();
   const router = useRouter();
-  const firstPriced = item.variants.find((v) => v.price !== null) ?? item.variants[0];
-  const [weight, setWeight] = useState(firstPriced?.weight ?? "");
   const [qty, setQty] = useState(1);
-  const variant = item.variants.find((v) => v.weight === weight);
-  const buyable = !item.soldOut && variant?.price != null;
+  const buyable = canBuy(item);
 
   const addToCart = (open: boolean) => {
     if (!buyable) return;
-    add(item.id, weight, qty, open);
+    add(item.id, qty, open);
     onAdded?.();
   };
 
@@ -28,27 +26,10 @@ export function BuyBox({ item, onAdded }: { item: ShopItem; onAdded?: () => void
     <div>
       <div className="rounded-2xl bg-mist-50 px-5 py-4">
         <p className="text-xs text-ink-400">{t.price}</p>
-        <p className={`mt-0.5 text-3xl font-semibold tracking-tight tabular-nums ${variant?.price != null ? "text-chili-600" : "text-forest-900"}`}>
-          {variant?.price != null ? formatPrice(variant.price, locale) : t.contactPrice}
-        </p>
+        <div className="mt-0.5">
+          <Price item={item} size="large" />
+        </div>
       </div>
-
-      {item.variants.length > 0 && (
-        <fieldset className="mt-5">
-          <legend className="text-sm text-ink-600">{t.size}</legend>
-          <div className="mt-2 flex flex-wrap gap-2">
-            {item.variants.map((v) => (
-              <label key={v.weight} className="cursor-pointer">
-                <input type="radio" name={`size-${item.id}`} value={v.weight} checked={v.weight === weight} onChange={() => setWeight(v.weight)} className="peer sr-only" />
-                <span className="flex flex-col rounded-xl border border-mist-200 bg-white px-4 py-2 text-sm transition peer-checked:border-forest-600 peer-checked:ring-1 peer-checked:ring-forest-600 peer-focus-visible:outline-2 peer-focus-visible:outline-forest-600 hover:border-forest-600/50">
-                  <span className="font-medium text-ink-900">{v.weight}</span>
-                  <span className="text-xs text-ink-600 tabular-nums">{v.price != null ? formatPrice(v.price, locale) : t.contactPrice}</span>
-                </span>
-              </label>
-            ))}
-          </div>
-        </fieldset>
-      )}
 
       {buyable ? (
         <>

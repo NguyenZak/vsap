@@ -145,13 +145,13 @@ export const sectionDefs: SectionDef[] = [
           { key: "tail", label: "Phần nhạt (sau ảnh)", type: "text" },
           { key: "image", label: "Ảnh tròn", type: "image" },
         ],
-        newItem: () => ({ strong: l("Câu mới", "New statement"), muted: l("phần nhạt,", "muted part,"), tail: l("phần cuối.", "the ending."), image: img("/images/paddy-work.webp") }),
+        newItem: () => ({ strong: l("Câu mới", "New statement"), muted: l("phần nhạt,", "muted part,"), tail: l("phần cuối.", "the ending."), image: img("/images/cashew-grove.webp") }),
       },
     ],
     create: () => ({
       eyebrow: l("Câu chuyện", "Our story"),
       hold: 3.5,
-      items: [{ strong: l("Câu tuyên bố", "A statement"), muted: l("phần nhạt,", "muted part,"), tail: l("phần cuối.", "the ending."), image: img("/images/paddy-work.webp") }],
+      items: [{ strong: l("Câu tuyên bố", "A statement"), muted: l("phần nhạt,", "muted part,"), tail: l("phần cuối.", "the ending."), image: img("/images/cashew-grove.webp") }],
     }),
   },
   {
@@ -401,7 +401,7 @@ export const sectionDefs: SectionDef[] = [
       ...button(),
       toneField,
     ],
-    create: () => ({ ...sampleHeading(), body: l("Nội dung.", "Content."), image: img("/images/highland-farmers.webp"), imageSide: "right", buttonLabel: l(""), buttonHref: "", tone: "white" }),
+    create: () => ({ ...sampleHeading(), body: l("Nội dung.", "Content."), image: img("/images/cashew-grove.webp"), imageSide: "right", buttonLabel: l(""), buttonHref: "", tone: "white" }),
   },
   {
     type: "gallery",

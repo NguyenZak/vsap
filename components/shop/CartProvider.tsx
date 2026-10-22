@@ -17,9 +17,9 @@ type Shop = {
   priced: { line: CartLine; item: ShopItem; price: number; qty: number }[];
   count: number;
   subtotal: number;
-  add: (id: string, weight: string, qty?: number, open?: boolean) => void;
-  setQty: (id: string, weight: string, qty: number) => void;
-  remove: (id: string, weight: string) => void;
+  add: (id: string, qty?: number, open?: boolean) => void;
+  setQty: (id: string, qty: number) => void;
+  remove: (id: string) => void;
   clear: () => void;
   cartOpen: boolean;
   setCartOpen: (open: boolean) => void;
@@ -56,7 +56,6 @@ function write(key: string, value: unknown) {
   } catch {}
 }
 
-const same = (l: CartLine, id: string, weight: string) => l.id === id && l.weight === weight;
 
 export function CartProvider({
   locale,
@@ -79,12 +78,10 @@ export function CartProvider({
   useEffect(() => {
     const stored = read<unknown>(CART_KEY, []);
     if (Array.isArray(stored)) {
-      setLines(
-        stored
-          .filter((l): l is CartLine => typeof l?.id === "string" && typeof l?.weight === "string")
-          .map((l) => ({ id: l.id, weight: l.weight, qty: clampQty(l.qty) }))
-          .slice(0, MAX_LINES),
-      );
+      // Carts saved while packs had sizes may hold the same pack twice: merge them.
+      const merged = new Map<string, number>();
+      for (const l of stored) if (typeof l?.id === "string") merged.set(l.id, clampQty((merged.get(l.id) ?? 0) + clampQty(l.qty)));
+      setLines([...merged].map(([id, qty]) => ({ id, qty })).slice(0, MAX_LINES));
     }
     const ids = read<unknown>(RECENT_KEY, []);
     if (Array.isArray(ids)) setRecent(ids.filter((id): id is string => typeof id === "string").slice(0, MAX_RECENT));
@@ -101,20 +98,20 @@ export function CartProvider({
     if (loaded) write(CART_KEY, lines);
   }, [lines, loaded]);
 
-  const add = useCallback((id: string, weight: string, qty = 1, open = true) => {
+  const add = useCallback((id: string, qty = 1, open = true) => {
     setLines((prev) => {
-      const hit = prev.find((l) => same(l, id, weight));
+      const hit = prev.find((l) => l.id === id);
       if (hit) return prev.map((l) => (l === hit ? { ...l, qty: clampQty(l.qty + qty) } : l));
-      return [...prev, { id, weight, qty: clampQty(qty) }].slice(-MAX_LINES);
+      return [...prev, { id, qty: clampQty(qty) }].slice(-MAX_LINES);
     });
     if (open) setCartOpen(true);
   }, []);
 
-  const setQty = useCallback((id: string, weight: string, qty: number) => {
-    setLines((prev) => prev.map((l) => (same(l, id, weight) ? { ...l, qty: clampQty(qty) } : l)));
+  const setQty = useCallback((id: string, qty: number) => {
+    setLines((prev) => prev.map((l) => (l.id === id ? { ...l, qty: clampQty(qty) } : l)));
   }, []);
 
-  const remove = useCallback((id: string, weight: string) => setLines((prev) => prev.filter((l) => !same(l, id, weight))), []);
+  const remove = useCallback((id: string) => setLines((prev) => prev.filter((l) => l.id !== id)), []);
   const clear = useCallback(() => setLines([]), []);
 
   const viewed = useCallback((id: string) => {

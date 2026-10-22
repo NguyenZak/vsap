@@ -3,6 +3,7 @@ import { Mail, MapPin, Phone } from "lucide-react";
 import { pick } from "@/lib/cms/links";
 import type { SiteContent, UiStrings } from "@/lib/cms/types";
 import type { Locale } from "@/lib/i18n";
+import { localeInfo } from "@/lib/locales";
 import { Button } from "./ui";
 
 type Props = { locale: Locale; content: SiteContent; ui: UiStrings };
@@ -12,6 +13,11 @@ export function Footer({ locale, content, ui }: Props) {
   const site = content.settings;
   const products = content.products;
   const heading = "text-xs font-medium uppercase tracking-[0.18em] text-white/50";
+  // The registered English name everywhere except the Vietnamese pages.
+  const legalName = locale === "vi" || !site.legalNameEn ? site.legalName : site.legalNameEn;
+  const registered = /^\d{4}-\d{2}-\d{2}$/.test(site.registeredAt ?? "")
+    ? new Intl.DateTimeFormat(localeInfo[locale].intl, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: "UTC" }).format(new Date(`${site.registeredAt}T00:00:00Z`))
+    : "";
   const link = "text-white/80 transition hover:text-sun-400";
 
   return (
@@ -25,8 +31,32 @@ export function Footer({ locale, content, ui }: Props) {
             <p className="mt-4 max-w-sm text-sm leading-relaxed text-white/65">{pick(site.about, locale)}</p>
             <p className="mt-5 text-xs text-white/50">
               {footer.brandOf}
-              <span className="mt-1 block text-sm font-semibold tracking-wide text-white uppercase">{site.legalName}</span>
+              <span className="mt-1 block text-sm font-semibold tracking-wide text-white uppercase">{legalName}</span>
             </p>
+            {/* Business registration details, as Vietnamese e-commerce rules require on selling sites. */}
+            <dl className="mt-3 space-y-1 text-xs text-white/60">
+              {site.taxId && (
+                <div>
+                  <dt className="inline">{footer.taxId}: </dt>
+                  <dd className="inline font-medium text-white/85 tabular-nums">{site.taxId}</dd>
+                  {registered && (
+                    <span>
+                      {" · "}
+                      {footer.registered} {registered}
+                    </span>
+                  )}
+                </div>
+              )}
+              {site.representative?.name && (
+                <div>
+                  <dt className="inline">{footer.representative}: </dt>
+                  <dd className="inline text-white/85">
+                    {site.representative.name}
+                    {pick(site.representative.title, locale) && ` – ${pick(site.representative.title, locale)}`}
+                  </dd>
+                </div>
+              )}
+            </dl>
           </div>
           <Button href={`/${locale}/contact`}>{nav.quote}</Button>
         </div>
@@ -118,7 +148,7 @@ export function Footer({ locale, content, ui }: Props) {
             </ul>
           )}
           <p>
-            {footer.brandOf} {site.legalName}
+            {footer.brandOf} {legalName}
           </p>
         </div>
       </div>

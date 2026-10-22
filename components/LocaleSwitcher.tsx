@@ -4,11 +4,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { Check, ChevronDown, Globe } from "lucide-react";
-import { locales, type Locale } from "@/lib/i18n";
+import { LOCALE_COOKIE, localeInfo, locales, type Locale } from "@/lib/locales";
 
 /** Each language is named in itself, so visitors can find theirs whatever page they are on. */
-const names: Record<Locale, string> = { vi: "Tiếng Việt", en: "English", zh: "简体中文" };
-const label: Record<Locale, string> = { vi: "Chọn ngôn ngữ", en: "Choose language", zh: "选择语言" };
+const names = Object.fromEntries(locales.map((l) => [l, localeInfo[l].name])) as Record<Locale, string>;
+const label = Object.fromEntries(locales.map((l) => [l, localeInfo[l].choose])) as Record<Locale, string>;
 
 /**
  * Language dropdown. Sits inside the header's `group/header`, so the button
@@ -74,7 +74,11 @@ export function LocaleSwitcher({ locale }: { locale: Locale }) {
               hrefLang={l}
               lang={l}
               aria-current={l === locale ? "true" : undefined}
-              onClick={() => setOpen(false)}
+              onClick={() => {
+                // Remember the choice for later visits to "/" (proxy.ts prefers it over the device language).
+                document.cookie = `${LOCALE_COOKIE}=${l}; path=/; max-age=31536000; samesite=lax`;
+                setOpen(false);
+              }}
               className="flex items-center justify-between gap-3 rounded-xl px-3 py-2.5 text-sm text-ink-900 transition hover:bg-mist-50 aria-[current=true]:font-medium aria-[current=true]:text-forest-600"
             >
               <span>

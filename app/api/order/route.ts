@@ -5,12 +5,14 @@ import { recentOrdersFrom, saveOrder } from "@/lib/cms/orders";
 import { getPublishedContent } from "@/lib/cms/store";
 import { isLocale } from "@/lib/locales";
 import { priceOrder } from "@/lib/shop";
+import { formatAddress, isValidAddress } from "@/lib/vn-admin";
 
 /** Orders allowed per visitor address in the window below. */
 const MAX_PER_WINDOW = 5;
 const WINDOW_MS = 10 * 60_000;
 
-const LIMITS: Record<keyof OrderCustomer, number> = { name: 120, phone: 40, email: 160, address: 400, note: 2000 };
+/** Fields read from the form; `address` is built here from the three address parts. */
+const LIMITS: Partial<Record<keyof OrderCustomer, number>> = { name: 120, phone: 40, email: 160, province: 80, ward: 80, street: 200, note: 2000 };
 
 function parseCustomer(raw: unknown): OrderCustomer | null {
   if (!raw || typeof raw !== "object") return null;
@@ -18,12 +20,14 @@ function parseCustomer(raw: unknown): OrderCustomer | null {
   for (const [key, max] of Object.entries(LIMITS)) {
     const value = (raw as Record<string, unknown>)[key];
     if (value === undefined || value === "") continue;
-    if (typeof value !== "string" || value.length > max) return null;
+    if (typeof value !== "string" || value.length > max!) return null;
     out[key] = value.trim();
   }
-  if (!out.name || !out.address || out.phone?.replace(/[^\d]/g, "").length < 8) return null;
+  if (!out.name || !out.street || out.phone?.replace(/[^\d]/g, "").length < 8) return null;
+  // Province and ward must be a real pair from the post-2025 list (lib/vn-admin.ts).
+  if (!isValidAddress(out.province ?? "", out.ward ?? "")) return null;
   if (out.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(out.email)) return null;
-  return out as OrderCustomer;
+  return { ...out, address: formatAddress(out.street, out.ward, out.province) } as OrderCustomer;
 }
 
 export async function POST(request: Request) {

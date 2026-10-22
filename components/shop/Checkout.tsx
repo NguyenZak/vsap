@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CheckCircle2, ShoppingBag, Trash2, Wallet } from "lucide-react";
 import { formatPrice } from "@/lib/shop";
+import type { Province } from "@/lib/vn-admin";
 import { useShop } from "./CartProvider";
 import { QtyStepper } from "./Dialog";
 
@@ -56,8 +57,16 @@ export function Checkout() {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
-          customer: { name: field("name"), phone: field("phone"), email: field("email"), address: field("address"), note: field("note") },
-          items: priced.map((p) => ({ id: p.line.id, weight: p.line.weight, qty: p.qty })),
+          customer: {
+            name: field("name"),
+            phone: field("phone"),
+            email: field("email"),
+            province: field("province"),
+            ward: field("ward"),
+            street: field("street"),
+            note: field("note"),
+          },
+          items: priced.map((p) => ({ id: p.line.id, qty: p.qty })),
           locale,
           page: location.pathname,
           website: field("website"),
@@ -91,10 +100,7 @@ export function Checkout() {
             {t.email}
             <input name="email" type="email" maxLength={160} autoComplete="email" className={input} />
           </label>
-          <label className="block text-sm text-ink-600 sm:col-span-2">
-            {t.address} <span className="text-chili-600">*</span>
-            <textarea name="address" required maxLength={400} rows={2} autoComplete="street-address" className={input} />
-          </label>
+          <AddressFields />
           <label className="block text-sm text-ink-600 sm:col-span-2">
             {t.note}
             <textarea name="note" maxLength={2000} rows={3} placeholder={t.notePlaceholder} className={input} />
@@ -130,7 +136,7 @@ export function Checkout() {
           <h2 className="heading text-2xl text-forest-900">{t.yourOrder}</h2>
           <ul className="mt-4 divide-y divide-mist-200">
             {priced.map(({ line, item, price, qty }) => (
-              <li key={`${line.id}-${line.weight}`} className="flex gap-3 py-4">
+              <li key={line.id} className="flex gap-3 py-4">
                 <div className="size-16 shrink-0 overflow-hidden rounded-xl bg-white">
                   {item.images[0] && <img src={item.images[0]} alt="" className="size-full object-contain p-1" />}
                 </div>
@@ -138,16 +144,16 @@ export function Checkout() {
                   <Link href={item.href} className="block text-sm font-medium text-ink-900 hover:text-forest-600">
                     {item.name}
                   </Link>
-                  <p className="text-xs text-ink-600">{[item.flavor, line.weight].filter(Boolean).join(" · ")}</p>
+                  <p className="text-xs text-ink-600">{item.flavor}</p>
                   <div className="mt-2 flex items-center justify-between gap-3">
-                    <QtyStepper size="sm" value={qty} onChange={(n) => setQty(line.id, line.weight, n)} labels={t} />
+                    <QtyStepper size="sm" value={qty} onChange={(n) => setQty(line.id, n)} labels={t} />
                     <span className="text-sm font-medium tabular-nums">{formatPrice(price * qty, locale)}</span>
                   </div>
                 </div>
                 <button
                   type="button"
-                  onClick={() => remove(line.id, line.weight)}
-                  aria-label={`${t.remove} ${item.name} ${line.weight}`}
+                  onClick={() => remove(line.id)}
+                  aria-label={`${t.remove} ${item.name}`}
                   className="grid size-8 shrink-0 place-items-center self-start rounded-full text-ink-400 transition hover:bg-white hover:text-chili-600"
                 >
                   <Trash2 className="size-4" />
@@ -162,5 +168,69 @@ export function Checkout() {
         </div>
       </aside>
     </div>
+  );
+}
+
+/**
+ * Delivery address on Vietnam's post-2025 two-level map: province → ward/commune
+ * (lists in lib/vn-admin, loaded only on this page), then house number and street.
+ */
+function AddressFields() {
+  const { t } = useShop();
+  const [provinces, setProvinces] = useState<Province[]>([]);
+  const [province, setProvince] = useState("");
+  const [ward, setWard] = useState("");
+
+  useEffect(() => {
+    let live = true;
+    import("@/lib/vn-admin").then((m) => live && setProvinces(m.provinces));
+    return () => {
+      live = false;
+    };
+  }, []);
+
+  const wards = provinces.find(([name]) => name === province)?.[1] ?? [];
+  const req = <span className="text-chili-600">*</span>;
+
+  return (
+    <fieldset className="grid gap-4 sm:col-span-2 sm:grid-cols-2">
+      <legend className="mb-3 text-sm font-medium text-ink-900">{t.address}</legend>
+      <label className="block text-sm text-ink-600">
+        {t.province} {req}
+        <select
+          name="province"
+          required
+          value={province}
+          onChange={(e) => {
+            setProvince(e.target.value);
+            setWard("");
+          }}
+          autoComplete="address-level1"
+          className={input}
+        >
+          <option value="">{t.selectProvince}</option>
+          {provinces.map(([name]) => (
+            <option key={name} value={name}>
+              {name}
+            </option>
+          ))}
+        </select>
+      </label>
+      <label className="block text-sm text-ink-600">
+        {t.ward} {req}
+        <select name="ward" required value={ward} onChange={(e) => setWard(e.target.value)} disabled={!province} autoComplete="address-level2" className={`${input} disabled:opacity-60`}>
+          <option value="">{t.selectWard}</option>
+          {wards.map((name) => (
+            <option key={name} value={name}>
+              {name}
+            </option>
+          ))}
+        </select>
+      </label>
+      <label className="block text-sm text-ink-600 sm:col-span-2">
+        {t.street} {req}
+        <input name="street" required maxLength={200} placeholder={t.streetPlaceholder} autoComplete="address-line1" className={input} />
+      </label>
+    </fieldset>
   );
 }

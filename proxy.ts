@@ -1,10 +1,10 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { sessionUser } from "@/lib/cms/auth";
 import { can } from "@/lib/cms/roles";
-import { isLocale } from "@/lib/locales";
+import { isLocale, LOCALE_COOKIE, preferredLocale } from "@/lib/locales";
 
 /**
- * - / redirects to /vi or /en by the browser's language; so does any other path
+ * - / redirects to the visitor's language (saved choice, else device language); so does any other path
  *   without a locale prefix (/products → /vi/products, /typo → the localized 404).
  * - /admin and /api/admin need a valid admin session (except the login page/API).
  * - Public pages opened with ?__preview=1 by a signed-in editor render the draft:
@@ -13,16 +13,14 @@ import { isLocale } from "@/lib/locales";
 export async function proxy(req: NextRequest) {
   const { pathname, searchParams } = req.nextUrl;
 
-  // Pick the visitor's language: Vietnamese (or no preference, e.g. crawlers) → /vi, Chinese → /zh, anything else → /en.
+  // Language from the visitor's saved choice or their device (see preferredLocale).
   const head = pathname.split("/")[1] ?? "";
   if (!isLocale(head) && !["admin", "api", "media"].includes(head)) {
-    const accept = (req.headers.get("accept-language") ?? "").toLowerCase();
-    const first = accept.split(",")[0]?.trim() ?? "";
+    const lang = preferredLocale(req.headers.get("accept-language"), req.cookies.get(LOCALE_COOKIE)?.value);
     const url = req.nextUrl.clone();
-    const lang = !first || first.startsWith("vi") || first === "*" ? "vi" : first.startsWith("zh") ? "zh" : "en";
     url.pathname = `/${lang}${pathname === "/" ? "" : pathname}`;
     const res = NextResponse.redirect(url, 302);
-    res.headers.set("Vary", "Accept-Language");
+    res.headers.set("Vary", "Accept-Language, Cookie");
     return res;
   }
   const isAdminArea = pathname === "/admin" || pathname.startsWith("/admin/") || pathname.startsWith("/api/admin/");
@@ -67,7 +65,11 @@ export const config = {
     "/en/:path*",
     "/zh",
     "/zh/:path*",
+    "/ja",
+    "/ja/:path*",
+    "/ko",
+    "/ko/:path*",
     // Locale-less page paths (to redirect them). Skips files (anything with a dot) and framework/dev internals.
-    "/((?!(?:vi|en|zh|admin|api|media|_next|cdn-cgi|node_modules)(?:/|$)|@|__|.*\\.).*)",
+    "/((?!(?:vi|en|zh|ja|ko|admin|api|media|_next|cdn-cgi|node_modules)(?:/|$)|@|__|.*\\.).*)",
   ],
 };
