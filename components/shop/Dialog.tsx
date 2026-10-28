@@ -1,18 +1,21 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useState } from "react";
+import { useAnimate, useReducedMotion } from "motion/react";
 import { Minus, Plus, X } from "lucide-react";
 import { MAX_QTY } from "@/lib/shop";
 
 /**
- * Native modal <dialog>: the browser traps focus, closes on Esc and puts the rest
- * of the page out of reach. Clicking the backdrop closes it too.
+ * Native modal <dialog> (the browser traps focus, Esc and the backdrop close it),
+ * animated with Motion: the cart drawer springs in from the right, the quick-view
+ * modal grows out of the point that opened it. Both animate out before closing.
  */
 export function Dialog({
   open,
   onClose,
   label,
   variant,
+  origin,
   className = "",
   children,
 }: {
@@ -20,17 +23,43 @@ export function Dialog({
   onClose: () => void;
   label: string;
   variant: "drawer" | "modal";
+  /** Viewport point the modal grows from (the clicked card), when known. */
+  origin?: { x: number; y: number } | null;
   className?: string;
   children: React.ReactNode;
 }) {
-  const ref = useRef<HTMLDialogElement>(null);
+  const [scope, animate] = useAnimate<HTMLDialogElement>();
+  const reduce = useReducedMotion();
+  // Keeps the content on screen while the closing animation plays.
+  const [shown, setShown] = useState(false);
 
   useEffect(() => {
-    const d = ref.current;
+    const d = scope.current;
     if (!d) return;
-    if (open && !d.open) d.showModal();
-    if (!open && d.open) d.close();
-  }, [open]);
+    if (open && !d.open) {
+      setShown(true);
+      d.showModal();
+      if (reduce) return;
+      if (variant === "drawer") {
+        animate(d, { x: ["100%", "0%"] }, { type: "spring", stiffness: 260, damping: 30 });
+      } else {
+        if (origin) {
+          const r = d.getBoundingClientRect();
+          d.style.transformOrigin = `${origin.x - r.left}px ${origin.y - r.top}px`;
+        }
+        animate(d, { opacity: [0, 1], scale: [0.6, 1] }, { type: "spring", stiffness: 320, damping: 28 });
+      }
+    }
+    if (!open && d.open) {
+      const done = () => {
+        d.close();
+        setShown(false);
+      };
+      if (reduce) return done();
+      const out = variant === "drawer" ? { x: "100%" } : { opacity: 0, scale: 0.9 };
+      animate(d, out, { duration: 0.22, ease: "easeIn" }).then(done);
+    }
+  }, [open]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const shape =
     variant === "drawer"
@@ -39,13 +68,22 @@ export function Dialog({
 
   return (
     <dialog
-      ref={ref}
+      ref={scope}
       aria-label={label}
-      onClose={onClose}
+      // Esc: let the closing animation run instead of the browser closing at once.
+      onCancel={(e) => {
+        e.preventDefault();
+        onClose();
+      }}
+      // The browser may still close it outright (e.g. Esc without a recent user gesture): keep state in step.
+      onClose={() => {
+        setShown(false);
+        if (open) onClose();
+      }}
       onClick={(e) => e.target === e.currentTarget && onClose()}
       className={`${shape} bg-white p-0 text-ink-900 backdrop:bg-forest-950/50 backdrop:backdrop-blur-sm ${className}`}
     >
-      {open && children}
+      {(open || shown) && children}
     </dialog>
   );
 }

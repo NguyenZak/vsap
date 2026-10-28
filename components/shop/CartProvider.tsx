@@ -4,7 +4,9 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
 import type { UiStrings } from "@/lib/cms/types";
 import type { Locale } from "@/lib/locales";
 import { clampQty, MAX_LINES, resolveLine, type CartLine, type ShopItem } from "@/lib/shop";
+import { MotionConfig } from "motion/react";
 import { CartDrawer } from "./CartDrawer";
+import { flyToCart } from "./fly";
 
 type Shop = {
   locale: Locale;
@@ -19,7 +21,8 @@ type Shop = {
   priced: { line: CartLine; item: ShopItem; price: number; qty: number }[];
   count: number;
   subtotal: number;
-  add: (id: string, qty?: number, open?: boolean) => void;
+  /** `from`: the product photo to fly into the cart; the drawer opens once it lands. */
+  add: (id: string, qty?: number, open?: boolean, from?: HTMLImageElement | null) => void;
   setQty: (id: string, qty: number) => void;
   remove: (id: string) => void;
   clear: () => void;
@@ -102,13 +105,13 @@ export function CartProvider({
     if (loaded) write(CART_KEY, lines);
   }, [lines, loaded]);
 
-  const add = useCallback((id: string, qty = 1, open = true) => {
+  const add = useCallback((id: string, qty = 1, open = true, from?: HTMLImageElement | null) => {
     setLines((prev) => {
       const hit = prev.find((l) => l.id === id);
       if (hit) return prev.map((l) => (l === hit ? { ...l, qty: clampQty(l.qty + qty) } : l));
       return [...prev, { id, qty: clampQty(qty) }].slice(-MAX_LINES);
     });
-    if (open) setCartOpen(true);
+    void flyToCart(from).then(() => open && setCartOpen(true));
   }, []);
 
   const setQty = useCallback((id: string, qty: number) => {
@@ -155,8 +158,11 @@ export function CartProvider({
 
   return (
     <ShopContext.Provider value={value}>
-      {children}
-      <CartDrawer />
+      {/* Motion animations (shop, header nav) follow the visitor's reduced-motion setting. */}
+      <MotionConfig reducedMotion="user">
+        {children}
+        <CartDrawer />
+      </MotionConfig>
     </ShopContext.Provider>
   );
 }

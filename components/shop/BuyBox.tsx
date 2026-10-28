@@ -16,9 +16,11 @@ export function BuyBox({ item, onAdded }: { item: ShopItem; onAdded?: () => void
   const [qty, setQty] = useState(1);
   const buyable = canBuy(item);
 
-  const addToCart = (open: boolean) => {
+  const addToCart = (open: boolean, e?: React.MouseEvent) => {
     if (!buyable) return;
-    add(item.id, qty, open);
+    // The photo to fly into the cart: the big gallery image beside this buy box.
+    const scope = e?.currentTarget.closest("dialog, section");
+    add(item.id, qty, open, scope?.querySelector<HTMLImageElement>("[data-main-photo]"));
     onAdded?.();
   };
 
@@ -38,7 +40,7 @@ export function BuyBox({ item, onAdded }: { item: ShopItem; onAdded?: () => void
           <div className="mt-6 grid grid-cols-2 gap-3">
             <button
               type="button"
-              onClick={() => addToCart(true)}
+              onClick={(e) => addToCart(true, e)}
               className="inline-flex items-center justify-center gap-2 rounded-lg border-2 border-chili-600 px-3 py-3 text-sm font-semibold tracking-wide text-chili-600 uppercase transition hover:bg-chili-600/5"
             >
               <ShoppingBag className="size-4" />

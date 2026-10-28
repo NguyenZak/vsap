@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { ShoppingBag, Trash2 } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
 import { formatPrice } from "@/lib/shop";
 import { useShop } from "./CartProvider";
 import { CloseButton, Dialog, QtyStepper } from "./Dialog";
@@ -35,8 +36,17 @@ export function CartDrawer() {
         ) : (
           <>
             <ul className="flex-1 divide-y divide-mist-200 overflow-y-auto px-5 sm:px-6">
+              <AnimatePresence initial={false}>
               {priced.map(({ line, item, price, qty }) => (
-                <li key={line.id} className="flex gap-4 py-4">
+                <motion.li
+                  key={line.id}
+                  layout
+                  initial={{ opacity: 0, x: 40 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -40, height: 0, paddingTop: 0, paddingBottom: 0 }}
+                  transition={{ type: "spring", stiffness: 380, damping: 32 }}
+                  className="flex gap-4 overflow-hidden py-4"
+                >
                   <Link href={item.href} onClick={close} className="size-20 shrink-0 overflow-hidden rounded-xl bg-mist-50">
                     {item.images[0] && <img src={item.images[0]} alt="" className="size-full object-contain p-1" />}
                   </Link>
@@ -58,8 +68,9 @@ export function CartDrawer() {
                   >
                     <Trash2 className="size-4" />
                   </button>
-                </li>
+                </motion.li>
               ))}
+              </AnimatePresence>
             </ul>
 
             <div className="border-t border-mist-200 bg-mist-50 px-5 py-5 sm:px-6">

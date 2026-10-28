@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { motion, useMotionValue, useReducedMotion, useSpring, useTransform } from "motion/react";
 import { ArrowUpRight, Eye, MessageCircle, ShoppingBag } from "lucide-react";
 import { canBuy, discountPercent, type ShopItem } from "@/lib/shop";
 import { BuyBox } from "./BuyBox";
@@ -13,27 +14,57 @@ import { Price } from "./Price";
 /** Retail packs as shop cards, with a quick-view popup for picking a size without leaving the page. */
 export function ProductGrid({ items, reveal = true }: { items: ShopItem[]; reveal?: boolean }) {
   const [quick, setQuick] = useState<ShopItem | null>(null);
+  const [origin, setOrigin] = useState<{ x: number; y: number } | null>(null);
   const { t } = useShop();
 
   return (
     <>
       <ul className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4">
-        {items.map((item) => (
-          <li key={item.id} {...(reveal ? { "data-reveal": "" } : {})}>
-            <ProductCard item={item} onQuickView={() => setQuick(item)} />
-          </li>
+        {items.map((item, i) => (
+          // Cards rise in, staggered along the row, as they scroll into view (Motion).
+          <motion.li
+            key={item.id}
+            initial={reveal ? { opacity: 0, y: 40 } : false}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "0px 0px -10% 0px" }}
+            transition={{ type: "spring", stiffness: 140, damping: 20, delay: (i % 4) * 0.08 }}
+          >
+            <ProductCard
+              item={item}
+              onQuickView={(e) => {
+                setOrigin(e ? { x: e.clientX, y: e.clientY } : null);
+                setQuick(item);
+              }}
+            />
+          </motion.li>
         ))}
       </ul>
 
-      <Dialog open={quick !== null} onClose={() => setQuick(null)} label={quick?.name ?? t.quickView} variant="modal">
+      <Dialog open={quick !== null} onClose={() => setQuick(null)} label={quick?.name ?? t.quickView} variant="modal" origin={origin}>
         {quick && <QuickView item={quick} onClose={() => setQuick(null)} />}
       </Dialog>
     </>
   );
 }
 
-function ProductCard({ item, onQuickView }: { item: ShopItem; onQuickView: () => void }) {
+function ProductCard({ item, onQuickView }: { item: ShopItem; onQuickView: (e?: React.MouseEvent) => void }) {
   const { t, locale, add, frame } = useShop();
+  // Slight 3D tilt toward the pointer while hovering (off for reduced motion and touch).
+  const reduce = useReducedMotion();
+  const px = useMotionValue(0.5);
+  const py = useMotionValue(0.5);
+  const rotateY = useSpring(useTransform(px, [0, 1], [-7, 7]), { stiffness: 220, damping: 18 });
+  const rotateX = useSpring(useTransform(py, [0, 1], [6, -6]), { stiffness: 220, damping: 18 });
+  const tilt = (e: React.PointerEvent<HTMLElement>) => {
+    if (reduce || e.pointerType !== "mouse") return;
+    const r = e.currentTarget.getBoundingClientRect();
+    px.set((e.clientX - r.left) / r.width);
+    py.set((e.clientY - r.top) / r.height);
+  };
+  const untilt = () => {
+    px.set(0.5);
+    py.set(0.5);
+  };
   // With a frame the photo shrinks into the frame's open area, clear of its bottom badges.
   // (an <img> ignores opposite insets, so the box needs an explicit width and height)
   const fit = frame ? "left-[9%] top-[5%] h-[75%] w-[82%]" : "inset-0 size-full p-3";
@@ -41,7 +72,12 @@ function ProductCard({ item, onQuickView }: { item: ShopItem; onQuickView: () =>
   const discount = discountPercent(item);
 
   return (
-    <article className="group/card flex h-full flex-col overflow-hidden rounded-2xl bg-white ring-1 ring-mist-200 transition hover:shadow-lg hover:shadow-forest-950/5 hover:ring-forest-600/30">
+    <motion.article
+      onPointerMove={tilt}
+      onPointerLeave={untilt}
+      style={{ rotateX, rotateY, transformPerspective: 900 }}
+      className="group/card flex h-full flex-col overflow-hidden rounded-2xl bg-white ring-1 ring-mist-200 transition-[box-shadow] hover:shadow-xl hover:shadow-forest-950/10 hover:ring-forest-600/30"
+    >
       <div className="relative aspect-[3/4] overflow-hidden bg-white">
         <Link href={item.href} tabIndex={-1} aria-hidden className="absolute inset-0">
           {front && (
@@ -72,7 +108,7 @@ function ProductCard({ item, onQuickView }: { item: ShopItem; onQuickView: () =>
         )}
         <button
           type="button"
-          onClick={onQuickView}
+          onClick={(e) => onQuickView(e)}
           aria-label={`${t.quickView}: ${item.name}`}
           className="absolute top-2 right-2 grid size-9 place-items-center rounded-full bg-white/90 text-ink-900 shadow-sm ring-1 ring-mist-200 transition hover:bg-sun-400 sm:translate-y-1 sm:opacity-0 sm:group-hover/card:translate-y-0 sm:group-hover/card:opacity-100 sm:focus-visible:opacity-100"
         >
@@ -93,14 +129,15 @@ function ProductCard({ item, onQuickView }: { item: ShopItem; onQuickView: () =>
 
         <div className="mt-auto pt-3">
           {canBuy(item) ? (
-            <button
+            <motion.button
               type="button"
-              onClick={() => add(item.id)}
+              whileTap={{ scale: 0.94 }}
+              onClick={(e) => add(item.id, 1, true, e.currentTarget.closest("article")?.querySelector("img"))}
               className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-sun-400 px-3 py-2.5 text-xs font-medium text-forest-950 transition hover:bg-sun-500 sm:text-sm"
             >
               <ShoppingBag className="size-4" />
               {t.addToCart}
-            </button>
+            </motion.button>
           ) : (
             <Link
               href={item.soldOut ? item.href : `/${locale}/contact`}
@@ -112,7 +149,7 @@ function ProductCard({ item, onQuickView }: { item: ShopItem; onQuickView: () =>
           )}
         </div>
       </div>
-    </article>
+    </motion.article>
   );
 }
 
