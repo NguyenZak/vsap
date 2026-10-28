@@ -10,7 +10,10 @@ const field =
   "mt-1.5 block w-full rounded-xl border border-mist-200 bg-white px-4 py-3 text-ink-900 placeholder:text-ink-400 outline-none transition focus:border-forest-600 focus:ring-4 focus:ring-sun-400/50";
 const label = "text-sm font-medium text-ink-900";
 
-export function InquiryForm({ t, defaultProduct }: { t: UiStrings["form"]; defaultProduct?: string }) {
+export type ProductChoice = { value: string; label: string };
+
+/** `products` are the CMS products (slug + name in this language); "other" is always offered last. */
+export function InquiryForm({ t, products, defaultProduct }: { t: UiStrings["form"]; products: ProductChoice[]; defaultProduct?: string }) {
   const [status, setStatus] = useState<Status>("idle");
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
@@ -69,12 +72,17 @@ export function InquiryForm({ t, defaultProduct }: { t: UiStrings["form"]; defau
       </label>
       <label className="block">
         <span className={label}>{t.product}</span>
-        <select name="product" defaultValue={productKey(defaultProduct, t.productOptions)} className={field}>
-          {Object.entries(t.productOptions).map(([value, text]) => (
-            <option key={value} value={value}>
-              {text}
+        <select
+          name="product"
+          defaultValue={products.some((p) => p.value === defaultProduct) ? defaultProduct : (products[0]?.value ?? "other")}
+          className={field}
+        >
+          {products.map((p) => (
+            <option key={p.value} value={p.value}>
+              {p.label}
             </option>
           ))}
+          <option value="other">{t.productOptions.other}</option>
         </select>
       </label>
       <label className="block sm:col-span-2">
@@ -103,10 +111,4 @@ export function InquiryForm({ t, defaultProduct }: { t: UiStrings["form"]; defau
       </div>
     </form>
   );
-}
-
-/** Product page slugs are kebab-case ("bird-nest"); the form's option keys are camelCase ("birdNest"). */
-function productKey(slug: string | undefined, options: Record<string, string>) {
-  const key = (slug ?? "").replace(/-(\w)/g, (_, c: string) => c.toUpperCase());
-  return key in options ? key : "cashew";
 }

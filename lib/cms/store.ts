@@ -6,6 +6,7 @@ import { cache } from "react";
 import { bindings, CmsUnavailableError, db } from "./db";
 import { defaultContent } from "./defaults";
 import { isObject, normalize } from "./normalize";
+import { fontFileType } from "./theme";
 import type { SiteContent } from "./types";
 
 export { normalize, CmsUnavailableError };
@@ -159,12 +160,14 @@ function slugify(name: string) {
 }
 
 export async function uploadMedia(file: File): Promise<MediaItem> {
-  if (!ALLOWED_TYPES.has(file.type)) throw new Error(`Unsupported file type: ${file.type || "unknown"}`);
+  // Fonts are recognised by extension: browsers report .ttf/.otf/.woff inconsistently, often as "".
+  const type = ALLOWED_TYPES.has(file.type) ? file.type : fontFileType(file.name);
+  if (!type) throw new Error(`Unsupported file type: ${file.type || file.name.split(".").pop() || "unknown"}`);
   if (file.size > MAX_UPLOAD) throw new Error("File is larger than 10 MB");
   const date = new Date();
   const key = `${date.getUTCFullYear()}/${String(date.getUTCMonth() + 1).padStart(2, "0")}/${crypto.randomUUID().slice(0, 8)}-${slugify(file.name)}`;
-  await bucket().put(key, await file.arrayBuffer(), { httpMetadata: { contentType: file.type, cacheControl: "public, max-age=31536000, immutable" } });
-  const item = { key, name: file.name.slice(0, 200), type: file.type, size: file.size, created_at: Date.now() };
+  await bucket().put(key, await file.arrayBuffer(), { httpMetadata: { contentType: type, cacheControl: "public, max-age=31536000, immutable" } });
+  const item = { key, name: file.name.slice(0, 200), type, size: file.size, created_at: Date.now() };
   await (await db()).prepare("INSERT INTO cms_media (key, name, type, size, created_at) VALUES (?, ?, ?, ?, ?)").bind(item.key, item.name, item.type, item.size, item.created_at).run();
   return { ...item, url: mediaUrl(key) };
 }

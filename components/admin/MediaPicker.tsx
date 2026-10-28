@@ -99,7 +99,7 @@ export function MediaPicker({ current, onPick, onClose }: { current?: string; on
 
   const q = query.trim().toLowerCase();
   const library = builtInImages.filter((i) => !q || i.label.toLowerCase().includes(q) || i.src.includes(q));
-  const uploads = (media.items ?? []).filter((i) => !q || i.name.toLowerCase().includes(q));
+  const uploads = (media.items ?? []).filter((i) => !i.type.startsWith("font/") && (!q || i.name.toLowerCase().includes(q)));
 
   const tile = (src: string, label: string, onClick: () => void, extra?: React.ReactNode) => (
     <div key={src} className="group relative">

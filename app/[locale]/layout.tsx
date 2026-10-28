@@ -4,9 +4,12 @@ import { FloatingContact } from "@/components/FloatingContact";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { MotionMain } from "@/components/MotionMain";
+import { SiteContactProvider } from "@/components/SiteContact";
 import { PreviewBridge } from "@/components/cms/PreviewBridge";
 import { CartProvider } from "@/components/shop/CartProvider";
 import { pick } from "@/lib/cms/links";
+import { resolveMenu } from "@/lib/cms/menu";
+import { fontFaceCss, googleFontsHref, menuStyleVars, pageStyleVars, stylesheetUrl, usedFonts } from "@/lib/cms/theme";
 import { getContent, isPreview } from "@/lib/cms/store";
 import { localeParams, locales, resolveLocale, metadataLocale } from "@/lib/i18n";
 import { localeInfo } from "@/lib/locales";
@@ -77,6 +80,12 @@ export default async function LocaleLayout({ children, params }: Props) {
   const ui = content.ui[locale];
   // Only a real GA4 id is ever interpolated into the inline script.
   const ga4 = /^G-[A-Z0-9]{4,16}$/.test(site.analytics.ga4.trim()) && !preview ? site.analytics.ga4.trim() : "";
+  // Fonts picked in Studio (theme, menu, any page) that the layout doesn't already load.
+  const { theme } = content;
+  const fontsHref = googleFontsHref([...usedFonts([theme.page, ...Object.values(content.pages).map((p) => p.style)]), theme.menu.font]);
+  // Fonts added in Studio › Giao diện: pasted stylesheet links, and @font-face for uploaded/linked files.
+  const customLinks = [...new Set(theme.fonts.map((f) => stylesheetUrl(f.link)).filter((u): u is string => Boolean(u)))];
+  const customFaces = fontFaceCss(theme.fonts);
 
   return (
     // suppressHydrationWarning: the inline script below adds the `js` class before React hydrates.
@@ -84,8 +93,20 @@ export default async function LocaleLayout({ children, params }: Props) {
       <head>
         {/* Lets CSS hide intro elements before first paint, only when JS will animate them in. */}
         <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js')" }} />
+        {fontsHref && (
+          <>
+            <link rel="preconnect" href="https://fonts.googleapis.com" />
+            <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+            <link rel="stylesheet" href={fontsHref} />
+          </>
+        )}
+        {customLinks.map((href) => (
+          <link key={href} rel="stylesheet" href={href} />
+        ))}
+        {customFaces && <style dangerouslySetInnerHTML={{ __html: customFaces }} />}
       </head>
-      <body className="flex min-h-dvh flex-col">
+      {/* Theme › fonts and text sizes apply everywhere, header and footer included. */}
+      <body className="flex min-h-dvh flex-col" style={pageStyleVars(theme.page)}>
         <CartProvider
           locale={locale}
           t={ui.shop}
@@ -93,8 +114,17 @@ export default async function LocaleLayout({ children, params }: Props) {
           frame={content.settings.productFrame}
           catalog={visiblePacks(content.retailPacks).map((p) => toShopItem(p, locale))}
         >
-          <Header locale={locale} nav={ui.nav} contact={site} logoAlt={`${site.name} – ${site.tagline}`} />
-          <MotionMain>{children}</MotionMain>
+          <Header
+            locale={locale}
+            nav={ui.nav}
+            items={resolveMenu(content, locale)}
+            menuStyle={menuStyleVars(theme.menu)}
+            contact={site}
+            logoAlt={`${site.name} – ${site.tagline}`}
+          />
+          <SiteContactProvider value={{ phone: site.phone, phoneE164: site.phoneE164, email: site.email }}>
+            <MotionMain>{children}</MotionMain>
+          </SiteContactProvider>
           <Footer locale={locale} content={content} ui={ui} />
         </CartProvider>
         {!preview && <FloatingContact t={ui.chat} links={site} />}

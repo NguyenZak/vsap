@@ -7,23 +7,23 @@ import { PostGrid } from "@/components/PostCards";
 import { CmsImg } from "@/components/sections";
 import { Button } from "@/components/ui";
 import { pick } from "@/lib/cms/links";
-import { channelOf, formatDate, inLocale, postChannels, postPath } from "@/lib/cms/post-format";
+import { formatDate, inLocale, postPath, withCategories } from "@/lib/cms/post-format";
 import { getPosts } from "@/lib/cms/posts";
 import { getContent, isPreview } from "@/lib/cms/store";
-import type { PostChannel } from "@/lib/cms/types";
 import { locales, metadataLocale, resolveLocale, type Locale } from "@/lib/i18n";
 import { faqFromMarkdown, plainText, readingMinutes } from "@/lib/markdown";
 import { articleJsonLd, breadcrumbJsonLd, faqJsonLd, jsonLdHtml, seoMetadata } from "@/lib/seo";
 
-// The page of one post, shared by /news/[slug] (Tin tức) and /health/[slug]
-// (Sức khỏe và đời sống). A post opened under the other channel's path is
-// redirected to its own, so each post has a single address.
+// The page of one post at /{category}/{slug}: /news/… and /health/… have their own
+// routes, other categories go through [locale]/[...rest]. A post opened under
+// another category's path is redirected to its own, so each post has one address.
 
 export type PostParams = Promise<{ locale: string; slug: string }>;
 
 async function load(locale: Locale, slug: string) {
   const preview = await isPreview();
-  const [content, posts] = await Promise.all([getContent(), getPosts(locale, preview)]);
+  const [content, all] = await Promise.all([getContent(), getPosts(locale, preview)]);
+  const posts = withCategories(all, content.categories);
   const post = posts.find((p) => p.slug === slug) ?? null;
   // Languages the same post exists in, for hreflang.
   const available = post ? (await Promise.all(locales.map(async (l) => ((await getPosts(l, preview)).some((p) => p.slug === slug) ? l : null)))).filter((l): l is Locale => Boolean(l)) : [];
@@ -50,21 +50,23 @@ export async function postMetadata(params: PostParams): Promise<Metadata> {
   });
 }
 
-export async function PostPage({ params, channel }: { params: PostParams; channel: PostChannel }) {
+export async function PostPage({ params, channel }: { params: PostParams; channel: string }) {
   const { locale: raw, slug } = await params;
   const locale = resolveLocale(raw);
   const { content, post, posts } = await load(locale, slug);
   if (!post || !inLocale(post, locale)) notFound();
-  if (channelOf(post) !== channel) permanentRedirect(`/${locale}${postPath(post)}`);
-  const list = postChannels.find((c) => c.value === channel)!.path;
+  if (post.channel !== channel) permanentRedirect(`/${locale}${postPath(post)}`);
+  const category = content.categories.find((c) => c.slug === channel);
+  const list = `/${channel}`;
   const ui = content.ui[locale];
   const t = ui.news;
   const tr = (v: Parameters<typeof pick>[0]) => pick(v, locale);
   const body = tr(post.body);
   // "More stories" stay in the same channel when it has enough of them.
   const others = posts.filter((p) => p.slug !== post.slug);
-  const same = others.filter((p) => channelOf(p) === channel);
-  const more = (same.length >= 3 ? same : [...same, ...others.filter((p) => channelOf(p) !== channel)]).slice(0, 3);
+  const same = others.filter((p) => p.channel === channel);
+  const more = (same.length >= 3 ? same : [...same, ...others.filter((p) => p.channel !== channel)]).slice(0, 3);
+  const categoryName = tr(category?.name) || ui.nav.news;
   const path = postPath(post);
 
   const faq = faqFromMarkdown(body);
@@ -79,7 +81,7 @@ export async function PostPage({ params, channel }: { params: PostParams; channe
       section: tr(post.category),
     }),
     breadcrumbJsonLd(content, locale, [
-      { name: ui.nav[channel], path: list },
+      { name: categoryName, path: list },
       { name: tr(post.title), path },
     ]),
   ];
@@ -93,7 +95,7 @@ export async function PostPage({ params, channel }: { params: PostParams; channe
         <div className="container-page pb-14 pt-36 sm:pb-20">
           <Link href={`/${locale}${list}`} data-intro className="inline-flex items-center gap-2 text-sm text-white/80 hover:text-white">
             <ArrowLeft className="size-4" />
-            {channel === "news" ? t.back : ui.nav[channel]}
+            {channel === "news" ? t.back : categoryName}
           </Link>
           <p data-intro className="mt-6 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-white/75">
             {tr(post.category) && <span className="rounded-full bg-white/15 px-3 py-1 font-medium text-white backdrop-blur-md">{tr(post.category)}</span>}

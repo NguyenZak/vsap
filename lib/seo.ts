@@ -3,7 +3,7 @@
 // set here instead of relying on the layout's defaults.
 import type { Metadata } from "next";
 import { pick } from "./cms/links";
-import type { Page, SiteContent } from "./cms/types";
+import type { CmsImage, Page, SiteContent } from "./cms/types";
 import { defaultLocale, localeInfo, locales, type Locale } from "./locales";
 
 export const ogLocale = Object.fromEntries(locales.map((l) => [l, localeInfo[l].og])) as Record<Locale, string>;
@@ -59,13 +59,13 @@ export function seoMetadata({ content, locale, path, title, description, image, 
 }
 
 /** First photo of a page (hero slide or page banner), used as its share image. */
-export function pageImage(page: Page): { src: string; alt: string } | undefined {
+export function pageImage(page: Page, locale: Locale = defaultLocale): { src: string; alt: string } | undefined {
   for (const s of page.sections) {
     if (s.hidden) continue;
     const p = s.props as Record<string, unknown>;
-    const fromSlides = Array.isArray(p.slides) ? (p.slides[0] as { image?: { src?: string; alt?: { vi?: string } } })?.image : undefined;
-    const img = (fromSlides ?? p.image) as { src?: string; alt?: { vi?: string } } | undefined;
-    if (img?.src) return { src: img.src, alt: img.alt?.vi ?? "" };
+    const fromSlides = Array.isArray(p.slides) ? (p.slides[0] as { image?: CmsImage })?.image : undefined;
+    const img = (fromSlides ?? p.image) as Partial<CmsImage> | undefined;
+    if (img?.src) return { src: img.src, alt: pick(img.alt, locale) };
   }
   return undefined;
 }

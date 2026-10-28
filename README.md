@@ -12,7 +12,7 @@ Website song ngữ (Tiếng Việt / English) cho thương hiệu nông sản VS
 ```sh
 npm install
 npm run dev        # dev server (http://localhost:5173)
-npm run build      # build + prerender toàn bộ trang tĩnh
+npm run build      # build bản production (trang render theo từng request từ CMS)
 npm run start      # chạy thử bản build trong workerd
 npm run typecheck
 npm test           # unit test phần lõi CMS
@@ -40,19 +40,16 @@ lib/
 
 ## Sửa nội dung
 
-- Chữ trên site: `lib/content/vi.ts` và `lib/content/en.ts` (file `en.ts` bắt buộc có đủ khóa như `vi.ts`).
-- Sản phẩm: `lib/products.ts`. Thêm sản phẩm mới thì thêm vào mảng `products`, kèm `image` / `gallery` là key ảnh trong `lib/images.ts`.
-- Sản phẩm bán lẻ (hộp, hũ, túi): `lib/retail.ts`, ảnh bao bì thật ở `public/images/products/`. Đối tác: `lib/partners.ts` (có logo thì thêm vào `public/images/partners/`).
-- Nút liên hệ nổi Zalo/WhatsApp/điện thoại: `components/FloatingContact.tsx`, link ở `lib/site.ts`.
-- Ảnh: file nằm ở `public/images/`, khai báo (alt song ngữ + nguồn) trong `lib/images.ts`. Ảnh hiện tại là ảnh minh họa CC0/Public Domain từ Wikimedia Commons — thay bằng ảnh thật của VSAP bằng cách ghi đè file cùng tên.
-- Thông tin liên hệ + domain: `lib/site.ts`.
+Mọi nội dung (chữ, sản phẩm, bán lẻ, đối tác, liên hệ, ảnh) sửa trong Studio tại `/admin`, xem mục **CMS** bên dưới. Các file `lib/content/*.ts`, `lib/products.ts`, `lib/retail.ts`, `lib/partners.ts`, `lib/site.ts`, `lib/images.ts` chỉ là **nội dung khởi tạo** (dùng khi D1 còn trống) — sửa chúng không đổi website đã có dữ liệu CMS. Riêng `lib/site.ts` còn là số điện thoại/email dự phòng cho trang lỗi toàn cục (khi chính CMS lỗi).
+
+Còn cố định trong code: logo (`public/logo*.svg`), 5 ảnh trang trí quanh lưới bán lẻ (`shopDecor` trong `components/blocks.tsx`), chữ của trang 404/lỗi (`components/ErrorScreen.tsx`).
 - Màu & typography: `app/globals.css` (khối `@theme`). Chữ chính Inter; phần nghiêng của tiêu đề dùng Noto Serif Display bản nén ngang, tự host ở `public/fonts` (có đủ dấu tiếng Việt). Tiêu đề gồm `title` + `accent` (dòng serif nghiêng) trong `lib/content/*.ts`.
 - Logo trên nền ảnh/nền tối dùng `public/logo-light.svg`.
 
 ## Chuyển động (GSAP)
 
-- Hero trang chủ là slider: `components/HeroSlider.tsx`. Nội dung từng slide ở `home.hero.slides` trong `lib/content/*.ts`; ảnh và link của slide khai báo ở mảng `media` đầu file (cùng thứ tự). Thời gian mỗi slide: hằng `AUTOPLAY`.
-- Câu tuyên bố gõ chữ dạng slider: `components/StatementSlider.tsx`; nội dung ở `home.statement.items`, ảnh tròn từng câu ở mảng `pills`, thời gian giữ câu: hằng `HOLD`.
+- Hero trang chủ là slider: `components/HeroSlider.tsx`. Slide (chữ, ảnh, link) và thời gian mỗi slide sửa trong Studio › Trang › Trang chủ › section Hero.
+- Câu tuyên bố gõ chữ dạng slider: `components/StatementSlider.tsx`; các câu, ảnh tròn và thời gian giữ mỗi câu sửa trong Studio (section Tuyên bố).
 - Hiệu ứng khi cuộn do `components/MotionMain.tsx` điều khiển, bật bằng thuộc tính trên phần tử: `data-reveal`, `data-reveal="clip"`, `data-parallax` (hoặc `<Photo parallax />`), `data-count`, `data-intro`.
 - Plugin GSAP đăng ký ở `lib/gsap.ts`. Người dùng bật "giảm chuyển động" trong hệ điều hành sẽ thấy trang tĩnh, slider không tự chạy.
 
@@ -65,6 +62,12 @@ Toàn bộ nội dung website (các trang, section, sản phẩm, bao bì bán l
 - **Công ty** — tên, liên hệ, văn phòng, link Zalo/WhatsApp, SEO mặc định. **Chữ giao diện** — nhãn nút, menu, form.
 - **Thư viện ảnh** — tải ảnh lên (lưu trên R2), dùng ở mọi trường ảnh.
 - **Tin tức** — bài viết song ngữ (`/news`, `/news/<slug>`), soạn bằng Markdown có thanh công cụ (tiêu đề, đậm, liên kết, ảnh, danh sách, trích dẫn). Mỗi bài có bản nháp riêng và chỉ hiện khi được xuất bản; ngày đăng ở tương lai = hẹn giờ. Bài thiếu tiêu đề tiếng Anh chỉ hiện ở `/vi`. Section *Tin tức* đặt được trên bất kỳ trang nào. 10 bài mẫu song ngữ (`lib/content/posts*.ts`, viết theo hướng SEO/GEO: trả lời ngắn đầu bài, mục *Câu hỏi thường gặp* tự sinh FAQPage) được nạp một lần dưới dạng **bản nháp** khi mở Studio › Tin tức lần đầu; duyệt rồi bấm *Xuất bản* từng bài.
+- **Chuyên mục** — thêm / sửa / xoá chuyên mục tin. Mỗi chuyên mục có trang riêng ở `/slug`, bài ở `/slug/ten-bai` (Tin tức `/news` và Sức khỏe `/health` là hai chuyên mục có sẵn, giữ link cũ). Bài của chuyên mục bị xoá tự chuyển về chuyên mục đầu tiên; link cũ chuyển hướng 308. Slug không được trùng đường dẫn có sẵn (`about`, `products`, `contact`…).
+- **Menu** — thêm / bớt / sắp xếp mục menu và cấp con. Mục có thể tự lấy cấp con từ *các nhóm sản phẩm* hoặc *các chuyên mục tin* (thêm nhóm/chuyên mục là menu tự cập nhật). Trên máy tính cấp con là danh sách thả xuống, trên điện thoại là danh sách thụt vào.
+- **Giao diện** — màu nền, màu tiêu đề, màu chữ, font, cỡ chữ (%) cho toàn site; font / cỡ / độ đậm / viết hoa / màu chữ cho menu. **Font tự thêm**: dán link Google Fonts / link CSS / link file `.woff2`, hoặc tải file `.woff2 .woff .ttf .otf` lên (lưu R2) — font thêm vào có trong mọi ô chọn font. Mặc định vẫn là Inter (chữ) và Phudu (tiêu đề).
+  - Từng trang: *Cài đặt trang* có phần *Màu và chữ của trang* (ghi đè Giao diện).
+  - Từng section: nhóm *Màu & khung* (màu nền riêng, màu tiêu đề/chữ, khung kẻ trên-dưới hoặc khung bao bo góc, màu/độ dày viền) — ghi đè màu của trang. Màu chung không áp vào section nền tối để chữ trắng vẫn đọc được.
+- **Trang Sản phẩm theo nhóm** — section *Nhóm sản phẩm*: mỗi nhóm (Studio › Sản phẩm) kèm các sản phẩm bán lẻ của nhóm (Studio › Bán lẻ, trường *Sản phẩm*). Thêm / sửa / sắp xếp nhóm ở Studio › Sản phẩm.
 - **Báo giá** — hộp thư các yêu cầu gửi từ form: lọc theo trạng thái (Mới / Đang xử lý / Đã xong / Spam), tìm kiếm, ghi chú nội bộ, trả lời email/WhatsApp, xuất CSV mở bằng Excel. Huy hiệu đỏ báo số yêu cầu mới. **Cài đặt › Telegram** (chỉ Quản trị; nút Telegram trong hộp thư cũng dẫn tới đây): dán token bot từ @BotFather, bấm *Tìm nhóm* để chọn nhóm đã thêm bot, *Gửi tin thử*. Từ đó mỗi yêu cầu mới được báo ngay vào nhóm, kèm nút mở thẳng yêu cầu trong Studio, WhatsApp và Zalo. Token lưu ở máy chủ, không hiện lại; nếu đặt secret `TELEGRAM_BOT_TOKEN` thì secret được ưu tiên.
 - **Tài khoản** và **Nhật ký** — xem mục *Đăng nhập & phân quyền* bên dưới.
 - **Bản nháp → Xuất bản.** Mọi thay đổi tự lưu vào bản nháp (khách không thấy); bấm *Xuất bản* để đưa lên website. *Lịch sử* giữ 50 lần xuất bản gần nhất để khôi phục. Hoàn tác/làm lại: Ctrl/Cmd + Z / Shift + Z.
@@ -76,6 +79,7 @@ Kỹ thuật: nội dung là một tài liệu JSON (`lib/cms/types.ts`) lưu tr
 | Loại section mới | Khai báo trường trong `lib/cms/registry.ts`, viết renderer cùng tên trong `components/blocks.tsx` (test sẽ báo nếu thiếu) |
 | Trường mới cho sản phẩm/cài đặt | `lib/cms/types.ts` + `lib/cms/collections.ts` + giá trị mặc định trong `lib/cms/defaults.ts` |
 | Biểu tượng chọn được | `lib/cms/icons.ts` + `components/cms/Icon.tsx` |
+| Font có sẵn trong danh sách chọn | mảng `fonts` trong `lib/cms/theme.ts` (cần có dấu tiếng Việt) |
 
 ### Đăng nhập & phân quyền
 

@@ -417,22 +417,26 @@ export const sectionDefs: SectionDef[] = [
     create: () => ({ ...sampleHeading(), images: [{ image: img("/images/cashew.webp") }, { image: img("/images/macadamia.webp") }, { image: img("/images/highlands.webp") }], columns: "3", tone: "white" }),
   },
   {
+    type: "productGroups",
+    label: "Nhóm sản phẩm",
+    description: "Từng nhóm trong Studio › Sản phẩm, kèm các sản phẩm bán lẻ của nhóm (Studio › Bán lẻ).",
+    icon: "boxes",
+    fields: [
+      ...headingFields(),
+      { key: "groupLabel", label: "Chữ nút xem nhóm", type: "text" },
+      { key: "showEmpty", label: "Hiện cả nhóm chưa có sản phẩm bán lẻ", type: "boolean" },
+      toneField,
+    ],
+    create: () => ({ ...sampleHeading(), groupLabel: l("Xem nhóm", "View group"), showEmpty: true, tone: "white" }),
+  },
+  {
     type: "posts",
     label: "Tin tức",
     description: "Bài viết mới nhất từ mục Tin tức.",
     icon: "newspaper",
     fields: [
       ...headingFields(),
-      {
-        key: "channel",
-        label: "Lấy bài từ",
-        type: "select",
-        options: [
-          { value: "news", label: "Tin tức" },
-          { value: "health", label: "Sức khỏe và đời sống" },
-          { value: "all", label: "Cả hai chuyên mục" },
-        ],
-      },
+      { key: "channel", label: "Lấy bài từ chuyên mục", type: "category", all: true },
       { key: "limit", label: "Số bài hiển thị", type: "number", min: 0, max: 60, help: "0 = tất cả bài (dùng cho trang Tin tức)." },
       { key: "featured", label: "Bài đầu tiên hiển thị lớn", type: "boolean" },
       ...button(),

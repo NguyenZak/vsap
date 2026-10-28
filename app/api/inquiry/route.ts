@@ -2,6 +2,7 @@ import { env } from "cloudflare:workers";
 import { clientHash } from "@/lib/cms/api";
 import type { InquiryData as Inquiry } from "@/lib/cms/inquiry-format";
 import { recentFrom, saveInquiry } from "@/lib/cms/inquiries";
+import { getPublishedContent } from "@/lib/cms/store";
 import { notifyInquiry } from "@/lib/cms/notify";
 import { isLocale } from "@/lib/locales";
 
@@ -15,7 +16,7 @@ const LIMITS: Record<keyof Inquiry, number> = {
   email: 160,
   phone: 40,
   country: 80,
-  product: 20,
+  product: 80,
   quantity: 120,
   message: 4000,
 };
@@ -47,6 +48,11 @@ export async function POST(request: Request) {
 
   const inquiry = parse(body);
   if (!inquiry) return Response.json({ ok: false }, { status: 422 });
+  // The form sends a product slug; the inbox, Telegram and CSV show its Vietnamese name.
+  if (inquiry.product && inquiry.product !== "other") {
+    const product = (await getPublishedContent()).products.find((p) => p.slug === inquiry.product);
+    if (product?.name.vi) inquiry.product = product.name.vi;
+  }
 
   const raw = body as Record<string, unknown>;
   const locale = typeof raw.locale === "string" && isLocale(raw.locale) ? raw.locale : undefined;

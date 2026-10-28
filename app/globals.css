@@ -183,33 +183,16 @@ body {
 }
 
 /*
- * Shop dialogs (components/shop/Dialog.tsx): the cart slides in from the right,
- * quick view rises in. Page scroll is locked while either is open.
+ * Shop dialogs (components/shop/Dialog.tsx). Page scroll is locked while one is open.
  */
 html:has(dialog[open]) {
   overflow: hidden;
 }
+/* The dialogs themselves are animated with Motion (components/shop/Dialog.tsx); only the backdrop fades here. */
 @media (prefers-reduced-motion: no-preference) {
-  .shop-drawer[open] {
-    animation: shop-drawer-in 0.45s cubic-bezier(0.22, 1, 0.36, 1);
-  }
-  .shop-modal[open] {
-    animation: shop-modal-in 0.4s cubic-bezier(0.22, 1, 0.36, 1);
-  }
   .shop-drawer[open]::backdrop,
   .shop-modal[open]::backdrop {
     animation: shop-fade-in 0.3s ease-out;
-  }
-}
-@keyframes shop-drawer-in {
-  from {
-    transform: translateX(100%);
-  }
-}
-@keyframes shop-modal-in {
-  from {
-    opacity: 0;
-    transform: translateY(24px) scale(0.98);
   }
 }
 @keyframes shop-fade-in {
@@ -272,4 +255,42 @@ html:has(dialog[open]) {
 }
 :lang(ko) {
   word-break: keep-all;
+}
+
+/*
+ * Colours and frames chosen in Studio (lib/cms/theme.ts → sectionStyleVars).
+ * Unlayered, so they win over the Tailwind colour utilities they replace; text
+ * that sits on its own dark/photo panel (white text) keeps its colour.
+ */
+[data-cms-text] :is(p, li, dd, dt, td, th, blockquote, figcaption, label):not([class*="text-white"], [class*="text-white"] *) {
+  color: var(--cms-text);
+}
+[data-cms-heading] :is(h1, h2, h3, h4, .heading):not([class*="text-white"], [class*="text-white"] *) {
+  color: var(--cms-heading);
+}
+section[data-frame="lines"] {
+  border-block: var(--frame-width) solid var(--frame-color);
+}
+section[data-frame="box"] {
+  margin: 1.5rem var(--page-gutter);
+  overflow: hidden;
+  border: var(--frame-width) solid var(--frame-color);
+  border-radius: var(--frame-radius);
+}
+
+/* Header links: Theme › Menu sets these variables on <header> (menuStyleVars). */
+.menu-link,
+.menu-sublink {
+  font-family: var(--menu-font, inherit);
+  font-weight: var(--menu-weight, inherit);
+  text-transform: var(--menu-case, none);
+}
+.menu-link {
+  font-size: var(--menu-size, 0.875rem);
+}
+header:not([data-solid]) .menu-link:not([aria-current]) {
+  color: var(--menu-color, rgb(255 255 255 / 0.9));
+}
+header[data-solid] .menu-link:not([aria-current]) {
+  color: var(--menu-color-solid, var(--color-ink-600));
 }

@@ -1,4 +1,10 @@
 // Quote-request types, labels and CSV export, shared by the API and Studio (no Cloudflare imports).
+import type { Locale } from "../locales";
+import { pick } from "./links";
+import type { Product } from "./types";
+
+/** The quote form's product choices: every CMS product, sent as its slug. */
+export const inquiryProducts = (products: Product[], locale: Locale) => products.map((p) => ({ value: p.slug, label: pick(p.name, locale) }));
 
 export const inquiryStatuses = ["new", "processing", "done", "spam"] as const;
 export type InquiryStatus = (typeof inquiryStatuses)[number];

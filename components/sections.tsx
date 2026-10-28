@@ -10,7 +10,8 @@ export type Tone = "white" | "muted" | "dark";
 
 /** Background classes for a section tone. */
 export const toneBg: Record<Tone, string> = {
-  white: "bg-white",
+  // Studio › Giao diện / page style can recolour the plain sections (--page-bg).
+  white: "bg-[var(--page-bg,#fff)]",
   muted: "bg-mist-50",
   dark: "bg-forest-950 bg-dark-glow text-white",
 };

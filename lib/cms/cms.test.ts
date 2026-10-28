@@ -5,7 +5,7 @@ import { getIn, setIn, type FieldDef } from "./fields";
 import { iconNames } from "./icons";
 import { localHref, pick } from "./links";
 import { defaultContent } from "./defaults";
-import { normalize, withDefaults } from "./normalize";
+import { normalize, siteUrl, withDefaults } from "./normalize";
 import { sectionDefs } from "./registry";
 import { newProduct, newRetailPack, productFields, retailFields, settingsFields } from "./collections";
 
@@ -105,6 +105,26 @@ describe("normalize", () => {
 
   it("does not let defaults override saved values", () => {
     expect(withDefaults({ a: { b: 2 } }, { a: { b: 1, c: 3 } })).toEqual({ a: { b: 2, c: 3 } });
+  });
+
+  it("drops UI strings the site no longer reads, keeping edited ones", () => {
+    const saved = structuredClone(content) as unknown as { ui: Record<string, { form: { productOptions: Record<string, string> }; common: Record<string, string> }> };
+    saved.ui.vi.form.productOptions = { cashew: "Hạt điều", other: "Sản phẩm khác" };
+    saved.ui.vi.common.allProducts = "Tất cả";
+    const n = normalize(saved);
+    expect(n.ui.vi.form.productOptions).toEqual({ other: "Sản phẩm khác" });
+    expect("allProducts" in n.ui.vi.common).toBe(false);
+  });
+
+  it("turns the typed domain into an origin every page can build URLs from", () => {
+    const fallback = "https://vsap.com.vn";
+    expect(siteUrl("vsap.com.vn", fallback)).toBe("https://vsap.com.vn");
+    expect(siteUrl(" https://www.vsap.com.vn/vi/ ", fallback)).toBe("https://www.vsap.com.vn");
+    expect(siteUrl("http://localhost:5173", fallback)).toBe("http://localhost:5173");
+    for (const bad of ["", "   ", "javascript:alert(1)", "mailto:a@b.co", "https://", 42]) expect(siteUrl(bad, fallback)).toBe(fallback);
+    const saved = structuredClone(content);
+    saved.settings.url = "example.com";
+    expect(normalize(saved).settings.url).toBe("https://example.com");
   });
 });
 

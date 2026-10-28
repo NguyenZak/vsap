@@ -162,7 +162,7 @@ export const settingsFields: FieldDef[] = [
   },
   { key: "tagline", label: "Slogan", type: "string" },
   { key: "about", label: "Giới thiệu ngắn (footer)", type: "textarea", rows: 2 },
-  { key: "url", label: "Tên miền", type: "string" },
+  { key: "url", label: "Tên miền", type: "string", help: "Ví dụ: https://vsap.com.vn (thiếu https:// sẽ tự thêm khi lưu)." },
   { key: "email", label: "Email", type: "string" },
   { key: "phone", label: "Số điện thoại (hiển thị)", type: "string" },
   { key: "phoneE164", label: "Số điện thoại (quốc tế, để gọi)", type: "string", help: "Dạng +84962874111" },
@@ -187,8 +187,9 @@ export const settingsFields: FieldDef[] = [
     key: "seo",
     label: "SEO mặc định",
     type: "group",
+    help: "Chỉ dùng khi một trang chưa có SEO riêng. Tiêu đề, mô tả trang chủ trên Google sửa ở Trang › Trang chủ › Cài đặt trang (SEO).",
     fields: [
-      { key: "title", label: "Tiêu đề trang chủ trên Google", type: "text" },
+      { key: "title", label: "Tiêu đề mặc định", type: "text" },
       { key: "description", label: "Mô tả mặc định", type: "textarea", rows: 2 },
       { key: "image", label: "Ảnh chia sẻ mặc định (1200×630)", type: "media", help: "Dùng khi trang không có ảnh riêng." },
     ],
@@ -224,6 +225,133 @@ export const settingsFields: FieldDef[] = [
   },
 ];
 
+/** Font picker (built-in fonts + Studio › Giao diện › Font tự thêm); "" keeps the design's font. */
+const fontField = (key: string, label: string, fallback: string): FieldDef => ({ key, label, type: "font", fallback });
+
+export const customFontFields: FieldDef[] = [
+  {
+    key: "fonts",
+    label: "Font tự thêm",
+    type: "list",
+    itemLabel: "font",
+    titleKey: "name",
+    help: "Font thêm ở đây sẽ có trong mọi ô chọn font. Nên chọn font có đủ dấu tiếng Việt.",
+    fields: [
+      { key: "name", label: "Tên font (font-family)", type: "string", placeholder: "VD: Lexend", help: "Đúng tên trong file CSS của font. Để trống nếu dán link Google Fonts: tên lấy từ link." },
+      {
+        key: "link",
+        label: "Dán link font",
+        type: "string",
+        placeholder: "https://fonts.googleapis.com/css2?family=Lexend:wght@400;600&display=swap",
+        help: "Link CSS (Google Fonts, Adobe Fonts…) hoặc link thẳng tới file .woff2 / .ttf. Chỉ nhận https://",
+      },
+      {
+        key: "files",
+        label: "Hoặc tải file font lên",
+        type: "list",
+        itemLabel: "file",
+        titleKey: "weight",
+        help: "Mỗi độ đậm / kiểu nghiêng là một file. Nên dùng .woff2 cho nhẹ.",
+        fields: [
+          { key: "src", label: "File font", type: "fontFile" },
+          {
+            key: "weight",
+            label: "Độ đậm của file",
+            type: "select",
+            options: ["100", "200", "300", "400", "500", "600", "700", "800", "900"].map((w) => ({ value: w, label: w === "400" ? "400 (thường)" : w === "700" ? "700 (đậm)" : w })),
+          },
+          { key: "style", label: "Kiểu", type: "select", options: [{ value: "normal", label: "Thẳng" }, { value: "italic", label: "Nghiêng" }] },
+        ],
+        newItem: () => ({ src: "", weight: "400", style: "normal" }),
+      },
+    ],
+    newItem: () => ({ name: "", link: "", files: [] }),
+  },
+];
+const scaleField = (key: string, label: string): FieldDef => ({ key, label, type: "number", min: 50, max: 200, step: 5, zeroIsDefault: true, help: "Phần trăm so với cỡ thiết kế, ví dụ 110. Để trống = mặc định." });
+
+/** Colours and type of a page (and, in Studio › Giao diện, of the whole site). */
+export const pageStyleFields: FieldDef[] = [
+  { key: "background", label: "Màu nền trang", type: "color", help: "Nền của các section để nền trắng." },
+  { key: "heading", label: "Màu tiêu đề", type: "color" },
+  { key: "text", label: "Màu chữ", type: "color", help: "Không áp vào section nền tối, để chữ trắng vẫn đọc được." },
+  fontField("font", "Font chữ thường", "Inter"),
+  fontField("headingFont", "Font tiêu đề", "Phudu"),
+  scaleField("textScale", "Cỡ chữ thường (%)"),
+  scaleField("headingScale", "Cỡ tiêu đề (%)"),
+];
+
+export const menuStyleFields: FieldDef[] = [
+  fontField("font", "Font menu", "theo font chữ thường"),
+  { key: "size", label: "Cỡ chữ menu (px)", type: "number", min: 10, max: 24, zeroIsDefault: true, help: "Để trống = 14." },
+  {
+    key: "weight",
+    label: "Độ đậm",
+    type: "select",
+    options: [
+      { value: "", label: "Mặc định" },
+      { value: "400", label: "Thường" },
+      { value: "500", label: "Vừa" },
+      { value: "600", label: "Đậm vừa" },
+      { value: "700", label: "Đậm" },
+    ],
+  },
+  { key: "uppercase", label: "Viết hoa toàn bộ", type: "boolean" },
+  { key: "color", label: "Màu chữ menu trên ảnh đầu trang", type: "color", help: "Khi thanh menu còn trong suốt (mặc định trắng)." },
+  { key: "colorSolid", label: "Màu chữ menu khi cuộn trang", type: "color", help: "Khi thanh menu chuyển nền trắng (mặc định xám đậm)." },
+];
+
+const menuLinkFields: FieldDef[] = [
+  { key: "label", label: "Tên hiển thị", type: "text" },
+  { key: "href", label: "Liên kết", type: "link" },
+];
+
+export const menuFields: FieldDef[] = [
+  {
+    key: "menu",
+    label: "Các mục menu",
+    type: "list",
+    itemLabel: "mục menu",
+    titleKey: "label",
+    help: "Kéo để sắp xếp. Mục đầu tiên có biểu tượng ngôi nhà.",
+    fields: [
+      ...menuLinkFields,
+      {
+        key: "auto",
+        label: "Cấp con tự động",
+        type: "select",
+        options: [
+          { value: "", label: "Không" },
+          { value: "productGroups", label: "Các nhóm sản phẩm (Studio › Sản phẩm)" },
+          { value: "newsCategories", label: "Các chuyên mục tin (Studio › Chuyên mục)" },
+        ],
+        help: "Thêm nhóm hoặc chuyên mục mới là menu tự cập nhật.",
+      },
+      { key: "children", label: "Cấp con thêm tay", type: "list", itemLabel: "mục con", titleKey: "label", fields: menuLinkFields, newItem: () => ({ label: l("Mục con", "Sub-item"), href: "/" }) },
+      { key: "wide", label: "Chỉ hiện trên màn hình rộng (tên dài)", type: "boolean", help: "Trên laptop nhỏ mục này chỉ còn trong menu điện thoại." },
+    ],
+    newItem: () => ({ label: l("Mục mới", "New item"), href: "/", children: [], auto: "", wide: false }),
+  },
+];
+
+export const categoryFields: FieldDef[] = [
+  { key: "name", label: "Tên chuyên mục", type: "text" },
+  { key: "slug", label: "Đường dẫn (slug)", type: "string", help: "Trang chuyên mục ở /slug, bài ở /slug/ten-bai. Đổi slug sẽ đổi link của cả chuyên mục." },
+  { key: "intro", label: "Giới thiệu ngắn", type: "textarea", rows: 3 },
+  { key: "image", label: "Ảnh đầu trang chuyên mục", type: "image" },
+  {
+    key: "seo",
+    label: "SEO",
+    type: "group",
+    fields: [
+      { key: "title", label: "Tiêu đề trên Google", type: "text", help: "Để trống để dùng tên chuyên mục." },
+      { key: "description", label: "Mô tả trên Google", type: "textarea", rows: 2, help: "Để trống để dùng phần giới thiệu." },
+    ],
+  },
+];
+
+export const newCategory = () => ({ slug: "chuyen-muc-moi", name: l("Chuyên mục mới", "New category"), intro: l(""), image: img("/images/cashew-harvest.webp"), seo: { title: l(""), description: l("") } });
+
 export const pageSeoFields: FieldDef[] = [
   { key: "title", label: "Tiêu đề trên Google", type: "text", help: "Nên dài 30–60 ký tự." },
   { key: "description", label: "Mô tả trên Google", type: "textarea", rows: 3, help: "Nên dài 70–160 ký tự." },
@@ -236,16 +364,12 @@ export const postFields: FieldDef[] = [
   { key: "slug", label: "Đường dẫn (slug)", type: "string", help: "Chữ thường không dấu và gạch ngang. Đổi slug sau khi đã đăng sẽ đổi URL bài." },
   {
     key: "channel",
-    label: "Chuyên mục chính",
-    type: "select",
-    options: [
-      { value: "news", label: "Tin tức (/news)" },
-      { value: "health", label: "Sức khỏe và đời sống (/health)" },
-    ],
-    help: "Quyết định bài hiện ở trang nào và đường dẫn của bài.",
+    label: "Chuyên mục",
+    type: "category",
+    help: "Quyết định bài hiện ở trang nào và đường dẫn của bài (/chuyen-muc/ten-bai). Thêm/sửa chuyên mục ở Studio › Chuyên mục.",
   },
   { key: "date", label: "Ngày đăng", type: "date", help: "Chọn ngày trong tương lai để hẹn giờ: bài đã xuất bản chỉ hiện từ ngày đó." },
-  { key: "category", label: "Chuyên mục", type: "text" },
+  { key: "category", label: "Nhãn trên thẻ bài (tuỳ chọn)", type: "text", help: "Chữ nhỏ hiện trên ảnh bìa, ví dụ “Mùa vụ”. Không ảnh hưởng tới chuyên mục." },
   { key: "cover", label: "Ảnh bìa", type: "image" },
   { key: "excerpt", label: "Tóm tắt", type: "textarea", rows: 3, help: "Hiện trên thẻ bài và làm mô tả mặc định khi chia sẻ." },
   { key: "body", label: "Nội dung", type: "markdown" },

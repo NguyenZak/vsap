@@ -4,13 +4,14 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { ArrowLeft, ArrowUpRight, Mail, Phone, RotateCw } from "lucide-react";
 import { defaultLocale, isLocale, type Locale } from "@/lib/locales";
-import { site } from "@/lib/site";
+import { useSiteContact } from "./SiteContact";
 import { Button, Tag } from "./ui";
 
 /*
  * Shared look for not-found.tsx, error.tsx and global-error.tsx. The copy is
  * hard-coded on purpose: these pages must still render when the CMS (D1) is the
- * thing that failed. not-found/error get no route params, so the language comes
+ * thing that failed. The phone and email do come from the CMS (via the layout's
+ * SiteContactProvider) whenever the layout rendered. not-found/error get no route params, so the language comes
  * from the URL.
  */
 
@@ -199,6 +200,7 @@ export function ErrorScreen({
   const t = copy[locale];
   const c = t[kind];
   const home = `/${locale}`;
+  const site = useSiteContact();
   // Only the in-layout pages animate in via MotionMain; global-error has no MotionMain.
   const intro = standalone ? {} : { "data-intro": "" };
 

@@ -3,8 +3,9 @@
 import { Globe, Mail, MapPin, Phone } from "lucide-react";
 import type { Locale } from "@/lib/i18n";
 import { localHref, pick } from "@/lib/cms/links";
-import { channelOf } from "@/lib/cms/post-format";
-import type { CmsImage, L, Post, Section, SiteContent, UiStrings } from "@/lib/cms/types";
+import { withCategories } from "@/lib/cms/post-format";
+import { emptyPageStyle, sectionStyleVars } from "@/lib/cms/theme";
+import type { CmsImage, L, PageStyle, Post, Section, SectionStyle, SiteContent, UiStrings } from "@/lib/cms/types";
 import { HeroSlider } from "./HeroSlider";
 import { InquiryForm } from "./InquiryForm";
 import { FeaturedPost, PostGrid } from "./PostCards";
@@ -25,6 +26,7 @@ import {
   type Tone,
 } from "./sections";
 import { SIZES } from "@/lib/responsive";
+import { inquiryProducts } from "@/lib/cms/inquiry-format";
 import { CmsIcon } from "./cms/Icon";
 import { Button, Tag, Title } from "./ui";
 
@@ -35,6 +37,8 @@ export type BlockCtx = {
   /** Live news posts for this language, loaded only when the page has a "posts" section. */
   posts?: Post[];
   preview?: boolean;
+  /** The page's colours and type merged over the theme's (lib/cms/theme.ts). */
+  pageStyle?: PageStyle;
 };
 
 // Section props are free-form JSON from the CMS; these readers keep the renderers tolerant
@@ -270,6 +274,49 @@ const renderers: Record<string, Renderer> = {
     );
   },
 
+  // The Products page by group: each product group (Studio › Sản phẩm) with its retail products underneath.
+  productGroups(p, ctx) {
+    const { t, img } = makeT(ctx);
+    const tone = toneOf({ id: "", type: "productGroups", props: p }) as Tone;
+    const dark = tone === "dark";
+    const packs = visiblePacks(ctx.content.retailPacks);
+    const groups = ctx.content.products
+      .map((group) => ({ group, items: packs.filter((r) => r.product === group.slug).map((r) => toShopItem(r, ctx.locale)) }))
+      .filter((g) => g.items.length > 0 || p.showEmpty !== false);
+    return (
+      <div className="block-pad container-page">
+        {heading(p, ctx, tone)}
+        <div className={`space-y-16 sm:space-y-24 ${hasHeading(p, ctx) ? "mt-12 sm:mt-16" : ""}`}>
+          {groups.map(({ group, items }) => (
+            <div key={group.slug} id={`nhom-${group.slug}`} className="scroll-mt-28">
+              <div data-reveal className={`flex flex-col gap-5 border-b pb-6 sm:flex-row sm:items-end sm:justify-between ${dark ? "border-white/15" : "border-mist-200"}`}>
+                <div className="flex items-center gap-4 sm:gap-6">
+                  {group.image?.src && (
+                    <div className="relative size-20 shrink-0 overflow-hidden rounded-2xl sm:size-24">
+                      <CmsImg image={img(group.image)} sizes={SIZES.thumb} className="absolute inset-0 size-full" />
+                    </div>
+                  )}
+                  <div>
+                    <h3 className={`heading text-3xl sm:text-4xl ${dark ? "text-white" : "text-forest-900"}`}>{t(group.name)}</h3>
+                    {t(group.short) && <p className={`mt-2 max-w-2xl text-sm leading-relaxed ${dark ? "text-white/70" : "text-ink-600"}`}>{t(group.short)}</p>}
+                  </div>
+                </div>
+                <Button href={localHref(`/products/${group.slug}`, ctx.locale)} variant={dark ? "sun" : "dark"} className="shrink-0 self-start sm:self-auto">
+                  {t(p.groupLabel) || ctx.ui.common.viewProduct}
+                </Button>
+              </div>
+              {items.length > 0 && (
+                <div className="mt-8">
+                  <ProductGrid items={items} />
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  },
+
   productCards(p, ctx) {
     const { t, img } = makeT(ctx);
     const cards = ctx.content.products.map((pr) => ({
@@ -346,13 +393,14 @@ const renderers: Record<string, Renderer> = {
 
   story(p, ctx) {
     const { t, img } = makeT(ctx);
+    const dark = str(p.tone) === "dark";
     return (
       <div className="block-pad container-page grid gap-10 lg:grid-cols-12 lg:items-center">
         <div data-reveal className="lg:col-span-6">
-          {t(p.tag) && <Tag>{t(p.tag)}</Tag>}
+          {t(p.tag) && <Tag tone={dark ? "glass" : "light"}>{t(p.tag)}</Tag>}
           <div className="mt-6 space-y-5">
-            {t(p.lead) && <p className="heading text-2xl text-forest-900 sm:text-3xl">{t(p.lead)}</p>}
-            <Paragraphs text={t(p.body)} className="text-base leading-relaxed text-ink-600" />
+            {t(p.lead) && <p className={`heading text-2xl sm:text-3xl ${dark ? "text-white" : "text-forest-900"}`}>{t(p.lead)}</p>}
+            <Paragraphs text={t(p.body)} className={`text-base leading-relaxed ${dark ? "text-white/75" : "text-ink-600"}`} />
           </div>
         </div>
         <div className="grid grid-cols-2 gap-3 lg:col-span-6">
@@ -392,15 +440,16 @@ const renderers: Record<string, Renderer> = {
 
   accordionImage(p, ctx, section) {
     const { t, img } = makeT(ctx);
+    const dark = str(p.tone) === "dark";
     const items = list(p.items).map((it) => ({ icon: str(it.icon), title: t(it.title), body: t(it.body) }));
     return (
       <div className="block-pad container-page grid gap-4 lg:grid-cols-2">
         <div>
           {hasHeading(p, ctx) && (
             <div data-reveal className="mb-10">
-              {t(p.eyebrow) && <Tag>{t(p.eyebrow)}</Tag>}
-              <Title title={t(p.title)} accent={t(p.accent)} className="mt-4 text-4xl text-forest-900 sm:text-5xl" />
-              {t(p.lead) && <p className="mt-5 max-w-md text-sm leading-relaxed text-ink-600">{t(p.lead)}</p>}
+              {t(p.eyebrow) && <Tag tone={dark ? "glass" : "light"}>{t(p.eyebrow)}</Tag>}
+              <Title title={t(p.title)} accent={t(p.accent)} className={`mt-4 text-4xl sm:text-5xl ${dark ? "text-white" : "text-forest-900"}`} />
+              {t(p.lead) && <p className={`mt-5 max-w-md text-sm leading-relaxed ${dark ? "text-white/75" : "text-ink-600"}`}>{t(p.lead)}</p>}
             </div>
           )}
           <AccordionCards name={`acc-${section.id}`} items={items} />
@@ -414,12 +463,13 @@ const renderers: Record<string, Renderer> = {
 
   checklist(p, ctx) {
     const { t } = makeT(ctx);
+    const dark = str(p.tone) === "dark";
     return (
       <div className="block-pad container-page grid gap-10 lg:grid-cols-2">
         <div data-reveal>
-          {t(p.eyebrow) && <Tag>{t(p.eyebrow)}</Tag>}
-          <Title title={t(p.title)} accent={t(p.accent)} className="mt-4 text-4xl text-forest-900 sm:text-5xl" />
-          {t(p.lead) && <p className="mt-5 max-w-md text-sm leading-relaxed text-ink-600">{t(p.lead)}</p>}
+          {t(p.eyebrow) && <Tag tone={dark ? "glass" : "light"}>{t(p.eyebrow)}</Tag>}
+          <Title title={t(p.title)} accent={t(p.accent)} className={`mt-4 text-4xl sm:text-5xl ${dark ? "text-white" : "text-forest-900"}`} />
+          {t(p.lead) && <p className={`mt-5 max-w-md text-sm leading-relaxed ${dark ? "text-white/75" : "text-ink-600"}`}>{t(p.lead)}</p>}
         </div>
         <ul className="space-y-2.5">
           {list(p.items).map((it, i) => (
@@ -450,7 +500,7 @@ const renderers: Record<string, Renderer> = {
         <ul className={`space-y-2.5 ${showForm ? "lg:col-span-4" : "grid gap-2.5 space-y-0 sm:grid-cols-2"}`}>
           <li data-reveal className="rounded-2xl bg-forest-900 p-5 text-white">
             <p className="text-xs text-white/60">{ui.footer.brandOf}</p>
-            <p className="mt-1 text-sm font-semibold tracking-wide uppercase">{s.legalName}</p>
+            <p className="mt-1 text-sm font-semibold tracking-wide uppercase">{ctx.locale === "vi" || !s.legalNameEn ? s.legalName : s.legalNameEn}</p>
           </li>
           {info.map(({ icon: Icon, label, value, href }, i) => (
             <li key={i} data-reveal className="flex items-center gap-3 rounded-2xl bg-mist-50 p-2 pr-5">
@@ -472,7 +522,7 @@ const renderers: Record<string, Renderer> = {
         </ul>
         {showForm && (
           <div data-reveal className="rounded-3xl bg-mist-50 p-6 sm:p-10 lg:col-span-8">
-            <InquiryForm t={ui.form} />
+            <InquiryForm t={ui.form} products={inquiryProducts(ctx.content.products, ctx.locale)} />
           </div>
         )}
       </div>
@@ -526,7 +576,7 @@ const renderers: Record<string, Renderer> = {
     const limit = num(p.limit, 0);
     // Sections saved before channels existed list news, as they did then.
     const channel = str(p.channel) || "news";
-    const pool = (ctx.posts ?? []).filter((x) => channel === "all" || channelOf(x) === channel);
+    const pool = withCategories(ctx.posts ?? [], ctx.content.categories).filter((x) => channel === "all" || x.channel === channel);
     const posts = limit ? pool.slice(0, limit) : pool;
     const labels = { readMore: ctx.ui.news.readMore, minutes: ctx.ui.news.minutes };
     // A "latest news" strip disappears until there is something to show; the
@@ -577,6 +627,7 @@ export function RenderSections({ sections, ctx, preview = false }: { sections: S
           const render = renderers[s.type];
           if (!render) return null;
           const tone = toneOf(s);
+          const look = sectionStyleVars(s.props?.style as Partial<SectionStyle> | undefined, ctx.pageStyle ?? emptyPageStyle(), tone);
           return (
             <section
               key={s.id}
@@ -585,6 +636,8 @@ export function RenderSections({ sections, ctx, preview = false }: { sections: S
               data-type={s.type}
               data-tone={tone}
               className={tone === "none" ? "" : toneBg[tone]}
+              style={look.style}
+              {...look.attrs}
             >
               {render(s.props ?? {}, ctx, s)}
             </section>

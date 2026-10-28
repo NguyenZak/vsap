@@ -111,7 +111,7 @@ export function Footer({ locale, content, ui }: Props) {
               {products.map((p) => (
                 <li key={p.slug}>
                   <Link href={`/${locale}/products/${p.slug}`} className={link}>
-                    {p.name[locale]}
+                    {pick(p.name, locale)}
                   </Link>
                 </li>
               ))}
@@ -137,8 +137,8 @@ export function Footer({ locale, content, ui }: Props) {
                 <li key={i} className="flex gap-3">
                   <MapPin className="mt-0.5 size-4 shrink-0 text-sun-400" />
                   <span className="text-white/80">
-                    <span className="block text-white">{o.label[locale]}</span>
-                    {o.address[locale]}
+                    <span className="block text-white">{pick(o.label, locale)}</span>
+                    {pick(o.address, locale)}
                   </span>
                 </li>
               ))}

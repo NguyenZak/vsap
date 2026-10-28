@@ -1,16 +1,16 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { AlertTriangle, CalendarClock, Check, Loader2, Newspaper, Plus, Rocket, RotateCcw, Trash2, Undo2 } from "lucide-react";
 import { postFields } from "@/lib/cms/collections";
 import { setIn } from "@/lib/cms/fields";
-import { isScheduled, postPath, postProblem, slugify } from "@/lib/cms/post-format";
+import { channelOf, isScheduled, postPath, postProblem, slugify } from "@/lib/cms/post-format";
 import { pick } from "@/lib/cms/links";
 import type { L, Post, Settings } from "@/lib/cms/types";
 import type { Locale } from "@/lib/i18n";
 import { plainText } from "@/lib/markdown";
 import { api, formatTime, type PostRecord, type PostSummary } from "./api";
-import { FieldForm } from "./fields";
+import { FieldData, FieldForm } from "./fields";
 import { Panel } from "./PageEditor";
 import { Preview, type PreviewHandle } from "./Preview";
 import { SeoPreview } from "./SeoPreview";
@@ -29,6 +29,9 @@ function StatusChip({ p }: { p: Pick<PostSummary, "status" | "scheduled"> }) {
 
 export function PostsView({ settings, canWrite, canPublish, locale, onLocale }: { settings: Settings; canWrite: boolean; canPublish: boolean; locale: Locale; onLocale: (l: Locale) => void }) {
   const [posts, setPosts] = useState<PostSummary[] | null>(null);
+  const { categories } = useContext(FieldData);
+  // "" = every category.
+  const [filter, setFilter] = useState("");
   const [error, setError] = useState("");
   const [selected, setSelected] = useState<string | null>(null);
   const [record, setRecord] = useState<PostRecord | null>(null);
@@ -191,6 +194,16 @@ export function PostsView({ settings, canWrite, canPublish, locale, onLocale }: 
         <div className="border-b border-mist-200 px-4 py-4">
           <h2 className="text-base font-medium text-ink-900">Tin tức</h2>
           <p className="mt-0.5 text-xs leading-snug text-ink-600">Mỗi bài có bản nháp riêng; chỉ hiện trên website sau khi được xuất bản.</p>
+          {categories.length > 1 && (
+            <select value={filter} onChange={(e) => setFilter(e.target.value)} aria-label="Lọc theo chuyên mục" className="mt-3 w-full rounded-lg border border-mist-200 bg-white px-2.5 py-1.5 text-sm text-ink-900">
+              <option value="">Tất cả chuyên mục ({posts?.length ?? 0})</option>
+              {categories.map((c) => (
+                <option key={c.slug} value={c.slug}>
+                  {c.name || c.slug} ({posts?.filter((p) => channelOf(p, categories) === c.slug).length ?? 0})
+                </option>
+              ))}
+            </select>
+          )}
         </div>
         <ol className="min-h-0 flex-1 space-y-1 overflow-y-auto p-3">
           {error && <li className="px-2 text-sm text-chili-600">{error}</li>}
@@ -201,7 +214,7 @@ export function PostsView({ settings, canWrite, canPublish, locale, onLocale }: 
               Chưa có bài viết nào.
             </li>
           )}
-          {posts?.map((p) => (
+          {posts?.filter((p) => !filter || channelOf(p, categories) === filter).map((p) => (
             <li key={p.id}>
               <button
                 type="button"
@@ -213,7 +226,9 @@ export function PostsView({ settings, canWrite, canPublish, locale, onLocale }: 
                   <span className="line-clamp-2 text-sm leading-snug text-ink-900">{p.title.vi || p.title.en || "(chưa có tiêu đề)"}</span>
                   <span className="mt-1 flex items-center gap-1.5">
                     <StatusChip p={p} />
-                    {p.channel === "health" && <span className="rounded-full bg-forest-900/10 px-2 py-0.5 text-[11px] text-forest-900">Sức khỏe</span>}
+                    <span className="truncate rounded-full bg-forest-900/10 px-2 py-0.5 text-[11px] text-forest-900">
+                      {categories.find((c) => c.slug === channelOf(p, categories))?.name ?? p.channel}
+                    </span>
                     <span className="text-[11px] text-ink-400">{p.date}</span>
                   </span>
                 </span>

@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { postPath } from "@/lib/cms/post-format";
+import { postPath, withCategories } from "@/lib/cms/post-format";
 import { allLivePosts } from "@/lib/cms/posts";
 import { getContent, getPublishedAt } from "@/lib/cms/store";
 import { locales } from "@/lib/i18n";
@@ -8,7 +8,8 @@ import { visiblePacks } from "@/lib/shop";
 export const dynamic = "force-dynamic";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [{ settings, pages, products, retailPacks, policies }, publishedAt, posts] = await Promise.all([getContent(), getPublishedAt(), allLivePosts()]);
+  const [{ settings, pages, products, retailPacks, policies, categories }, publishedAt, livePosts] = await Promise.all([getContent(), getPublishedAt(), allLivePosts()]);
+  const posts = withCategories(livePosts, categories);
   const lastModified = publishedAt ? new Date(publishedAt) : undefined;
   const entries = [
     // Pages hidden from search (noindex) stay out of the sitemap.
@@ -18,6 +19,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...products.map((p) => ({ path: `/products/${p.slug}`, priority: 0.9 })),
     ...visiblePacks(retailPacks).map((p) => ({ path: `/products/${p.product}/${p.id}`, priority: 0.7 })),
     ...policies.map((p) => ({ path: `/policies/${p.slug}`, priority: 0.3 })),
+    // Categories without a page of their own (news/health have one) are listed at /{slug}.
+    ...categories.filter((c) => !Object.values(pages).some((p) => p.path === `/${c.slug}`)).map((c) => ({ path: `/${c.slug}`, priority: 0.6 })),
   ];
   const pageUrls = entries.flatMap(({ path, priority }) =>
     locales.map((locale) => ({

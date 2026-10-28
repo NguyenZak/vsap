@@ -1,11 +1,12 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { createContext, useContext, useRef, useState } from "react";
 import { locales, type Locale } from "@/lib/locales";
 import { Bold, ChevronDown, ChevronUp, Copy, GripVertical, Heading2, Heading3, ImageIcon, Italic, Link2, List, ListOrdered, Minus, Plus, Quote, Trash2 } from "lucide-react";
 import { getIn, type FieldDef } from "@/lib/cms/fields";
 import { iconNames } from "@/lib/cms/icons";
 import { CmsIcon } from "@/components/cms/Icon";
+import { api } from "./api";
 import { MediaPicker } from "./MediaPicker";
 
 type Path = (string | number)[];
@@ -14,6 +15,70 @@ type L = Record<Locale, string>;
 
 const inputCls =
   "w-full rounded-lg border border-mist-200 bg-white px-3 py-2 text-sm text-ink-900 outline-none transition placeholder:text-ink-400 focus:border-forest-600 focus:ring-2 focus:ring-sun-400/50";
+
+/** Site data some fields offer as choices (e.g. news categories); provided by Studio. */
+export const FieldData = createContext<{ categories: { slug: string; name: string }[]; fonts: { value: string; label: string }[] }>({ categories: [], fonts: [] });
+
+/** Upload one font file to the media library and keep its /media/… path. */
+function FontFileField({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+  const name = value.split("/").pop() ?? "";
+  return (
+    <div>
+      <div className="flex items-center gap-2">
+        <span className={`min-w-0 flex-1 truncate rounded-lg border border-mist-200 px-3 py-2 font-mono text-xs ${value ? "text-ink-900" : "text-ink-400"}`}>{value ? name : "Chưa có file"}</span>
+        <label className="shrink-0 cursor-pointer rounded-lg bg-forest-900 px-3 py-2 text-xs font-medium text-white hover:bg-forest-800">
+          {busy ? "Đang tải…" : value ? "Đổi file" : "Tải file font"}
+          <input
+            type="file"
+            accept=".woff2,.woff,.ttf,.otf"
+            className="sr-only"
+            disabled={busy}
+            onChange={async (e) => {
+              const file = e.target.files?.[0];
+              e.target.value = "";
+              if (!file) return;
+              setBusy(true);
+              setError("");
+              try {
+                const r = await api.upload([file]);
+                if (r.items[0]) onChange(r.items[0].url);
+              } catch (err) {
+                setError((err as Error).message);
+              } finally {
+                setBusy(false);
+              }
+            }}
+          />
+        </label>
+      </div>
+      {error && <p className="mt-1 text-xs text-chili-600">{error}</p>}
+    </div>
+  );
+}
+
+function ColorField({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  const valid = /^#[0-9a-f]{6}$/i.test(value);
+  return (
+    <div className="flex items-center gap-2">
+      <label
+        className="relative size-9 shrink-0 cursor-pointer overflow-hidden rounded-lg border border-mist-200"
+        style={valid ? { background: value } : { backgroundImage: "repeating-conic-gradient(#e8dec5 0 25%, #fff 0 50%)", backgroundSize: "10px 10px" }}
+        title="Chọn màu"
+      >
+        <input type="color" value={valid ? value : "#ffffff"} onChange={(e) => onChange(e.target.value)} className="absolute inset-0 size-full cursor-pointer opacity-0" />
+      </label>
+      <input value={value} onChange={(e) => onChange(e.target.value.trim())} placeholder="Mặc định" className={`${inputCls.replace("w-full ", "")} w-32 font-mono text-xs`} />
+      {value && (
+        <button type="button" onClick={() => onChange("")} className="rounded-lg px-2 py-1.5 text-xs text-ink-600 hover:bg-mist-100">
+          Mặc định
+        </button>
+      )}
+      {value && !valid && <span className="text-xs text-chili-600">Dạng #1a2b3c</span>}
+    </div>
+  );
+}
 
 /** Site paths offered as suggestions in link fields. */
 export const LINK_SUGGESTIONS = ["/", "/about", "/products", "/products/cashew", "/products/macadamia", "/quality", "/news", "/health", "/contact", "#inquiry"];
@@ -306,7 +371,60 @@ function MarkdownField({ value, onChange }: { value: L; onChange: (v: L) => void
 
 function Field({ field, value, path, onChange }: { field: FieldDef; value: unknown; path: Path; onChange: OnChange }) {
   const set = (v: unknown) => onChange(path, v);
+  const { categories, fonts } = useContext(FieldData);
   switch (field.type) {
+    case "font": {
+      const current = String(value ?? "");
+      return (
+        <label className="block">
+          <Label field={field} />
+          <select value={current} onChange={(e) => set(e.target.value)} className={inputCls}>
+            <option value="">Mặc định ({field.fallback})</option>
+            {fonts.map((o) => (
+              <option key={o.value} value={o.value}>
+                {o.label}
+              </option>
+            ))}
+            {current && !fonts.some((o) => o.value === current) && <option value={current}>{current.replace(/^custom:/, "")} (font đã xoá)</option>}
+          </select>
+          <Help text={field.help} />
+        </label>
+      );
+    }
+    case "fontFile":
+      return (
+        <div>
+          <Label field={field} />
+          <FontFileField value={String(value ?? "")} onChange={set} />
+          <Help text={field.help} />
+        </div>
+      );
+    case "color":
+      return (
+        <div>
+          <Label field={field} />
+          <ColorField value={String(value ?? "")} onChange={set} />
+          <Help text={field.help} />
+        </div>
+      );
+    case "category": {
+      const options = [...categories.map((c) => ({ value: c.slug, label: c.name || c.slug })), ...(field.all ? [{ value: "all", label: "Tất cả chuyên mục" }] : [])];
+      const current = String(value ?? "");
+      return (
+        <label className="block">
+          <Label field={field} />
+          <select value={current || options[0]?.value} onChange={(e) => set(e.target.value)} className={inputCls}>
+            {options.map((o) => (
+              <option key={o.value} value={o.value}>
+                {o.label}
+              </option>
+            ))}
+            {current && !options.some((o) => o.value === current) && <option value={current}>{current} (chuyên mục đã xoá)</option>}
+          </select>
+          <Help text={field.help} />
+        </label>
+      );
+    }
     case "text":
     case "textarea":
       return (
@@ -330,11 +448,11 @@ function Field({ field, value, path, onChange }: { field: FieldDef; value: unkno
           <Label field={field} />
           <input
             type="number"
-            value={typeof value === "number" ? value : ""}
+            value={typeof value === "number" && !(field.zeroIsDefault && value === 0) ? value : ""}
             min={field.min}
             max={field.max}
             step={field.step}
-            onChange={(e) => set(e.target.value === "" ? undefined : Number(e.target.value))}
+            onChange={(e) => set(e.target.value === "" ? (field.zeroIsDefault ? 0 : undefined) : Number(e.target.value))}
             className={`${inputCls} w-32`}
           />
           <Help text={field.help} />

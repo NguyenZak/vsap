@@ -28,7 +28,12 @@ export function MediaView({ canDelete }: { canDelete: boolean }) {
           <ul className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
             {media.items.map((m) => (
               <li key={m.key} className="group overflow-hidden rounded-xl border border-mist-200">
-                <img src={m.url} alt="" loading="lazy" className="aspect-[4/3] w-full bg-mist-50 object-cover" />
+                {m.type.startsWith("font/") ? (
+                  // Font files (Studio › Giao diện › Font tự thêm): no preview image.
+                  <div className="flex aspect-[4/3] w-full items-center justify-center bg-mist-50 text-4xl font-semibold text-ink-400">Aa</div>
+                ) : (
+                  <img src={m.url} alt="" loading="lazy" className="aspect-[4/3] w-full bg-mist-50 object-cover" />
+                )}
                 <div className="p-2.5">
                   <p className="truncate text-xs font-medium text-ink-900" title={m.name}>
                     {m.name}

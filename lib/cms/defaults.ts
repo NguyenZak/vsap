@@ -14,7 +14,8 @@ import { products } from "../products";
 import { packers, priceListIds, retailFacts, retailPacks, tempPrices } from "../retail";
 import { site } from "../site";
 import { emptyL, locales, type Locale } from "../locales";
-import type { CmsImage, L, Page, PageId, Section, SiteContent, UiStrings } from "./types";
+import { emptyMenuStyle, emptyPageStyle } from "./theme";
+import type { CmsImage, L, MenuItem, Page, PageId, PostCategory, Section, SiteContent, UiStrings } from "./types";
 
 type Dict = typeof vi;
 
@@ -95,7 +96,7 @@ const retailSection = (id: string) =>
 const pageHero = (id: string, get: (d: Dict) => { eyebrow: string; title: string; accent: string; lead: string }, image: ImageKey) =>
   section(id, "pageHero", { ...heading(get), image: pic(image) });
 
-const pages: Record<PageId, Page> = {
+const pages: Record<PageId, Omit<Page, "style">> = {
   home: {
     label: "Trang chủ",
     path: "",
@@ -202,14 +203,15 @@ const pages: Record<PageId, Page> = {
     seo: { title: tr((d) => d.productsPage.metaTitle), description: tr((d) => d.productsPage.metaDescription), image: "", noindex: false },
     sections: [
       pageHero("products-hero", (d) => d.productsPage, "cashewTreeSky"),
-      section("products-cards", "productCards", {
+      section("products-groups", "productGroups", {
         eyebrow: blank(),
         title: blank(),
         accent: blank(),
         lead: blank(),
-        ctaLabel: tr((d) => d.common.viewProduct),
+        groupLabel: tr((d) => d.common.viewProduct),
+        showEmpty: true,
+        tone: "white",
       }),
-      retailSection("products-retail"),
       ctaSection("products-cta"),
     ],
   },
@@ -294,6 +296,35 @@ const pages: Record<PageId, Page> = {
   },
 };
 
+/** The header menu as it was before it became editable; Products lists the product groups. */
+function defaultMenu(): MenuItem[] {
+  const item = (href: string, get: (d: Dict) => string, auto: MenuItem["auto"] = "", wide = false): MenuItem => ({ label: tr(get), href, children: [], auto, wide });
+  return [
+    item("/", (d) => d.nav.home),
+    item("/about", (d) => d.nav.about),
+    item("/products", (d) => d.nav.products, "productGroups"),
+    item("/quality", (d) => d.nav.quality),
+    item("/health", (d) => d.nav.health, "", true),
+    item("/news", (d) => d.nav.news),
+    item("/contact", (d) => d.nav.contact),
+  ];
+}
+
+/** The two channels posts had before categories became editable; their slugs keep the old URLs. */
+function defaultCategories(): PostCategory[] {
+  const category = (slug: string, get: (d: Dict) => { title: string; lead?: string }, name: (d: Dict) => string, image: ImageKey): PostCategory => ({
+    slug,
+    name: tr(name),
+    intro: tr((d) => get(d).lead ?? ""),
+    image: pic(image),
+    seo: { title: blank(), description: blank() },
+  });
+  return [
+    category("news", (d) => d.news, (d) => d.nav.news, "cashewHarvest"),
+    category("health", (d) => d.health, (d) => d.nav.health, "macadamiaSpoon"),
+  ];
+}
+
 /** Search titles for the seed products (the page heading stays the short product name). */
 const productSeoTitles: Record<string, L> = {
   cashew: { vi: "Nhân hạt điều Việt Nam xuất khẩu W180–W450", en: "Vietnamese cashew kernels W180–W450 for export", zh: "越南出口腰果仁 W180–W450", ja: "ベトナム産輸出用カシューナッツ W180–W450", ko: "베트남 수출용 캐슈넛 W180–W450" },
@@ -308,7 +339,6 @@ function ui(d: Dict): UiStrings {
     common: {
       viewProduct: d.common.viewProduct,
       requestQuote: d.common.requestQuote,
-      allProducts: d.common.allProducts,
       prev: home.hero.prev,
       next: home.hero.next,
       pause: home.hero.pause,
@@ -331,7 +361,7 @@ function ui(d: Dict): UiStrings {
     },
     chat: { ...d.chat },
     contactInfo: { ...d.contact.info },
-    form: { ...d.contact.form, productOptions: { ...d.contact.form.productOptions } },
+    form: { ...d.contact.form, productOptions: { other: d.contact.form.productOptions.other } },
     productDetail: {
       ...d.productDetail,
       packsEyebrow: home.retail.eyebrow,
@@ -347,10 +377,8 @@ function ui(d: Dict): UiStrings {
       empty: d.news.empty,
       ctaTitle: d.news.ctaTitle,
       ctaBody: d.news.ctaBody,
-      share: d.news.share,
     },
     retail: {
-      sizes: home.retail.sizes,
       ingredients: home.retail.ingredients,
       nutrition: home.retail.nutrition,
       energy: home.retail.energy,
@@ -361,9 +389,8 @@ function ui(d: Dict): UiStrings {
       serving: home.retail.serving,
       storage: home.retail.storage,
       packedBy: home.retail.packedBy,
-      view: home.retail.view,
     },
-    shop: { ...d.shop },
+    shop: (({ from: _from, size: _size, required: _required, ...shop }) => shop)(d.shop),
   };
 }
 
@@ -399,7 +426,10 @@ export function defaultContent(): SiteContent {
       productFrame: "/images/frames/khung-chinh-hang.svg",
     },
     ui: Object.fromEntries(locales.map((l) => [l, ui(dicts[l])])) as Record<Locale, UiStrings>,
-    pages,
+    pages: Object.fromEntries(Object.entries(pages).map(([id, p]) => [id, { ...p, style: emptyPageStyle() }])) as Record<PageId, Page>,
+    theme: { page: emptyPageStyle(), menu: emptyMenuStyle(), fonts: [] },
+    menu: defaultMenu(),
+    categories: defaultCategories(),
     products: products.map((p) => ({
       slug: p.slug,
       name: { ...p.name },

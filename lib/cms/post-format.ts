@@ -38,14 +38,34 @@ export function formatDate(date: string, locale: Locale) {
   return new Intl.DateTimeFormat(locale === "en" ? "en-GB" : localeInfo[locale].intl, { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" }).format(d);
 }
 
-export const postChannels: { value: PostChannel; label: string; path: string }[] = [
-  { value: "news", label: "Tin tức", path: "/news" },
-  { value: "health", label: "Sức khỏe và đời sống", path: "/health" },
-];
-
-/** Older posts have no channel: they are news. */
-export const channelOf = (post: Partial<Pick<Post, "channel">>): PostChannel => (post.channel === "health" ? "health" : "news");
+/**
+ * Category slug a post belongs to. Posts saved before categories existed are news;
+ * given the site's categories, a post whose category was deleted falls back to the first one.
+ */
+export function channelOf(post: Partial<Pick<Post, "channel">>, categories?: { slug: string }[]): PostChannel {
+  const own = post.channel || "news";
+  if (!categories?.length || categories.some((c) => c.slug === own)) return own;
+  return categories[0].slug;
+}
 
 /** Site path of a post without the language prefix, e.g. /health/an-hat-moi-ngay. */
-export const postPath = (post: Pick<Post, "slug"> & Partial<Pick<Post, "channel">>) =>
-  `${postChannels.find((c) => c.value === channelOf(post))!.path}/${post.slug}`;
+export const postPath = (post: Pick<Post, "slug"> & Partial<Pick<Post, "channel">>, categories?: { slug: string }[]) =>
+  `/${channelOf(post, categories)}/${post.slug}`;
+
+/** Posts with their category resolved against the site's categories (see channelOf). */
+export const withCategories = <P extends Partial<Pick<Post, "channel">>>(posts: P[], categories: { slug: string }[]) =>
+  posts.map((p) => ({ ...p, channel: channelOf(p, categories) }));
+
+/**
+ * Top-level paths a category slug may not take: a category's list lives at /{slug},
+ * so these would be shadowed by the site's own pages.
+ */
+export const RESERVED_SLUGS = ["about", "products", "quality", "contact", "cart", "policies", "admin", "api", "media", "_next"];
+
+/** Why a category slug can't be used, in Vietnamese for the editor (null when fine). */
+export function categoryProblem(slug: string, others: string[]): string | null {
+  if (!SLUG_RE.test(slug)) return "Slug chỉ gồm chữ thường không dấu, số và gạch ngang.";
+  if (RESERVED_SLUGS.includes(slug)) return `“${slug}” trùng đường dẫn có sẵn của website.`;
+  if (others.includes(slug)) return "Đã có chuyên mục khác dùng slug này.";
+  return null;
+}

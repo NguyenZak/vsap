@@ -6,6 +6,7 @@ import { InquiryForm } from "@/components/InquiryForm";
 import { ProductGrid } from "@/components/shop/ProductGrid";
 import { CmsImg, SectionHeading } from "@/components/sections";
 import { Button, Title } from "@/components/ui";
+import { inquiryProducts } from "@/lib/cms/inquiry-format";
 import { pick } from "@/lib/cms/links";
 import { getContent } from "@/lib/cms/store";
 import { metadataLocale, resolveLocale } from "@/lib/i18n";
@@ -214,7 +215,7 @@ export default async function ProductPage({ params }: Props) {
             <p className="mt-5 text-sm leading-relaxed text-ink-600">{t.inquireBody}</p>
           </div>
           <div data-reveal className="rounded-3xl bg-white p-6 sm:p-10 lg:col-span-8">
-            <InquiryForm t={ui.form} defaultProduct={product.slug} />
+            <InquiryForm t={ui.form} products={inquiryProducts(content.products, locale)} defaultProduct={product.slug} />
           </div>
         </div>
       </section>

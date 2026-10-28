@@ -9,6 +9,9 @@ import {
   CloudOff,
   ExternalLink,
   FileText,
+  FolderTree,
+  Menu as MenuIcon,
+  Palette,
   Handshake,
   Scale,
   History,
@@ -31,14 +34,31 @@ import {
   X,
 } from "lucide-react";
 import type { Permission } from "@/lib/cms/roles";
-import { newPolicy, newProduct, newRetailPack, partnerFields, policyFields, productFields, retailFields, settingsFields } from "@/lib/cms/collections";
+import {
+  categoryFields,
+  customFontFields,
+  menuFields,
+  menuStyleFields,
+  newCategory,
+  newPolicy,
+  newProduct,
+  newRetailPack,
+  pageStyleFields,
+  partnerFields,
+  policyFields,
+  productFields,
+  retailFields,
+  settingsFields,
+} from "@/lib/cms/collections";
+import { categoryProblem } from "@/lib/cms/post-format";
+import { customFontName, fontFaceCss, fontChoices, stylesheetUrl } from "@/lib/cms/theme";
 import { setIn } from "@/lib/cms/fields";
 import type { Locale } from "@/lib/i18n";
 import { pick } from "@/lib/cms/links";
-import type { L, PageId, Partner, Policy, Product, RetailPack, Section, SiteContent } from "@/lib/cms/types";
+import type { L, PageId, Partner, Policy, PostCategory, Product, RetailPack, Section, SiteContent } from "@/lib/cms/types";
 import { api, formatTime, type Me } from "./api";
 import { CollectionEditor } from "./CollectionEditor";
-import { FieldForm, LinkSuggestions } from "./fields";
+import { FieldData, FieldForm, LinkSuggestions } from "./fields";
 import { Panel, SectionInspector, SectionList } from "./PageEditor";
 import { Preview, type PreviewHandle } from "./Preview";
 import { SeoPreview } from "./SeoPreview";
@@ -54,7 +74,11 @@ import { TelegramSettings } from "./TelegramSettings";
 type Path = (string | number)[];
 type View =
   | { kind: "page"; id: PageId }
-  | { kind: "products" | "retail" | "partners" | "policies" | "settings" | "ui" | "media" | "history" | "news" | "inbox" | "orders" | "users" | "audit" | "system" };
+  | {
+      kind:
+        | "products" | "retail" | "partners" | "policies" | "settings" | "ui" | "media" | "history" | "news" | "categories"
+        | "menu" | "theme" | "inbox" | "orders" | "users" | "audit" | "system";
+    };
 
 type SaveState = "idle" | "pending" | "saving" | "saved" | "error";
 
@@ -63,11 +87,14 @@ const PAGE_IDS: PageId[] = ["home", "about", "products", "quality", "news", "hea
 const nav: { kind: View["kind"]; label: string; icon: typeof FileText; perm: Permission }[] = [
   { kind: "page", label: "Trang", icon: LayoutTemplate, perm: "content.read" },
   { kind: "news", label: "Tin tức", icon: Newspaper, perm: "content.read" },
+  { kind: "categories", label: "Chuyên mục", icon: FolderTree, perm: "content.read" },
   { kind: "products", label: "Sản phẩm", icon: Boxes, perm: "content.read" },
   { kind: "retail", label: "Bán lẻ", icon: ShoppingBag, perm: "content.read" },
   { kind: "partners", label: "Đối tác", icon: Handshake, perm: "content.read" },
   { kind: "policies", label: "Chính sách", icon: Scale, perm: "content.read" },
   { kind: "settings", label: "Công ty", icon: Building2, perm: "content.read" },
+  { kind: "menu", label: "Menu", icon: MenuIcon, perm: "content.read" },
+  { kind: "theme", label: "Giao diện", icon: Palette, perm: "content.read" },
   { kind: "ui", label: "Chữ giao diện", icon: Languages, perm: "content.read" },
   { kind: "media", label: "Thư viện ảnh", icon: ImageIcon, perm: "content.read" },
   { kind: "history", label: "Lịch sử", icon: History, perm: "content.read" },
@@ -357,14 +384,20 @@ export function Studio() {
     if (view.kind === "retail" && content.retailPacks[itemIndex]) previewPath = `/products/${content.retailPacks[itemIndex].product}/${content.retailPacks[itemIndex].id}`;
     if (view.kind === "policies" && content.policies[itemIndex]) previewPath = `/policies/${content.policies[itemIndex].slug}`;
     if (view.kind === "settings") previewPath = "/contact";
+    if (view.kind === "categories" && content.categories[itemIndex]) previewPath = `/${content.categories[itemIndex].slug}`;
   }
 
   const showPreview = Boolean(content) && !NO_PREVIEW.includes(view.kind);
   const canWrite = can("content.write");
   const canPublish = can("content.publish");
   const tr = (v: { vi: string } | undefined) => v?.vi ?? "";
+  const fieldData = {
+    categories: (content?.categories ?? []).map((c) => ({ slug: c.slug, name: tr(c.name) })),
+    fonts: fontChoices(content?.theme.fonts ?? []),
+  };
 
   return (
+    <FieldData.Provider value={fieldData}>
     <div className="flex h-dvh flex-col bg-mist-50 text-ink-900">
       <div className="fixed inset-0 z-[120] flex items-center justify-center bg-white p-8 text-center lg:hidden">
         <div>
@@ -373,7 +406,7 @@ export function Studio() {
           <p className="mt-1 text-sm text-ink-600">Vui lòng mở trên máy tính hoặc máy tính bảng xoay ngang (từ 1024px).</p>
         </div>
       </div>
-      {content && <LinkSuggestions extra={content.products.map((p) => `/products/${p.slug}`)} />}
+      {content && <LinkSuggestions extra={[...content.products.map((p) => `/products/${p.slug}`), ...content.categories.map((c) => `/${c.slug}`)]} />}
 
       {/* Top bar */}
       <header className="flex h-14 shrink-0 items-center gap-3 border-b border-mist-200 bg-white px-4">
@@ -615,6 +648,51 @@ export function Studio() {
           />
         )}
 
+        {view.kind === "categories" && content && (
+          <CollectionEditor<PostCategory>
+            title="Chuyên mục tin"
+            description={
+              categoryIssues(content.categories) ||
+              "Mỗi chuyên mục có trang riêng ở /slug và hiện trong menu nếu mục menu chọn “Các chuyên mục tin”. Tin tức và Sức khỏe còn có trang dựng sẵn trong mục Trang. Bài của chuyên mục bị xoá sẽ chuyển về chuyên mục đầu tiên."
+            }
+            items={content.categories}
+            basePath={["categories"]}
+            fields={categoryFields}
+            selected={itemIndex}
+            onSelect={setItemIndex}
+            label={(c) => tr(c.name) || c.slug}
+            sublabel={(c) => `/${c.slug}`}
+            newItem={() => newCategory() as PostCategory}
+            onItems={(items) => onField(["categories"], items)}
+            onChange={onField}
+          />
+        )}
+        {view.kind === "menu" && content && (
+          <section className="flex w-[34rem] shrink-0 flex-col border-r border-mist-200 bg-white">
+            <Panel title="Menu" subtitle="Thanh menu đầu trang và menu trên điện thoại. Mục có cấp con hiện danh sách thả xuống khi rê chuột.">
+              <FieldForm fields={menuFields} value={content} onChange={onField} />
+            </Panel>
+          </section>
+        )}
+        {view.kind === "theme" && content && (
+          <section className="flex w-[34rem] shrink-0 flex-col border-r border-mist-200 bg-white">
+            <Panel title="Giao diện" subtitle="Màu, font và cỡ chữ chung cho toàn website. Từng trang (Cài đặt trang) và từng section (Màu & khung) có thể đặt riêng.">
+              <h3 className="text-sm font-medium text-ink-900">Toàn website</h3>
+              <div className="mt-4">
+                <FieldForm fields={pageStyleFields} value={content.theme.page} path={["theme", "page"]} onChange={onField} />
+              </div>
+              <h3 className="mt-8 border-t border-mist-200 pt-6 text-sm font-medium text-ink-900">Menu</h3>
+              <div className="mt-4">
+                <FieldForm fields={menuStyleFields} value={content.theme.menu} path={["theme", "menu"]} onChange={onField} />
+              </div>
+              <h3 className="mt-8 border-t border-mist-200 pt-6 text-sm font-medium text-ink-900">Font</h3>
+              <div className="mt-4">
+                <FieldForm fields={customFontFields} value={content.theme} path={["theme"]} onChange={onField} />
+              </div>
+              <FontSamples fonts={content.theme.fonts} />
+            </Panel>
+          </section>
+        )}
         {view.kind === "policies" && content && (
           <CollectionEditor<Policy>
             title="Chính sách"
@@ -654,10 +732,18 @@ export function Studio() {
             <Panel title="Thông tin công ty" subtitle="Dùng ở chân trang, trang Liên hệ, nút liên hệ nổi và dữ liệu cho Google.">
               <SeoPreview
                 siteName={content.settings.name}
-                title={content.settings.seo.title[locale] || content.settings.seo.title.vi}
-                description={content.settings.seo.description[locale] || content.settings.seo.description.vi}
+                // What Google shows for the home page: its own SEO fields win over these defaults.
+                title={
+                  content.pages.home.seo.title[locale] || content.settings.seo.title[locale] || content.pages.home.seo.title.vi || content.settings.seo.title.vi
+                }
+                description={
+                  content.pages.home.seo.description[locale] ||
+                  content.settings.seo.description[locale] ||
+                  content.pages.home.seo.description.vi ||
+                  content.settings.seo.description.vi
+                }
                 url={`${content.settings.url}/${locale}`}
-                image={content.settings.seo.image}
+                image={content.pages.home.seo.image || content.settings.seo.image}
               />
               <FieldForm fields={settingsFields} value={content.settings} path={["settings"]} onChange={onField} />
             </Panel>
@@ -760,7 +846,19 @@ export function Studio() {
         </div>
       )}
     </div>
+    </FieldData.Provider>
   );
+}
+
+/** Category slugs that would break links, as one line for the editor (empty when all are fine). */
+function categoryIssues(categories: PostCategory[]): string {
+  const issues = categories
+    .map((c, i) => {
+      const problem = categoryProblem(c.slug, categories.filter((_, j) => j !== i).map((o) => o.slug));
+      return problem ? `/${c.slug || "…"}: ${problem}` : "";
+    })
+    .filter(Boolean);
+  return issues.length ? `⚠️ Cần sửa: ${issues.join(" · ")}` : "";
 }
 
 function SaveBadge({ state, error, hasDraft, canPublish }: { state: SaveState; error: string; hasDraft: boolean; canPublish: boolean }) {
@@ -786,5 +884,23 @@ function SaveBadge({ state, error, hasDraft, canPublish }: { state: SaveState; e
     <span className="ml-2 inline-flex items-center gap-1.5 rounded-full bg-sun-400/30 px-2.5 py-1 text-xs text-forest-900">
       <Check className="size-3.5" /> Đang khớp với website
     </span>
+  );
+}
+
+/** A line of Vietnamese in each added font, so the editor sees it loads and has the accents. */
+function FontSamples({ fonts }: { fonts: SiteContent["theme"]["fonts"] }) {
+  const named = fonts.filter((f) => customFontName(f));
+  if (!named.length) return null;
+  return (
+    <div className="mt-4 space-y-2 rounded-lg bg-mist-50 p-3">
+      {named.map((f) => stylesheetUrl(f.link) && <link key={f.link} rel="stylesheet" href={stylesheetUrl(f.link)!} />)}
+      <style dangerouslySetInnerHTML={{ __html: fontFaceCss(named) }} />
+      {named.map((f) => (
+        <p key={customFontName(f)} className="text-lg text-ink-900" style={{ fontFamily: `"${customFontName(f)}", system-ui` }}>
+          <span className="mr-2 align-middle font-sans text-[11px] text-ink-400">{customFontName(f)}</span>
+          Hạt điều Việt Nam – Đặc sản Tây Nguyên ạ ầ ẫ ữ ự
+        </p>
+      ))}
+    </div>
   );
 }

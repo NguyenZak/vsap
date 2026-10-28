@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import {
+  Boxes,
   BookOpen,
   ChartNoAxesColumn,
   ChevronDown,
@@ -36,7 +37,8 @@ import {
   X,
   type LucideIcon,
 } from "lucide-react";
-import { pageSeoFields } from "@/lib/cms/collections";
+import { pageSeoFields, pageStyleFields } from "@/lib/cms/collections";
+import { sectionStyleField } from "@/lib/cms/fields";
 import { sectionDef, sectionDefs } from "@/lib/cms/registry";
 import type { Page, Section } from "@/lib/cms/types";
 import { FieldForm } from "./fields";
@@ -66,6 +68,7 @@ const defIcons: Record<string, LucideIcon> = {
   "layout-panel-left": LayoutPanelLeft,
   images: Images,
   newspaper: Newspaper,
+  boxes: Boxes,
 };
 
 function DefIcon({ name, className }: { name: string; className?: string }) {
@@ -131,7 +134,7 @@ export function SectionList({
         onClick={() => onSelect("seo")}
         className={`mx-3 mt-3 flex items-center gap-2 rounded-lg px-3 py-2 text-left text-sm transition ${selected === "seo" ? "bg-forest-900 text-white" : "bg-mist-50 text-ink-900 hover:bg-mist-100"}`}
       >
-        <Settings2 className="size-4" /> Cài đặt trang (SEO)
+        <Settings2 className="size-4" /> Cài đặt trang (SEO, màu, chữ)
       </button>
       <p className="mt-4 px-4 text-[11px] font-medium tracking-wider text-ink-400 uppercase">Các section · kéo để sắp xếp</p>
       <ol className="mt-2 min-h-0 flex-1 space-y-1 overflow-y-auto px-3 pb-3">
@@ -267,6 +270,9 @@ export function SectionInspector({
       <Panel title="Cài đặt trang" subtitle={page.label}>
         {seoPreview}
         <FieldForm fields={pageSeoFields} value={page.seo} path={[...basePath, "seo"]} onChange={onChange} />
+        <h3 className="mt-8 border-t border-mist-200 pt-6 text-sm font-medium text-ink-900">Màu và chữ của trang</h3>
+        <p className="mt-1 mb-4 text-xs leading-snug text-ink-400">Để trống = theo Studio › Giao diện. Từng section còn có thể đặt màu riêng.</p>
+        <FieldForm fields={pageStyleFields} value={page.style} path={[...basePath, "style"]} onChange={onChange} />
       </Panel>
     );
   }
@@ -312,7 +318,7 @@ export function SectionInspector({
     <Panel title={def?.label ?? section.type} subtitle={def?.description} actions={actions}>
       {section.hidden && <p className="mb-4 rounded-lg bg-sun-500/10 px-3 py-2 text-xs text-ink-900">Section này đang bị ẩn, khách truy cập sẽ không thấy.</p>}
       {def ? (
-        <FieldForm fields={def.fields} value={section.props} path={[...basePath, "sections", index, "props"]} onChange={onChange} />
+        <FieldForm fields={[...def.fields, sectionStyleField]} value={section.props} path={[...basePath, "sections", index, "props"]} onChange={onChange} />
       ) : (
         <p className="text-sm text-chili-600">Loại section “{section.type}” không còn được hỗ trợ.</p>
       )}

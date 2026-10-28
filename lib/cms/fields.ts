@@ -11,13 +11,22 @@ export type FieldDef =
   | (Base & { type: "textarea"; rows?: number })
   /** Language-neutral single line (codes, numbers shown as text, names). */
   | (Base & { type: "string"; placeholder?: string })
-  | (Base & { type: "number"; min?: number; max?: number; step?: number })
+  /** `zeroIsDefault`: stored 0 means "design default" and shows as an empty box. */
+  | (Base & { type: "number"; min?: number; max?: number; step?: number; zeroIsDefault?: boolean })
   | (Base & { type: "boolean" })
   /** Calendar date stored as YYYY-MM-DD. */
   | (Base & { type: "date" })
   /** Long bilingual text with a Markdown toolbar (news post bodies). */
   | (Base & { type: "markdown" })
   | (Base & { type: "select"; options: { value: string; label: string }[] })
+  /** #rrggbb, or "" for the design's default colour. */
+  | (Base & { type: "color" })
+  /** Font key: a built-in font or one added in Studio › Giao diện; "" = `fallback` (the design's font). */
+  | (Base & { type: "font"; fallback: string })
+  /** A font file uploaded to the media library (.woff2 / .woff / .ttf / .otf). */
+  | (Base & { type: "fontFile" })
+  /** Slug of a news category (SiteContent.categories); `all` adds an "every category" choice. */
+  | (Base & { type: "category"; all?: boolean })
   /** { src, alt } picked from the media library. */
   | (Base & { type: "image" })
   /** Bare image path (logos, packshots) picked from the media library. */
@@ -53,6 +62,32 @@ export const toneField: FieldDef = {
     { value: "white", label: "Trắng" },
     { value: "muted", label: "Xám nhạt" },
     { value: "dark", label: "Xanh đậm" },
+  ],
+};
+
+/** Colours and frame for any section, stored in props.style (lib/cms/theme.ts sectionStyleVars). */
+export const sectionStyleField: FieldDef = {
+  key: "style",
+  label: "Màu & khung (tuỳ chọn)",
+  type: "group",
+  help: "Để trống = theo nền đã chọn ở trên và màu chung của trang. Màu nền riêng sẽ thay cho nền có sẵn.",
+  fields: [
+    { key: "background", label: "Màu nền", type: "color" },
+    { key: "heading", label: "Màu tiêu đề", type: "color" },
+    { key: "text", label: "Màu chữ", type: "color" },
+    {
+      key: "frame",
+      label: "Khung viền",
+      type: "select",
+      options: [
+        { value: "none", label: "Không viền" },
+        { value: "lines", label: "Đường kẻ trên và dưới" },
+        { value: "box", label: "Khung bao quanh (thụt vào, bo góc)" },
+      ],
+    },
+    { key: "border", label: "Màu viền", type: "color" },
+    { key: "borderWidth", label: "Độ dày viền (px)", type: "number", min: 1, max: 12 },
+    { key: "radius", label: "Bo góc khung (px)", type: "number", min: 0, max: 64 },
   ],
 };
 

@@ -5,6 +5,7 @@ import { getPosts } from "@/lib/cms/posts";
 import { getContent, isPreview } from "@/lib/cms/store";
 import type { L, PageId } from "@/lib/cms/types";
 import { metadataLocale, resolveLocale } from "@/lib/i18n";
+import { mergePageStyle, pageStyleVars } from "@/lib/cms/theme";
 import { breadcrumbJsonLd, faqJsonLd, jsonLdHtml, pageImage, seoMetadata } from "@/lib/seo";
 
 type Params = Promise<{ locale: string }>;
@@ -25,13 +26,15 @@ export async function CmsPage({ id, params }: { id: PageId; params: Params }) {
     .filter((f) => f.q && f.a);
   if (faqItems.length) jsonLd.push(faqJsonLd(faqItems));
 
+  const pageStyle = mergePageStyle(content.theme.page, page.style);
+
   return (
-    <>
-      <RenderSections sections={page.sections} ctx={{ locale, content, ui, posts, preview }} preview={preview} />
+    <div style={pageStyleVars(pageStyle)}>
+      <RenderSections sections={page.sections} ctx={{ locale, content, ui, posts, preview, pageStyle }} preview={preview} />
       {jsonLd.map((d, i) => (
         <script key={i} type="application/ld+json" dangerouslySetInnerHTML={jsonLdHtml(d)} />
       ))}
-    </>
+    </div>
   );
 }
 
@@ -40,7 +43,7 @@ export async function cmsMetadata(id: PageId, params: Params): Promise<Metadata>
   const locale = metadataLocale((await params).locale);
   const content = await getContent();
   const page = content.pages[id];
-  const hero = pageImage(page);
+  const hero = pageImage(page, locale);
   return seoMetadata({
     content,
     locale,

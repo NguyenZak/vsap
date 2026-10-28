@@ -2,23 +2,36 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
-import { ArrowUpRight, House, Mail, Phone } from "lucide-react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { ArrowUpRight, ChevronDown, House, Mail, Phone } from "lucide-react";
+import { motion } from "motion/react";
 import { gsap, prefersReducedMotion, useGSAP } from "@/lib/gsap";
+import type { NavItem } from "@/lib/cms/menu";
 import type { UiStrings } from "@/lib/cms/types";
 import type { Locale } from "@/lib/i18n";
 import { LocaleSwitcher } from "./LocaleSwitcher";
 import { CartButton } from "./shop/CartButton";
 
-type Props = { locale: Locale; nav: UiStrings["nav"]; contact: { phone: string; phoneE164: string; email: string }; logoAlt: string };
+type Props = {
+  locale: Locale;
+  nav: UiStrings["nav"];
+  /** Studio › Menu, resolved for this language (lib/cms/menu.ts). */
+  items: NavItem[];
+  /** Theme › menu type and colours as CSS variables (lib/cms/theme.ts). */
+  menuStyle?: CSSProperties;
+  contact: { phone: string; phoneE164: string; email: string };
+  logoAlt: string;
+};
 
-export function Header({ locale, nav, contact: site, logoAlt }: Props) {
+export function Header({ locale, nav, items: links, menuStyle, contact: site, logoAlt }: Props) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   // True from the moment the menu opens until its close animation has finished,
   // so the header keeps its solid background while the panel folds away.
   const [menuShown, setMenuShown] = useState(false);
+  // Desktop nav link under the pointer, for the sliding hover pill.
+  const [hovered, setHovered] = useState<string | null>(null);
   const root = useRef<HTMLElement>(null);
   const button = useRef<HTMLButtonElement>(null);
   const menu = useRef<gsap.core.Timeline | null>(null);
@@ -91,25 +104,15 @@ export function Header({ locale, nav, contact: site, logoAlt }: Props) {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const links = [
-    { href: `/${locale}`, label: nav.home },
-    { href: `/${locale}/about`, label: nav.about },
-    { href: `/${locale}/products`, label: nav.products },
-    { href: `/${locale}/quality`, label: nav.quality },
-    // Long label: in the desktop bar only from xl up (it stays in the mobile menu and the footer).
-    { href: `/${locale}/health`, label: nav.health, wide: true },
-    { href: `/${locale}/news`, label: nav.news },
-    { href: `/${locale}/contact`, label: nav.contact },
-  ];
-
   const isActive = (href: string) =>
-    href === `/${locale}` ? pathname === href : pathname.startsWith(href);
+    href === `/${locale}` ? pathname === href : pathname === href || pathname.startsWith(`${href}/`);
 
   const solid = scrolled || open || menuShown;
 
   return (
     <header
       ref={root}
+      style={menuStyle}
       data-solid={solid || undefined}
       className={`group/header fixed inset-x-0 top-0 z-40 transition-colors duration-300 ${
         solid ? "bg-white/90 shadow-sm shadow-black/5 backdrop-blur-md" : "bg-transparent"
@@ -128,19 +131,63 @@ export function Header({ locale, nav, contact: site, logoAlt }: Props) {
 
         <nav
           aria-label="Main"
+          onPointerLeave={() => setHovered(null)}
           className="hidden items-center gap-1 rounded-full border border-white/20 bg-white/10 p-1 backdrop-blur-md group-data-solid/header:border-mist-200 group-data-solid/header:bg-mist-50 lg:flex"
         >
-          {links.map((l, i) => (
-            <Link
-              key={l.href}
-              href={l.href}
-              aria-current={isActive(l.href) ? "page" : undefined}
-              className={`${"wide" in l ? "hidden xl:inline-flex" : "inline-flex"} items-center gap-1.5 rounded-full bg-white/10 px-3.5 py-1.5 text-sm whitespace-nowrap text-white/90 transition hover:bg-white/20 group-data-solid/header:bg-transparent group-data-solid/header:text-ink-600 group-data-solid/header:hover:bg-white aria-[current=page]:bg-white aria-[current=page]:text-ink-900 group-data-solid/header:aria-[current=page]:bg-white group-data-solid/header:aria-[current=page]:text-ink-900 group-data-solid/header:aria-[current=page]:shadow-sm`}
-            >
-              {i === 0 && <House className="size-3.5 text-forest-600" />}
-              {l.label}
-            </Link>
-          ))}
+          {links.map((l, i) => {
+            const active = isActive(l.href) || l.children.some((c) => isActive(c.href));
+            const key = `${i}-${l.href}`;
+            return (
+              // Long labels can be kept to wide screens (they stay in the mobile menu).
+              <div key={key} onPointerEnter={() => setHovered(key)} className={`group/item relative ${l.wide ? "hidden xl:block" : ""}`}>
+              <Link
+                href={l.href}
+                aria-current={active ? "page" : undefined}
+                className="menu-link relative isolate inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3.5 py-1.5 text-sm whitespace-nowrap text-white/90 transition-colors group-data-solid/header:bg-transparent group-data-solid/header:text-ink-600 aria-[current=page]:text-ink-900 group-data-solid/header:aria-[current=page]:text-ink-900"
+              >
+                {/* Motion: the white "current page" pill slides to the new link, and a soft pill follows the pointer. */}
+                {active && (
+                  <motion.span
+                    layoutId="nav-current"
+                    transition={{ type: "spring", stiffness: 420, damping: 34 }}
+                    className="absolute inset-0 -z-10 rounded-full bg-white group-data-solid/header:shadow-sm"
+                  />
+                )}
+                {hovered === key && !active && (
+                  <motion.span
+                    layoutId="nav-hover"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ type: "spring", stiffness: 500, damping: 38 }}
+                    className="absolute inset-0 -z-10 rounded-full bg-white/25 group-data-solid/header:bg-white"
+                  />
+                )}
+                {i === 0 && <House className="size-3.5 text-forest-600" />}
+                {l.label}
+                {l.children.length > 0 && <ChevronDown aria-hidden="true" className="size-3.5 opacity-60 transition group-hover/item:rotate-180" />}
+              </Link>
+              {l.children.length > 0 && (
+                // Sub-menu: opens on hover and when a link inside has keyboard focus.
+                <div className="invisible absolute top-full left-0 z-50 pt-3 opacity-0 transition duration-200 group-focus-within/item:visible group-focus-within/item:opacity-100 group-hover/item:visible group-hover/item:opacity-100">
+                  <ul className="min-w-60 rounded-2xl bg-white p-2 shadow-xl shadow-black/10 ring-1 ring-black/5">
+                    {l.children.map((c) => (
+                      <li key={c.href}>
+                        <Link
+                          href={c.href}
+                          aria-current={isActive(c.href) ? "page" : undefined}
+                          className="menu-sublink block rounded-xl px-3.5 py-2.5 text-sm whitespace-nowrap text-ink-600 transition hover:bg-mist-50 hover:text-ink-900 aria-[current=page]:bg-mist-50 aria-[current=page]:text-ink-900"
+                        >
+                          {c.label}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              </div>
+            );
+          })}
         </nav>
 
         <div className="flex items-center gap-1.5 sm:gap-2">
@@ -182,20 +229,39 @@ export function Header({ locale, nav, contact: site, logoAlt }: Props) {
           {links.map((l, i) => {
             const active = isActive(l.href);
             return (
-              <li key={l.href} className="overflow-hidden border-b border-mist-200">
-                <Link
-                  data-menu-link
-                  href={l.href}
-                  onClick={() => setOpen(false)}
-                  aria-current={active ? "page" : undefined}
-                  className="group flex items-center gap-4 py-4"
-                >
-                  <span className="w-6 text-xs text-ink-400 tabular-nums">{String(i + 1).padStart(2, "0")}</span>
-                  <span className={`heading flex-1 text-3xl ${active ? "accent text-[2.1rem] text-forest-600" : "text-forest-900"}`}>
-                    {l.label}
-                  </span>
-                  <ArrowUpRight className="size-5 text-ink-400 transition group-hover:rotate-45 group-hover:text-forest-600" />
-                </Link>
+              <li key={`${i}-${l.href}`} className="border-b border-mist-200">
+                <div className="overflow-hidden">
+                  <Link
+                    data-menu-link
+                    href={l.href}
+                    onClick={() => setOpen(false)}
+                    aria-current={active ? "page" : undefined}
+                    className="group flex items-center gap-4 py-4"
+                  >
+                    <span className="w-6 text-xs text-ink-400 tabular-nums">{String(i + 1).padStart(2, "0")}</span>
+                    <span className={`heading flex-1 text-3xl ${active ? "accent text-[2.1rem] text-forest-600" : "text-forest-900"}`}>
+                      {l.label}
+                    </span>
+                    <ArrowUpRight className="size-5 text-ink-400 transition group-hover:rotate-45 group-hover:text-forest-600" />
+                  </Link>
+                </div>
+                {l.children.length > 0 && (
+                  <ul className="-mt-1 grid gap-0.5 pb-4 pl-10">
+                    {l.children.map((c) => (
+                      <li key={c.href} className="overflow-hidden">
+                        <Link
+                          data-menu-link
+                          href={c.href}
+                          onClick={() => setOpen(false)}
+                          aria-current={isActive(c.href) ? "page" : undefined}
+                          className="block py-1.5 text-base text-ink-600 aria-[current=page]:font-medium aria-[current=page]:text-forest-600"
+                        >
+                          {c.label}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </li>
             );
           })}
