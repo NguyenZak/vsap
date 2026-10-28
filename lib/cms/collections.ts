@@ -1,5 +1,5 @@
 // Edit forms for the non-page content: products, retail packs, partners, settings and news posts.
-import { img, l, type FieldDef } from "./fields";
+import { img, l, textEffectsField, type FieldDef } from "./fields";
 
 export const productFields: FieldDef[] = [
   { key: "slug", label: "Đường dẫn (slug)", type: "string", help: "Chỉ chữ thường không dấu và gạch ngang, ví dụ: hat-dieu. Đổi slug sẽ đổi URL trang." },
@@ -279,6 +279,7 @@ export const pageStyleFields: FieldDef[] = [
   fontField("headingFont", "Font tiêu đề", "Phudu"),
   scaleField("textScale", "Cỡ chữ thường (%)"),
   scaleField("headingScale", "Cỡ tiêu đề (%)"),
+  textEffectsField,
 ];
 
 export const menuStyleFields: FieldDef[] = [

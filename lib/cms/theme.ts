@@ -1,7 +1,7 @@
 // Theme helpers shared by the site and Studio (pure, unit-testable): the fonts an
 // editor can pick, and how page / section / menu styles become CSS variables.
 import type { CSSProperties } from "react";
-import type { CustomFont, MenuStyle, PageStyle, SectionStyle } from "./types";
+import type { CustomFont, MenuStyle, PageStyle, SectionStyle, TextEffect, TextEffects } from "./types";
 
 type Font = { key: string; label: string; stack: string; /** Google Fonts family; absent = already loaded by the layout. */ google?: string; serif?: boolean };
 
@@ -113,7 +113,29 @@ export function googleFontsHref(keys: Iterable<string>): string | null {
   return `https://fonts.googleapis.com/css2?${query}&display=swap`;
 }
 
-export const emptyPageStyle = (): PageStyle => ({ background: "", text: "", heading: "", font: "", headingFont: "", textScale: 0, headingScale: 0 });
+const emptyEffect = (): TextEffect => ({ stroke: "", strokeWidth: 0, shadow: "", shadowBlur: 0, shadowOffset: 0, shadowOpacity: 0 });
+
+/** "#1a2b3c" at 60% → "rgba(26, 43, 60, 0.6)". */
+function rgba(hex: string, pct: number) {
+  const n = parseInt(hex.slice(1), 16);
+  return `rgba(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}, ${+(pct / 100).toFixed(2)})`;
+}
+export const emptyEffects = (): TextEffects => ({ heading: emptyEffect(), text: emptyEffect() });
+export const emptyPageStyle = (): PageStyle => ({ background: "", text: "", heading: "", font: "", headingFont: "", textScale: 0, headingScale: 0, effects: emptyEffects() });
+
+type EffectsLayer = Partial<{ heading: Partial<TextEffect>; text: Partial<TextEffect> }> | undefined;
+
+/** Text effects field by field: each later (more specific) layer wins where it sets something. */
+export function mergeEffects(...layers: EffectsLayer[]): TextEffects {
+  const out = emptyEffects();
+  for (const layer of layers)
+    for (const kind of ["heading", "text"] as const)
+      for (const [k, v] of Object.entries(layer?.[kind] ?? {}) as [keyof TextEffect, unknown][]) {
+        if (!(k in out[kind]) || !v) continue;
+        if (typeof v === typeof out[kind][k]) (out[kind] as Record<string, unknown>)[k] = v;
+      }
+  return out;
+}
 export const emptyMenuStyle = (): MenuStyle => ({ font: "", size: 0, weight: "", uppercase: false, color: "", colorSolid: "" });
 
 const HEX = /^#[0-9a-f]{6}$/i;
@@ -125,9 +147,11 @@ const scale = (v: unknown) => (typeof v === "number" && v >= 50 && v <= 200 ? v 
 export function mergePageStyle(theme: Partial<PageStyle> | undefined, page: Partial<PageStyle> | undefined): PageStyle {
   const out = emptyPageStyle();
   for (const k of Object.keys(out) as (keyof PageStyle)[]) {
+    if (k === "effects") continue;
     const own = page?.[k];
     (out as Record<string, unknown>)[k] = own ? own : (theme?.[k] ?? out[k]);
   }
+  out.effects = mergeEffects(theme?.effects, page?.effects);
   return out;
 }
 
@@ -177,6 +201,27 @@ export function sectionStyleVars(style: Partial<SectionStyle> | undefined, page:
     vars["--cms-heading"] = heading;
     attrs["data-cms-heading"] = "";
   }
+  // Outline and shadow: page/theme effects merged with the section's own, field by field.
+  const fx = mergeEffects(page.effects, s.effects);
+  for (const [kind, p] of [["heading", "h"], ["text", "t"]] as const) {
+    const e = fx[kind];
+    const stroke = color(e.stroke);
+    if (stroke) {
+      vars[`--fx-${p}-stroke`] = `${clamp(e.strokeWidth || 1, 0.5, 6)}px ${stroke}`;
+      attrs[`data-fx-${p}-stroke`] = "";
+    }
+    const hex = color(e.shadow);
+    if (hex) {
+      const shadow = rgba(hex, clamp(e.shadowOpacity || 60, 5, 100));
+      const blur = clamp(e.shadowBlur || 6, 0, 40);
+      const offset = clamp(e.shadowOffset || 2, -20, 20);
+      vars[`--fx-${p}-shadow`] = `0 ${offset}px ${blur}px ${shadow}`;
+      // Gradient title accents have transparent text: a text-shadow would cover the gradient.
+      vars[`--fx-${p}-drop`] = `drop-shadow(0 ${offset}px ${blur / 2}px ${shadow})`;
+      attrs[`data-fx-${p}-shadow`] = "";
+    }
+  }
+
   const frame = s.frame === "lines" || s.frame === "box" ? s.frame : "none";
   if (frame !== "none") {
     attrs["data-frame"] = frame;
@@ -186,6 +231,8 @@ export function sectionStyleVars(style: Partial<SectionStyle> | undefined, page:
   }
   return { style: vars as CSSProperties, attrs };
 }
+
+const clamp = (n: number, min: number, max: number) => Math.min(Math.max(Number(n) || 0, min), max);
 
 /** CSS variables read by the header's links (components/Header.tsx + globals.css). */
 export function menuStyleVars(m: MenuStyle): CSSProperties {

@@ -65,6 +65,27 @@ export const toneField: FieldDef = {
   ],
 };
 
+const effectFields = (): FieldDef[] => [
+  { key: "stroke", label: "Màu viền chữ", type: "color", help: "Chọn màu là bật viền." },
+  { key: "strokeWidth", label: "Độ dày viền (px)", type: "number", min: 0.5, max: 6, step: 0.5, zeroIsDefault: true, help: "Để trống = 1." },
+  { key: "shadow", label: "Màu bóng", type: "color", help: "Chọn màu là bật bóng." },
+  { key: "shadowOpacity", label: "Độ đậm bóng (%)", type: "number", min: 5, max: 100, step: 5, zeroIsDefault: true, help: "Để trống = 60." },
+  { key: "shadowBlur", label: "Độ nhoè bóng (px)", type: "number", min: 0, max: 40, zeroIsDefault: true, help: "Để trống = 6." },
+  { key: "shadowOffset", label: "Bóng lệch xuống (px)", type: "number", min: -20, max: 20, zeroIsDefault: true, help: "Để trống = 2. Số âm = lệch lên." },
+];
+
+/** Outline and shadow of headings and body text (lib/cms/theme.ts mergeEffects). */
+export const textEffectsField: FieldDef = {
+  key: "effects",
+  label: "Viền & bóng chữ",
+  type: "group",
+  help: "Để trống = theo cấp trên (section → trang → Giao diện chung).",
+  fields: [
+    { key: "heading", label: "Tiêu đề", type: "group", fields: effectFields() },
+    { key: "text", label: "Chữ thường", type: "group", fields: effectFields() },
+  ],
+};
+
 /** Colours and frame for any section, stored in props.style (lib/cms/theme.ts sectionStyleVars). */
 export const sectionStyleField: FieldDef = {
   key: "style",
@@ -88,6 +109,7 @@ export const sectionStyleField: FieldDef = {
     { key: "border", label: "Màu viền", type: "color" },
     { key: "borderWidth", label: "Độ dày viền (px)", type: "number", min: 1, max: 12 },
     { key: "radius", label: "Bo góc khung (px)", type: "number", min: 0, max: 64 },
+    textEffectsField,
   ],
 };
 

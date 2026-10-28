@@ -3,7 +3,7 @@ import { defaultContent } from "./defaults";
 import { resolveMenu } from "./menu";
 import { normalize } from "./normalize";
 import { categoryProblem, channelOf, postPath, withCategories } from "./post-format";
-import { customFontKey, customFontName, emptyPageStyle, fontChoices, fontFaceCss, fontFileType, googleFontsHref, menuStyleVars, mergePageStyle, pageStyleVars, sectionStyleVars, stylesheetUrl } from "./theme";
+import { customFontKey, customFontName, emptyPageStyle, fontChoices, fontFaceCss, fontFileType, googleFontsHref, menuStyleVars, mergeEffects, mergePageStyle, pageStyleVars, sectionStyleVars, stylesheetUrl } from "./theme";
 
 const content = defaultContent();
 
@@ -174,5 +174,37 @@ describe("fonts added in Studio", () => {
     const choices = fontChoices([{ name: "", link: "https://fonts.googleapis.com/css2?family=Lexend", files: [] }, { name: "", link: "", files: [] }]);
     expect(choices.at(-1)).toEqual({ value: "custom:Lexend", label: "Lexend (tự thêm)" });
     expect(choices.filter((c) => c.value.startsWith("custom:"))).toHaveLength(1);
+  });
+});
+
+describe("text outline and shadow", () => {
+  it("merge field by field: section over page over theme", () => {
+    const fx = mergeEffects(
+      { heading: { stroke: "#000000", strokeWidth: 2, shadow: "#111111" } },
+      { heading: { stroke: "#ffffff" }, text: { shadow: "#222222", shadowBlur: 10 } },
+      { heading: { strokeWidth: 3 } },
+    );
+    expect(fx.heading).toMatchObject({ stroke: "#ffffff", strokeWidth: 3, shadow: "#111111" });
+    expect(fx.text).toMatchObject({ shadow: "#222222", shadowBlur: 10, stroke: "" });
+  });
+
+  it("become CSS variables, also on dark sections, with safe values only", () => {
+    const page = mergePageStyle({ ...emptyPageStyle(), effects: { heading: { stroke: "#000000", strokeWidth: 99, shadow: "#ff0000", shadowBlur: 0, shadowOffset: 0, shadowOpacity: 50 }, text: { stroke: "red", strokeWidth: 1, shadow: "", shadowBlur: 0, shadowOffset: 0, shadowOpacity: 0 } } }, undefined);
+    const { style, attrs } = sectionStyleVars(undefined, page, "dark");
+    expect(style).toMatchObject({
+      "--fx-h-stroke": "6px #000000",
+      "--fx-h-shadow": "0 2px 6px rgba(255, 0, 0, 0.5)",
+      "--fx-h-drop": "drop-shadow(0 2px 3px rgba(255, 0, 0, 0.5))",
+    });
+    expect(attrs).toEqual({ "data-fx-h-stroke": "", "data-fx-h-shadow": "" });
+    // A section can add its own effect on top.
+    expect(sectionStyleVars({ effects: { text: { shadow: "#000000", shadowOffset: -3 } } }, page, "white").style).toMatchObject({ "--fx-t-shadow": "0 -3px 6px rgba(0, 0, 0, 0.6)" });
+  });
+
+  it("are filled in for pages saved before they existed", () => {
+    const old = structuredClone(content) as unknown as { pages: Record<string, { style: Record<string, unknown> }> };
+    delete old.pages.home.style.effects;
+    expect(normalize(old).pages.home.style.effects.heading.stroke).toBe("");
+    expect(mergePageStyle(undefined, { text: "#123456" } as never).effects.text.stroke).toBe("");
   });
 });

@@ -93,6 +93,22 @@ export type Section = {
   props: Record<string, unknown>;
 };
 
+/** Outline and drop shadow of one kind of text. A colour switches each on; 0 = inherit. */
+export type TextEffect = {
+  stroke: string;
+  /** px */
+  strokeWidth: number;
+  shadow: string;
+  /** px */
+  shadowBlur: number;
+  /** px, downwards (negative = up) */
+  shadowOffset: number;
+  /** % opacity of the shadow colour */
+  shadowOpacity: number;
+};
+
+export type TextEffects = { heading: TextEffect; text: TextEffect };
+
 /**
  * Colours and type for a page (or, in Theme.page, the whole site). Empty values
  * and 0 mean "inherit": a section's own style beats its page's, which beats the theme.
@@ -109,6 +125,7 @@ export type PageStyle = {
   /** Text and heading size in % of the design's size; 0 = inherit. */
   textScale: number;
   headingScale: number;
+  effects: TextEffects;
 };
 
 /** Optional per-section look, stored in section.props.style. */
@@ -122,6 +139,7 @@ export type SectionStyle = {
   border: string;
   borderWidth: number;
   radius: number;
+  effects: Partial<{ heading: Partial<TextEffect>; text: Partial<TextEffect> }>;
 };
 
 /** The header menu's type and colours (empty / 0 = design default). */

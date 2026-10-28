@@ -268,6 +268,28 @@ html:has(dialog[open]) {
 [data-cms-heading] :is(h1, h2, h3, h4, .heading):not([class*="text-white"], [class*="text-white"] *) {
   color: var(--cms-heading);
 }
+/* Text outline and shadow (Studio › Viền & bóng chữ); each switched on by its data attribute. */
+[data-fx-h-stroke] :is(h1, h2, h3, h4, .heading),
+[data-fx-t-stroke] :is(p, li, dd, dt, td, th, blockquote, figcaption, label) {
+  paint-order: stroke fill;
+}
+[data-fx-h-stroke] :is(h1, h2, h3, h4, .heading) {
+  -webkit-text-stroke: var(--fx-h-stroke);
+}
+[data-fx-t-stroke] :is(p, li, dd, dt, td, th, blockquote, figcaption, label) {
+  -webkit-text-stroke: var(--fx-t-stroke);
+}
+[data-fx-h-shadow] :is(h1, h2, h3, h4, .heading) {
+  text-shadow: var(--fx-h-shadow);
+}
+[data-fx-t-shadow] :is(p, li, dd, dt, td, th, blockquote, figcaption, label) {
+  text-shadow: var(--fx-t-shadow);
+}
+/* The gradient accent line has transparent text: shadow it as a shape instead. */
+[data-fx-h-shadow] .title-accent {
+  text-shadow: none;
+  filter: var(--fx-h-drop);
+}
 section[data-frame="lines"] {
   border-block: var(--frame-width) solid var(--frame-color);
 }
