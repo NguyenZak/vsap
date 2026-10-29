@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-/* dark: utilities follow the .dark class (set from the visitor's choice or device; components/ThemeToggle.tsx). */
+/* dark: utilities follow the .dark class on <html>, set by Studio › Giao diện › Chế độ tối ([locale]/layout.tsx). */
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {

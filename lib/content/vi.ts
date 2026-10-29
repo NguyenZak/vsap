@@ -15,8 +15,6 @@ export const vi = {
     quote: "Nhận báo giá",
     menu: "Mở menu",
     close: "Đóng menu",
-    dark: "Chế độ tối",
-    light: "Chế độ sáng",
   },
   common: {
     learnMore: "Tìm hiểu thêm",

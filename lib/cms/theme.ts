@@ -236,6 +236,9 @@ export function sectionStyleVars(style: Partial<SectionStyle> | undefined, page:
   return { style: vars as CSSProperties, attrs };
 }
 
+/** Dark mode "system": follow the visitor's device setting, live. Inline in <head>, so nothing flashes. */
+export const systemDarkScript = `(function(){var m=matchMedia("(prefers-color-scheme: dark)");function a(){document.documentElement.classList.toggle("dark",m.matches)}a();m.addEventListener("change",a)})()`;
+
 const clamp = (n: number, min: number, max: number) => Math.min(Math.max(Number(n) || 0, min), max);
 
 /** CSS variables read by the header's links (components/Header.tsx + globals.css). */

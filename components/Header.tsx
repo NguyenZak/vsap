@@ -10,7 +10,6 @@ import type { NavItem } from "@/lib/cms/menu";
 import type { UiStrings } from "@/lib/cms/types";
 import type { Locale } from "@/lib/i18n";
 import { LocaleSwitcher } from "./LocaleSwitcher";
-import { ThemeToggle } from "./ThemeToggle";
 import { CartButton } from "./shop/CartButton";
 
 type Props = {
@@ -22,11 +21,9 @@ type Props = {
   menuStyle?: CSSProperties;
   contact: { phone: string; phoneE164: string; email: string };
   logoAlt: string;
-  /** Studio › Giao diện › Chế độ tối: show the light/dark switch. */
-  darkMode?: boolean;
 };
 
-export function Header({ locale, nav, items: links, menuStyle, contact: site, logoAlt, darkMode = false }: Props) {
+export function Header({ locale, nav, items: links, menuStyle, contact: site, logoAlt }: Props) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -197,7 +194,6 @@ export function Header({ locale, nav, items: links, menuStyle, contact: site, lo
 
         <div className="flex items-center gap-1.5 sm:gap-2">
           <LocaleSwitcher locale={locale} />
-          {darkMode && <ThemeToggle labels={{ dark: nav.dark, light: nav.light }} />}
           <CartButton />
           <Link
             href={`/${locale}/contact`}

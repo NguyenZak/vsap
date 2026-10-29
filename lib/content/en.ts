@@ -17,8 +17,6 @@ export const en: Dictionary = {
     quote: "Get a quote",
     menu: "Open menu",
     close: "Close menu",
-    dark: "Dark mode",
-    light: "Light mode",
   },
   common: {
     learnMore: "Learn more",

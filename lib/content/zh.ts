@@ -17,8 +17,6 @@ export const zh: Dictionary = {
     quote: "获取报价",
     menu: "打开菜单",
     close: "关闭菜单",
-    dark: "深色模式",
-    light: "浅色模式",
   },
   common: {
     learnMore: "了解更多",

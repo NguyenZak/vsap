@@ -17,8 +17,6 @@ export const ja: Dictionary = {
     quote: "お見積もり",
     menu: "メニューを開く",
     close: "メニューを閉じる",
-    dark: "ダークモード",
-    light: "ライトモード",
   },
   common: {
     learnMore: "詳しく見る",

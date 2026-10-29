@@ -234,10 +234,11 @@ export const darkModeFields: FieldDef[] = [
     label: "Chế độ tối (dark mode)",
     type: "select",
     options: [
-      { value: "auto", label: "Bật: theo máy người xem, có nút sáng/tối trên menu" },
-      { value: "off", label: "Tắt: luôn giao diện sáng" },
+      { value: "light", label: "Sáng" },
+      { value: "dark", label: "Tối: nền đen cho toàn website" },
+      { value: "system", label: "Theo máy người xem (sáng hoặc tối)" },
     ],
-    help: "Ở chế độ tối, màu chữ chung chọn ở dưới tạm bỏ để chữ không tối trên nền tối; section có màu nền riêng giữ nguyên giao diện sáng. Khung xem trước trong Studio luôn hiện giao diện sáng (bấm nút trên menu để thử).",
+    help: "Chỉ admin chọn ở đây, khách không có nút chuyển. Ở chế độ tối, màu chữ chung chọn ở dưới tạm bỏ để chữ không tối trên nền đen; section có màu nền riêng giữ giao diện sáng. Bấm Xuất bản để áp dụng.",
   },
 ];
 

@@ -211,16 +211,19 @@ describe("text outline and shadow", () => {
 });
 
 describe("dark mode setting", () => {
-  it("is on (following the device) by default and for older saved content", () => {
-    expect(content.theme.darkMode).toBe("auto");
+  it("is light unless chosen in Studio, including content saved by the first version", () => {
+    expect(content.theme.darkMode).toBe("light");
     const old = structuredClone(content) as unknown as { theme: Record<string, unknown> };
     delete old.theme.darkMode;
-    expect(normalize(old).theme.darkMode).toBe("auto");
-    expect(normalize({ ...structuredClone(content), theme: { ...content.theme, darkMode: "off" } }).theme.darkMode).toBe("off");
-    expect(normalize({ ...structuredClone(content), theme: { ...content.theme, darkMode: "weird" } }).theme.darkMode).toBe("auto");
+    expect(normalize(old).theme.darkMode).toBe("light");
+    const as = (v: string) => normalize({ ...structuredClone(content), theme: { ...content.theme, darkMode: v as never } }).theme.darkMode;
+    expect(as("auto")).toBe("light");
+    expect(as("off")).toBe("light");
+    expect(as("dark")).toBe("dark");
+    expect(as("system")).toBe("system");
   });
 
-  it("has a switch label in every language", () => {
-    for (const ui of Object.values(content.ui)) expect(ui.nav.dark && ui.nav.light).toBeTruthy();
+  it("gives visitors no switch: the menu strings have no dark/light labels", () => {
+    for (const ui of Object.values(content.ui)) expect(Object.keys(ui.nav)).not.toContain("dark");
   });
 });
