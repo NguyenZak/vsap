@@ -228,6 +228,19 @@ export const settingsFields: FieldDef[] = [
 /** Font picker (built-in fonts + Studio › Giao diện › Font tự thêm); "" keeps the design's font. */
 const fontField = (key: string, label: string, fallback: string): FieldDef => ({ key, label, type: "font", fallback });
 
+export const darkModeFields: FieldDef[] = [
+  {
+    key: "darkMode",
+    label: "Chế độ tối (dark mode)",
+    type: "select",
+    options: [
+      { value: "auto", label: "Bật: theo máy người xem, có nút sáng/tối trên menu" },
+      { value: "off", label: "Tắt: luôn giao diện sáng" },
+    ],
+    help: "Ở chế độ tối, màu chữ chung chọn ở dưới tạm bỏ để chữ không tối trên nền tối; section có màu nền riêng giữ nguyên giao diện sáng. Khung xem trước trong Studio luôn hiện giao diện sáng (bấm nút trên menu để thử).",
+  },
+];
+
 export const customFontFields: FieldDef[] = [
   {
     key: "fonts",

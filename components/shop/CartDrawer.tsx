@@ -16,7 +16,7 @@ export function CartDrawer() {
     <Dialog open={cartOpen} onClose={close} label={t.cart} variant="drawer">
       <div className="flex h-full flex-col">
         <div className="flex items-center justify-between gap-4 border-b border-mist-200 px-5 py-4 sm:px-6">
-          <h2 className="heading text-2xl text-forest-900">
+          <h2 className="heading text-2xl text-heading">
             {t.cart}
             {count > 0 && <span className="ml-2 text-base text-ink-400 tabular-nums">({count})</span>}
           </h2>
@@ -86,7 +86,7 @@ export function CartDrawer() {
               >
                 {t.checkout}
               </Link>
-              <button type="button" onClick={close} className="mt-2 w-full py-2 text-sm text-ink-600 hover:text-forest-900">
+              <button type="button" onClick={close} className="mt-2 w-full py-2 text-sm text-ink-600 hover:text-heading">
                 {t.continueShopping}
               </button>
             </div>

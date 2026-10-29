@@ -153,7 +153,7 @@ export function StatementSlider({ eyebrow, items, hold: HOLD, labels }: Props) {
 
   const go = (i: number) => goTo.current(((i % n) + n) % n);
   const round =
-    "inline-flex size-11 items-center justify-center rounded-full border border-mist-200 bg-white text-ink-900 transition hover:border-forest-900 hover:bg-forest-900 hover:text-white";
+    "inline-flex size-11 items-center justify-center rounded-full border border-mist-200 bg-surface text-ink-900 transition hover:border-forest-900 hover:bg-forest-900 hover:text-white";
 
   return (
     <div ref={root}>
@@ -186,7 +186,7 @@ export function StatementSlider({ eyebrow, items, hold: HOLD, labels }: Props) {
             <p className="sr-only">{`${item.strong} ${item.muted} ${item.tail}`}</p>
             <p
               aria-hidden="true"
-              className="heading max-w-[72rem] text-3xl text-forest-900 sm:text-4xl lg:text-[2.85rem] lg:leading-[1.18]"
+              className="heading max-w-[72rem] text-3xl text-heading sm:text-4xl lg:text-[2.85rem] lg:leading-[1.18]"
             >
               <span data-st-start className="inline-block h-[0.9em] w-0 align-[-0.1em]" />
               <Chars text={item.strong} />

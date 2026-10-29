@@ -145,14 +145,14 @@ export default async function PackPage({ params }: Props) {
       {/* Kamina-style layout: white cards on the cream page, gallery left, buy box and description right. */}
       <div className="bg-mist-50">
         <section className="container-page grid gap-5 py-6 sm:py-8 lg:grid-cols-12 lg:items-start">
-          <div className="space-y-5 rounded-2xl bg-white p-3 sm:p-4 lg:sticky lg:top-24 lg:col-span-6">
+          <div className="space-y-5 rounded-2xl bg-surface p-3 sm:p-4 lg:sticky lg:top-24 lg:col-span-6">
             <Gallery images={item.images} alt={[item.name, item.flavor].filter(Boolean).join(" – ")} />
             <ShareBar title={item.name} />
           </div>
 
           <div className="space-y-5 lg:col-span-6">
-            <div className="rounded-2xl bg-white p-5 sm:p-6">
-              <h1 className="heading text-2xl text-forest-900 sm:text-3xl">{item.name}</h1>
+            <div className="rounded-2xl bg-surface p-5 sm:p-6">
+              <h1 className="heading text-2xl text-heading sm:text-3xl">{item.name}</h1>
               {item.flavor && <p className="mt-1 text-sm text-ink-600">{item.flavor}</p>}
               <p className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-ink-600">
                 <span>
@@ -183,8 +183,8 @@ export default async function PackPage({ params }: Props) {
               </ul>
             </div>
 
-            <div className="rounded-2xl bg-white p-5 sm:p-6">
-              <h2 className="inline-block border-b-2 border-forest-600 pb-2 text-sm font-semibold tracking-wider text-forest-900 uppercase">{t.description}</h2>
+            <div className="rounded-2xl bg-surface p-5 sm:p-6">
+              <h2 className="inline-block border-b-2 border-forest-600 pb-2 text-sm font-semibold tracking-wider text-heading uppercase">{t.description}</h2>
               <div className="-mt-px border-t border-mist-200 pt-5">
                 <MoreText more={t.showMore} less={t.showLess}>
                   <div className="space-y-4 text-sm leading-relaxed text-ink-600 sm:text-base">
@@ -230,7 +230,7 @@ export default async function PackPage({ params }: Props) {
       {related.length > 0 && (
         <section className="py-10 sm:py-14">
           <div className="container-page">
-            <h2 className="heading text-3xl text-forest-900">{t.related}</h2>
+            <h2 className="heading text-3xl text-heading">{t.related}</h2>
             <div className="mt-8">
               <ProductGrid items={related} />
             </div>

@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* dark: utilities follow the .dark class (set from the visitor's choice or device; components/ThemeToggle.tsx). */
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   /* Brand colours, taken from the VSAP logo (public/logo.svg): deep green #115931 / #0f6b3b,
      leaf green #7cb442, sun yellow #ffc40d and chili red #d73e27. */
@@ -21,6 +24,9 @@
   --color-ink-900: #17231a;
   --color-ink-600: #59645b;
   --color-ink-400: #8d968d;
+  /* Semantic: card/field backgrounds and heading text. Both flip in dark mode (below). */
+  --color-surface: #ffffff;
+  --color-heading: #115931;
 
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-phudu), var(--font-inter), ui-sans-serif, system-ui, sans-serif;
@@ -36,7 +42,7 @@ html {
 
 body {
   margin: 0;
-  background: #fff;
+  background: var(--page-bg, #fff);
   color: var(--color-ink-900);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
@@ -315,4 +321,60 @@ header:not([data-solid]) .menu-link:not([aria-current]) {
 }
 header[data-solid] .menu-link:not([aria-current]) {
   color: var(--menu-color-solid, var(--color-ink-600));
+}
+
+/*
+ * Dark mode (html.dark): black backgrounds, near-black cards and grey borders; the
+ * palette's neutrals and the semantic colours flip. Brand colours (green and yellow
+ * buttons, accents) and photos stay as they are.
+ */
+.dark {
+  color-scheme: dark;
+  --page-bg: #000000;
+  --color-surface: #141414;
+  --color-heading: #f5f5f0;
+  --color-mist-50: #0b0b0b;
+  --color-mist-100: #1c1c1c;
+  --color-mist-200: #2e2e2e;
+  --color-ink-900: #f2f2f2;
+  --color-ink-600: #b3b3b3;
+  --color-ink-400: #8a8a8a;
+  --color-forest-600: #5aac5e;
+  /* The deepest green (footer, dark sections, overlays) goes black too; text on yellow stays dark. */
+  --color-forest-950: #000000;
+}
+/* A light page colour picked in Studio would leave dark text on light: the dark page colour wins. */
+.dark [style*="--page-bg"] {
+  --page-bg: #000000 !important;
+}
+/* Text colours picked in Studio are chosen for light backgrounds: use the design's colours instead… */
+.dark :not([data-cms-bg])[data-cms-text] :is(p, li, dd, dt, td, th, blockquote, figcaption, label),
+.dark :not([data-cms-bg])[data-cms-heading] :is(h1, h2, h3, h4, .heading) {
+  color: revert-layer;
+}
+/* …except in a section with its own background colour, which keeps its light look. */
+.dark [data-cms-bg] {
+  color-scheme: light;
+  --page-bg: #fff;
+  --color-surface: #ffffff;
+  --color-heading: #115931;
+  --color-mist-50: #fbf6e9;
+  --color-mist-100: #f4ecd8;
+  --color-mist-200: #e8dec5;
+  --color-ink-900: #17231a;
+  --color-ink-600: #59645b;
+  --color-ink-400: #8d968d;
+  --color-forest-600: #2a8a45;
+  --color-forest-950: #082a17;
+}
+/* The green → orange gradient of title accents is too dark on the dark background. */
+.dark .title-accent {
+  background-image: linear-gradient(90deg, #b9dc8f 0%, #ffc40d 55%, #ff8f4d 100%);
+}
+.dark [data-cms-bg] .title-accent {
+  background-image: linear-gradient(90deg, #0f6b3b 0%, #4f9a2a 45%, #d4561f 100%);
+}
+/* Plain black: no green/yellow glow on dark sections. */
+.dark .bg-dark-glow {
+  background-image: none;
 }

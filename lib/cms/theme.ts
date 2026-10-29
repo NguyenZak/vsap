@@ -192,7 +192,11 @@ export function sectionStyleVars(style: Partial<SectionStyle> | undefined, page:
   const heading = color(s.heading) || (light ? color(page.heading) : "");
   const vars: Record<string, string> = {};
   const attrs: Record<string, string> = {};
-  if (bg) vars.backgroundColor = bg;
+  if (bg) {
+    vars.backgroundColor = bg;
+    // Dark mode keeps such a section in its light palette (globals.css).
+    attrs["data-cms-bg"] = "";
+  }
   if (text) {
     vars["--cms-text"] = text;
     attrs["data-cms-text"] = "";

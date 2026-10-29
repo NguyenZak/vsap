@@ -94,7 +94,7 @@ export default async function PolicyPage({ params }: Props) {
                   <Link
                     href={`/${locale}/policies/${p.slug}`}
                     aria-current={p.slug === policy.slug ? "page" : undefined}
-                    className="block rounded-lg px-3 py-2 text-ink-600 transition hover:bg-mist-50 hover:text-forest-900 aria-[current=page]:bg-mist-100 aria-[current=page]:font-medium aria-[current=page]:text-forest-900"
+                    className="block rounded-lg px-3 py-2 text-ink-600 transition hover:bg-mist-50 hover:text-heading aria-[current=page]:bg-mist-100 aria-[current=page]:font-medium aria-[current=page]:text-heading"
                   >
                     {pick(p.title, locale)}
                   </Link>

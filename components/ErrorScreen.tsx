@@ -303,13 +303,13 @@ export function ErrorScreen({
               <li key={l.path}>
                 <Link
                   href={`${home}${l.path}`}
-                  className="group flex h-full items-start justify-between gap-4 rounded-2xl bg-white p-5 ring-1 ring-mist-200 transition hover:-translate-y-0.5 hover:ring-forest-600/40 sm:p-6"
+                  className="group flex h-full items-start justify-between gap-4 rounded-2xl bg-surface p-5 ring-1 ring-mist-200 transition hover:-translate-y-0.5 hover:ring-forest-600/40 sm:p-6"
                 >
                   <span>
                     <span className="block text-base font-medium text-ink-900">{l.label}</span>
                     <span className="mt-1 block text-sm text-ink-600">{l.note}</span>
                   </span>
-                  <span className="grid size-9 shrink-0 place-items-center rounded-full bg-mist-100 text-forest-900 transition group-hover:bg-sun-400">
+                  <span className="grid size-9 shrink-0 place-items-center rounded-full bg-mist-100 text-heading transition group-hover:bg-sun-400">
                     <ArrowUpRight className="size-4 transition-transform group-hover:rotate-45" />
                   </span>
                 </Link>

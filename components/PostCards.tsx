@@ -15,7 +15,7 @@ function Meta({ post, locale, labels, tone = "light" }: { post: Post; locale: Lo
   return (
     <p className={`flex flex-wrap items-center gap-x-2 gap-y-1 text-xs ${tone === "dark" ? "text-white/70" : "text-ink-400"}`}>
       {category && (
-        <span className={`rounded-full px-2.5 py-1 font-medium ${tone === "dark" ? "bg-white/15 text-white" : "bg-sun-400/50 text-forest-900"}`}>{category}</span>
+        <span className={`rounded-full px-2.5 py-1 font-medium ${tone === "dark" ? "bg-white/15 text-white" : "bg-sun-400/50 text-heading"}`}>{category}</span>
       )}
       {post.date && <time dateTime={post.date}>{formatDate(post.date, locale)}</time>}
       <span aria-hidden="true">·</span>
@@ -32,15 +32,15 @@ const excerptOf = (post: Post, locale: Locale) => pick(post.excerpt, locale) || 
 export function PostCard({ post, locale, labels, onMuted = false }: { post: Post; locale: Locale; labels: Labels; onMuted?: boolean }) {
   const cover = post.cover?.src ? { src: post.cover.src, alt: pick(post.cover.alt, locale) } : undefined;
   return (
-    <Link href={`/${locale}${postPath(post)}`} data-reveal className={`group flex h-full flex-col rounded-3xl p-2 transition ${onMuted ? "bg-white hover:bg-mist-100" : "bg-mist-50 hover:bg-mist-100"}`}>
+    <Link href={`/${locale}${postPath(post)}`} data-reveal className={`group flex h-full flex-col rounded-3xl p-2 transition ${onMuted ? "bg-surface hover:bg-mist-100" : "bg-mist-50 hover:bg-mist-100"}`}>
       <div className="overflow-hidden rounded-2xl">
         <CmsImg image={cover} sizes={SIZES.third} className="aspect-[16/10] w-full transition duration-700 group-hover:scale-105" />
       </div>
       <div className="flex flex-1 flex-col p-4 sm:p-5">
         <Meta post={post} locale={locale} labels={labels} />
-        <h3 className="heading mt-3 text-2xl text-forest-900">{pick(post.title, locale)}</h3>
+        <h3 className="heading mt-3 text-2xl text-heading">{pick(post.title, locale)}</h3>
         <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-ink-600">{excerptOf(post, locale)}</p>
-        <span className="mt-auto inline-flex items-center gap-1.5 pt-5 text-sm font-medium text-forest-900">
+        <span className="mt-auto inline-flex items-center gap-1.5 pt-5 text-sm font-medium text-heading">
           {labels.readMore}
           <ArrowUpRight className="size-4 transition-transform group-hover:rotate-45" />
         </span>

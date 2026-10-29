@@ -48,7 +48,7 @@ export function SectionHeading({
       <div data-reveal className="max-w-2xl">
         {eyebrow && <Tag tone={dark ? "glass" : "light"}>{eyebrow}</Tag>}
         {(title || accent) && (
-          <Title title={title ?? ""} accent={accent} className={`mt-4 text-4xl sm:text-5xl ${dark ? "text-white" : "text-forest-900"}`} />
+          <Title title={title ?? ""} accent={accent} className={`mt-4 text-4xl sm:text-5xl ${dark ? "text-white" : "text-heading"}`} />
         )}
       </div>
       {lead && (
@@ -127,14 +127,14 @@ export function AccordionCards({
       {items.map((item, i) => (
         <details key={i} name={name} open={openFirst && i === 0} data-reveal className="group rounded-2xl bg-mist-50 p-2 transition-colors hover:bg-mist-100">
           <summary className="flex cursor-pointer list-none items-center gap-3 p-1.5 [&::-webkit-details-marker]:hidden">
-            <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-xl bg-white text-ink-600 transition group-open:bg-sun-400 group-open:text-forest-950">
+            <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-xl bg-surface text-ink-600 transition group-open:bg-sun-400 group-open:text-forest-950">
               <CmsIcon name={item.icon} className="size-[18px]" />
             </span>
             <h3 className="flex-1 text-base text-ink-900">{item.title}</h3>
             <Plus className="size-5 text-ink-600 group-open:hidden" />
             <Minus className="hidden size-5 text-ink-900 group-open:block" />
           </summary>
-          <p className="mt-2 rounded-xl bg-white px-5 py-4 text-sm leading-relaxed whitespace-pre-line text-ink-600 sm:pl-[3.75rem]">{item.body}</p>
+          <p className="mt-2 rounded-xl bg-surface px-5 py-4 text-sm leading-relaxed whitespace-pre-line text-ink-600 sm:pl-[3.75rem]">{item.body}</p>
         </details>
       ))}
     </div>
@@ -145,7 +145,7 @@ export function AccordionCards({
 /** One logo colour per stat card: yellow, leaf green, chili red, deep green. */
 const statColors = [
   "bg-sun-400/25 text-forest-950",
-  "bg-leaf-500/20 text-forest-900",
+  "bg-leaf-500/20 text-heading",
   "bg-chili-600/10 text-chili-600",
   "bg-forest-900 text-white",
 ];
@@ -176,12 +176,12 @@ export function ProductCard({ card }: { card: ProductCardView }) {
       </div>
       <div className="p-5 sm:p-6">
         {card.latin && <p className="accent text-lg text-ink-600">{card.latin}</p>}
-        <h3 className="heading mt-1 text-3xl text-forest-900">{card.name}</h3>
+        <h3 className="heading mt-1 text-3xl text-heading">{card.name}</h3>
         <p className="mt-3 text-sm leading-relaxed text-ink-600">{card.short}</p>
         <div className="mt-5 flex items-end justify-between gap-4">
           <ul className="flex flex-wrap gap-1.5">
             {card.grades.slice(0, 4).map((g) => (
-              <li key={g} className="rounded-full border border-mist-200 bg-white px-3 py-1 text-xs text-ink-900">
+              <li key={g} className="rounded-full border border-mist-200 bg-surface px-3 py-1 text-xs text-ink-900">
                 {g}
               </li>
             ))}
@@ -221,7 +221,7 @@ export function LogoWall({ partners, join }: { partners: { name: string; logo: s
             className="max-h-12 w-auto max-w-[70%] object-contain opacity-60 grayscale transition duration-300 group-hover:opacity-100 group-hover:grayscale-0"
           />
         ) : (
-          <span className="text-center text-xl font-semibold tracking-tight text-ink-400 uppercase transition group-hover:text-forest-900 sm:text-2xl">{p.name}</span>
+          <span className="text-center text-xl font-semibold tracking-tight text-ink-400 uppercase transition group-hover:text-heading sm:text-2xl">{p.name}</span>
         );
         return (
           <li key={i} data-reveal className="group flex h-32 items-center justify-center bg-white px-6 sm:h-36">
@@ -237,7 +237,7 @@ export function LogoWall({ partners, join }: { partners: { name: string; logo: s
       })}
       {join && (
         <li data-reveal className="flex h-32 items-center justify-center bg-mist-50 px-6 sm:h-36">
-          <Link href={join.href} className="group inline-flex items-center gap-2 text-sm font-medium text-forest-900">
+          <Link href={join.href} className="group inline-flex items-center gap-2 text-sm font-medium text-heading">
             <Handshake className="size-5 text-forest-600" />
             {join.label}
             <ArrowUpRight className="size-4 transition group-hover:rotate-45" />

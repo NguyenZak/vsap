@@ -26,7 +26,8 @@ describe("page and section styles", () => {
     expect(sectionStyleVars(undefined, page, "white").attrs).toHaveProperty("data-cms-text");
     expect(sectionStyleVars(undefined, page, "dark").attrs).toEqual({});
     // A custom background means the page's colours were not chosen for it.
-    expect(sectionStyleVars({ background: "#000000" }, page, "white").attrs).toEqual({});
+    // (It is flagged so dark mode can keep it in its light palette.)
+    expect(sectionStyleVars({ background: "#000000" }, page, "white").attrs).toEqual({ "data-cms-bg": "" });
     const own = sectionStyleVars({ background: "#000000", text: "#ffffff" }, page, "dark");
     expect(own.style).toMatchObject({ backgroundColor: "#000000", "--cms-text": "#ffffff" });
   });
@@ -206,5 +207,20 @@ describe("text outline and shadow", () => {
     delete old.pages.home.style.effects;
     expect(normalize(old).pages.home.style.effects.heading.stroke).toBe("");
     expect(mergePageStyle(undefined, { text: "#123456" } as never).effects.text.stroke).toBe("");
+  });
+});
+
+describe("dark mode setting", () => {
+  it("is on (following the device) by default and for older saved content", () => {
+    expect(content.theme.darkMode).toBe("auto");
+    const old = structuredClone(content) as unknown as { theme: Record<string, unknown> };
+    delete old.theme.darkMode;
+    expect(normalize(old).theme.darkMode).toBe("auto");
+    expect(normalize({ ...structuredClone(content), theme: { ...content.theme, darkMode: "off" } }).theme.darkMode).toBe("off");
+    expect(normalize({ ...structuredClone(content), theme: { ...content.theme, darkMode: "weird" } }).theme.darkMode).toBe("auto");
+  });
+
+  it("has a switch label in every language", () => {
+    for (const ui of Object.values(content.ui)) expect(ui.nav.dark && ui.nav.light).toBeTruthy();
   });
 });

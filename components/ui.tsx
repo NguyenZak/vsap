@@ -5,7 +5,7 @@ type Variant = "sun" | "white" | "dark" | "glass";
 
 const button: Record<Variant, string> = {
   sun: "bg-sun-400 text-forest-950 hover:bg-sun-500",
-  white: "bg-white text-ink-900 hover:bg-mist-100",
+  white: "bg-surface text-ink-900 hover:bg-mist-100",
   dark: "bg-forest-900 text-white hover:bg-forest-800",
   glass: "border border-white/70 text-white hover:bg-white/10",
 };
@@ -40,7 +40,7 @@ export function Tag({ children, tone = "light" }: { children: React.ReactNode; t
   return (
     <p
       className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs ${
-        tone === "glass" ? "border-white/30 bg-white/15 text-white backdrop-blur-md" : "border-leaf-500/30 bg-leaf-500/10 text-forest-900"
+        tone === "glass" ? "border-white/30 bg-white/15 text-white backdrop-blur-md" : "border-leaf-500/30 bg-leaf-500/10 text-heading"
       }`}
     >
       <span className={`size-1.5 rounded-full ${tone === "glass" ? "bg-sun-400" : "bg-leaf-500"}`} />

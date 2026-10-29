@@ -99,7 +99,7 @@ export function ValuesShowcase({ items: values, autoplay: AUTOPLAY }: { items: S
               >
                 <span
                   className={`inline-flex size-10 shrink-0 items-center justify-center rounded-xl transition ${
-                    open ? "bg-sun-400 text-forest-950" : "bg-white text-ink-600"
+                    open ? "bg-sun-400 text-forest-950" : "bg-surface text-ink-600"
                   }`}
                 >
                   <CmsIcon name={v.icon} className="size-[18px]" />
@@ -115,7 +115,7 @@ export function ValuesShowcase({ items: values, autoplay: AUTOPLAY }: { items: S
                 }`}
               >
                 <div className="overflow-hidden">
-                  <p className="mt-2 rounded-xl bg-white px-5 py-4 text-sm leading-relaxed text-ink-600 sm:pl-[3.75rem]">{v.body}</p>
+                  <p className="mt-2 rounded-xl bg-surface px-5 py-4 text-sm leading-relaxed text-ink-600 sm:pl-[3.75rem]">{v.body}</p>
                 </div>
               </div>
             </li>

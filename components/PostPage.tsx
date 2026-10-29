@@ -120,14 +120,14 @@ export async function PostPage({ params, channel }: { params: PostParams; channe
         </div>
       </section>
 
-      <article className="bg-white py-16 sm:py-24">
+      <article className="bg-surface py-16 sm:py-24">
         <div data-reveal className="container-page max-w-3xl">
           <Markdown source={body} locale={locale} />
           {post.author && <p className="mt-12 border-t border-mist-200 pt-6 text-sm text-ink-400">— {post.author}</p>}
         </div>
       </article>
 
-      <section className="bg-white pb-16 sm:pb-24">
+      <section className="bg-surface pb-16 sm:pb-24">
         <div data-reveal className="container-page">
           <div className="flex flex-col items-start justify-between gap-6 rounded-3xl bg-forest-900 p-8 sm:flex-row sm:items-center sm:p-12">
             <div>
@@ -142,7 +142,7 @@ export async function PostPage({ params, channel }: { params: PostParams; channe
       {more.length > 0 && (
         <section className="bg-mist-50 py-16 sm:py-24">
           <div className="container-page">
-            <h2 data-reveal className="heading text-3xl text-forest-900 sm:text-4xl">
+            <h2 data-reveal className="heading text-3xl text-heading sm:text-4xl">
               {t.more}
             </h2>
             <div className="mt-10">

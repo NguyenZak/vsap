@@ -76,7 +76,7 @@ function ProductCard({ item, onQuickView }: { item: ShopItem; onQuickView: (e?: 
       onPointerMove={tilt}
       onPointerLeave={untilt}
       style={{ rotateX, rotateY, transformPerspective: 900 }}
-      className="group/card flex h-full flex-col overflow-hidden rounded-2xl bg-white ring-1 ring-mist-200 transition-[box-shadow] hover:shadow-xl hover:shadow-forest-950/10 hover:ring-forest-600/30"
+      className="group/card flex h-full flex-col overflow-hidden rounded-2xl bg-surface ring-1 ring-mist-200 transition-[box-shadow] hover:shadow-xl hover:shadow-forest-950/10 hover:ring-forest-600/30"
     >
       <div className="relative aspect-[3/4] overflow-hidden bg-white">
         <Link href={item.href} tabIndex={-1} aria-hidden className="absolute inset-0">
@@ -110,7 +110,7 @@ function ProductCard({ item, onQuickView }: { item: ShopItem; onQuickView: (e?: 
           type="button"
           onClick={(e) => onQuickView(e)}
           aria-label={`${t.quickView}: ${item.name}`}
-          className="absolute top-2 right-2 grid size-9 place-items-center rounded-full bg-white/90 text-ink-900 shadow-sm ring-1 ring-mist-200 transition hover:bg-sun-400 sm:translate-y-1 sm:opacity-0 sm:group-hover/card:translate-y-0 sm:group-hover/card:opacity-100 sm:focus-visible:opacity-100"
+          className="absolute top-2 right-2 grid size-9 place-items-center rounded-full bg-surface/90 text-ink-900 shadow-sm ring-1 ring-mist-200 transition hover:bg-sun-400 sm:translate-y-1 sm:opacity-0 sm:group-hover/card:translate-y-0 sm:group-hover/card:opacity-100 sm:focus-visible:opacity-100"
         >
           <Eye className="size-4" />
         </button>
@@ -161,7 +161,7 @@ function QuickView({ item, onClose }: { item: ShopItem; onClose: () => void }) {
       <div className="flex flex-col">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h2 className="heading text-3xl text-forest-900">
+            <h2 className="heading text-3xl text-heading">
               {item.name}
               {item.flavor && <span className="accent block text-[1.05em] leading-tight text-ink-600">{item.flavor}</span>}
             </h2>
@@ -174,7 +174,7 @@ function QuickView({ item, onClose }: { item: ShopItem; onClose: () => void }) {
         <div className="mt-5">
           <BuyBox item={item} onAdded={onClose} />
         </div>
-        <Link href={item.href} onClick={onClose} className="group mt-5 inline-flex items-center gap-1.5 self-start text-sm font-medium text-forest-900 hover:text-forest-600">
+        <Link href={item.href} onClick={onClose} className="group mt-5 inline-flex items-center gap-1.5 self-start text-sm font-medium text-heading hover:text-forest-600">
           {t.details}
           <ArrowUpRight className="size-4 transition-transform group-hover:rotate-45" />
         </Link>

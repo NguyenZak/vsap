@@ -7,7 +7,7 @@ import type { UiStrings } from "@/lib/cms/types";
 type Status = "idle" | "sending" | "success" | "error";
 
 const field =
-  "mt-1.5 block w-full rounded-xl border border-mist-200 bg-white px-4 py-3 text-ink-900 placeholder:text-ink-400 outline-none transition focus:border-forest-600 focus:ring-4 focus:ring-sun-400/50";
+  "mt-1.5 block w-full rounded-xl border border-mist-200 bg-surface px-4 py-3 text-ink-900 placeholder:text-ink-400 outline-none transition focus:border-forest-600 focus:ring-4 focus:ring-sun-400/50";
 const label = "text-sm font-medium text-ink-900";
 
 export type ProductChoice = { value: string; label: string };

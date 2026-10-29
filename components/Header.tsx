@@ -10,6 +10,7 @@ import type { NavItem } from "@/lib/cms/menu";
 import type { UiStrings } from "@/lib/cms/types";
 import type { Locale } from "@/lib/i18n";
 import { LocaleSwitcher } from "./LocaleSwitcher";
+import { ThemeToggle } from "./ThemeToggle";
 import { CartButton } from "./shop/CartButton";
 
 type Props = {
@@ -21,9 +22,11 @@ type Props = {
   menuStyle?: CSSProperties;
   contact: { phone: string; phoneE164: string; email: string };
   logoAlt: string;
+  /** Studio › Giao diện › Chế độ tối: show the light/dark switch. */
+  darkMode?: boolean;
 };
 
-export function Header({ locale, nav, items: links, menuStyle, contact: site, logoAlt }: Props) {
+export function Header({ locale, nav, items: links, menuStyle, contact: site, logoAlt, darkMode = false }: Props) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -115,18 +118,20 @@ export function Header({ locale, nav, items: links, menuStyle, contact: site, lo
       style={menuStyle}
       data-solid={solid || undefined}
       className={`group/header fixed inset-x-0 top-0 z-40 transition-colors duration-300 ${
-        solid ? "bg-white/90 shadow-sm shadow-black/5 backdrop-blur-md" : "bg-transparent"
+        solid ? "bg-surface/90 shadow-sm shadow-black/5 backdrop-blur-md" : "bg-transparent"
       }`}
     >
       <div className="container-page flex h-18 items-center justify-between gap-4 lg:h-22">
         <Link href={`/${locale}`} className="-ml-2 shrink-0" aria-label="VSAP">
+          {/* The solid header is light, except in dark mode: the light logo goes on anything dark. */}
           <img
             src={solid ? "/logo.svg" : "/logo-light.svg"}
             alt={logoAlt}
             width={136}
             height={68}
-            className="h-10 w-auto sm:h-12 lg:h-14"
+            className={`h-10 w-auto sm:h-12 lg:h-14 ${solid ? "dark:hidden" : ""}`}
           />
+          {solid && <img src="/logo-light.svg" alt={logoAlt} width={136} height={68} className="hidden h-10 w-auto sm:h-12 lg:h-14 dark:block" />}
         </Link>
 
         <nav
@@ -150,7 +155,7 @@ export function Header({ locale, nav, items: links, menuStyle, contact: site, lo
                   <motion.span
                     layoutId="nav-current"
                     transition={{ type: "spring", stiffness: 420, damping: 34 }}
-                    className="absolute inset-0 -z-10 rounded-full bg-white group-data-solid/header:shadow-sm"
+                    className="absolute inset-0 -z-10 rounded-full bg-surface group-data-solid/header:shadow-sm"
                   />
                 )}
                 {hovered === key && !active && (
@@ -160,7 +165,7 @@ export function Header({ locale, nav, items: links, menuStyle, contact: site, lo
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     transition={{ type: "spring", stiffness: 500, damping: 38 }}
-                    className="absolute inset-0 -z-10 rounded-full bg-white/25 group-data-solid/header:bg-white"
+                    className="absolute inset-0 -z-10 rounded-full bg-white/25 group-data-solid/header:bg-surface"
                   />
                 )}
                 {i === 0 && <House className="size-3.5 text-forest-600" />}
@@ -170,7 +175,7 @@ export function Header({ locale, nav, items: links, menuStyle, contact: site, lo
               {l.children.length > 0 && (
                 // Sub-menu: opens on hover and when a link inside has keyboard focus.
                 <div className="invisible absolute top-full left-0 z-50 pt-3 opacity-0 transition duration-200 group-focus-within/item:visible group-focus-within/item:opacity-100 group-hover/item:visible group-hover/item:opacity-100">
-                  <ul className="min-w-60 rounded-2xl bg-white p-2 shadow-xl shadow-black/10 ring-1 ring-black/5">
+                  <ul className="min-w-60 rounded-2xl bg-surface p-2 shadow-xl shadow-black/10 ring-1 ring-black/5">
                     {l.children.map((c) => (
                       <li key={c.href}>
                         <Link
@@ -192,10 +197,11 @@ export function Header({ locale, nav, items: links, menuStyle, contact: site, lo
 
         <div className="flex items-center gap-1.5 sm:gap-2">
           <LocaleSwitcher locale={locale} />
+          {darkMode && <ThemeToggle labels={{ dark: nav.dark, light: nav.light }} />}
           <CartButton />
           <Link
             href={`/${locale}/contact`}
-            className="hidden rounded-full bg-white px-3.5 py-2 text-sm font-medium whitespace-nowrap min-[420px]:inline-flex text-ink-900 transition hover:bg-mist-100 group-data-solid/header:bg-forest-900 group-data-solid/header:text-white sm:px-5 sm:py-2.5"
+            className="hidden rounded-full bg-surface px-3.5 py-2 text-sm font-medium whitespace-nowrap min-[420px]:inline-flex text-ink-900 transition hover:bg-mist-100 group-data-solid/header:bg-forest-900 group-data-solid/header:text-white sm:px-5 sm:py-2.5"
           >
             {nav.quote}
           </Link>
@@ -223,7 +229,7 @@ export function Header({ locale, nav, items: links, menuStyle, contact: site, lo
         id="mobile-nav"
         aria-label="Mobile"
         inert={!open}
-        className="invisible absolute inset-x-0 top-full flex h-[calc(100dvh-4.5rem)] flex-col overflow-y-auto border-t border-mist-200 bg-white lg:hidden"
+        className="invisible absolute inset-x-0 top-full flex h-[calc(100dvh-4.5rem)] flex-col overflow-y-auto border-t border-mist-200 bg-surface lg:hidden"
       >
         <ul className="container-page pt-4">
           {links.map((l, i) => {
@@ -239,7 +245,7 @@ export function Header({ locale, nav, items: links, menuStyle, contact: site, lo
                     className="group flex items-center gap-4 py-4"
                   >
                     <span className="w-6 text-xs text-ink-400 tabular-nums">{String(i + 1).padStart(2, "0")}</span>
-                    <span className={`heading flex-1 text-3xl ${active ? "accent text-[2.1rem] text-forest-600" : "text-forest-900"}`}>
+                    <span className={`heading flex-1 text-3xl ${active ? "accent text-[2.1rem] text-forest-600" : "text-heading"}`}>
                       {l.label}
                     </span>
                     <ArrowUpRight className="size-5 text-ink-400 transition group-hover:rotate-45 group-hover:text-forest-600" />

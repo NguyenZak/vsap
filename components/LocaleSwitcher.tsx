@@ -52,7 +52,7 @@ export function LocaleSwitcher({ locale }: { locale: Locale }) {
         aria-expanded={open}
         aria-controls="locale-menu"
         aria-label={`${label[locale]}: ${names[locale]}`}
-        className="flex h-9 items-center gap-1 rounded-full border border-white/25 bg-white/10 pr-2 pl-2.5 text-xs font-medium text-white uppercase backdrop-blur-md transition hover:bg-white/20 group-data-solid/header:border-mist-200 group-data-solid/header:bg-mist-50 group-data-solid/header:text-ink-900 group-data-solid/header:hover:bg-white"
+        className="flex h-9 items-center gap-1 rounded-full border border-white/25 bg-white/10 pr-2 pl-2.5 text-xs font-medium text-white uppercase backdrop-blur-md transition hover:bg-white/20 group-data-solid/header:border-mist-200 group-data-solid/header:bg-mist-50 group-data-solid/header:text-ink-900 group-data-solid/header:hover:bg-surface"
       >
         <Globe className="size-3.5 opacity-80" aria-hidden="true" />
         {locale}
@@ -63,7 +63,7 @@ export function LocaleSwitcher({ locale }: { locale: Locale }) {
         id="locale-menu"
         aria-label={label[locale]}
         inert={!open}
-        className={`absolute top-full right-0 z-50 mt-2 w-40 origin-top-right rounded-2xl border border-mist-200 bg-white p-1.5 shadow-xl shadow-black/10 transition duration-200 ${
+        className={`absolute top-full right-0 z-50 mt-2 w-40 origin-top-right rounded-2xl border border-mist-200 bg-surface p-1.5 shadow-xl shadow-black/10 transition duration-200 ${
           open ? "visible scale-100 opacity-100" : "invisible scale-95 opacity-0"
         }`}
       >

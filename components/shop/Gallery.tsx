@@ -69,7 +69,7 @@ export function Gallery({ images, alt }: { images: string[]; alt: string }) {
               type="button"
               onClick={() => go(-1)}
               aria-label={labels.prev}
-              className="absolute top-1/2 left-3 grid size-10 -translate-y-1/2 place-items-center rounded-full bg-white/90 text-ink-900 shadow-sm transition hover:bg-white sm:opacity-0 sm:group-hover:opacity-100 sm:focus-visible:opacity-100"
+              className="absolute top-1/2 left-3 grid size-10 -translate-y-1/2 place-items-center rounded-full bg-surface/90 text-ink-900 shadow-sm transition hover:bg-surface sm:opacity-0 sm:group-hover:opacity-100 sm:focus-visible:opacity-100"
             >
               <ChevronLeft className="size-5" />
             </button>
@@ -77,7 +77,7 @@ export function Gallery({ images, alt }: { images: string[]; alt: string }) {
               type="button"
               onClick={() => go(1)}
               aria-label={labels.next}
-              className="absolute top-1/2 right-3 grid size-10 -translate-y-1/2 place-items-center rounded-full bg-white/90 text-ink-900 shadow-sm transition hover:bg-white sm:opacity-0 sm:group-hover:opacity-100 sm:focus-visible:opacity-100"
+              className="absolute top-1/2 right-3 grid size-10 -translate-y-1/2 place-items-center rounded-full bg-surface/90 text-ink-900 shadow-sm transition hover:bg-surface sm:opacity-0 sm:group-hover:opacity-100 sm:focus-visible:opacity-100"
             >
               <ChevronRight className="size-5" />
             </button>

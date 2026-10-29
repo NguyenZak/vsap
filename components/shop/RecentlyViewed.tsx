@@ -27,7 +27,7 @@ export function RecentlyViewed({ current }: { current: string }) {
 
   return (
     <section className="container-page py-16 sm:py-20">
-      <h2 className="heading text-3xl text-forest-900">{t.recent}</h2>
+      <h2 className="heading text-3xl text-heading">{t.recent}</h2>
       <div className="mt-8">
         <ProductGrid items={items} reveal={false} />
       </div>

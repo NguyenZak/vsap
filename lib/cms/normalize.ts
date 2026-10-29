@@ -30,7 +30,7 @@ export function normalize(raw: unknown): SiteContent {
     // so Studio doesn't offer fields that change nothing.
     ui: pruneTo(content.ui, defaults.ui),
     retailPacks: content.retailPacks.map(normalizePack),
-    theme: { ...content.theme, fonts: (Array.isArray(content.theme.fonts) ? content.theme.fonts : []).filter(isObject).map(normalizeFont) },
+    theme: { ...content.theme, darkMode: content.theme.darkMode === "off" ? "off" : "auto", fonts: (Array.isArray(content.theme.fonts) ? content.theme.fonts : []).filter(isObject).map(normalizeFont) },
     menu: content.menu.filter(isObject).map(normalizeMenuItem),
     categories: content.categories.filter(isObject).map(normalizeCategory),
   };

@@ -17,6 +17,8 @@ export const ko: Dictionary = {
     quote: "견적 요청",
     menu: "메뉴 열기",
     close: "메뉴 닫기",
+    dark: "다크 모드",
+    light: "라이트 모드",
   },
   common: {
     learnMore: "자세히 보기",

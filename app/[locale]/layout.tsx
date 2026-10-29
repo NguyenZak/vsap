@@ -3,6 +3,7 @@ import { Inter, Phudu } from "next/font/google";
 import { FloatingContact } from "@/components/FloatingContact";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
+import { themeBootScript } from "@/components/ThemeToggle";
 import { MotionMain } from "@/components/MotionMain";
 import { SiteContactProvider } from "@/components/SiteContact";
 import { PreviewBridge } from "@/components/cms/PreviewBridge";
@@ -93,6 +94,8 @@ export default async function LocaleLayout({ children, params }: Props) {
       <head>
         {/* Lets CSS hide intro elements before first paint, only when JS will animate them in. */}
         <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js')" }} />
+        {/* Dark mode before first paint: the visitor's choice, else the device's (components/ThemeToggle.tsx). */}
+        {theme.darkMode !== "off" && !preview && <script dangerouslySetInnerHTML={{ __html: themeBootScript }} />}
         {fontsHref && (
           <>
             <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -121,6 +124,7 @@ export default async function LocaleLayout({ children, params }: Props) {
             menuStyle={menuStyleVars(theme.menu)}
             contact={site}
             logoAlt={`${site.name} – ${site.tagline}`}
+            darkMode={theme.darkMode !== "off"}
           />
           <SiteContactProvider value={{ phone: site.phone, phoneE164: site.phoneE164, email: site.email }}>
             <MotionMain>{children}</MotionMain>

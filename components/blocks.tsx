@@ -297,7 +297,7 @@ const renderers: Record<string, Renderer> = {
                     </div>
                   )}
                   <div>
-                    <h3 className={`heading text-3xl sm:text-4xl ${dark ? "text-white" : "text-forest-900"}`}>{t(group.name)}</h3>
+                    <h3 className={`heading text-3xl sm:text-4xl ${dark ? "text-white" : "text-heading"}`}>{t(group.name)}</h3>
                     {t(group.short) && <p className={`mt-2 max-w-2xl text-sm leading-relaxed ${dark ? "text-white/70" : "text-ink-600"}`}>{t(group.short)}</p>}
                   </div>
                 </div>
@@ -399,7 +399,7 @@ const renderers: Record<string, Renderer> = {
         <div data-reveal className="lg:col-span-6">
           {t(p.tag) && <Tag tone={dark ? "glass" : "light"}>{t(p.tag)}</Tag>}
           <div className="mt-6 space-y-5">
-            {t(p.lead) && <p className={`heading text-2xl sm:text-3xl ${dark ? "text-white" : "text-forest-900"}`}>{t(p.lead)}</p>}
+            {t(p.lead) && <p className={`heading text-2xl sm:text-3xl ${dark ? "text-white" : "text-heading"}`}>{t(p.lead)}</p>}
             <Paragraphs text={t(p.body)} className={`text-base leading-relaxed ${dark ? "text-white/75" : "text-ink-600"}`} />
           </div>
         </div>
@@ -425,11 +425,11 @@ const renderers: Record<string, Renderer> = {
         {heading(p, ctx, tone)}
         <ul className={`grid gap-3 ${cols} ${hasHeading(p, ctx) ? "mt-12" : ""}`}>
           {items.map((it, i) => (
-            <li key={i} data-reveal className={`rounded-2xl p-7 ${tone === "dark" ? "bg-white/5" : tone === "muted" ? "bg-white" : "bg-mist-50"}`}>
+            <li key={i} data-reveal className={`rounded-2xl p-7 ${tone === "dark" ? "bg-white/5" : tone === "muted" ? "bg-surface" : "bg-mist-50"}`}>
               <span className="inline-flex size-11 items-center justify-center rounded-xl bg-sun-400 text-forest-950">
                 <CmsIcon name={str(it.icon)} className="size-5" />
               </span>
-              <h3 className={`heading mt-8 text-2xl ${tone === "dark" ? "text-white" : "text-forest-900"}`}>{t(it.title)}</h3>
+              <h3 className={`heading mt-8 text-2xl ${tone === "dark" ? "text-white" : "text-heading"}`}>{t(it.title)}</h3>
               <p className={`mt-3 text-sm leading-relaxed whitespace-pre-line ${tone === "dark" ? "text-white/70" : "text-ink-600"}`}>{t(it.body)}</p>
             </li>
           ))}
@@ -448,7 +448,7 @@ const renderers: Record<string, Renderer> = {
           {hasHeading(p, ctx) && (
             <div data-reveal className="mb-10">
               {t(p.eyebrow) && <Tag tone={dark ? "glass" : "light"}>{t(p.eyebrow)}</Tag>}
-              <Title title={t(p.title)} accent={t(p.accent)} className={`mt-4 text-4xl sm:text-5xl ${dark ? "text-white" : "text-forest-900"}`} />
+              <Title title={t(p.title)} accent={t(p.accent)} className={`mt-4 text-4xl sm:text-5xl ${dark ? "text-white" : "text-heading"}`} />
               {t(p.lead) && <p className={`mt-5 max-w-md text-sm leading-relaxed ${dark ? "text-white/75" : "text-ink-600"}`}>{t(p.lead)}</p>}
             </div>
           )}
@@ -468,13 +468,13 @@ const renderers: Record<string, Renderer> = {
       <div className="block-pad container-page grid gap-10 lg:grid-cols-2">
         <div data-reveal>
           {t(p.eyebrow) && <Tag tone={dark ? "glass" : "light"}>{t(p.eyebrow)}</Tag>}
-          <Title title={t(p.title)} accent={t(p.accent)} className={`mt-4 text-4xl sm:text-5xl ${dark ? "text-white" : "text-forest-900"}`} />
+          <Title title={t(p.title)} accent={t(p.accent)} className={`mt-4 text-4xl sm:text-5xl ${dark ? "text-white" : "text-heading"}`} />
           {t(p.lead) && <p className={`mt-5 max-w-md text-sm leading-relaxed ${dark ? "text-white/75" : "text-ink-600"}`}>{t(p.lead)}</p>}
         </div>
         <ul className="space-y-2.5">
           {list(p.items).map((it, i) => (
             <li key={i} data-reveal className="flex items-center gap-3 rounded-2xl bg-mist-50 p-2 pr-5 text-sm text-ink-900">
-              <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-xl bg-white text-forest-600">
+              <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-xl bg-surface text-forest-600">
                 <CmsIcon name="file-check" className="size-[18px]" />
               </span>
               {t(it.text)}
@@ -555,7 +555,7 @@ const renderers: Record<string, Renderer> = {
         </div>
         <div data-reveal>
           {t(p.eyebrow) && <Tag tone={dark ? "glass" : "light"}>{t(p.eyebrow)}</Tag>}
-          <Title title={t(p.title)} accent={t(p.accent)} className={`mt-4 text-4xl sm:text-5xl ${dark ? "text-white" : "text-forest-900"}`} />
+          <Title title={t(p.title)} accent={t(p.accent)} className={`mt-4 text-4xl sm:text-5xl ${dark ? "text-white" : "text-heading"}`} />
           {t(p.lead) && <p className={`mt-5 text-lg leading-relaxed ${dark ? "text-white/85" : "text-ink-900"}`}>{t(p.lead)}</p>}
           <div className={`mt-5 space-y-4 text-sm leading-relaxed ${dark ? "text-white/70" : "text-ink-600"}`}>
             <Paragraphs text={t(p.body)} />
@@ -590,7 +590,7 @@ const renderers: Record<string, Renderer> = {
           {t(p.buttonLabel) && str(p.buttonHref) && <Button href={href(p.buttonHref)} variant={tone === "dark" ? "sun" : "dark"}>{t(p.buttonLabel)}</Button>}
         </div>
         <div className={`space-y-4 ${hasHeading(p, ctx) || t(p.buttonLabel) ? "mt-12" : ""}`}>
-          {posts.length === 0 && <p className={`rounded-3xl px-6 py-16 text-center text-ink-600 ${tone === "white" ? "bg-mist-50" : "bg-white"}`}>{ctx.ui.news.empty}</p>}
+          {posts.length === 0 && <p className={`rounded-3xl px-6 py-16 text-center text-ink-600 ${tone === "white" ? "bg-mist-50" : "bg-surface"}`}>{ctx.ui.news.empty}</p>}
           {first && <FeaturedPost post={first} locale={ctx.locale} labels={labels} />}
           {rest.length > 0 && <PostGrid posts={rest as Post[]} locale={ctx.locale} labels={labels} onMuted={tone !== "white"} />}
         </div>

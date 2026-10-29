@@ -14,7 +14,7 @@ export function CartButton() {
       type="button"
       onClick={() => setCartOpen(true)}
       aria-label={count ? `${t.cart} (${count})` : t.cart}
-      className="relative inline-flex size-10 items-center justify-center rounded-full border border-white/25 bg-white/10 text-white backdrop-blur-md transition hover:bg-white/20 group-data-solid/header:border-mist-200 group-data-solid/header:bg-mist-50 group-data-solid/header:text-ink-900 group-data-solid/header:hover:bg-white"
+      className="relative inline-flex size-10 items-center justify-center rounded-full border border-white/25 bg-white/10 text-white backdrop-blur-md transition hover:bg-white/20 group-data-solid/header:border-mist-200 group-data-solid/header:bg-mist-50 group-data-solid/header:text-ink-900 group-data-solid/header:hover:bg-surface"
     >
       <ShoppingBag className="size-[18px]" />
       <AnimatePresence>

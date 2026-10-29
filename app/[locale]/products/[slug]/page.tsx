@@ -101,9 +101,9 @@ export default async function ProductPage({ params }: Props) {
       <section className="bg-mist-50 py-16 sm:py-24">
         <div className="container-page grid gap-10 lg:grid-cols-12 lg:items-center">
           <div data-reveal className={gallery.length ? "lg:col-span-7" : "lg:col-span-12"}>
-            <p className="heading text-2xl text-forest-900 sm:text-3xl">{tr(product.description)}</p>
+            <p className="heading text-2xl text-heading sm:text-3xl">{tr(product.description)}</p>
             {tr(product.origin) && (
-              <p className="mt-8 inline-flex items-start gap-3 rounded-2xl bg-white p-2 pr-5 text-sm text-ink-600">
+              <p className="mt-8 inline-flex items-start gap-3 rounded-2xl bg-surface p-2 pr-5 text-sm text-ink-600">
                 <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-xl bg-sun-400 text-forest-950">
                   <MapPin className="size-[18px]" />
                 </span>
@@ -134,11 +134,11 @@ export default async function ProductPage({ params }: Props) {
         <div className="lg:col-span-7">
           {product.grades.length > 0 && (
             <>
-              <Title title={t.grades} className="text-4xl text-forest-900" />
+              <Title title={t.grades} className="text-4xl text-heading" />
               <ul className="mt-8 space-y-2">
                 {product.grades.map((g, i) => (
                   <li key={i} data-reveal className="flex items-center gap-4 rounded-2xl bg-mist-50 p-2 pr-5 text-sm">
-                    <span className="inline-flex h-10 min-w-24 shrink-0 items-center justify-center rounded-xl bg-white px-3 font-semibold text-forest-900">
+                    <span className="inline-flex h-10 min-w-24 shrink-0 items-center justify-center rounded-xl bg-surface px-3 font-semibold text-heading">
                       {g.code}
                     </span>
                     <span className="text-ink-600">{tr(g.label)}</span>
@@ -150,11 +150,11 @@ export default async function ProductPage({ params }: Props) {
 
           {product.packaging.length > 0 && (
             <>
-              <Title title={t.packaging} className="mt-16 text-4xl text-forest-900" />
+              <Title title={t.packaging} className="mt-16 text-4xl text-heading" />
               <ul className="mt-8 space-y-2">
                 {product.packaging.map((p, i) => (
                   <li key={i} data-reveal className="flex items-center gap-4 rounded-2xl bg-mist-50 p-2 pr-5 text-sm text-ink-600">
-                    <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-xl bg-white text-forest-600">
+                    <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-xl bg-surface text-forest-600">
                       <Package className="size-[18px]" />
                     </span>
                     {tr(p.text)}
@@ -168,7 +168,7 @@ export default async function ProductPage({ params }: Props) {
         <aside className="space-y-10 lg:col-span-5">
           {product.specs.length > 0 && (
             <div>
-              <h2 className="heading text-2xl text-forest-900">{t.specs}</h2>
+              <h2 className="heading text-2xl text-heading">{t.specs}</h2>
               <dl className="mt-6 grid grid-cols-2 gap-2.5">
                 {product.specs.map((s, i) => (
                   <div key={i} data-reveal className="rounded-2xl bg-mist-50 px-4 py-6 text-center">
@@ -183,7 +183,7 @@ export default async function ProductPage({ params }: Props) {
 
           {product.applications.length > 0 && (
             <div>
-              <h2 className="heading text-2xl text-forest-900">{t.applications}</h2>
+              <h2 className="heading text-2xl text-heading">{t.applications}</h2>
               <ul className="mt-5 flex flex-wrap gap-2">
                 {product.applications.map((a, i) => (
                   <li key={i} className="inline-flex items-center gap-1.5 rounded-full border border-mist-200 px-4 py-2 text-sm text-ink-900">
@@ -211,10 +211,10 @@ export default async function ProductPage({ params }: Props) {
       <section id="inquiry" className="scroll-mt-24 bg-mist-50 py-16 sm:py-24">
         <div className="container-page grid gap-10 lg:grid-cols-12">
           <div className="lg:col-span-4">
-            <Title title={t.inquireTitle} className="text-4xl text-forest-900" />
+            <Title title={t.inquireTitle} className="text-4xl text-heading" />
             <p className="mt-5 text-sm leading-relaxed text-ink-600">{t.inquireBody}</p>
           </div>
-          <div data-reveal className="rounded-3xl bg-white p-6 sm:p-10 lg:col-span-8">
+          <div data-reveal className="rounded-3xl bg-surface p-6 sm:p-10 lg:col-span-8">
             <InquiryForm t={ui.form} products={inquiryProducts(content.products, locale)} defaultProduct={product.slug} />
           </div>
         </div>

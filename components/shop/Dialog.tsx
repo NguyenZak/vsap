@@ -81,7 +81,7 @@ export function Dialog({
         if (open) onClose();
       }}
       onClick={(e) => e.target === e.currentTarget && onClose()}
-      className={`${shape} bg-white p-0 text-ink-900 backdrop:bg-forest-950/50 backdrop:backdrop-blur-sm ${className}`}
+      className={`${shape} bg-surface p-0 text-ink-900 backdrop:bg-forest-950/50 backdrop:backdrop-blur-sm ${className}`}
     >
       {(open || shown) && children}
     </dialog>
@@ -113,9 +113,9 @@ export function QtyStepper({
   size?: "sm" | "md";
 }) {
   const box = size === "sm" ? "h-8" : "h-11";
-  const btn = `grid ${size === "sm" ? "w-8" : "w-11"} place-items-center text-ink-600 transition hover:text-forest-900 disabled:opacity-30`;
+  const btn = `grid ${size === "sm" ? "w-8" : "w-11"} place-items-center text-ink-600 transition hover:text-heading disabled:opacity-30`;
   return (
-    <div className={`inline-flex ${box} items-stretch rounded-full border border-mist-200 bg-white`}>
+    <div className={`inline-flex ${box} items-stretch rounded-full border border-mist-200 bg-surface`}>
       <button type="button" className={btn} onClick={() => onChange(value - 1)} disabled={value <= 1} aria-label={labels.decrease}>
         <Minus className="size-3.5" />
       </button>

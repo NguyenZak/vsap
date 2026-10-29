@@ -37,6 +37,7 @@ import type { Permission } from "@/lib/cms/roles";
 import {
   categoryFields,
   customFontFields,
+  darkModeFields,
   menuFields,
   menuStyleFields,
   newCategory,
@@ -677,7 +678,8 @@ export function Studio() {
         {view.kind === "theme" && content && (
           <section className="flex w-[34rem] shrink-0 flex-col border-r border-mist-200 bg-white">
             <Panel title="Giao diện" subtitle="Màu, font và cỡ chữ chung cho toàn website. Từng trang (Cài đặt trang) và từng section (Màu & khung) có thể đặt riêng.">
-              <h3 className="text-sm font-medium text-ink-900">Toàn website</h3>
+              <FieldForm fields={darkModeFields} value={content.theme} path={["theme"]} onChange={onField} />
+              <h3 className="mt-8 border-t border-mist-200 pt-6 text-sm font-medium text-ink-900">Toàn website</h3>
               <div className="mt-4">
                 <FieldForm fields={pageStyleFields} value={content.theme.page} path={["theme", "page"]} onChange={onField} />
               </div>

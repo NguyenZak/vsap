@@ -39,7 +39,7 @@ export function FloatingContact({ t, links: site }: { t: UiStrings["chat"]; link
   );
 
   const items = [
-    { href: site.zalo, label: t.zalo, className: "bg-white ring-1 ring-black/5", ping: "bg-[#0068ff]", icon: <ZaloIcon /> },
+    { href: site.zalo, label: t.zalo, className: "bg-surface ring-1 ring-black/5", ping: "bg-[#0068ff]", icon: <ZaloIcon /> },
     { href: site.whatsapp, label: t.whatsapp, className: "bg-[#25d366]", icon: <WhatsAppIcon /> },
     { href: site.phoneE164 ? `tel:${site.phoneE164}` : "", label: `${t.call} ${site.phone}`, className: "bg-forest-900", icon: <Phone className="size-5" /> },
   ].filter((item) => item.href);
@@ -66,7 +66,7 @@ export function FloatingContact({ t, links: site }: { t: UiStrings["chat"]; link
             >
               {/* Label: always visible in the opened phone menu, slides out on hover / keyboard focus on larger screens. */}
               <span
-                className={`pointer-events-none absolute right-full mr-3 rounded-full bg-ink-900 px-3 py-1.5 text-xs font-medium whitespace-nowrap text-white shadow-lg transition sm:translate-x-2 sm:opacity-0 sm:group-hover:translate-x-0 sm:group-hover:opacity-100 sm:group-focus-visible:translate-x-0 sm:group-focus-visible:opacity-100`}
+                className={`pointer-events-none absolute right-full mr-3 rounded-full bg-forest-950 px-3 py-1.5 text-xs font-medium whitespace-nowrap text-white shadow-lg transition sm:translate-x-2 sm:opacity-0 sm:group-hover:translate-x-0 sm:group-hover:opacity-100 sm:group-focus-visible:translate-x-0 sm:group-focus-visible:opacity-100`}
               >
                 {item.label}
               </span>

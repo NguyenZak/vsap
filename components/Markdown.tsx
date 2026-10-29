@@ -40,7 +40,7 @@ function Inlines({ nodes, locale }: { nodes: Inline[]; locale: Locale }) {
                 key={i}
                 href={external ? n.href : localHref(n.href, locale)}
                 {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-                className="font-medium text-forest-600 underline decoration-sun-500 decoration-2 underline-offset-4 hover:text-forest-900"
+                className="font-medium text-forest-600 underline decoration-sun-500 decoration-2 underline-offset-4 hover:text-heading"
               >
                 <Inlines nodes={n.c} locale={locale} />
               </a>
@@ -63,7 +63,7 @@ export function Markdown({ source, locale }: { source: string; locale: Locale })
             const Tag = `h${b.level}` as "h2" | "h3" | "h4";
             const size = { 2: "pt-6 text-3xl sm:text-4xl", 3: "pt-4 text-2xl", 4: "pt-2 text-xl" }[b.level];
             return (
-              <Tag key={i} className={`heading scroll-mt-28 text-forest-900 ${size}`}>
+              <Tag key={i} className={`heading scroll-mt-28 text-heading ${size}`}>
                 <Inlines nodes={b.c} locale={locale} />
               </Tag>
             );
@@ -89,7 +89,7 @@ export function Markdown({ source, locale }: { source: string; locale: Locale })
           }
           case "quote":
             return (
-              <blockquote key={i} className="accent border-l-2 border-sun-500 py-1 pl-6 text-2xl leading-snug text-forest-900">
+              <blockquote key={i} className="accent border-l-2 border-sun-500 py-1 pl-6 text-2xl leading-snug text-heading">
                 <Inlines nodes={b.c} locale={locale} />
               </blockquote>
             );

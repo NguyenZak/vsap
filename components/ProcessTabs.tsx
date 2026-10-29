@@ -129,12 +129,12 @@ export function ProcessTabs({
               aria-controls={`${uid}-panel`}
               onClick={() => setActive(i)}
               className={`relative flex shrink-0 items-center gap-3 overflow-hidden rounded-xl border p-2 pr-4 text-left outline-none transition focus-visible:ring-2 focus-visible:ring-forest-600 ${
-                selected ? "border-mist-200 bg-white shadow-sm" : "border-transparent bg-mist-50 hover:bg-mist-100"
+                selected ? "border-mist-200 bg-surface shadow-sm" : "border-transparent bg-mist-50 hover:bg-mist-100"
               }`}
             >
               <span
                 className={`inline-flex size-9 shrink-0 items-center justify-center rounded-lg ${
-                  selected ? "bg-sun-400 text-forest-950" : "bg-white text-ink-600"
+                  selected ? "bg-sun-400 text-forest-950" : "bg-surface text-ink-600"
                 }`}
               >
                 <CmsIcon name={s.icon} className="size-4" />
@@ -181,7 +181,7 @@ export function ProcessTabs({
         </p>
 
         <div className="absolute inset-x-4 bottom-14 space-y-2 sm:inset-x-auto sm:right-6 sm:top-1/2 sm:bottom-auto sm:w-72 sm:-translate-y-1/2">
-          <div data-step-card className="rounded-2xl bg-white/95 p-5 text-center shadow-xl shadow-black/10 backdrop-blur-md">
+          <div data-step-card className="rounded-2xl bg-surface/95 p-5 text-center shadow-xl shadow-black/10 backdrop-blur-md">
             <span className="mx-auto inline-flex size-11 items-center justify-center rounded-full bg-sun-400 text-forest-950">
               <CmsIcon name={step.icon} className="size-5" />
             </span>
@@ -189,7 +189,7 @@ export function ProcessTabs({
             <p className="text-sm font-medium text-ink-900">{step.title}</p>
             <p className="mt-2 text-xs leading-relaxed text-ink-600">{step.body}</p>
           </div>
-          <div data-step-card className="rounded-2xl bg-white/95 p-4 shadow-xl shadow-black/10 backdrop-blur-md">
+          <div data-step-card className="rounded-2xl bg-surface/95 p-4 shadow-xl shadow-black/10 backdrop-blur-md">
             <div className="flex items-center justify-between text-xs">
               <span className="font-medium text-ink-900">
                 {stepLabel} {active + 1}/{steps.length}

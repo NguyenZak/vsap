@@ -11,7 +11,7 @@ import { QtyStepper } from "./Dialog";
 type State = { kind: "idle" } | { kind: "sending" } | { kind: "done"; id: number | null } | { kind: "error"; message: string };
 
 const input =
-  "mt-1.5 w-full rounded-xl border border-mist-200 bg-white px-4 py-3 text-sm text-ink-900 outline-none transition placeholder:text-ink-400 focus:border-forest-600 focus:ring-2 focus:ring-forest-600/15";
+  "mt-1.5 w-full rounded-xl border border-mist-200 bg-surface px-4 py-3 text-sm text-ink-900 outline-none transition placeholder:text-ink-400 focus:border-forest-600 focus:ring-2 focus:ring-forest-600/15";
 
 /** Cart review and delivery form; the order is priced again on the server. */
 type PolicyLink = { href: string; label: string } | null;
@@ -24,7 +24,7 @@ export function Checkout({ terms, privacy }: { terms: PolicyLink; privacy: Polic
     return (
       <div className="mx-auto max-w-xl rounded-3xl bg-mist-50 p-8 text-center sm:p-12">
         <CheckCircle2 className="mx-auto size-12 text-forest-600" />
-        <h2 className="heading mt-5 text-3xl text-forest-900">{t.successTitle}</h2>
+        <h2 className="heading mt-5 text-3xl text-heading">{t.successTitle}</h2>
         <p className="mt-3 text-ink-600">{t.successBody.replace("{id}", state.id ? String(state.id) : "")}</p>
         <Link href={`/${locale}/products`} className="mt-8 inline-flex rounded-full bg-forest-900 px-5 py-3 text-sm font-medium text-white transition hover:bg-forest-800">
           {t.continueShopping}
@@ -38,7 +38,7 @@ export function Checkout({ terms, privacy }: { terms: PolicyLink; privacy: Polic
   if (priced.length === 0) {
     return (
       <div className="mx-auto flex max-w-xl flex-col items-center gap-5 rounded-3xl bg-mist-50 p-10 text-center">
-        <span className="grid size-16 place-items-center rounded-full bg-white text-forest-600">
+        <span className="grid size-16 place-items-center rounded-full bg-surface text-forest-600">
           <ShoppingBag className="size-7" />
         </span>
         <p className="text-ink-600">{t.cartEmpty}</p>
@@ -123,7 +123,7 @@ export function Checkout({ terms, privacy }: { terms: PolicyLink; privacy: Polic
             {t.agree.split(/(\{terms\}|\{privacy\})/).map((part, i) => {
               const link = part === "{terms}" ? terms : part === "{privacy}" ? privacy : null;
               return link ? (
-                <Link key={i} href={link.href} target="_blank" className="font-medium text-forest-900 underline underline-offset-2 hover:text-forest-600">
+                <Link key={i} href={link.href} target="_blank" className="font-medium text-heading underline underline-offset-2 hover:text-forest-600">
                   {link.label}
                 </Link>
               ) : (
@@ -150,7 +150,7 @@ export function Checkout({ terms, privacy }: { terms: PolicyLink; privacy: Polic
 
       <aside className="order-1 lg:order-2 lg:col-span-5">
         <div className="rounded-3xl bg-mist-50 p-5 sm:p-6 lg:sticky lg:top-28">
-          <h2 className="heading text-2xl text-forest-900">{t.yourOrder}</h2>
+          <h2 className="heading text-2xl text-heading">{t.yourOrder}</h2>
           <ul className="mt-4 divide-y divide-mist-200">
             {priced.map(({ line, item, price, qty }) => (
               <li key={line.id} className="flex gap-3 py-4">
@@ -171,7 +171,7 @@ export function Checkout({ terms, privacy }: { terms: PolicyLink; privacy: Polic
                   type="button"
                   onClick={() => remove(line.id)}
                   aria-label={`${t.remove} ${item.name}`}
-                  className="grid size-8 shrink-0 place-items-center self-start rounded-full text-ink-400 transition hover:bg-white hover:text-chili-600"
+                  className="grid size-8 shrink-0 place-items-center self-start rounded-full text-ink-400 transition hover:bg-surface hover:text-chili-600"
                 >
                   <Trash2 className="size-4" />
                 </button>
@@ -180,7 +180,7 @@ export function Checkout({ terms, privacy }: { terms: PolicyLink; privacy: Polic
           </ul>
           <div className="flex items-baseline justify-between border-t border-mist-200 pt-4">
             <span className="text-sm text-ink-600">{t.subtotal}</span>
-            <span className="text-2xl font-medium tabular-nums text-forest-900">{formatPrice(subtotal, locale)}</span>
+            <span className="text-2xl font-medium tabular-nums text-heading">{formatPrice(subtotal, locale)}</span>
           </div>
         </div>
       </aside>

@@ -427,7 +427,7 @@ export function defaultContent(): SiteContent {
     },
     ui: Object.fromEntries(locales.map((l) => [l, ui(dicts[l])])) as Record<Locale, UiStrings>,
     pages: Object.fromEntries(Object.entries(pages).map(([id, p]) => [id, { ...p, style: emptyPageStyle() }])) as Record<PageId, Page>,
-    theme: { page: emptyPageStyle(), menu: emptyMenuStyle(), fonts: [] },
+    theme: { page: emptyPageStyle(), menu: emptyMenuStyle(), fonts: [], darkMode: "auto" },
     menu: defaultMenu(),
     categories: defaultCategories(),
     products: products.map((p) => ({

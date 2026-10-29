@@ -45,7 +45,11 @@ export type Settings = {
 
 /** Interface strings that are not part of any one section (nav, buttons, form labels…). */
 export type UiStrings = {
-  nav: { home: string; about: string; products: string; quality: string; news: string; health: string; contact: string; quote: string; menu: string; close: string };
+  nav: {
+    home: string; about: string; products: string; quality: string; news: string; health: string; contact: string; quote: string; menu: string; close: string;
+    /** Labels of the light/dark switch in the header. */
+    dark: string; light: string;
+  };
   common: { viewProduct: string; requestQuote: string; prev: string; next: string; pause: string; play: string; slide: string; step: string; photo: string };
   footer: { explore: string; products: string; contact: string; rights: string; brandOf: string; taxId: string; registered: string; representative: string; policies: string; policyUpdated: string };
   chat: { label: string; zalo: string; whatsapp: string; call: string; close: string };
@@ -165,7 +169,13 @@ export type CustomFont = {
   files: { src: string; weight: string; style: "normal" | "italic" }[];
 };
 
-export type Theme = { page: PageStyle; menu: MenuStyle; fonts: CustomFont[] };
+export type Theme = {
+  page: PageStyle;
+  menu: MenuStyle;
+  fonts: CustomFont[];
+  /** "auto": dark when the visitor's device is, with a switch in the header; "off": always light. */
+  darkMode: "auto" | "off";
+};
 
 export type MenuLink = { label: L; href: string };
 

@@ -7,7 +7,7 @@ import { useShop } from "./CartProvider";
 export function Price({ item, size }: { item: Pick<ShopItem, "price" | "oldPrice">; size: "card" | "large" }) {
   const { t, locale } = useShop();
   if (item.price === null) {
-    return <p className={`font-semibold text-forest-900 ${size === "large" ? "text-3xl tracking-tight" : "text-base"}`}>{t.contactPrice}</p>;
+    return <p className={`font-semibold text-heading ${size === "large" ? "text-3xl tracking-tight" : "text-base"}`}>{t.contactPrice}</p>;
   }
   return (
     <p className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5 tabular-nums">
