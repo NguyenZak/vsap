@@ -506,8 +506,11 @@ export function Studio() {
       </header>
 
       <div className="flex min-h-0 flex-1">
-        {/* Main nav */}
-        <nav className="flex w-[4.5rem] shrink-0 flex-col items-stretch gap-1 overflow-y-auto border-r border-mist-200 bg-white py-3">
+        {/* Shell: the nav rail and everything right of it; the rail can be dragged wider. */}
+        <Panes id="shell">
+        <Pane id="nav" defaultSize="4.5rem" minSize="4.5rem" maxSize="15rem" className="bg-white">
+        {/* Main nav: icon over label when narrow, icon beside label once dragged wider (container query). */}
+        <nav className="@container flex min-h-0 flex-1 flex-col items-stretch gap-1 overflow-y-auto py-3">
           {nav
             .filter((n) => can(n.perm))
             .map((n) => {
@@ -518,12 +521,12 @@ export function Studio() {
                   key={n.kind}
                   type="button"
                   onClick={() => go(n.kind === "page" ? { kind: "page", id: view.kind === "page" ? view.id : "home" } : ({ kind: n.kind } as View))}
-                  className={`relative mx-2 flex flex-col items-center gap-1 rounded-lg px-1 py-2 text-[10px] leading-tight transition ${active ? "bg-forest-900 text-white" : "text-ink-600 hover:bg-mist-100"}`}
+                  className={`relative mx-2 flex flex-col items-center gap-1 rounded-lg px-1 py-2 text-[10px] leading-tight transition @[8rem]:flex-row @[8rem]:gap-3 @[8rem]:px-3 @[8rem]:text-left @[8rem]:text-sm ${active ? "bg-forest-900 text-white" : "text-ink-600 hover:bg-mist-100"}`}
                 >
-                  <n.icon className="size-[18px]" />
+                  <n.icon className="size-[18px] shrink-0" />
                   {n.label}
                   {badge > 0 && (
-                    <span className="absolute top-1 right-1 min-w-4 rounded-full bg-chili-600 px-1 text-[10px] leading-4 font-semibold text-white" aria-label={`${badge} ${n.kind === "orders" ? "đơn" : "yêu cầu"} mới`}>
+                    <span className="absolute top-1 right-1 min-w-4 rounded-full bg-chili-600 px-1 text-[10px] leading-4 font-semibold text-white @[8rem]:top-1/2 @[8rem]:right-2 @[8rem]:-translate-y-1/2" aria-label={`${badge} ${n.kind === "orders" ? "đơn" : "yêu cầu"} mới`}>
                       {badge > 99 ? "99+" : badge}
                     </span>
                   )}
@@ -531,6 +534,10 @@ export function Studio() {
               );
             })}
         </nav>
+        </Pane>
+        <PaneHandle />
+        <Pane id="main" fill>
+        <div className="flex min-h-0 min-w-0 flex-1">
 
         {/* Editors: resizable columns (+ preview) for the multi-column views */}
         <MaybePanes id={paneLayout(view.kind)}>
@@ -809,6 +816,9 @@ export function Studio() {
           </>
         )}
         </MaybePanes>
+        </div>
+        </Pane>
+        </Panes>
       </div>
 
       {publishOpen && (
