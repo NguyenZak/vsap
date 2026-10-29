@@ -60,6 +60,7 @@ import type { L, PageId, Partner, Policy, PostCategory, Product, RetailPack, Sec
 import { api, formatTime, type Me } from "./api";
 import { CollectionEditor } from "./CollectionEditor";
 import { FieldData, FieldForm, LinkSuggestions } from "./fields";
+import { Pane, PaneHandle, Panes } from "./Panes";
 import { Panel, SectionInspector, SectionList } from "./PageEditor";
 import { Preview, type PreviewHandle } from "./Preview";
 import { SeoPreview } from "./SeoPreview";
@@ -531,10 +532,11 @@ export function Studio() {
             })}
         </nav>
 
-        {/* Editors */}
+        {/* Editors: resizable columns (+ preview) for the multi-column views */}
+        <MaybePanes id={paneLayout(view.kind)}>
         {view.kind === "page" && content && (
           <>
-            <aside className="flex w-72 shrink-0 flex-col border-r border-mist-200 bg-white">
+            <Pane id="list" defaultSize="18rem" minSize="12rem" maxSize="32rem" className="bg-white">
               <div className="border-b border-mist-200 p-3">
                 <label className="text-[11px] font-medium tracking-wider text-ink-400 uppercase">Trang đang sửa</label>
                 <select
@@ -558,8 +560,9 @@ export function Studio() {
                 }}
                 onChange={(sections: Section[]) => onField(["pages", view.id, "sections"], sections)}
               />
-            </aside>
-            <section className="flex w-[26rem] shrink-0 flex-col border-r border-mist-200 bg-white">
+            </Pane>
+            <PaneHandle />
+            <Pane id="editor" defaultSize="26rem" minSize="20rem" maxSize="60rem" className="bg-white">
               <SectionInspector
                 page={content.pages[view.id]}
                 basePath={["pages", view.id]}
@@ -583,7 +586,7 @@ export function Studio() {
                   );
                 })()}
               />
-            </section>
+            </Pane>
           </>
         )}
 
@@ -669,14 +672,14 @@ export function Studio() {
           />
         )}
         {view.kind === "menu" && content && (
-          <section className="flex w-[34rem] shrink-0 flex-col border-r border-mist-200 bg-white">
+          <Pane id="editor" defaultSize="34rem" minSize="20rem" maxSize="60rem" className="bg-white">
             <Panel title="Menu" subtitle="Thanh menu đầu trang và menu trên điện thoại. Mục có cấp con hiện danh sách thả xuống khi rê chuột.">
               <FieldForm fields={menuFields} value={content} onChange={onField} />
             </Panel>
-          </section>
+          </Pane>
         )}
         {view.kind === "theme" && content && (
-          <section className="flex w-[34rem] shrink-0 flex-col border-r border-mist-200 bg-white">
+          <Pane id="editor" defaultSize="34rem" minSize="20rem" maxSize="60rem" className="bg-white">
             <Panel title="Giao diện" subtitle="Màu, font và cỡ chữ chung cho toàn website. Từng trang (Cài đặt trang) và từng section (Màu & khung) có thể đặt riêng.">
               <FieldForm fields={darkModeFields} value={content.theme} path={["theme"]} onChange={onField} />
               <h3 className="mt-8 border-t border-mist-200 pt-6 text-sm font-medium text-ink-900">Toàn website</h3>
@@ -693,7 +696,7 @@ export function Studio() {
               </div>
               <FontSamples fonts={content.theme.fonts} />
             </Panel>
-          </section>
+          </Pane>
         )}
         {view.kind === "policies" && content && (
           <CollectionEditor<Policy>
@@ -730,7 +733,7 @@ export function Studio() {
         )}
 
         {view.kind === "settings" && content && (
-          <section className="flex w-[34rem] shrink-0 flex-col border-r border-mist-200 bg-white">
+          <Pane id="editor" defaultSize="34rem" minSize="20rem" maxSize="60rem" className="bg-white">
             <Panel title="Thông tin công ty" subtitle="Dùng ở chân trang, trang Liên hệ, nút liên hệ nổi và dữ liệu cho Google.">
               <SeoPreview
                 siteName={content.settings.name}
@@ -749,7 +752,7 @@ export function Studio() {
               />
               <FieldForm fields={settingsFields} value={content.settings} path={["settings"]} onChange={onField} />
             </Panel>
-          </section>
+          </Pane>
         )}
 
         {view.kind === "ui" && content && <UiEditor ui={content.ui} onChange={onField} />}
@@ -784,22 +787,28 @@ export function Studio() {
         )}
 
         {showPreview && (
-          <Preview
-            ref={preview}
-            path={previewPath}
-            locale={locale}
-            onLocale={setLocale}
-            activeSection={view.kind === "page" && selected && selected !== "seo" ? selected : undefined}
-            onSelect={
-              view.kind === "page"
-                ? (id) => {
-                    setSelected(id);
-                    preview.current?.focus(id, false);
-                  }
-                : undefined
-            }
-          />
+          <>
+            <PaneHandle />
+            <Pane id="preview" fill minSize="20rem">
+              <Preview
+                ref={preview}
+                path={previewPath}
+                locale={locale}
+                onLocale={setLocale}
+                activeSection={view.kind === "page" && selected && selected !== "seo" ? selected : undefined}
+                onSelect={
+                  view.kind === "page"
+                    ? (id) => {
+                        setSelected(id);
+                        preview.current?.focus(id, false);
+                      }
+                    : undefined
+                }
+              />
+            </Pane>
+          </>
         )}
+        </MaybePanes>
       </div>
 
       {publishOpen && (
@@ -904,5 +913,37 @@ function FontSamples({ fonts }: { fonts: SiteContent["theme"]["fonts"] }) {
         </p>
       ))}
     </div>
+  );
+}
+
+/**
+ * Views whose columns can be resized, by layout: views sharing a layout id have the same
+ * columns (and remember one set of widths). Others (media, history, team…) are one full-width pane.
+ */
+const PANE_LAYOUTS: Partial<Record<View["kind"], string>> = {
+  page: "page",
+  products: "collection",
+  retail: "collection",
+  partners: "collection",
+  policies: "collection",
+  categories: "collection",
+  settings: "form",
+  menu: "form",
+  theme: "form",
+  ui: "ui",
+  news: "news",
+  inbox: "inbox",
+  orders: "orders",
+};
+const paneLayout = (kind: View["kind"]) => PANE_LAYOUTS[kind] ?? null;
+
+/** Resizable columns for multi-column views; other views render straight into the row. */
+function MaybePanes({ id, children }: { id: string | null; children: React.ReactNode }) {
+  return id ? (
+    <Panes key={id} id={id}>
+      {children}
+    </Panes>
+  ) : (
+    <>{children}</>
   );
 }

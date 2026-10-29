@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { BellRing, Building2, Download, Globe2, Inbox, Loader2, Mail, MessageCircle, Package, Phone, RefreshCw, Search, Trash2 } from "lucide-react";
 import { inquiryStatuses, inquiryStatusInfo, type Inquiry, type InquiryStatus } from "@/lib/cms/inquiry-format";
 import { api, formatTime, type TelegramStatus } from "./api";
+import { Pane, PaneHandle } from "./Panes";
 
 const productLabel: Record<string, string> = { cashew: "Hạt điều", macadamia: "Hạt macca", other: "Khác" };
 
@@ -105,7 +106,7 @@ export function InboxView({ onCounts, onConfigure }: { onCounts?: (c: Record<Inq
 
   return (
     <>
-      <aside className="flex w-[26rem] shrink-0 flex-col border-r border-mist-200 bg-white">
+      <Pane id="list" defaultSize="26rem" minSize="16rem" maxSize="40rem" className="bg-white">
         <div className="border-b border-mist-200 px-4 py-4">
           <div className="flex items-start justify-between gap-3">
             <div>
@@ -178,9 +179,10 @@ export function InboxView({ onCounts, onConfigure }: { onCounts?: (c: Record<Inq
             </li>
           ))}
         </ol>
-      </aside>
+      </Pane>
+      <PaneHandle />
 
-      <section className="min-h-0 flex-1 overflow-y-auto bg-mist-50">
+      <Pane id="detail" fill minSize="24rem" className="overflow-y-auto bg-mist-50">
         {current ? (
           <Detail key={current.id} item={current} onStatus={(s) => setItemStatus(current, s)} onSaved={replace} onDeleted={() => { setSelected(null); load(); }} />
         ) : (
@@ -191,7 +193,7 @@ export function InboxView({ onCounts, onConfigure }: { onCounts?: (c: Record<Inq
             </div>
           </div>
         )}
-      </section>
+      </Pane>
     </>
   );
 }

@@ -5,6 +5,7 @@ import { ChevronDown, ChevronUp, Copy, GripVertical, Plus, Trash2 } from "lucide
 import type { FieldDef } from "@/lib/cms/fields";
 import { FieldForm } from "./fields";
 import { Panel } from "./PageEditor";
+import { Pane, PaneHandle } from "./Panes";
 
 type Path = (string | number)[];
 
@@ -57,7 +58,7 @@ export function CollectionEditor<T extends object>({
 
   return (
     <>
-      <aside className="flex w-72 shrink-0 flex-col border-r border-mist-200 bg-white">
+      <Pane id="list" defaultSize="18rem" minSize="12rem" maxSize="32rem" className="bg-white">
         <div className="border-b border-mist-200 px-4 py-4">
           <h2 className="text-base font-medium text-ink-900">{title}</h2>
           <p className="mt-0.5 text-xs leading-snug text-ink-600">{description}</p>
@@ -109,8 +110,9 @@ export function CollectionEditor<T extends object>({
             <Plus className="size-4" /> Thêm mới
           </button>
         </div>
-      </aside>
-      <section className="flex w-[30rem] shrink-0 flex-col border-r border-mist-200 bg-white">
+      </Pane>
+      <PaneHandle />
+      <Pane id="editor" defaultSize="30rem" minSize="20rem" maxSize="60rem" className="bg-white">
         {current ? (
           <Panel
             title={label(current) || "(chưa đặt tên)"}
@@ -152,7 +154,7 @@ export function CollectionEditor<T extends object>({
             <p className="text-sm text-ink-600">Chọn một mục bên trái hoặc thêm mới.</p>
           </Panel>
         )}
-      </section>
+      </Pane>
     </>
   );
 }

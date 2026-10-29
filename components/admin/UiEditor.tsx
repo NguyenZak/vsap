@@ -4,6 +4,7 @@ import { useState } from "react";
 import type { UiStrings } from "@/lib/cms/types";
 import { locales, type Locale } from "@/lib/locales";
 import { Panel } from "./PageEditor";
+import { Pane, PaneHandle } from "./Panes";
 
 type Path = (string | number)[];
 
@@ -208,7 +209,7 @@ export function UiEditor({ ui, onChange }: { ui: Record<Locale, UiStrings>; onCh
   const [group, setGroup] = useState<keyof UiStrings>("nav");
   return (
     <>
-      <aside className="flex w-64 shrink-0 flex-col border-r border-mist-200 bg-white">
+      <Pane id="list" defaultSize="16rem" minSize="12rem" maxSize="28rem" className="bg-white">
         <div className="border-b border-mist-200 px-4 py-4">
           <h2 className="text-base font-medium text-ink-900">Chữ giao diện</h2>
           <p className="mt-0.5 text-xs leading-snug text-ink-600">Nhãn nút, menu, form… dùng chung trên mọi trang.</p>
@@ -220,12 +221,13 @@ export function UiEditor({ ui, onChange }: { ui: Record<Locale, UiStrings>; onCh
             </button>
           ))}
         </nav>
-      </aside>
-      <section className="flex w-[34rem] shrink-0 flex-col border-r border-mist-200 bg-white">
+      </Pane>
+      <PaneHandle />
+      <Pane id="editor" defaultSize="34rem" minSize="20rem" maxSize="60rem" className="bg-white">
         <Panel title={groups[group]}>
           <Rows byLang={Object.fromEntries(locales.map((l) => [l, (ui[l]?.[group] ?? {}) as Strings])) as Record<Locale, Strings>} path={[group]} onChange={onChange} />
         </Panel>
-      </section>
+      </Pane>
     </>
   );
 }

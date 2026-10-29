@@ -14,6 +14,7 @@ import { FieldData, FieldForm } from "./fields";
 import { Panel } from "./PageEditor";
 import { Preview, type PreviewHandle } from "./Preview";
 import { SeoPreview } from "./SeoPreview";
+import { Pane, PaneHandle } from "./Panes";
 
 type Path = (string | number)[];
 type Save = "idle" | "pending" | "saving" | "saved" | "error";
@@ -190,7 +191,7 @@ export function PostsView({ settings, canWrite, canPublish, locale, onLocale }: 
 
   return (
     <>
-      <aside className="flex w-72 shrink-0 flex-col border-r border-mist-200 bg-white">
+      <Pane id="list" defaultSize="18rem" minSize="12rem" maxSize="32rem" className="bg-white">
         <div className="border-b border-mist-200 px-4 py-4">
           <h2 className="text-base font-medium text-ink-900">Tin tức</h2>
           <p className="mt-0.5 text-xs leading-snug text-ink-600">Mỗi bài có bản nháp riêng; chỉ hiện trên website sau khi được xuất bản.</p>
@@ -243,9 +244,10 @@ export function PostsView({ settings, canWrite, canPublish, locale, onLocale }: 
             </button>
           </div>
         )}
-      </aside>
+      </Pane>
+      <PaneHandle />
 
-      <section className="flex w-[30rem] shrink-0 flex-col border-r border-mist-200 bg-white">
+      <Pane id="editor" defaultSize="30rem" minSize="20rem" maxSize="60rem" className="bg-white">
         {draft && record ? (
           <Panel
             title={draft.title.vi || draft.title.en || "(chưa có tiêu đề)"}
@@ -317,9 +319,12 @@ export function PostsView({ settings, canWrite, canPublish, locale, onLocale }: 
             {selected ? <Loader2 className="size-5 animate-spin text-ink-400" /> : <p className="text-sm text-ink-600">Chọn một bài bên trái{canWrite ? " hoặc bấm “Bài viết mới”" : ""}.</p>}
           </Panel>
         )}
-      </section>
+      </Pane>
+      <PaneHandle />
 
-      <Preview ref={preview} path={draft ? postPath(draft) : "/news"} locale={locale} onLocale={onLocale} />
+      <Pane id="preview" fill minSize="20rem">
+        <Preview ref={preview} path={draft ? postPath(draft) : "/news"} locale={locale} onLocale={onLocale} />
+      </Pane>
     </>
   );
 }

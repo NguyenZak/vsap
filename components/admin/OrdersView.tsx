@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Loader2, Mail, MapPin, MessageCircle, Phone, ReceiptText, RefreshCw, Search, ShoppingCart, Trash2, User } from "lucide-react";
 import { orderStatuses, orderStatusInfo, type Order, type OrderStatus } from "@/lib/cms/order-format";
 import { api, formatTime } from "./api";
+import { Pane, PaneHandle } from "./Panes";
 
 const statusTone: Record<OrderStatus, string> = {
   new: "bg-sun-400 text-forest-950",
@@ -94,7 +95,7 @@ export function OrdersView({ onCounts }: { onCounts?: (c: Record<OrderStatus, nu
 
   return (
     <>
-      <aside className="flex w-[26rem] shrink-0 flex-col border-r border-mist-200 bg-white">
+      <Pane id="list" defaultSize="26rem" minSize="16rem" maxSize="40rem" className="bg-white">
         <div className="border-b border-mist-200 px-4 py-4">
           <div className="flex items-start justify-between gap-3">
             <div>
@@ -153,9 +154,10 @@ export function OrdersView({ onCounts }: { onCounts?: (c: Record<OrderStatus, nu
             </li>
           ))}
         </ol>
-      </aside>
+      </Pane>
+      <PaneHandle />
 
-      <section className="min-h-0 flex-1 overflow-y-auto bg-mist-50">
+      <Pane id="detail" fill minSize="24rem" className="overflow-y-auto bg-mist-50">
         {current ? (
           <Detail key={current.id} item={current} onStatus={(s) => setItemStatus(current, s)} onSaved={replace} onDeleted={() => { setSelected(null); load(); }} />
         ) : (
@@ -166,7 +168,7 @@ export function OrdersView({ onCounts }: { onCounts?: (c: Record<OrderStatus, nu
             </div>
           </div>
         )}
-      </section>
+      </Pane>
     </>
   );
 }
