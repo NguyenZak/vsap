@@ -197,7 +197,7 @@ export function Header({ locale, nav, items: links, menuStyle, contact: site, lo
           <CartButton />
           <Link
             href={`/${locale}/contact`}
-            className="hidden rounded-full bg-surface px-3.5 py-2 text-sm font-medium whitespace-nowrap min-[420px]:inline-flex text-ink-900 transition hover:bg-mist-100 group-data-solid/header:bg-forest-900 group-data-solid/header:text-white sm:px-5 sm:py-2.5"
+            className="btn btn-quote hidden rounded-full bg-surface px-3.5 py-2 text-sm font-medium whitespace-nowrap min-[420px]:inline-flex text-ink-900 transition hover:bg-mist-100 group-data-solid/header:bg-forest-900 group-data-solid/header:text-white sm:px-5 sm:py-2.5"
           >
             {nav.quote}
           </Link>
@@ -274,7 +274,7 @@ export function Header({ locale, nav, items: links, menuStyle, contact: site, lo
             <Link
               href={`/${locale}/contact`}
               onClick={() => setOpen(false)}
-              className="flex items-center justify-center gap-2 rounded-full bg-sun-400 px-5 py-3.5 font-medium text-forest-950"
+              className="btn btn-primary flex items-center justify-center gap-2 rounded-full bg-sun-400 px-5 py-3.5 font-medium text-forest-950"
             >
               {nav.quote}
               <ArrowUpRight className="size-4" />

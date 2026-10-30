@@ -60,7 +60,7 @@ export function FeaturedPost({ post, locale, labels }: { post: Post; locale: Loc
         <Meta post={post} locale={locale} labels={labels} tone="dark" />
         <h3 className="heading mt-4 text-3xl text-white sm:text-5xl">{pick(post.title, locale)}</h3>
         <p className="mt-3 line-clamp-2 max-w-2xl text-sm leading-relaxed text-white/80 sm:text-base">{excerptOf(post, locale)}</p>
-        <span className="mt-6 inline-flex items-center gap-1.5 rounded-full bg-sun-400 px-4 py-2 text-sm font-medium text-forest-950">
+        <span className="btn btn-primary mt-6 inline-flex items-center gap-1.5 rounded-full bg-sun-400 px-4 py-2 text-sm font-medium text-forest-950">
           {labels.readMore}
           <ArrowUpRight className="size-4 transition-transform group-hover:rotate-45" />
         </span>

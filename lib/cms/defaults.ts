@@ -14,7 +14,7 @@ import { products } from "../products";
 import { packers, priceListIds, retailFacts, retailPacks, tempPrices } from "../retail";
 import { site } from "../site";
 import { emptyL, locales, type Locale } from "../locales";
-import { emptyMenuStyle, emptyPageStyle } from "./theme";
+import { emptyButtonStyle, emptyMenuStyle, emptyPageStyle } from "./theme";
 import type { CmsImage, L, MenuItem, Page, PageId, PostCategory, Section, SiteContent, UiStrings } from "./types";
 
 type Dict = typeof vi;
@@ -427,7 +427,7 @@ export function defaultContent(): SiteContent {
     },
     ui: Object.fromEntries(locales.map((l) => [l, ui(dicts[l])])) as Record<Locale, UiStrings>,
     pages: Object.fromEntries(Object.entries(pages).map(([id, p]) => [id, { ...p, style: emptyPageStyle() }])) as Record<PageId, Page>,
-    theme: { page: emptyPageStyle(), menu: emptyMenuStyle(), fonts: [], darkMode: "light" },
+    theme: { page: emptyPageStyle(), menu: emptyMenuStyle(), buttons: emptyButtonStyle(), fonts: [], darkMode: "light" },
     menu: defaultMenu(),
     categories: defaultCategories(),
     products: products.map((p) => ({

@@ -41,7 +41,7 @@ export function BuyBox({ item, onAdded }: { item: ShopItem; onAdded?: () => void
             <button
               type="button"
               onClick={(e) => addToCart(true, e)}
-              className="inline-flex items-center justify-center gap-2 rounded-lg border-2 border-chili-600 px-3 py-3 text-sm font-semibold tracking-wide text-chili-600 uppercase transition hover:bg-chili-600/5"
+              className="btn btn-buy-outline inline-flex items-center justify-center gap-2 rounded-lg border-2 border-chili-600 px-3 py-3 text-sm font-semibold tracking-wide text-chili-600 uppercase transition hover:bg-chili-600/5"
             >
               <ShoppingBag className="size-4" />
               {t.addToCart}
@@ -52,7 +52,7 @@ export function BuyBox({ item, onAdded }: { item: ShopItem; onAdded?: () => void
                 addToCart(false);
                 router.push(`/${locale}/cart`);
               }}
-              className="inline-flex items-center justify-center rounded-lg border-2 border-chili-600 bg-chili-600 px-3 py-3 text-sm font-semibold tracking-wide text-white uppercase transition hover:bg-chili-600/90"
+              className="btn btn-buy inline-flex items-center justify-center rounded-lg border-2 border-chili-600 bg-chili-600 px-3 py-3 text-sm font-semibold tracking-wide text-white uppercase transition hover:bg-chili-600/90"
             >
               {t.buyNow}
             </button>
@@ -61,7 +61,7 @@ export function BuyBox({ item, onAdded }: { item: ShopItem; onAdded?: () => void
       ) : (
         <Link
           href={`/${locale}/contact`}
-          className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-forest-900 px-5 py-3.5 text-sm font-semibold tracking-wide text-white uppercase transition hover:bg-forest-800"
+          className="btn btn-secondary mt-6 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-forest-900 px-5 py-3.5 text-sm font-semibold tracking-wide text-white uppercase transition hover:bg-forest-800"
         >
           <MessageCircle className="size-4" />
           {t.askPrice}

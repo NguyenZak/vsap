@@ -98,7 +98,7 @@ export function InquiryForm({ t, products, defaultProduct }: { t: UiStrings["for
         <button
           type="submit"
           disabled={status === "sending"}
-          className="inline-flex items-center justify-center gap-2 rounded-full bg-sun-400 px-6 py-3 text-sm font-medium text-forest-950 transition hover:bg-sun-500 disabled:opacity-60"
+          className="btn btn-primary inline-flex items-center justify-center gap-2 rounded-full bg-sun-400 px-6 py-3 text-sm font-medium text-forest-950 transition hover:bg-sun-500 disabled:opacity-60"
         >
           {status === "sending" ? t.sending : t.submit}
           {status === "sending" ? <Loader2 className="size-4 animate-spin" /> : <Send className="size-4" />}

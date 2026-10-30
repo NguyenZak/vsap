@@ -142,6 +142,8 @@ export type SectionStyle = {
   borderWidth: number;
   radius: number;
   effects: Partial<{ heading: Partial<TextEffect>; text: Partial<TextEffect> }>;
+  /** Colours of the buttons inside this section (both the yellow and the dark ones). */
+  button: Partial<{ bg: string; text: string; hover: string }>;
 };
 
 /** The header menu's type and colours (empty / 0 = design default). */
@@ -167,7 +169,29 @@ export type CustomFont = {
   files: { src: string; weight: string; style: "normal" | "italic" }[];
 };
 
+/** Colours of one kind of button; "" = the design's colour. */
+export type ButtonColors = { bg: string; text: string; hover: string };
+
+/** Studio › Giao diện › Nút: colours per kind of button, plus shape and lettering for all of them. */
+export type ButtonStyle = {
+  /** Yellow call-to-action buttons. */
+  primary: ButtonColors;
+  /** Dark green buttons (on light backgrounds, solid header). */
+  secondary: ButtonColors;
+  /** White buttons. */
+  light: ButtonColors;
+  /** Outlined buttons over photos. */
+  outline: { border: string; text: string; hover: string };
+  /** Red "buy now" / "add to cart" on a retail product's page. */
+  buy: ButtonColors;
+  /** px; 0 = each button's own shape (mostly pills). */
+  radius: number;
+  uppercase: boolean;
+  weight: "" | "400" | "500" | "600" | "700";
+};
+
 export type Theme = {
+  buttons: ButtonStyle;
   page: PageStyle;
   menu: MenuStyle;
   fonts: CustomFont[];

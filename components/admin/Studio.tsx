@@ -35,6 +35,7 @@ import {
 } from "lucide-react";
 import type { Permission } from "@/lib/cms/roles";
 import {
+  buttonStyleFields,
   categoryFields,
   customFontFields,
   darkModeFields,
@@ -46,6 +47,7 @@ import {
   newRetailPack,
   pageStyleFields,
   partnerFields,
+  productFrameFields,
   policyFields,
   productFields,
   retailFields,
@@ -696,6 +698,15 @@ export function Studio() {
               <h3 className="mt-8 border-t border-mist-200 pt-6 text-sm font-medium text-ink-900">Menu</h3>
               <div className="mt-4">
                 <FieldForm fields={menuStyleFields} value={content.theme.menu} path={["theme", "menu"]} onChange={onField} />
+              </div>
+              <h3 className="mt-8 border-t border-mist-200 pt-6 text-sm font-medium text-ink-900">Nút</h3>
+              <p className="mt-1 text-xs leading-snug text-ink-400">Chữ trên nút sửa ở từng section (Trang), ở Chữ giao diện (menu, giỏ hàng, form) và ở slide của hero. Để trống màu = giữ màu thiết kế.</p>
+              <div className="mt-4">
+                <FieldForm fields={buttonStyleFields} value={content.theme.buttons} path={["theme", "buttons"]} onChange={onField} />
+              </div>
+              <h3 className="mt-8 border-t border-mist-200 pt-6 text-sm font-medium text-ink-900">Khung ảnh sản phẩm</h3>
+              <div className="mt-4">
+                <FieldForm fields={productFrameFields} value={content.settings} path={["settings"]} onChange={onField} />
               </div>
               <h3 className="mt-8 border-t border-mist-200 pt-6 text-sm font-medium text-ink-900">Font</h3>
               <div className="mt-4">

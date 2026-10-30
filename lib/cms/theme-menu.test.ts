@@ -3,7 +3,7 @@ import { defaultContent } from "./defaults";
 import { resolveMenu } from "./menu";
 import { normalize } from "./normalize";
 import { categoryProblem, channelOf, postPath, withCategories } from "./post-format";
-import { customFontKey, customFontName, emptyPageStyle, fontChoices, fontFaceCss, fontFileType, googleFontsHref, menuStyleVars, mergeEffects, mergePageStyle, pageStyleVars, sectionStyleVars, stylesheetUrl } from "./theme";
+import { buttonStyleVars, customFontKey, customFontName, emptyPageStyle, fontChoices, fontFaceCss, fontFileType, googleFontsHref, menuStyleVars, mergeEffects, mergePageStyle, pageStyleVars, sectionStyleVars, stylesheetUrl } from "./theme";
 
 const content = defaultContent();
 
@@ -225,5 +225,27 @@ describe("dark mode setting", () => {
 
   it("gives visitors no switch: the menu strings have no dark/light labels", () => {
     for (const ui of Object.values(content.ui)) expect(Object.keys(ui.nav)).not.toContain("dark");
+  });
+});
+
+describe("buttons", () => {
+  it("change nothing until a colour is picked, and older content gets the empty style", () => {
+    expect(buttonStyleVars(content.theme.buttons)).toEqual({ style: {}, attrs: {} });
+    const old = structuredClone(content) as unknown as { theme: Record<string, unknown> };
+    delete old.theme.buttons;
+    expect(normalize(old).theme.buttons.primary).toEqual({ bg: "", text: "", hover: "" });
+  });
+
+  it("turn Studio choices into variables and switches, with safe values only", () => {
+    const b = { ...content.theme.buttons, primary: { bg: "#d73e27", text: "#ffffff", hover: "" }, outline: { border: "red", text: "#ffffff", hover: "" }, radius: 99, uppercase: true, weight: "600" as const };
+    expect(buttonStyleVars(b)).toEqual({
+      style: { "--btn-primary-bg": "#d73e27", "--btn-primary-text": "#ffffff", "--btn-outline-text": "#ffffff", "--btn-radius": "40px", "--btn-weight": "600" },
+      attrs: { "data-btn-radius": "", "data-btn-upper": "", "data-btn-weight": "" },
+    });
+  });
+
+  it("can be recoloured per section, hover defaulting to the background", () => {
+    const { style } = sectionStyleVars({ button: { bg: "#000000", text: "#ffffff" } }, emptyPageStyle(), "white");
+    expect(style).toMatchObject({ "--btn-primary-bg": "#000000", "--btn-primary-hover": "#000000", "--btn-secondary-text": "#ffffff" });
   });
 });

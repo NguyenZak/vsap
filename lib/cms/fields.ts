@@ -109,6 +109,17 @@ export const sectionStyleField: FieldDef = {
     { key: "border", label: "Màu viền", type: "color" },
     { key: "borderWidth", label: "Độ dày viền (px)", type: "number", min: 1, max: 12 },
     { key: "radius", label: "Bo góc khung (px)", type: "number", min: 0, max: 64 },
+    {
+      key: "button",
+      label: "Màu nút trong section",
+      type: "group",
+      help: "Ghi đè màu nút chung (Giao diện › Nút) cho riêng section này.",
+      fields: [
+        { key: "bg", label: "Màu nền nút", type: "color" },
+        { key: "text", label: "Màu chữ nút", type: "color" },
+        { key: "hover", label: "Màu nền khi rê chuột", type: "color" },
+      ],
+    },
     textEffectsField,
   ],
 };

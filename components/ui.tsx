@@ -3,11 +3,12 @@ import { ArrowUpRight } from "lucide-react";
 
 type Variant = "sun" | "white" | "dark" | "glass";
 
+// btn-* pick up Studio › Giao diện › Nút (globals.css); the Tailwind colours are the design's defaults.
 const button: Record<Variant, string> = {
-  sun: "bg-sun-400 text-forest-950 hover:bg-sun-500",
-  white: "bg-surface text-ink-900 hover:bg-mist-100",
-  dark: "bg-forest-900 text-white hover:bg-forest-800",
-  glass: "border border-white/70 text-white hover:bg-white/10",
+  sun: "btn-primary bg-sun-400 text-forest-950 hover:bg-sun-500",
+  white: "btn-light bg-surface text-ink-900 hover:bg-mist-100",
+  dark: "btn-secondary bg-forest-900 text-white hover:bg-forest-800",
+  glass: "btn-outline border border-white/70 text-white hover:bg-white/10",
 };
 
 /** Pill button link; the yellow one carries the small ↗ arrow like the mockup. */
@@ -27,7 +28,7 @@ export function Button({
   return (
     <Link
       href={href}
-      className={`group inline-flex items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-medium transition ${button[variant]} ${className}`}
+      className={`btn group inline-flex items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-medium transition ${button[variant]} ${className}`}
     >
       {children}
       {arrow && <ArrowUpRight className="size-4 transition-transform group-hover:rotate-45" />}

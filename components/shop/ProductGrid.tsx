@@ -133,7 +133,7 @@ function ProductCard({ item, onQuickView }: { item: ShopItem; onQuickView: (e?: 
               type="button"
               whileTap={{ scale: 0.94 }}
               onClick={(e) => add(item.id, 1, true, e.currentTarget.closest("article")?.querySelector("img"))}
-              className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-sun-400 px-3 py-2.5 text-xs font-medium text-forest-950 transition hover:bg-sun-500 sm:text-sm"
+              className="btn btn-primary inline-flex w-full items-center justify-center gap-2 rounded-full bg-sun-400 px-3 py-2.5 text-xs font-medium text-forest-950 transition hover:bg-sun-500 sm:text-sm"
             >
               <ShoppingBag className="size-4" />
               {t.addToCart}

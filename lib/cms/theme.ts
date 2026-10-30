@@ -1,7 +1,7 @@
 // Theme helpers shared by the site and Studio (pure, unit-testable): the fonts an
 // editor can pick, and how page / section / menu styles become CSS variables.
 import type { CSSProperties } from "react";
-import type { CustomFont, MenuStyle, PageStyle, SectionStyle, TextEffect, TextEffects } from "./types";
+import type { ButtonColors, ButtonStyle, CustomFont, MenuStyle, PageStyle, SectionStyle, TextEffect, TextEffects } from "./types";
 
 type Font = { key: string; label: string; stack: string; /** Google Fonts family; absent = already loaded by the layout. */ google?: string; serif?: boolean };
 
@@ -136,6 +136,49 @@ export function mergeEffects(...layers: EffectsLayer[]): TextEffects {
       }
   return out;
 }
+const emptyColors = (): ButtonColors => ({ bg: "", text: "", hover: "" });
+export const emptyButtonStyle = (): ButtonStyle => ({
+  primary: emptyColors(),
+  secondary: emptyColors(),
+  light: emptyColors(),
+  outline: { border: "", text: "", hover: "" },
+  buy: emptyColors(),
+  radius: 0,
+  uppercase: false,
+  weight: "",
+});
+
+/**
+ * Theme › Nút as CSS variables on <body>, read by the .btn-* rules in globals.css.
+ * Shape and lettering are switched on by data attributes so an unset value
+ * leaves each button's own shape alone.
+ */
+export function buttonStyleVars(b: Partial<ButtonStyle> | undefined) {
+  const vars: Record<string, string> = {};
+  const attrs: Record<string, string> = {};
+  const set = (name: string, v: unknown) => {
+    if (color(v)) vars[name] = color(v);
+  };
+  for (const kind of ["primary", "secondary", "light", "buy"] as const) {
+    set(`--btn-${kind}-bg`, b?.[kind]?.bg);
+    set(`--btn-${kind}-text`, b?.[kind]?.text);
+    set(`--btn-${kind}-hover`, b?.[kind]?.hover);
+  }
+  set("--btn-outline-border", b?.outline?.border);
+  set("--btn-outline-text", b?.outline?.text);
+  set("--btn-outline-hover", b?.outline?.hover);
+  if (b?.radius && b.radius > 0) {
+    vars["--btn-radius"] = `${clamp(b.radius, 0, 40)}px`;
+    attrs["data-btn-radius"] = "";
+  }
+  if (b?.uppercase) attrs["data-btn-upper"] = "";
+  if (b?.weight && /^[4-7]00$/.test(b.weight)) {
+    vars["--btn-weight"] = b.weight;
+    attrs["data-btn-weight"] = "";
+  }
+  return { style: vars as CSSProperties, attrs };
+}
+
 export const emptyMenuStyle = (): MenuStyle => ({ font: "", size: 0, weight: "", uppercase: false, color: "", colorSolid: "" });
 
 const HEX = /^#[0-9a-f]{6}$/i;
@@ -224,6 +267,14 @@ export function sectionStyleVars(style: Partial<SectionStyle> | undefined, page:
       vars[`--fx-${p}-drop`] = `drop-shadow(0 ${offset}px ${blur / 2}px ${shadow})`;
       attrs[`data-fx-${p}-shadow`] = "";
     }
+  }
+
+  // This section's buttons: one colour for both the yellow and the dark kind.
+  const btn = s.button ?? {};
+  for (const kind of ["primary", "secondary"] as const) {
+    if (color(btn.bg)) vars[`--btn-${kind}-bg`] = color(btn.bg);
+    if (color(btn.text)) vars[`--btn-${kind}-text`] = color(btn.text);
+    if (color(btn.hover || btn.bg)) vars[`--btn-${kind}-hover`] = color(btn.hover || btn.bg);
   }
 
   const frame = s.frame === "lines" || s.frame === "box" ? s.frame : "none";

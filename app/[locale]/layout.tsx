@@ -9,7 +9,7 @@ import { PreviewBridge } from "@/components/cms/PreviewBridge";
 import { CartProvider } from "@/components/shop/CartProvider";
 import { pick } from "@/lib/cms/links";
 import { resolveMenu } from "@/lib/cms/menu";
-import { fontFaceCss, googleFontsHref, menuStyleVars, pageStyleVars, stylesheetUrl, systemDarkScript, usedFonts } from "@/lib/cms/theme";
+import { buttonStyleVars, fontFaceCss, googleFontsHref, menuStyleVars, pageStyleVars, stylesheetUrl, systemDarkScript, usedFonts } from "@/lib/cms/theme";
 import { getContent, isPreview } from "@/lib/cms/store";
 import { localeParams, locales, resolveLocale, metadataLocale } from "@/lib/i18n";
 import { localeInfo } from "@/lib/locales";
@@ -86,6 +86,8 @@ export default async function LocaleLayout({ children, params }: Props) {
   // Fonts added in Studio › Giao diện: pasted stylesheet links, and @font-face for uploaded/linked files.
   const customLinks = [...new Set(theme.fonts.map((f) => stylesheetUrl(f.link)).filter((u): u is string => Boolean(u)))];
   const customFaces = fontFaceCss(theme.fonts);
+  // Studio › Giao diện › Nút: colours, shape and lettering of every button.
+  const buttons = buttonStyleVars(theme.buttons);
 
   return (
     // suppressHydrationWarning: the inline script below adds the `js` class before React hydrates.
@@ -108,7 +110,7 @@ export default async function LocaleLayout({ children, params }: Props) {
         {customFaces && <style dangerouslySetInnerHTML={{ __html: customFaces }} />}
       </head>
       {/* Theme › fonts and text sizes apply everywhere, header and footer included. */}
-      <body className="flex min-h-dvh flex-col" style={pageStyleVars(theme.page)}>
+      <body className="flex min-h-dvh flex-col" style={{ ...pageStyleVars(theme.page), ...buttons.style }} {...buttons.attrs}>
         <CartProvider
           locale={locale}
           t={ui.shop}

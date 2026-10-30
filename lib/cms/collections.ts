@@ -141,12 +141,6 @@ export const partnerFields: FieldDef[] = [
 export const settingsFields: FieldDef[] = [
   { key: "name", label: "Tên thương hiệu", type: "string" },
   { key: "legalName", label: "Tên công ty", type: "string" },
-  {
-    key: "productFrame",
-    label: "Khung ảnh sản phẩm",
-    type: "media",
-    help: "Ảnh SVG hoặc PNG nền trong suốt, tỉ lệ 3:4 (dọc), phủ lên ảnh của mọi thẻ sản phẩm. Giữ phần giữa trống để không che sản phẩm. Để trống để bỏ khung.",
-  },
   { key: "legalNameEn", label: "Tên công ty bằng tiếng Anh", type: "string", help: "Theo giấy chứng nhận đăng ký doanh nghiệp; hiện ở các trang không phải tiếng Việt." },
   { key: "taxId", label: "Mã số doanh nghiệp (MST)", type: "string" },
   { key: "registeredAt", label: "Ngày đăng ký lần đầu", type: "date" },
@@ -227,6 +221,61 @@ export const settingsFields: FieldDef[] = [
 
 /** Font picker (built-in fonts + Studio › Giao diện › Font tự thêm); "" keeps the design's font. */
 const fontField = (key: string, label: string, fallback: string): FieldDef => ({ key, label, type: "font", fallback });
+
+/** Studio › Giao diện › Khung ảnh sản phẩm (stored in settings.productFrame). */
+export const productFrameFields: FieldDef[] = [
+  {
+    key: "productFrame",
+    label: "Khung ảnh sản phẩm",
+    type: "media",
+    help: "Ảnh SVG hoặc PNG nền trong suốt, tỉ lệ 3:4 (dọc), phủ lên ảnh của mọi thẻ sản phẩm. Giữ phần giữa trống để không che sản phẩm. Để trống để bỏ khung.",
+  },
+];
+
+const buttonColors = (key: string, label: string, help?: string): FieldDef => ({
+  key,
+  label,
+  type: "group",
+  help,
+  fields: [
+    { key: "bg", label: "Màu nền", type: "color" },
+    { key: "text", label: "Màu chữ", type: "color" },
+    { key: "hover", label: "Màu nền khi rê chuột", type: "color", help: "Để trống = theo màu nền." },
+  ],
+});
+
+/** Studio › Giao diện › Nút (theme.buttons). */
+export const buttonStyleFields: FieldDef[] = [
+  buttonColors("primary", "Nút chính (vàng)", "Nút kêu gọi: trong các section, hero, “Thêm vào giỏ”, “Gửi yêu cầu”, “Thanh toán”, “Đọc tiếp”…"),
+  buttonColors("secondary", "Nút phụ (xanh đậm)", "Nút trên nền sáng, “Nhận báo giá” ở menu khi cuộn trang, “Tư vấn” ở trang sản phẩm."),
+  buttonColors("light", "Nút sáng (trắng)", "“Nhận báo giá” ở menu khi nằm trên ảnh đầu trang, nút trắng trong section."),
+  {
+    key: "outline",
+    label: "Nút viền (trên ảnh)",
+    type: "group",
+    help: "Nút phụ trên ảnh đầu trang (hero).",
+    fields: [
+      { key: "border", label: "Màu viền", type: "color" },
+      { key: "text", label: "Màu chữ", type: "color" },
+      { key: "hover", label: "Màu nền khi rê chuột", type: "color" },
+    ],
+  },
+  buttonColors("buy", "Nút mua hàng (đỏ)", "“Mua ngay” và viền của “Thêm vào giỏ” ở trang chi tiết sản phẩm bán lẻ."),
+  { key: "radius", label: "Bo góc nút (px)", type: "number", min: 1, max: 40, zeroIsDefault: true, help: "Để trống = giữ kiểu hiện tại (nút tròn hai đầu). Ví dụ 8 = góc bo nhẹ." },
+  { key: "uppercase", label: "Chữ trên nút viết hoa", type: "boolean" },
+  {
+    key: "weight",
+    label: "Độ đậm chữ trên nút",
+    type: "select",
+    options: [
+      { value: "", label: "Mặc định" },
+      { value: "400", label: "Thường" },
+      { value: "500", label: "Vừa" },
+      { value: "600", label: "Đậm vừa" },
+      { value: "700", label: "Đậm" },
+    ],
+  },
+];
 
 export const darkModeFields: FieldDef[] = [
   {

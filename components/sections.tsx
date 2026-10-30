@@ -186,7 +186,7 @@ export function ProductCard({ card }: { card: ProductCardView }) {
               </li>
             ))}
           </ul>
-          <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-sun-400 px-4 py-2 text-sm font-medium text-forest-950">
+          <span className="btn btn-primary inline-flex shrink-0 items-center gap-1.5 rounded-full bg-sun-400 px-4 py-2 text-sm font-medium text-forest-950">
             {card.cta}
             <ArrowUpRight className="size-4 transition-transform group-hover:rotate-45" />
           </span>
