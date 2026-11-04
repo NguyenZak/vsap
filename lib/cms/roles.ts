@@ -15,10 +15,12 @@ export type Permission =
   /** Read and handle quote requests from the website. */
   | "inquiries"
   | "users"
-  | "audit";
+  | "audit"
+  /** Open the website to the public, or hide it behind the "Coming soon" page. */
+  | "site";
 
 const grants: Record<Role, Permission[]> = {
-  admin: ["content.read", "content.write", "content.publish", "media.delete", "inquiries", "users", "audit"],
+  admin: ["content.read", "content.write", "content.publish", "media.delete", "inquiries", "users", "audit", "site"],
   publisher: ["content.read", "content.write", "content.publish", "media.delete", "inquiries"],
   editor: ["content.read", "content.write"],
   sales: ["inquiries"],

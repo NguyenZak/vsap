@@ -51,6 +51,8 @@ export type UiStrings = {
   common: { viewProduct: string; requestQuote: string; prev: string; next: string; pause: string; play: string; slide: string; step: string; photo: string };
   footer: { explore: string; products: string; contact: string; rights: string; brandOf: string; taxId: string; registered: string; representative: string; policies: string; policyUpdated: string };
   chat: { label: string; zalo: string; whatsapp: string; call: string; close: string };
+  /** The page visitors see while the site is not public. */
+  comingSoon: { tag: string; title: string; accent: string; body: string; contact: string };
   contactInfo: { email: string; phone: string; website: string };
   form: {
     name: string; company: string; email: string; phone: string; country: string; product: string;

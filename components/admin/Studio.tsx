@@ -8,6 +8,7 @@ import {
   Check,
   CloudOff,
   ExternalLink,
+  EyeOff,
   FileText,
   FolderTree,
   Menu as MenuIcon,
@@ -73,6 +74,7 @@ import { InboxView } from "./InboxView";
 import { OrdersView } from "./OrdersView";
 import { PostsView } from "./PostsView";
 import { AuditView, ChangePassword, RoleBadge, UsersView } from "./TeamViews";
+import { SiteVisibility } from "./SiteVisibility";
 import { TelegramSettings } from "./TelegramSettings";
 
 type Path = (string | number)[];
@@ -143,6 +145,10 @@ export function Studio() {
   const [passwordOpen, setPasswordOpen] = useState(false);
   const [newInquiries, setNewInquiries] = useState(0);
   const [newOrders, setNewOrders] = useState(0);
+  // Website hidden behind "Coming soon" (Cài đặt › Hiển thị website): shown as a badge in the top bar.
+  const [siteHidden, setSiteHidden] = useState(false);
+  // Opening Chữ giao diện from that setting lands on the Coming soon strings.
+  const [uiGroup, setUiGroup] = useState<"nav" | "comingSoon">("nav");
   const preview = useRef<PreviewHandle>(null);
 
   // Undo / redo of whole-content snapshots; rapid edits (typing) collapse into one step.
@@ -181,6 +187,10 @@ export function Studio() {
         const first = nav.find((n) => m.permissions.includes(n.perm))?.kind ?? "inbox";
         setView(allowed(wanted.kind) ? wanted : first === "page" ? { kind: "page", id: "home" } : ({ kind: first } as View));
         if (m.permissions.includes("content.read")) load();
+        api
+          .visibility()
+          .then((v) => setSiteHidden(!v.public))
+          .catch(() => {});
       })
       .catch((e: Error) => setLoadError(e.message));
   }, [load]);
@@ -417,6 +427,17 @@ export function Studio() {
         <img src="/logo.svg" alt="VSAP" className="h-8 w-auto" />
         <span className="rounded-md bg-forest-900 px-2 py-0.5 text-[11px] font-semibold tracking-wider text-sun-400 uppercase">Studio</span>
         {content && <SaveBadge state={save} error={saveError} hasDraft={hasDraft} canPublish={canPublish} />}
+        {siteHidden && (
+          <button
+            type="button"
+            onClick={can("site") ? openSystem : undefined}
+            disabled={!can("site")}
+            title="Khách chỉ thấy trang Sắp ra mắt. Tài khoản Studio vẫn xem được toàn bộ website."
+            className="inline-flex items-center gap-1.5 rounded-full bg-chili-600 px-2.5 py-1 text-xs font-medium text-white enabled:hover:bg-chili-600/90 disabled:cursor-default"
+          >
+            <EyeOff className="size-3.5" /> Website đang ẩn
+          </button>
+        )}
         <div className="ml-auto flex items-center gap-1.5">
           {content && canWrite && (
             <>
@@ -773,7 +794,7 @@ export function Studio() {
           </Pane>
         )}
 
-        {view.kind === "ui" && content && <UiEditor ui={content.ui} onChange={onField} />}
+        {view.kind === "ui" && content && <UiEditor key={uiGroup} ui={content.ui} onChange={onField} initialGroup={uiGroup} />}
         {view.kind === "media" && <MediaView canDelete={can("media.delete")} />}
         {view.kind === "news" && content && (
           <PostsView settings={content.settings} canWrite={canWrite} canPublish={canPublish} locale={locale} onLocale={setLocale} />
@@ -785,8 +806,17 @@ export function Studio() {
             <div className="mx-auto max-w-2xl space-y-5">
               <div>
                 <h2 className="text-xl font-medium text-ink-900">Cài đặt</h2>
-                <p className="mt-1 text-sm text-ink-600">Kết nối và thông báo của hệ thống. Chỉ Quản trị thấy mục này.</p>
+                <p className="mt-1 text-sm text-ink-600">Hiển thị website, kết nối và thông báo của hệ thống. Chỉ Quản trị thấy mục này.</p>
               </div>
+              {can("site") && (
+                <SiteVisibility
+                  onChange={(v) => setSiteHidden(!v.public)}
+                  onEditText={() => {
+                    setUiGroup("comingSoon");
+                    setView({ kind: "ui" });
+                  }}
+                />
+              )}
               <TelegramSettings />
             </div>
           </div>

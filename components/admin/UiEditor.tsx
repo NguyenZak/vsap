@@ -13,6 +13,7 @@ const groups: Record<keyof UiStrings, string> = {
   common: "Nút & nhãn dùng chung",
   footer: "Chân trang",
   chat: "Nút liên hệ nổi (Zalo/WhatsApp)",
+  comingSoon: "Trang Sắp ra mắt (khi website không công khai)",
   contactInfo: "Thẻ liên hệ",
   form: "Form yêu cầu báo giá",
   productDetail: "Trang chi tiết sản phẩm",
@@ -136,6 +137,10 @@ const keyLabels: Record<string, string> = {
   decrease: "Giảm số lượng (đọc màn hình)",
   increase: "Tăng số lượng (đọc màn hình)",
   checkoutTitle: "Tiêu đề trang đặt hàng",
+  tag: "Nhãn nhỏ phía trên",
+  title: "Tiêu đề",
+  accent: "Tiêu đề (dòng nghiêng)",
+  body: "Lời nhắn",
   checkoutLead: "Mô tả trang đặt hàng",
   yourOrder: "Tiêu đề tóm tắt đơn",
   address: "Địa chỉ nhận hàng",
@@ -204,9 +209,9 @@ function Rows({ byLang, path, onChange }: { byLang: Record<Locale, Strings>; pat
 }
 
 /** Every interface string, grouped, with the site languages side by side. */
-export function UiEditor({ ui, onChange }: { ui: Record<Locale, UiStrings>; onChange: (path: Path, v: unknown) => void }) {
+export function UiEditor({ ui, onChange, initialGroup = "nav" }: { ui: Record<Locale, UiStrings>; onChange: (path: Path, v: unknown) => void; initialGroup?: keyof UiStrings }) {
   const keys = Object.keys(groups) as (keyof UiStrings)[];
-  const [group, setGroup] = useState<keyof UiStrings>("nav");
+  const [group, setGroup] = useState<keyof UiStrings>(initialGroup);
   return (
     <>
       <Pane id="list" defaultSize="16rem" minSize="12rem" maxSize="28rem" className="bg-white">

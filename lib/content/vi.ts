@@ -386,6 +386,14 @@ export const vi = {
       required: "Bắt buộc",
     },
   },
+  /** Shown to visitors while the site is not public (Studio › Cài đặt › Hiển thị website). */
+  comingSoon: {
+    tag: "Sắp ra mắt",
+    title: "Website mới của VSAP",
+    accent: "sắp ra mắt",
+    body: "Chúng tôi đang hoàn thiện những trang cuối cùng. Trong lúc chờ, VSAP vẫn nhận báo giá và đơn hàng qua điện thoại, email và Zalo.",
+    contact: "Liên hệ VSAP",
+  },
   chat: {
     label: "Liên hệ nhanh",
     zalo: "Chat Zalo",

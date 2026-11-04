@@ -382,6 +382,14 @@ export const ko: Dictionary = {
       required: "필수",
     },
   },
+  /** Shown to visitors while the site is not public (Studio › Cài đặt › Hiển thị website). */
+  comingSoon: {
+    tag: "오픈 예정",
+    title: "VSAP의 새 웹사이트가",
+    accent: "곧 오픈합니다",
+    body: "마지막 페이지를 다듬고 있습니다. 그동안에도 VSAP는 전화, 이메일, WhatsApp으로 견적 요청과 주문을 받고 있습니다.",
+    contact: "VSAP 문의",
+  },
   chat: {
     label: "빠른 문의",
     zalo: "Zalo 채팅",

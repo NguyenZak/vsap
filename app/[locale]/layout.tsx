@@ -11,6 +11,8 @@ import { pick } from "@/lib/cms/links";
 import { resolveMenu } from "@/lib/cms/menu";
 import { buttonStyleVars, fontFaceCss, googleFontsHref, menuStyleVars, pageStyleVars, stylesheetUrl, systemDarkScript, usedFonts } from "@/lib/cms/theme";
 import { getContent, isPreview } from "@/lib/cms/store";
+import { headers } from "next/headers";
+import { EyeOff } from "lucide-react";
 import { localeParams, locales, resolveLocale, metadataLocale } from "@/lib/i18n";
 import { localeInfo } from "@/lib/locales";
 import { jsonLdHtml, ogLocale, seoMetadata, siteJsonLd } from "@/lib/seo";
@@ -75,7 +77,9 @@ export async function generateMetadata({ params }: Omit<Props, "children">): Pro
 
 export default async function LocaleLayout({ children, params }: Props) {
   const locale = resolveLocale((await params).locale);
-  const [content, preview] = await Promise.all([getContent(), isPreview()]);
+  const [content, preview, requestHeaders] = await Promise.all([getContent(), isPreview(), headers()]);
+  // Set by proxy.ts when the site is hidden from visitors and a Studio account is looking.
+  const hiddenNotice = requestHeaders.get("x-vsap-hidden") === "1" && !preview;
   const { settings: site } = content;
   const ui = content.ui[locale];
   // Only a real GA4 id is ever interpolated into the inline script.
@@ -133,6 +137,15 @@ export default async function LocaleLayout({ children, params }: Props) {
         </CartProvider>
         {!preview && <FloatingContact t={ui.chat} links={site} />}
         {preview && <PreviewBridge />}
+        {hiddenNotice && (
+          <a
+            href="/admin?view=system"
+            className="fixed bottom-4 left-4 z-[200] inline-flex items-center gap-2 rounded-full bg-chili-600 px-4 py-2 text-xs font-medium text-white shadow-lg transition hover:bg-chili-600/90"
+          >
+            <EyeOff className="size-4" />
+            Website đang ẩn: khách chỉ thấy trang Sắp ra mắt
+          </a>
+        )}
         {/* vinext doesn't emit openGraph.alternateLocale; React 19 hoists this <meta> into <head>. */}
         {locales
           .filter((l) => l !== locale)

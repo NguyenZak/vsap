@@ -3,6 +3,7 @@ import { notifyOrder } from "@/lib/cms/notify";
 import type { OrderCustomer } from "@/lib/cms/order-format";
 import { recentOrdersFrom, saveOrder } from "@/lib/cms/orders";
 import { getPublishedContent } from "@/lib/cms/store";
+import { closedToVisitors } from "@/lib/cms/visibility";
 import { isLocale } from "@/lib/locales";
 import { priceOrder } from "@/lib/shop";
 import { formatAddress, isValidAddress } from "@/lib/vn-admin";
@@ -31,6 +32,7 @@ function parseCustomer(raw: unknown): OrderCustomer | null {
 }
 
 export async function POST(request: Request) {
+  if (await closedToVisitors(request)) return Response.json({ ok: false, error: "closed" }, { status: 503 });
   let body: Record<string, unknown>;
   try {
     body = (await request.json()) as Record<string, unknown>;

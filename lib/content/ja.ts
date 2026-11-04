@@ -382,6 +382,14 @@ export const ja: Dictionary = {
       required: "必須",
     },
   },
+  /** Shown to visitors while the site is not public (Studio › Cài đặt › Hiển thị website). */
+  comingSoon: {
+    tag: "近日公開",
+    title: "VSAPの新しいウェブサイトは",
+    accent: "まもなく公開",
+    body: "現在、最後のページを仕上げています。それまでの間も、お見積もりやご注文はお電話・メール・WhatsAppで承っております。",
+    contact: "VSAPへのお問い合わせ",
+  },
   chat: {
     label: "クイックお問い合わせ",
     zalo: "Zaloでチャット",

@@ -8,6 +8,7 @@ import type { TelegramChat, TelegramStatus } from "@/lib/cms/notify";
 import type { MediaItem } from "@/lib/cms/store";
 import type { Post, SiteContent } from "@/lib/cms/types";
 import type { AuditEntry, PublicUser } from "@/lib/cms/users";
+import type { Visibility } from "@/lib/cms/visibility-format";
 
 async function call<T>(url: string, init?: RequestInit): Promise<T> {
   const res = await fetch(url, { ...init, headers: init?.body instanceof FormData ? init?.headers : { "content-type": "application/json", ...init?.headers } });
@@ -23,7 +24,7 @@ async function call<T>(url: string, init?: RequestInit): Promise<T> {
 export type AdminState = { content: SiteContent; hasDraft: boolean; draftUpdatedAt: number | null; publishedAt: number | null };
 export type Revision = { id: number; created_at: number; note: string | null; author: string | null; size: number };
 export type Me = { user: SessionUser; permissions: Permission[] };
-export type { AuditEntry, Inquiry, InquiryStatus, Order, OrderStatus, PostRecord, PostSummary, PublicUser, TelegramChat, TelegramStatus };
+export type { AuditEntry, Inquiry, InquiryStatus, Order, OrderStatus, PostRecord, PostSummary, PublicUser, TelegramChat, TelegramStatus, Visibility };
 
 const qs = (params: Record<string, string | number | undefined>) => {
   const q = new URLSearchParams();
@@ -66,6 +67,8 @@ export const api = {
   updateOrder: (id: number, patch: { status?: OrderStatus; note?: string }) => call<{ order: Order }>("/api/admin/orders", { method: "PATCH", body: JSON.stringify({ id, ...patch }) }),
   deleteOrder: (id: number) => call<{ ok: true }>(`/api/admin/orders?id=${id}`, { method: "DELETE" }),
 
+  visibility: () => call<Visibility>("/api/admin/visibility"),
+  setVisibility: (isPublic: boolean) => call<Visibility>("/api/admin/visibility", { method: "POST", body: JSON.stringify({ public: isPublic }) }),
   telegram: () => call<TelegramStatus>("/api/admin/notify"),
   telegramToken: (token: string) => call<TelegramStatus>("/api/admin/notify", { method: "POST", body: JSON.stringify({ action: "token", token }) }),
   telegramDiscover: () => call<{ chats: TelegramChat[] }>("/api/admin/notify", { method: "POST", body: JSON.stringify({ action: "discover" }) }),

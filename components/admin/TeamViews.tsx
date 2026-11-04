@@ -16,6 +16,7 @@ const permissionLabel: Record<Permission, string> = {
   inquiries: "Yêu cầu báo giá",
   users: "Quản lý tài khoản",
   audit: "Xem nhật ký",
+  site: "Công khai / ẩn website",
 };
 
 const roleTone: Record<Role, string> = {
@@ -353,6 +354,7 @@ const actionLabel: Record<string, string> = {
   "draft.discard": "Bỏ bản nháp",
   "site.publish": "Xuất bản website",
   "site.restore": "Khôi phục phiên bản cũ",
+  "site.visibility": "Công khai / ẩn website",
   "media.upload": "Tải ảnh lên",
   "media.delete": "Xoá ảnh",
   "post.create": "Tạo bài viết",
@@ -376,7 +378,7 @@ const actionLabel: Record<string, string> = {
 };
 
 const actionTone = (a: string) =>
-  a.endsWith(".publish") || a === "site.restore" ? "bg-sun-400 text-forest-950" : a.includes("delete") || a === "login.fail" ? "bg-red-50 text-chili-600" : a.startsWith("user.") ? "bg-forest-900 text-sun-400" : "bg-mist-100 text-ink-600";
+  a.endsWith(".publish") || a === "site.restore" || a === "site.visibility" ? "bg-sun-400 text-forest-950" : a.includes("delete") || a === "login.fail" ? "bg-red-50 text-chili-600" : a.startsWith("user.") ? "bg-forest-900 text-sun-400" : "bg-mist-100 text-ink-600";
 
 const filters = [
   { value: "", label: "Tất cả" },

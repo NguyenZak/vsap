@@ -21,6 +21,7 @@ const permissionText: Record<Permission, string> = {
   inquiries: "xem yêu cầu báo giá",
   users: "quản lý tài khoản",
   audit: "xem nhật ký",
+  site: "bật/tắt công khai website",
 };
 
 /**

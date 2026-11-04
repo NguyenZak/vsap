@@ -4,6 +4,7 @@ import type { InquiryData as Inquiry } from "@/lib/cms/inquiry-format";
 import { recentFrom, saveInquiry } from "@/lib/cms/inquiries";
 import { getPublishedContent } from "@/lib/cms/store";
 import { notifyInquiry } from "@/lib/cms/notify";
+import { closedToVisitors } from "@/lib/cms/visibility";
 import { isLocale } from "@/lib/locales";
 
 /** Submissions allowed per visitor address in the window below. */
@@ -36,6 +37,7 @@ function parse(body: unknown): Inquiry | null {
 }
 
 export async function POST(request: Request) {
+  if (await closedToVisitors(request)) return Response.json({ ok: false, error: "closed" }, { status: 503 });
   let body: unknown;
   try {
     body = await request.json();

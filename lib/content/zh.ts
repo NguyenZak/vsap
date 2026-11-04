@@ -382,6 +382,14 @@ export const zh: Dictionary = {
       required: "必填",
     },
   },
+  /** Shown to visitors while the site is not public (Studio › Cài đặt › Hiển thị website). */
+  comingSoon: {
+    tag: "即将上线",
+    title: "VSAP 全新网站",
+    accent: "即将上线",
+    body: "我们正在完善最后的页面。在此期间，VSAP 仍可通过电话、电子邮件和 WhatsApp 接受询价与订单。",
+    contact: "联系 VSAP",
+  },
   chat: {
     label: "快速联系",
     zalo: "Zalo聊天",
