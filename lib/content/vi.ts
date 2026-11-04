@@ -475,6 +475,7 @@ export const vi = {
     registered: "Đăng ký lần đầu",
     representative: "Người đại diện",
     policies: "Chính sách",
+    aboutLink: "Giới thiệu",
     policyUpdated: "Cập nhật lần cuối",
   },
 };

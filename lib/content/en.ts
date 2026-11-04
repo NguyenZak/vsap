@@ -471,6 +471,7 @@ export const en: Dictionary = {
     registered: "First registered",
     representative: "Legal representative",
     policies: "Policies",
+    aboutLink: "About us",
     policyUpdated: "Last updated",
   },
 };

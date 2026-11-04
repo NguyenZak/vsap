@@ -471,6 +471,7 @@ export const ko: Dictionary = {
     registered: "최초 등록",
     representative: "법정 대표자",
     policies: "정책",
+    aboutLink: "회사 소개",
     policyUpdated: "최종 업데이트",
   },
 };

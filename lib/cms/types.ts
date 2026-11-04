@@ -49,7 +49,7 @@ export type UiStrings = {
     home: string; about: string; products: string; quality: string; news: string; health: string; contact: string; quote: string; menu: string; close: string;
   };
   common: { viewProduct: string; requestQuote: string; prev: string; next: string; pause: string; play: string; slide: string; step: string; photo: string };
-  footer: { explore: string; products: string; contact: string; rights: string; brandOf: string; taxId: string; registered: string; representative: string; policies: string; policyUpdated: string };
+  footer: { explore: string; products: string; contact: string; rights: string; brandOf: string; taxId: string; registered: string; representative: string; policies: string; aboutLink: string; policyUpdated: string };
   chat: { label: string; zalo: string; whatsapp: string; call: string; close: string };
   /** The page visitors see while the site is not public. */
   comingSoon: { tag: string; title: string; accent: string; body: string; contact: string };

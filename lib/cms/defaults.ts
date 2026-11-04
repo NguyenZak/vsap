@@ -357,6 +357,7 @@ function ui(d: Dict): UiStrings {
       registered: d.footer.registered,
       representative: d.footer.representative,
       policies: d.footer.policies,
+      aboutLink: d.footer.aboutLink,
       policyUpdated: d.footer.policyUpdated,
     },
     chat: { ...d.chat },

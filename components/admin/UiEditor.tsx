@@ -156,6 +156,7 @@ const keyLabels: Record<string, string> = {
   registered: "Nhãn ngày đăng ký",
   representative: "Nhãn người đại diện",
   policies: "Tiêu đề cột Chính sách",
+  aboutLink: "Liên kết Giới thiệu (đầu cột Chính sách)",
   policyUpdated: "Nhãn ngày cập nhật chính sách",
   agree: "Câu đồng ý khi đặt hàng ({terms}, {privacy} = liên kết)",
   province: "Ô tỉnh/thành phố",

@@ -740,7 +740,7 @@ export function Studio() {
         {view.kind === "policies" && content && (
           <CollectionEditor<Policy>
             title="Chính sách"
-            description="Điều khoản, bảo mật, thanh toán, vận chuyển, đổi trả: bắt buộc với website bán hàng. Nhớ cập nhật ngày khi sửa nội dung."
+            description="Điều khoản, bảo mật, thanh toán, vận chuyển, đổi trả: bắt buộc với website bán hàng. Thứ tự ở đây là thứ tự trong cột Chính sách ở chân trang (sau mục Giới thiệu); kéo thả để đổi. Nhớ cập nhật ngày khi sửa nội dung."
             items={content.policies}
             basePath={["policies"]}
             fields={policyFields}

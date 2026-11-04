@@ -471,6 +471,7 @@ export const zh: Dictionary = {
     registered: "首次登记",
     representative: "法定代表人",
     policies: "政策条款",
+    aboutLink: "关于我们",
     policyUpdated: "最后更新",
   },
 };

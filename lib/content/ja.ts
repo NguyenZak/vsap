@@ -471,6 +471,7 @@ export const ja: Dictionary = {
     registered: "初回登記",
     representative: "法定代表者",
     policies: "ポリシー",
+    aboutLink: "会社概要",
     policyUpdated: "最終更新日",
   },
 };
