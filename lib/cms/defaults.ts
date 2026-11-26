@@ -80,12 +80,17 @@ const processSection = (id: string) =>
 
 const ctaSection = (id: string) =>
   section(id, "cta", {
+    eyebrow: tr((d) => d.home.cta.eyebrow),
     title: tr((d) => d.home.cta.title),
     accent: tr((d) => d.home.cta.accent),
     lead: tr((d) => d.home.cta.lead),
+    note: tr((d) => d.home.cta.note),
     buttonLabel: tr((d) => d.home.cta.button),
-    buttonHref: "/contact",
-    image: pic("cashewGrove"),
+    buttonSub: tr((d) => d.home.cta.buttonSub),
+    buttonHref: "/products",
+    tagline: tr((d) => d.home.cta.tagline),
+    // No photo: the light, centred "Kết nối thương mại" layout.
+    image: { src: "", alt: blank() },
   });
 
 const retailSection = (id: string) =>

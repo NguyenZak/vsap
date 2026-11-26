@@ -280,10 +280,14 @@ export const vi = {
       ],
     },
     cta: {
-      title: "Bạn đang tìm nguồn",
-      accent: "điều, macca hay yến sào ổn định?",
-      lead: "Gửi yêu cầu, đội ngũ VSAP sẽ phản hồi với báo giá, mẫu thử và thông số kỹ thuật phù hợp.",
-      button: "Gửi yêu cầu báo giá",
+      eyebrow: "VSAP",
+      title: "Kết nối thương mại",
+      accent: "Trade & Partnerships",
+      lead: "VSAP chào đón khách hàng và đối tác trong nước, quốc tế quan tâm đến sản phẩm, giá cả và cơ hội hợp tác trong lĩnh vực cung ứng, phân phối sản phẩm.",
+      note: "VSAP welcomes domestic and international customers and partners interested in our products, pricing and opportunities for cooperation in product supply and distribution.",
+      button: "Tìm hiểu về sản phẩm và giá",
+      buttonSub: "Explore products & pricing",
+      tagline: "Minh bạch trong giao dịch – Trách nhiệm trong hợp tác\nTransparent Trade – Responsible Partnerships",
     },
   },
   values: [

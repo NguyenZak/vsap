@@ -1,5 +1,6 @@
 // One renderer per section type in lib/cms/registry.ts. Each takes the stored
 // section props and the page context, resolves the current language, and renders.
+import Link from "next/link";
 import { Globe, Mail, MapPin, Phone } from "lucide-react";
 import type { Locale } from "@/lib/i18n";
 import { localHref, pick } from "@/lib/cms/links";
@@ -119,6 +120,49 @@ function OpenFaq({ items }: { items: { title: string; body: string }[] }) {
         </div>
       ))}
     </dl>
+  );
+}
+
+/**
+ * cta without a background photo ("Kết nối thương mại"): centred brand line, uppercase
+ * title, subtitle, a rule, the text with an optional second-language line in italics,
+ * a two-line button, another rule and the tagline lines.
+ */
+function plainCta(p: P, ctx: BlockCtx) {
+  const { t, href } = makeT(ctx);
+  const lines = (v: unknown) => t(v as L).split("\n").map((l) => l.trim()).filter(Boolean);
+  const tagline = lines(p.tagline);
+  const showButton = t(p.buttonLabel) && str(p.buttonHref);
+  return (
+    <div className="block-pad container-page">
+      <div data-reveal className="mx-auto max-w-4xl text-center">
+        {t(p.eyebrow) && <p className="heading text-3xl text-heading uppercase sm:text-4xl">{t(p.eyebrow)}</p>}
+        {t(p.title) && <h2 className={`heading text-3xl text-heading uppercase sm:text-4xl ${t(p.eyebrow) ? "mt-3" : ""}`}>{t(p.title)}</h2>}
+        {t(p.accent) && <p className="mt-3 text-base tracking-wide text-sage-500 uppercase sm:text-lg">{t(p.accent)}</p>}
+        {(t(p.lead) || t(p.note) || showButton) && (
+          <div className="mt-8 border-t border-mist-200 pt-8">
+            {t(p.lead) && <p className="text-lg leading-relaxed text-ink-900 sm:text-xl">{t(p.lead)}</p>}
+            {t(p.note) && <p className="mt-3 text-sm leading-relaxed text-ink-400 italic sm:text-base">{t(p.note)}</p>}
+            {showButton && (
+              <Link
+                href={href(p.buttonHref)}
+                className="mt-8 inline-flex flex-col items-center gap-1 rounded-lg bg-forest-900 px-7 py-4 text-surface transition hover:bg-forest-800"
+              >
+                <span className="text-base font-semibold uppercase sm:text-lg">{t(p.buttonLabel)}</span>
+                {t(p.buttonSub) && <span className="text-xs tracking-wide uppercase opacity-85 sm:text-sm">{t(p.buttonSub)}</span>}
+              </Link>
+            )}
+          </div>
+        )}
+        {tagline.length > 0 && (
+          <div className="mt-8 space-y-2 border-t border-mist-200 pt-6 text-sm text-ink-600 sm:text-base">
+            {tagline.map((l, i) => (
+              <p key={i}>{l}</p>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
   );
 }
 
@@ -469,6 +513,7 @@ const renderers: Record<string, Renderer> = {
 
   cta(p, ctx) {
     const { t, img, href } = makeT(ctx);
+    if (!img(p.image)?.src) return plainCta(p, ctx);
     return (
       <div className="container-page py-16 sm:py-24">
         <div data-reveal="clip" className="relative isolate overflow-hidden rounded-3xl bg-forest-900 px-6 py-14 sm:px-12 sm:py-20">

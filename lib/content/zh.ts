@@ -275,10 +275,14 @@ export const zh: Dictionary = {
       ],
     },
     cta: {
-      title: "正在寻找稳定的",
-      accent: "腰果、夏威夷果或燕窝货源？",
-      lead: "提交您的需求，VSAP团队将为您提供报价、样品及相应的技术参数。",
-      button: "提交询价",
+      eyebrow: "VSAP",
+      title: "贸易合作",
+      accent: "Trade & Partnerships",
+      lead: "VSAP 欢迎关注我们的产品、价格以及产品供应与分销合作机会的国内外客户和合作伙伴。",
+      note: "VSAP welcomes domestic and international customers and partners interested in our products, pricing and opportunities for cooperation in product supply and distribution.",
+      button: "了解产品与价格",
+      buttonSub: "Explore products & pricing",
+      tagline: "交易透明 – 合作负责\nTransparent Trade – Responsible Partnerships",
     },
   },
   values: [

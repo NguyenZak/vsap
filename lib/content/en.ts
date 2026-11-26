@@ -275,10 +275,14 @@ export const en: Dictionary = {
       ],
     },
     cta: {
-      title: "Looking for a reliable",
-      accent: "cashew, macadamia or bird’s nest supplier?",
-      lead: "Send us your requirements and the VSAP team will reply with pricing, samples and matching specifications.",
-      button: "Request a quote",
+      eyebrow: "VSAP",
+      title: "Trade & Partnerships",
+      accent: "",
+      lead: "VSAP welcomes domestic and international customers and partners interested in our products, pricing and opportunities for cooperation in product supply and distribution.",
+      note: "",
+      button: "Explore products & pricing",
+      buttonSub: "",
+      tagline: "Transparent Trade – Responsible Partnerships",
     },
   },
   values: [

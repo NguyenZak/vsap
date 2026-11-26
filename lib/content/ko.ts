@@ -275,10 +275,14 @@ export const ko: Dictionary = {
       ],
     },
     cta: {
-      title: "안정적인 공급처를 찾고 계신가요?",
-      accent: "캐슈넛, 마카다미아, 제비집",
-      lead: "요청 사항을 보내 주시면 VSAP 팀이 견적, 샘플, 맞춤 사양을 안내해 드립니다.",
-      button: "견적 요청하기",
+      eyebrow: "VSAP",
+      title: "무역 및 파트너십",
+      accent: "Trade & Partnerships",
+      lead: "VSAP는 제품, 가격, 그리고 제품 공급·유통 분야의 협력 기회에 관심 있는 국내외 고객과 파트너를 환영합니다.",
+      note: "VSAP welcomes domestic and international customers and partners interested in our products, pricing and opportunities for cooperation in product supply and distribution.",
+      button: "제품 및 가격 알아보기",
+      buttonSub: "Explore products & pricing",
+      tagline: "투명한 거래 – 책임 있는 협력\nTransparent Trade – Responsible Partnerships",
     },
   },
   values: [

@@ -275,10 +275,14 @@ export const ja: Dictionary = {
       ],
     },
     cta: {
-      title: "カシューナッツ、マカダミア、ツバメの巣の",
-      accent: "安定した仕入れ先をお探しですか？",
-      lead: "ご要望をお送りいただければ、VSAPチームよりお見積もり、サンプル、適切な仕様をご案内いたします。",
-      button: "見積もりを依頼する",
+      eyebrow: "VSAP",
+      title: "取引・パートナーシップ",
+      accent: "Trade & Partnerships",
+      lead: "VSAPは、当社の製品や価格、製品の供給・流通分野での協業機会に関心をお持ちの国内外のお客様・パートナーの皆様を歓迎いたします。",
+      note: "VSAP welcomes domestic and international customers and partners interested in our products, pricing and opportunities for cooperation in product supply and distribution.",
+      button: "製品と価格を見る",
+      buttonSub: "Explore products & pricing",
+      tagline: "透明な取引 – 責任あるパートナーシップ\nTransparent Trade – Responsible Partnerships",
     },
   },
   values: [
