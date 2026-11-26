@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, type KeyboardEvent, type TouchEvent } from "react";
+import { useEffect, useRef, useState, type KeyboardEvent, type TouchEvent } from "react";
 import { ArrowDown, ArrowLeft, ArrowRight, Pause, Play, Star } from "lucide-react";
 import { gsap, prefersReducedMotion, useGSAP } from "@/lib/gsap";
 import { srcSetFor } from "@/lib/responsive";
@@ -60,6 +60,14 @@ export function HeroSlider({ slides, autoplay: AUTOPLAY, scrollLabel, rankValue,
   const [paused, setPaused] = useState(false);
   const n = slides.length;
   const [autoplay, setAutoplay] = useState(n > 1);
+  // The hero takes the shape of the first slide's photo (whichever of desktop / mobile the
+  // browser picked), so the whole image shows uncropped. Until it loads: 16:9, or 9:16 on phones.
+  const firstImg = useRef<HTMLImageElement>(null);
+  const [ratio, setRatio] = useState<number | null>(null);
+  const measure = (img: HTMLImageElement | null) => {
+    if (img?.complete && img.naturalWidth && img.naturalHeight) setRatio(img.naturalWidth / img.naturalHeight);
+  };
+  useEffect(() => measure(firstImg.current), []);
 
   useGSAP(
     (_, contextSafe) => {
@@ -166,7 +174,8 @@ export function HeroSlider({ slides, autoplay: AUTOPLAY, scrollLabel, rankValue,
       onBlur={(e) => !e.currentTarget.contains(e.relatedTarget) && hold("focus", false)}
       onTouchStart={onTouchStart}
       onTouchEnd={onTouchEnd}
-      className="relative isolate flex min-h-[100svh] flex-col overflow-hidden bg-forest-900 lg:min-h-[46rem]"
+      style={ratio ? { aspectRatio: ratio } : undefined}
+      className="relative isolate flex aspect-[9/16] flex-col bg-forest-900 md:aspect-video"
     >
       <div className="absolute inset-0 -z-10 overflow-hidden">
         {slides.map((s, i) => (
@@ -179,6 +188,8 @@ export function HeroSlider({ slides, autoplay: AUTOPLAY, scrollLabel, rankValue,
             <picture className="contents">
               {s.mobileImage?.src && <source media={MOBILE} srcSet={srcSetFor(s.mobileImage.src) ?? s.mobileImage.src} sizes="100vw" />}
               <img
+                ref={i === 0 ? firstImg : undefined}
+                onLoad={i === 0 ? (e) => measure(e.currentTarget) : undefined}
                 src={s.image.src}
                 srcSet={srcSetFor(s.image.src)}
                 sizes="100vw"
