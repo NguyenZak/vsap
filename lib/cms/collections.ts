@@ -71,7 +71,7 @@ export const retailFields: FieldDef[] = [
   { key: "pack", label: "Loại bao bì (chỉ dùng nội bộ, không hiện trên website)", type: "text" },
   { key: "price", label: "Giá bán (VNĐ)", type: "number", min: 0, step: 1000, help: "Để trống = hiện “Liên hệ” và nút “Hỏi giá”, sản phẩm không bán qua giỏ hàng." },
   { key: "oldPrice", label: "Giá cũ (VNĐ)", type: "number", min: 0, step: 1000, help: "Giá trước khi giảm, hiện gạch ngang cạnh giá bán kèm nhãn “-%”. Để trống nếu không giảm giá." },
-  { key: "wholesalePrice", label: "Giá sỉ (VNĐ)", type: "number", min: 0, step: 1000, help: "Giá sỉ từ 50kg (VNĐ). Để trống nếu không hiện dòng giá sỉ." },
+  { key: "wholesalePrice", label: "Giá sỉ (VNĐ)", type: "number", min: 0, step: 1000, help: "Chỉ để lưu nội bộ: trên web dòng giá sỉ luôn hiện \"Liên hệ\"." },
   { key: "soldOut", label: "Tạm hết hàng (ẩn nút mua)", type: "boolean" },
   { key: "hidden", label: "Ẩn khỏi website (vẫn giữ dữ liệu)", type: "boolean" },
   { key: "description", label: "Mô tả sản phẩm", type: "textarea", rows: 6, help: "Hiện ở trang riêng của sản phẩm. Để một dòng trống để tách đoạn." },

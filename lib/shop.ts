@@ -15,8 +15,6 @@ export type ShopItem = {
   price: number | null;
   /** Higher pre-discount price to show struck through, else null. */
   oldPrice: number | null;
-  /** Wholesale price in VND (from 50 kg), or null. */
-  wholesalePrice: number | null;
   soldOut: boolean;
 };
 
@@ -44,7 +42,6 @@ export function toShopItem(pack: RetailPack, locale: Locale): ShopItem {
     images: pack.images.map((i) => i.src).filter(Boolean),
     price: pack.price ?? null,
     oldPrice: pack.price && pack.oldPrice && pack.oldPrice > pack.price ? pack.oldPrice : null,
-    wholesalePrice: pack.wholesalePrice ?? null,
     soldOut: pack.soldOut,
   };
 }

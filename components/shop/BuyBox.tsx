@@ -24,22 +24,11 @@ export function BuyBox({ item, onAdded }: { item: ShopItem; onAdded?: () => void
     onAdded?.();
   };
 
-  const hasWholesale = item.wholesalePrice !== null;
-
   return (
     <div>
-      {hasWholesale ? (
-        <div className="rounded-xl border border-mist-200/60 bg-mist-50 px-4 py-3.5 sm:px-5 sm:py-4">
-          <Price item={item} size="large" />
-        </div>
-      ) : (
-        <div className="flex flex-wrap items-center gap-x-6 gap-y-2 rounded-xl border border-mist-200/60 bg-mist-50 px-4 py-3.5 sm:gap-x-8 sm:px-5 sm:py-4">
-          <p className="w-20 shrink-0 text-sm text-ink-600">{t.price}:</p>
-          <div className="min-w-0 flex-1">
-            <Price item={item} size="large" />
-          </div>
-        </div>
-      )}
+      <div className="rounded-xl border border-mist-200/60 bg-mist-50 px-4 py-3.5 sm:px-5 sm:py-4">
+        <Price item={item} size="large" />
+      </div>
 
       {buyable ? (
         <>

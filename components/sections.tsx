@@ -39,20 +39,21 @@ export function SectionHeading({
     <div
       className={
         center
-          ? "mx-auto flex max-w-2xl flex-col items-center gap-5 text-center"
+          ? "mx-auto flex max-w-2xl flex-col items-center gap-5 text-center lg:max-w-4xl"
           : align === "left"
             ? "flex max-w-3xl flex-col gap-5"
             : "flex flex-col gap-5 md:flex-row md:items-end md:justify-between md:gap-12"
       }
     >
-      <div data-reveal className="max-w-2xl">
+      {/* Centred headings run wider on desktop so the title and lead take fewer lines. */}
+      <div data-reveal className={center ? "max-w-2xl lg:max-w-4xl" : "max-w-2xl"}>
         {eyebrow && <Tag tone={dark ? "glass" : "light"}>{eyebrow}</Tag>}
         {(title || accent) && (
           <Title title={title ?? ""} accent={accent} className={`mt-4 text-4xl sm:text-5xl ${dark ? "text-white" : "text-heading"}`} />
         )}
       </div>
       {lead && (
-        <p data-reveal className={`max-w-sm text-sm leading-relaxed md:pb-1 ${dark ? "text-white/70" : "text-ink-600"}`}>
+        <p data-reveal className={`text-sm leading-relaxed md:pb-1 ${center ? "max-w-xl lg:max-w-3xl" : "max-w-sm"} ${dark ? "text-white/70" : "text-ink-600"}`}>
           {lead}
         </p>
       )}

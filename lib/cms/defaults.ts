@@ -125,6 +125,20 @@ const pages: Record<PageId, Omit<Page, "style">> = {
         proofLabel: tr((d) => d.home.hero.grades),
         proofImages: (["cashew", "macadamia", "cashewKernels"] as ImageKey[]).map((k) => ({ image: pic(k) })),
       }),
+      // "Về chúng tôi" right under the hero, from the approved About copy.
+      section("home-about", "imageText", {
+        eyebrow: tr((d) => d.about.eyebrow),
+        title: tr((d) => d.about.story.lead),
+        accent: blank(),
+        lead: tr((d) => d.about.story.paragraphs[0]),
+        body: tr((d) => d.about.intro.lead),
+        points: vi.about.intro.points.map((_, i) => ({ text: tr((d) => d.about.intro.points[i]) })),
+        image: pic("cashewKernels"),
+        imageSide: "left",
+        buttonLabel: tr((d) => d.common.learnMore),
+        buttonHref: "/about",
+        tone: "white",
+      }),
       retailSection("home-retail"),
       section("home-strip", "strip", {
         lead: tr((d) => d.home.strip.lead),

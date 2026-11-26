@@ -226,14 +226,14 @@ describe("price-list catalogue", () => {
     expect(priceOrder([{ id: "x", qty: 1 }], [pack({ id: "x", price: 100000, hidden: true })])).toBeNull();
   });
 
-  it("includes wholesale prices for all 23 price-list packs alongside retail prices", () => {
+  it("keeps wholesale prices for all 23 price-list packs in the CMS, never in what the browser gets", () => {
     const shown = visiblePacks(defaultContent().retailPacks);
     expect(shown).toHaveLength(23);
     for (const p of shown) {
       expect(p.price, p.id).toBeGreaterThan(0);
       expect(p.wholesalePrice, p.id).toBeGreaterThan(0);
       expect(p.wholesalePrice!, p.id).toBeLessThan(p.price!);
-      expect(toShopItem(p, "vi").wholesalePrice).toBe(p.wholesalePrice);
+      expect(JSON.stringify(toShopItem(p, "vi"))).not.toContain(String(p.wholesalePrice));
     }
     const byId = Object.fromEntries(shown.map((p) => [p.id, p]));
     expect(byId["hv400"].wholesalePrice).toBe(119000);

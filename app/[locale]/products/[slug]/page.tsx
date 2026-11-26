@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { ArrowLeft, MapPin, Package } from "lucide-react";
 import { InquiryForm } from "@/components/InquiryForm";
 import { ProductGrid } from "@/components/shop/ProductGrid";
-import { CmsImg, SectionHeading } from "@/components/sections";
+import { CmsImg, Paragraphs, SectionHeading } from "@/components/sections";
 import { Button, Title } from "@/components/ui";
 import { inquiryProducts } from "@/lib/cms/inquiry-format";
 import { pick } from "@/lib/cms/links";
@@ -55,7 +55,7 @@ export default async function ProductPage({ params }: Props) {
     "@context": "https://schema.org",
     "@type": "Product",
     name: tr(product.name),
-    description: tr(product.description),
+    description: plainText(tr(product.description)),
     image: [product.image?.src, ...gallery.map((g) => g.src), ...packs.flatMap((p) => (p.images[0]?.src ? [p.images[0].src] : []))]
       .filter(Boolean)
       .map((src) => new URL(src!, site.url).toString()),
@@ -101,7 +101,14 @@ export default async function ProductPage({ params }: Props) {
       <section className="bg-mist-50 py-16 sm:py-24">
         <div className="container-page grid gap-10 lg:grid-cols-12 lg:items-center">
           <div data-reveal className={gallery.length ? "lg:col-span-7" : "lg:col-span-12"}>
-            <p className="heading text-2xl text-heading sm:text-3xl">{tr(product.description)}</p>
+            {/* One plain paragraph reads as a big statement; a longer text ("## " heading, blank-line paragraphs) as an article. */}
+            {/^## |\n\s*\n/.test(tr(product.description).trim()) ? (
+              <div className="space-y-4 text-base leading-relaxed text-ink-600 sm:text-lg">
+                <Paragraphs text={tr(product.description)} headingClassName="heading text-3xl text-heading sm:text-4xl" />
+              </div>
+            ) : (
+              <p className="heading text-2xl text-heading sm:text-3xl">{tr(product.description)}</p>
+            )}
             {tr(product.origin) && (
               <p className="mt-8 inline-flex items-start gap-3 rounded-2xl bg-surface p-2 pr-5 text-sm text-ink-600">
                 <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-xl bg-sun-400 text-forest-950">
@@ -224,4 +231,13 @@ export default async function ProductPage({ params }: Props) {
       <script type="application/ld+json" dangerouslySetInnerHTML={jsonLdHtml(crumbs)} />
     </>
   );
+}
+
+/** Description without "## " heading lines, as one paragraph (structured data). */
+function plainText(text: string) {
+  return text
+    .split(/\n\s*\n/)
+    .map((p) => p.trim())
+    .filter((p) => p && !p.startsWith("## "))
+    .join(" ");
 }

@@ -35,11 +35,11 @@ export const products: Product[] = [
       ko: "백색 캐슈넛 홀·브로큰 각 등급과 소금 로스팅 제품을 AFI 기준에 따라 등급별로 공급합니다.",
     },
     description: {
-      vi: "Hạt điều Việt Nam nổi tiếng với nhân trắng ngà, vị béo ngọt và độ giòn đặc trưng. VSAP cung cấp nhân điều sơ chế đóng gói xuất khẩu cùng hạt điều rang muối cho thị trường bán lẻ, phân loại theo tiêu chuẩn của Hiệp hội Công nghiệp Thực phẩm Hoa Kỳ (AFI).",
-      en: "Vietnamese cashews are known for their ivory-white kernels, rich buttery taste and distinctive crunch. VSAP supplies export-packed raw kernels as well as roasted & salted cashews for retail, graded to the Association of Food Industries (AFI) specification.",
-      zh: "越南腰果以象牙白的果仁、香浓甘甜的口感和独特的酥脆感而闻名。VSAP供应出口包装的初加工腰果仁，以及面向零售市场的盐焗腰果，均按美国食品工业协会（AFI）标准分级。",
-      ja: "ベトナム産カシューナッツは、象牙色の実、濃厚でまろやかな甘み、独特の歯ごたえで知られています。VSAPは輸出向けに包装した一次加工のカシューナッツと、小売向けの塩ローストカシューナッツを、米国食品産業協会（AFI）の規格に基づき等級分けしてご提供しています。",
-      ko: "베트남산 캐슈넛은 상아빛 알맹이, 고소하고 진한 단맛, 특유의 바삭한 식감으로 잘 알려져 있습니다. VSAP는 수출용으로 포장한 1차 가공 캐슈넛 알맹이와 소매용 소금 로스팅 캐슈넛을 미국식품산업협회(AFI) 기준에 따라 등급을 분류해 공급합니다.",
+      vi: "## Hạt điều Việt Nam\n\nViệt Nam hiện là quốc gia dẫn đầu thế giới về chế biến và xuất khẩu nhân điều. Với các vùng trồng truyền thống tại Đông Nam Bộ và Tây Nguyên, cùng kinh nghiệm sản xuất và chế biến được tích lũy qua nhiều thập kỷ, ngành điều đã trở thành một phần quan trọng trong chuỗi cung ứng nông sản toàn cầu. Hạt điều có vị ngọt tự nhiên, béo bùi, giàu protein thực vật, chất béo không bão hòa và các khoáng chất thiết yếu. Sự đa dạng trong phương pháp chế biến và quy cách sản phẩm giúp hạt điều đáp ứng nhiều nhu cầu tiêu dùng, ẩm thực và thương mại trên thị trường quốc tế.",
+      en: "## Vietnamese cashews\n\nVietnam is currently the world's leading processor and exporter of cashew kernels. With traditional growing regions in the South-East and the Central Highlands, and production and processing experience built up over decades, the cashew industry has become an important part of the global agricultural supply chain. Cashews have a natural sweetness and a rich, buttery taste, and are high in plant protein, unsaturated fats and essential minerals. A wide range of processing methods and product specifications lets cashews meet many consumer, culinary and trade needs on international markets.",
+      zh: "## 越南腰果\n\n越南目前是全球领先的腰果仁加工和出口国。依托东南部和西原地区的传统种植区，以及数十年积累的生产与加工经验，腰果产业已成为全球农产品供应链的重要组成部分。腰果口感自然香甜、醇厚绵密，富含植物蛋白、不饱和脂肪和人体必需的矿物质。多样的加工方式和产品规格，使腰果能够满足国际市场在消费、烹饪和贸易方面的多种需求。",
+      ja: "## ベトナムのカシューナッツ\n\nベトナムは現在、カシューナッツの加工・輸出で世界をリードする国です。東南部と中部高原の伝統的な産地、そして数十年にわたって培われた生産・加工の経験により、カシューナッツ産業は世界の農産物サプライチェーンの重要な一部となっています。カシューナッツは自然な甘みとコクのある味わいが特長で、植物性たんぱく質、不飽和脂肪酸、必須ミネラルを豊富に含みます。多様な加工方法と製品規格により、国際市場における消費・料理・取引のさまざまなニーズに応えています。",
+      ko: "## 베트남 캐슈넛\n\n베트남은 현재 캐슈넛 가공 및 수출 분야에서 세계를 선도하는 국가입니다. 동남부와 중부 고원의 전통 재배 지역, 그리고 수십 년간 쌓아 온 생산·가공 경험을 바탕으로 캐슈넛 산업은 세계 농산물 공급망의 중요한 일부가 되었습니다. 캐슈넛은 자연스러운 단맛과 고소하고 풍부한 맛을 지니며, 식물성 단백질, 불포화 지방, 필수 미네랄이 풍부합니다. 다양한 가공 방법과 제품 규격 덕분에 국제 시장의 소비, 요리, 무역 수요를 폭넓게 충족합니다.",
     },
     origin: {
       vi: "Bình Phước, Đồng Nai và các tỉnh Đông Nam Bộ – vùng điều lớn nhất Việt Nam.",
@@ -112,11 +112,11 @@ export const products: Product[] = [
       ko: "껍질에 금을 내어 건조한 껍질째 마카다미아와 국제 스타일 기준의 알맹이, 자연 그대로의 고소하고 진한 맛.",
     },
     description: {
-      vi: "Được trồng trên cao nguyên đất đỏ bazan, hạt macca Việt Nam có nhân to, màu kem sáng, vị béo bùi và thơm tự nhiên. VSAP cung cấp macca nguyên vỏ sấy nứt tiện dụng và nhân macca phân loại theo style quốc tế.",
-      en: "Grown on the basalt highlands of Vietnam, Vietnamese macadamias have large, light-cream kernels with a rich, naturally aromatic flavour. VSAP supplies convenient cracked in-shell macadamias and kernels graded to international styles.",
-      zh: "越南夏威夷果生长于红色玄武岩土高原，果仁饱满，呈浅奶油色，口感香浓绵密，带有天然香气。VSAP供应食用便捷的烘干开口带壳夏威夷果，以及按国际Style标准分级的夏威夷果仁。",
-      ja: "ベトナムの玄武岩質の赤土高原で育つマカダミアナッツは、大粒で明るいクリーム色の実と、濃厚で自然な香ばしさが特長です。VSAPは手軽に食べられる割れ目入りの乾燥殻付きマカダミアナッツと、国際規格（Style）で等級分けした実をご提供しています。",
-      ko: "현무암 적토 고원에서 자란 베트남산 마카다미아는 알이 크고 밝은 크림색을 띠며, 고소하고 진한 맛과 자연스러운 향이 특징입니다. VSAP는 먹기 편하도록 껍질에 금을 내어 건조한 껍질째 마카다미아와 국제 스타일 기준으로 등급을 분류한 알맹이를 공급합니다.",
+      vi: "## Mắc ca Việt Nam\n\nCó nguồn gốc từ Australia, mắc ca được đưa vào trồng tại Việt Nam từ những năm 1990 và hiện được phát triển chủ yếu tại Tây Nguyên và Tây Bắc. Với điều kiện khí hậu, độ cao và thổ nhưỡng phù hợp, đặc biệt là vùng đất đỏ bazan Tây Nguyên, cây mắc ca có nhiều tiềm năng phát triển tại Việt Nam. Hạt mắc ca được ưa chuộng bởi vị béo thanh, giòn nhẹ, hương thơm tự nhiên và giá trị dinh dưỡng cao, giàu chất béo không bão hòa, chất xơ, vitamin và khoáng chất. Cùng với sự mở rộng vùng nguyên liệu và đầu tư vào kỹ thuật canh tác, chế biến, mắc ca Việt Nam đang từng bước tham gia vào chuỗi cung ứng nông sản quốc tế, đáp ứng nhu cầu ngày càng đa dạng của thị trường thực phẩm và dinh dưỡng!",
+      en: "## Vietnamese macadamias\n\nNative to Australia, macadamia was introduced to Vietnam in the 1990s and is now grown mainly in the Central Highlands and the North-West. With a suitable climate, altitude and soil, especially the red basalt soil of the Central Highlands, macadamia has strong potential in Vietnam. Macadamia nuts are prized for their clean, rich taste, light crunch, natural aroma and high nutritional value, and are rich in unsaturated fats, fibre, vitamins and minerals. As growing areas expand and investment in cultivation and processing increases, Vietnamese macadamias are steadily entering the international agricultural supply chain, meeting the increasingly diverse needs of the food and nutrition market.",
+      zh: "## 越南夏威夷果\n\n夏威夷果原产于澳大利亚，20世纪90年代引入越南种植，目前主要分布在西原和西北地区。凭借适宜的气候、海拔和土壤条件，尤其是西原的红色玄武岩土壤，夏威夷果在越南具有很大的发展潜力。夏威夷果口感醇香清爽、微脆，带有天然香气，营养价值高，富含不饱和脂肪、膳食纤维、维生素和矿物质。随着原料产区的扩大以及对种植和加工技术的投入，越南夏威夷果正逐步进入国际农产品供应链，满足食品与营养市场日益多样化的需求。",
+      ja: "## ベトナムのマカダミアナッツ\n\nオーストラリア原産のマカダミアは、1990年代にベトナムへ導入され、現在は主に中部高原と西北部で栽培されています。気候、標高、土壌の条件が適しており、特に中部高原の赤色玄武岩土壌に恵まれ、ベトナムでのマカダミア栽培には大きな可能性があります。マカダミアナッツは、すっきりとしたコク、軽やかな食感、自然な香り、そして高い栄養価で好まれ、不飽和脂肪酸、食物繊維、ビタミン、ミネラルを豊富に含みます。原料産地の拡大と栽培・加工技術への投資により、ベトナム産マカダミアは国際的な農産物サプライチェーンに着実に参入し、食品・栄養市場の多様化するニーズに応えています。",
+      ko: "## 베트남 마카다미아\n\n호주가 원산지인 마카다미아는 1990년대에 베트남에 도입되었으며, 현재 주로 중부 고원과 서북부 지역에서 재배되고 있습니다. 적합한 기후, 고도, 토양 조건, 특히 중부 고원의 붉은 현무암 토양 덕분에 마카다미아는 베트남에서 큰 성장 잠재력을 지니고 있습니다. 마카다미아는 담백하면서도 고소한 맛, 가벼운 바삭함, 자연스러운 향, 높은 영양가로 사랑받으며 불포화 지방, 식이섬유, 비타민, 미네랄이 풍부합니다. 원료 재배지의 확대와 재배·가공 기술에 대한 투자로 베트남 마카다미아는 국제 농산물 공급망에 점차 참여하며, 식품 및 영양 시장의 점점 다양해지는 수요에 부응하고 있습니다.",
     },
     origin: {
       vi: "Tây Nguyên, tập trung tại Đắk Lắk.",
