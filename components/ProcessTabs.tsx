@@ -116,7 +116,7 @@ export function ProcessTabs({
 
   return (
     <div ref={root}>
-      <div ref={tabs} role="tablist" className="no-scrollbar -mx-5 flex gap-2 overflow-x-auto px-5 sm:mx-0 sm:grid sm:grid-cols-3 sm:px-0 lg:grid-cols-6">
+      <div ref={tabs} role="tablist" className={`no-scrollbar -mx-5 flex gap-2 overflow-x-auto px-5 sm:mx-0 sm:grid sm:px-0 ${steps.length > 6 ? "sm:grid-cols-2 lg:grid-cols-4" : "sm:grid-cols-3 lg:grid-cols-6"}`}>
         {steps.map((s, i) => {
           const selected = i === active;
           return (

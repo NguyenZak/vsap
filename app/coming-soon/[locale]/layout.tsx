@@ -22,7 +22,7 @@ export const dynamicParams = false;
 export const generateStaticParams = localeParams;
 export const dynamic = "force-dynamic";
 
-export const viewport: Viewport = { themeColor: "#082a17", colorScheme: "dark" };
+export const viewport: Viewport = { themeColor: "#232c1e", colorScheme: "dark" };
 
 export async function generateMetadata({ params }: Omit<Props, "children">): Promise<Metadata> {
   const locale = metadataLocale((await params).locale);

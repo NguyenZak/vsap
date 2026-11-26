@@ -82,6 +82,7 @@ export type UiStrings = {
     note: string; notePlaceholder: string; payment: string; placeOrder: string; placing: string;
     successTitle: string; successBody: string; error: string;
     oldPrice: string;
+    retailPrice: string; wholesalePrice: string;
     perk5: string; perk6: string; share: string; copyLink: string; copied: string;
     /** Checkout note; {terms} and {privacy} become links to those policies. */
     agree: string;
@@ -257,6 +258,8 @@ export type RetailPack = {
   price: number | null;
   /** Price before the discount (VND), shown struck through when higher than `price`; null = no discount. */
   oldPrice: number | null;
+  /** Wholesale price in VND (from 50 kg); null = hidden. */
+  wholesalePrice: number | null;
   /** Hides the buy buttons and shows "sold out". */
   soldOut: boolean;
   /** Kept in Studio but not shown or sold on the website. */

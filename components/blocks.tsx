@@ -134,22 +134,20 @@ const renderers: Record<string, Renderer> = {
   },
 
   pageHero(p, ctx) {
-    const { t, img } = makeT(ctx);
+    const { t } = makeT(ctx);
     return (
-      <div className="relative isolate flex min-h-[34rem] items-end overflow-hidden bg-forest-900 lg:min-h-[40rem]">
-        <CmsImg image={img(p.image)} priority parallax className="absolute inset-0 -z-10 size-full" />
-        <div className="absolute inset-0 -z-10 bg-gradient-to-t from-black/60 via-black/20 to-black/25" />
-        <div className="container-page pb-14 pt-36 sm:pb-20">
+      <div className="bg-dark-glow relative isolate flex items-end overflow-hidden border-b border-mist-200/40 bg-forest-950">
+        <div className="container-page pt-32 pb-14 sm:pt-40 sm:pb-16">
           {t(p.eyebrow) && (
             <div data-intro>
               <Tag tone="glass">{t(p.eyebrow)}</Tag>
             </div>
           )}
           <div data-intro>
-            <Title as="h1" title={t(p.title)} accent={t(p.accent)} className="mt-5 max-w-3xl text-5xl text-white sm:text-6xl lg:text-7xl" />
+            <Title as="h1" title={t(p.title)} accent={t(p.accent)} className="mt-5 max-w-3xl text-4xl text-white sm:text-5xl lg:text-6xl" />
           </div>
           {t(p.lead) && (
-            <p data-intro className="mt-5 max-w-lg text-sm leading-relaxed text-white/85 sm:text-base">
+            <p data-intro className="mt-4 max-w-2xl text-sm leading-relaxed text-white/80 sm:text-base">
               {t(p.lead)}
             </p>
           )}
@@ -232,43 +230,39 @@ const renderers: Record<string, Renderer> = {
     );
   },
 
-  retail(p, ctx) {
-    const { t, href } = makeT(ctx);
+  retail(p, ctx, section) {
+    const { t } = makeT(ctx);
     const tone = toneOf({ id: "", type: "retail", props: p }) as Tone;
     const items = visiblePacks(ctx.content.retailPacks).map((r) => toShopItem(r, ctx.locale));
     // Nut photos at both edges (on unless switched off in Studio); the heading is centred between them.
     const decor = p.decor !== false;
+    const isHome = section?.id === "home-retail";
+    const categorySliders = isHome
+      ? (["macadamia", "cashew"] as const)
+          .map((slug) => ({
+            slug,
+            title: t(ctx.content.products.find((pr) => pr.slug === slug)?.name) || slug,
+            items: items.filter((it) => it.product === slug),
+          }))
+          .filter((g) => g.items.length > 0)
+      : [];
     return (
       <div className="block-pad relative overflow-x-clip">
-        {decor &&
-          shopDecor.map((d) => (
-            <img
-              key={d.src}
-              src={d.src}
-              alt=""
-              aria-hidden
-              loading="lazy"
-              decoding="async"
-              className={`pointer-events-none absolute hidden select-none motion-safe:animate-[decor-float_10s_ease-in-out_infinite] lg:block ${d.className}`}
-              style={{ animationDelay: d.delay }}
-            />
-          ))}
         <div className="container-page relative">
           {decor ? <SectionHeading eyebrow={t(p.eyebrow)} title={t(p.title)} accent={t(p.accent)} lead={t(p.lead)} tone={tone} align="center" /> : heading(p, ctx, tone)}
           {items.length > 0 && (
             <div className={hasHeading(p, ctx) ? "mt-12" : ""}>
-              <ProductGrid items={items} />
+              {isHome ? (
+                <div className="space-y-10">
+                  {categorySliders.map((g) => (
+                    <ProductGrid key={g.slug} items={g.items} layout="slider" heading={g.title} />
+                  ))}
+                </div>
+              ) : (
+                <ProductGrid items={items} />
+              )}
             </div>
           )}
-          {t(p.buttonLabel) && str(p.buttonHref) && (
-            <div data-reveal className={`mt-10 ${decor ? "text-center" : ""}`}>
-              <Button href={href(p.buttonHref)} variant={tone === "dark" ? "sun" : "dark"}>
-                {t(p.buttonLabel)}
-              </Button>
-            </div>
-          )}
-          {/* Room under the grid for the cashew photos, even when the next section shares this background. */}
-          {decor && <div aria-hidden className="hidden h-24 lg:block" />}
         </div>
       </div>
     );
@@ -355,7 +349,35 @@ const renderers: Record<string, Renderer> = {
 
   faq(p, ctx, section) {
     const { t } = makeT(ctx);
-    const items = list(p.items).map((f) => ({ icon: "message-question", title: t(f.q), body: t(f.a) }));
+    const items = list(p.items).map((f) => ({ group: t(f.group), icon: "message-question", title: t(f.q), body: t(f.a) }));
+    // Items that carry a group name are shown as rows: group name on the left, its questions on the right.
+    // Consecutive items with the same group name form one group.
+    if (items.some((it) => it.group)) {
+      const groups: { title: string; items: typeof items }[] = [];
+      for (const it of items) {
+        const last = groups[groups.length - 1];
+        if (last && last.title === it.group) last.items.push(it);
+        else groups.push({ title: it.group, items: [it] });
+      }
+      return (
+        <div className="block-pad container-page">
+          {heading(p, ctx)}
+          <div className={`divide-y divide-mist-200 ${hasHeading(p, ctx) ? "mt-12" : ""}`}>
+            {groups.map((g, gi) => (
+              <div key={gi} className="grid gap-4 py-8 first:pt-0 last:pb-0 lg:grid-cols-12 lg:gap-10">
+                <div data-reveal className="lg:col-span-4">
+                  <p className="text-xs font-medium tracking-widest text-ink-400 tabular-nums">{String(gi + 1).padStart(2, "0")}</p>
+                  {g.title && <h3 className="heading mt-2 text-xl text-heading sm:text-2xl">{g.title}</h3>}
+                </div>
+                <div className="lg:col-span-8">
+                  <AccordionCards name={`faq-${section.id}`} items={g.items} openFirst={gi === 0} />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
     const half = Math.ceil(items.length / 2);
     return (
       <div className="block-pad container-page">
@@ -395,15 +417,19 @@ const renderers: Record<string, Renderer> = {
     const { t, img } = makeT(ctx);
     const dark = str(p.tone) === "dark";
     return (
-      <div className="block-pad container-page grid gap-10 lg:grid-cols-12 lg:items-center">
+      <div className="block-pad container-page grid gap-10 lg:grid-cols-12 lg:items-start">
         <div data-reveal className="lg:col-span-6">
           {t(p.tag) && <Tag tone={dark ? "glass" : "light"}>{t(p.tag)}</Tag>}
           <div className="mt-6 space-y-5">
             {t(p.lead) && <p className={`heading text-2xl sm:text-3xl ${dark ? "text-white" : "text-heading"}`}>{t(p.lead)}</p>}
-            <Paragraphs text={t(p.body)} className={`text-base leading-relaxed ${dark ? "text-white/75" : "text-ink-600"}`} />
+            <Paragraphs
+              text={t(p.body)}
+              className={`text-base leading-relaxed ${dark ? "text-white/75" : "text-ink-600"}`}
+              headingClassName={`heading pt-4 text-xl sm:text-2xl ${dark ? "text-white" : "text-heading"}`}
+            />
           </div>
         </div>
-        <div className="grid grid-cols-2 gap-3 lg:col-span-6">
+        <div className="grid grid-cols-2 gap-3 lg:sticky lg:top-28 lg:col-span-6">
           <div data-reveal="clip" className="relative aspect-[3/4] overflow-hidden rounded-2xl">
             <CmsImg image={img(p.imageA)} parallax sizes={SIZES.thumb} className="absolute inset-0 size-full" />
           </div>
@@ -548,6 +574,7 @@ const renderers: Record<string, Renderer> = {
     const tone = toneOf({ id: "", type: "imageText", props: p }) as Tone;
     const imageLeft = str(p.imageSide) === "left";
     const dark = tone === "dark";
+    const points = list(p.points).map((it) => t(it.text)).filter(Boolean);
     return (
       <div className="block-pad container-page grid gap-10 lg:grid-cols-2 lg:items-center">
         <div data-reveal="clip" className={`relative aspect-[4/3] overflow-hidden rounded-2xl ${imageLeft ? "" : "lg:order-2"}`}>
@@ -555,11 +582,23 @@ const renderers: Record<string, Renderer> = {
         </div>
         <div data-reveal>
           {t(p.eyebrow) && <Tag tone={dark ? "glass" : "light"}>{t(p.eyebrow)}</Tag>}
-          <Title title={t(p.title)} accent={t(p.accent)} className={`mt-4 text-4xl sm:text-5xl ${dark ? "text-white" : "text-heading"}`} />
-          {t(p.lead) && <p className={`mt-5 text-lg leading-relaxed ${dark ? "text-white/85" : "text-ink-900"}`}>{t(p.lead)}</p>}
+          {(t(p.title) || t(p.accent)) && <Title title={t(p.title)} accent={t(p.accent)} className={`mt-4 text-4xl sm:text-5xl ${dark ? "text-white" : "text-heading"}`} />}
+          {t(p.lead) && <p className={`mt-5 text-lg leading-relaxed first:mt-0 ${dark ? "text-white/85" : "text-ink-900"}`}>{t(p.lead)}</p>}
           <div className={`mt-5 space-y-4 text-sm leading-relaxed ${dark ? "text-white/70" : "text-ink-600"}`}>
             <Paragraphs text={t(p.body)} />
           </div>
+          {points.length > 0 && (
+            <ul className="mt-6 flex flex-wrap gap-2">
+              {points.map((pt, i) => (
+                <li key={i} className={`inline-flex items-center gap-2 rounded-full py-1.5 pr-4 pl-1.5 text-sm font-medium ${dark ? "bg-white/10 text-white" : "bg-mist-50 text-ink-900"}`}>
+                  <span className="inline-flex size-6 items-center justify-center rounded-full bg-sun-400 text-forest-950">
+                    <CmsIcon name="badge-check" className="size-3.5" />
+                  </span>
+                  {pt}
+                </li>
+              ))}
+            </ul>
+          )}
           {t(p.buttonLabel) && str(p.buttonHref) && (
             <div className="mt-8">
               <Button href={href(p.buttonHref)}>{t(p.buttonLabel)}</Button>

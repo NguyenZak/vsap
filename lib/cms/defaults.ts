@@ -11,7 +11,7 @@ import { images, type ImageKey } from "../images";
 import { partners } from "../partners";
 import { policies, UPDATED as POLICIES_UPDATED } from "../content/policies";
 import { products } from "../products";
-import { packers, priceListIds, retailFacts, retailPacks, tempPrices } from "../retail";
+import { packers, priceListIds, retailFacts, retailPacks, tempPrices, wholesalePrices } from "../retail";
 import { site } from "../site";
 import { emptyL, locales, type Locale } from "../locales";
 import { emptyButtonStyle, emptyMenuStyle, emptyPageStyle } from "./theme";
@@ -44,11 +44,11 @@ const heroSlides: { image: ImageKey; href: string }[] = [
   { image: "shipping", href: "/contact" },
 ];
 const statementPills: ImageKey[] = ["birdNest", "cashewHarvest", "macadamiaTree", "cashewKernels"];
-const valueIcons = ["badge-check", "leaf", "handshake", "globe", "factory", "sprout"];
+const valueIcons = ["sprout", "badge-check", "scan-eye", "handshake", "heart"];
 // Only photos of VSAP's own lines (cashew, macadamia, bird's nest) and their regions: no rice or coffee.
-const valuePhotos: ImageKey[] = ["cashewKernels", "cashewTreeSky", "highlands", "shipping", "cashewProcessing", "cashewGrove"];
-const stepIcons = ["sprout", "wheat", "factory", "scan-search", "package-check", "ship"];
-const stepPhotos: ImageKey[] = ["cashewGrove", "cashewHarvest", "cashewProcessing", "qualityInspection", "cashewRoasted", "shipping"];
+const valuePhotos: ImageKey[] = ["cashewGrove", "qualityInspection", "cashewKernels", "highlandFarmers", "macadamiaSpoon"];
+const stepIcons = ["sprout", "wheat", "scan-search", "factory", "shield-check", "package-check", "truck", "heart"];
+const stepPhotos: ImageKey[] = ["cashewGrove", "cashewHarvest", "cashewKernels", "cashewProcessing", "qualityInspection", "cashewRoasted", "shipping", "macadamiaSpoon"];
 
 const valuesSection = (id: string) =>
   section(id, "values", {
@@ -162,7 +162,13 @@ const pages: Record<PageId, Omit<Page, "style">> = {
       }),
       section("home-faq", "faq", {
         ...heading((d) => d.home.faq),
-        items: vi.home.faq.items.map((_, i) => ({ q: tr((d) => d.home.faq.items[i].q), a: tr((d) => d.home.faq.items[i].a) })),
+        items: vi.home.faq.groups.flatMap((g, gi) =>
+          g.items.map((_, i) => ({
+            group: tr((d) => d.home.faq.groups[gi].title),
+            q: tr((d) => d.home.faq.groups[gi].items[i].q),
+            a: tr((d) => d.home.faq.groups[gi].items[i].a),
+          })),
+        ),
       }),
       ctaSection("home-cta"),
     ],
@@ -173,26 +179,42 @@ const pages: Record<PageId, Omit<Page, "style">> = {
     seo: { title: tr((d) => d.about.metaTitle), description: tr((d) => d.about.metaDescription), image: "", noindex: false },
     sections: [
       pageHero("about-hero", (d) => d.about, "farmerHoe"),
-      section("about-story", "story", {
-        tag: tr((d) => d.about.story.title),
-        lead: tr((d) => d.about.story.paragraphs[0]),
-        body: tr((d) => d.about.story.paragraphs.slice(1).join("\n\n")),
-        imageA: pic("cashewHarvest"),
-        imageB: pic("macadamiaTree"),
-        tone: "muted",
-      }),
-      section("about-pillars", "pillars", {
+      section("about-intro", "imageText", {
         eyebrow: blank(),
         title: blank(),
         accent: blank(),
-        lead: blank(),
+        lead: tr((d) => d.about.intro.lead),
+        body: tr((d) => d.about.intro.body),
+        points: vi.about.intro.points.map((_, i) => ({ text: tr((d) => d.about.intro.points[i]) })),
+        image: pic("cashewKernels"),
+        imageSide: "left",
+        buttonLabel: blank(),
+        buttonHref: "",
         tone: "white",
-        items: (["mission", "vision", "slogan"] as const).map((k, i) => ({
-          icon: ["target", "compass", "heart"][i],
-          title: tr((d) => d.about[k].title),
-          body: tr((d) => d.about[k].body),
-        })),
       }),
+      section("about-story", "story", {
+        tag: tr((d) => d.about.story.title),
+        lead: tr((d) => d.about.story.lead),
+        body: tr((d) => d.about.story.paragraphs.join("\n\n")),
+        imageA: pic("highlands"),
+        imageB: pic("macadamiaTree"),
+        tone: "muted",
+      }),
+      ...(["mission", "vision"] as const).map((k, i) =>
+        section(`about-${k}`, "imageText", {
+          eyebrow: tr((d) => d.about[k].title),
+          title: tr((d) => d.about[k].headline),
+          accent: tr((d) => d.about[k].accent),
+          lead: tr((d) => d.about[k].lead),
+          body: tr((d) => d.about[k].body),
+          points: vi.about[k].points.map((_, j) => ({ text: tr((d) => d.about[k].points[j]) })),
+          image: pic(i === 0 ? "macadamiaSpoon" : "cashewTreeSky"),
+          imageSide: i === 0 ? "right" : "left",
+          buttonLabel: blank(),
+          buttonHref: "",
+          tone: "white",
+        }),
+      ),
       valuesSection("about-values"),
       ctaSection("about-cta"),
     ],
@@ -455,6 +477,7 @@ export function defaultContent(): SiteContent {
       pack: { ...r.pack },
       price: tempPrices[r.id] ?? null,
       oldPrice: null,
+      wholesalePrice: wholesalePrices[r.id] ?? null,
       soldOut: false,
       hidden: !priceListIds.has(r.id),
       description: r.description ? { ...blank(), ...r.description } : blank(),

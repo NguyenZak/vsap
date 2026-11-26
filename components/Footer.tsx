@@ -44,7 +44,6 @@ export function Footer({ locale, content, ui }: Props) {
         <div className="flex flex-col gap-8 border-b border-white/10 pb-12 md:flex-row md:items-end md:justify-between">
           <div>
             <img src="/logo-light.svg" alt={site.name} width={136} height={68} className="-ml-3 h-16 w-auto" />
-            <p className="mt-4 max-w-sm text-sm leading-relaxed text-white/65">{pick(site.about, locale)}</p>
             <p className="mt-5 text-xs text-white/50">
               {footer.brandOf}
               <span className="mt-1 block text-sm font-semibold tracking-wide text-white uppercase">{legalName}</span>
@@ -61,15 +60,6 @@ export function Footer({ locale, content, ui }: Props) {
                       {footer.registered} {registered}
                     </span>
                   )}
-                </div>
-              )}
-              {site.representative?.name && (
-                <div>
-                  <dt className="inline">{footer.representative}: </dt>
-                  <dd className="inline text-white/85">
-                    {site.representative.name}
-                    {pick(site.representative.title, locale) && ` – ${pick(site.representative.title, locale)}`}
-                  </dd>
                 </div>
               )}
             </dl>

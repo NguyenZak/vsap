@@ -152,6 +152,8 @@ const keyLabels: Record<string, string> = {
   successTitle: "Tiêu đề khi đặt hàng xong",
   successBody: "Nội dung khi đặt hàng xong ({id} = mã đơn)",
   oldPrice: "Nhãn giá cũ (đọc màn hình)",
+  retailPrice: "Nhãn giá lẻ",
+  wholesalePrice: "Nhãn giá sỉ",
   taxId: "Nhãn mã số doanh nghiệp",
   registered: "Nhãn ngày đăng ký",
   representative: "Nhãn người đại diện",

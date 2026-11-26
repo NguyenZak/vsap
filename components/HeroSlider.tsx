@@ -275,10 +275,7 @@ export function HeroSlider({ slides, autoplay: AUTOPLAY, scrollLabel, rankValue,
                       </span>
                     </span>
                   </Heading>
-                  <p data-fade data-intro={intro} className="mt-5 max-w-md text-sm leading-relaxed text-white/90 sm:text-base">
-                    {s.lead}
-                  </p>
-                  <div data-fade data-intro={intro} className="mt-8 flex flex-wrap gap-3">
+                  <div data-fade data-intro={intro} className="mt-7 flex flex-wrap gap-3">
                     {s.buttonLabel && s.buttonHref && <Button href={s.buttonHref}>{s.buttonLabel}</Button>}
                     {s.secondaryLabel && s.secondaryHref && (
                       <Button href={s.secondaryHref} variant="glass">

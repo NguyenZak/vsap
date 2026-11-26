@@ -143,14 +143,14 @@ export default async function PackPage({ params }: Props) {
       </div>
 
       {/* Kamina-style layout: white cards on the cream page, gallery left, buy box and description right. */}
-      <div className="bg-mist-50">
+      <div className="overflow-x-clip bg-mist-50">
         <section className="container-page grid gap-5 py-6 sm:py-8 lg:grid-cols-12 lg:items-start">
-          <div className="space-y-5 rounded-2xl bg-surface p-3 sm:p-4 lg:sticky lg:top-24 lg:col-span-6">
+          <div className="min-w-0 space-y-5 rounded-2xl bg-surface p-3 sm:p-4 lg:sticky lg:top-24 lg:col-span-6">
             <Gallery images={item.images} alt={[item.name, item.flavor].filter(Boolean).join(" – ")} />
             <ShareBar title={item.name} />
           </div>
 
-          <div className="space-y-5 lg:col-span-6">
+          <div className="min-w-0 space-y-5 lg:col-span-6">
             <div className="rounded-2xl bg-surface p-5 sm:p-6">
               <h1 className="heading text-2xl text-heading sm:text-3xl">{item.name}</h1>
               {item.flavor && <p className="mt-1 text-sm text-ink-600">{item.flavor}</p>}
@@ -200,9 +200,9 @@ export default async function PackPage({ params }: Props) {
                     {facts.length > 0 && (
                       <dl className="divide-y divide-mist-200 border-y border-mist-200 text-sm">
                         {facts.map(([label, value]) => (
-                          <div key={label} className="grid grid-cols-[7.5rem_1fr] gap-4 py-2.5">
+                          <div key={label} className="grid grid-cols-[6.5rem_1fr] gap-3 py-2.5 sm:grid-cols-[7.5rem_1fr] sm:gap-4">
                             <dt className="text-ink-400">{label}</dt>
-                            <dd className="text-ink-900">{value}</dd>
+                            <dd className="min-w-0 break-words text-ink-900">{value}</dd>
                           </div>
                         ))}
                       </dl>

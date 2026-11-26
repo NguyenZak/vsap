@@ -64,7 +64,7 @@ export function Dialog({
   const shape =
     variant === "drawer"
       ? "shop-drawer m-0 ml-auto h-dvh max-h-none w-full max-w-md"
-      : "shop-modal m-auto max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] max-w-4xl rounded-3xl";
+      : "shop-modal m-auto max-h-[calc(100dvh-2rem)] w-[calc(100%-1.5rem)] max-w-4xl overflow-y-auto rounded-3xl border border-mist-200/80 shadow-2xl";
 
   return (
     <dialog

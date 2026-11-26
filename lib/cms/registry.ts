@@ -252,7 +252,7 @@ export const sectionDefs: SectionDef[] = [
   {
     type: "faq",
     label: "Câu hỏi thường gặp",
-    description: "Hai cột câu hỏi bấm mở.",
+    description: "Câu hỏi bấm mở: hai cột, hoặc theo nhóm nếu có điền tên nhóm.",
     icon: "message-circle-question",
     fields: [
       ...headingFields(),
@@ -263,13 +263,14 @@ export const sectionDefs: SectionDef[] = [
         itemLabel: "câu hỏi",
         titleKey: "q",
         fields: [
+          { key: "group", label: "Nhóm", type: "text", help: "Không bắt buộc. Các câu liền nhau cùng tên nhóm hiện chung một hàng; để trống tất cả thì hiện hai cột." },
           { key: "q", label: "Câu hỏi", type: "text" },
           { key: "a", label: "Trả lời", type: "textarea", rows: 4 },
         ],
-        newItem: () => ({ q: l("Câu hỏi mới?", "New question?"), a: l("Câu trả lời.", "The answer.") }),
+        newItem: () => ({ group: l(""), q: l("Câu hỏi mới?", "New question?"), a: l("Câu trả lời.", "The answer.") }),
       },
     ],
-    create: () => ({ ...sampleHeading(), items: [{ q: l("Câu hỏi?", "Question?"), a: l("Trả lời.", "Answer.") }] }),
+    create: () => ({ ...sampleHeading(), items: [{ group: l(""), q: l("Câu hỏi?", "Question?"), a: l("Trả lời.", "Answer.") }] }),
   },
   {
     type: "cta",
@@ -300,7 +301,7 @@ export const sectionDefs: SectionDef[] = [
     fields: [
       { key: "tag", label: "Nhãn nhỏ", type: "text" },
       { key: "lead", label: "Đoạn mở đầu (chữ lớn)", type: "textarea", rows: 3 },
-      { key: "body", label: "Đoạn tiếp theo", type: "textarea", rows: 4, help: "Xuống dòng hai lần để tách đoạn." },
+      { key: "body", label: "Đoạn tiếp theo", type: "textarea", rows: 8, help: "Xuống dòng hai lần để tách đoạn. Đoạn bắt đầu bằng \"## \" hiện thành tiêu đề nhỏ." },
       { key: "imageA", label: "Ảnh 1", type: "image" },
       { key: "imageB", label: "Ảnh 2", type: "image" },
       toneField,
@@ -396,12 +397,13 @@ export const sectionDefs: SectionDef[] = [
     fields: [
       ...headingFields(),
       { key: "body", label: "Nội dung", type: "textarea", rows: 6 },
+      { key: "points", label: "Điểm nhấn", type: "list", itemLabel: "điểm nhấn", titleKey: "text", fields: [{ key: "text", label: "Nội dung", type: "text" }], newItem: () => ({ text: l("Điểm nhấn", "Highlight") }) },
       { key: "image", label: "Ảnh", type: "image" },
       { key: "imageSide", label: "Vị trí ảnh", type: "select", options: [{ value: "left", label: "Trái" }, { value: "right", label: "Phải" }] },
       ...button(),
       toneField,
     ],
-    create: () => ({ ...sampleHeading(), body: l("Nội dung.", "Content."), image: img("/images/cashew-grove.webp"), imageSide: "right", buttonLabel: l(""), buttonHref: "", tone: "white" }),
+    create: () => ({ ...sampleHeading(), body: l("Nội dung.", "Content."), points: [], image: img("/images/cashew-grove.webp"), imageSide: "right", buttonLabel: l(""), buttonHref: "", tone: "white" }),
   },
   {
     type: "gallery",

@@ -28,7 +28,7 @@ export type RetailPack = {
 
 const img = (name: string) => `/images/products/${name}.webp`;
 
-/** Cracked in-shell macadamia SKUs from VSAP's retail price list (bảng giá sản phẩm, 10/2026). */
+/** Cracked in-shell macadamia SKUs from VSAP's retail price list (bảng giá lẻ sản phẩm, 11/2026). */
 type MaccaSku = {
   code: string;
   kind: "box" | "inshell";
@@ -37,6 +37,8 @@ type MaccaSku = {
   /** Kernel size printed on the price list, when given. */
   size?: string;
   gift?: boolean;
+  /** Optional custom highlight badge. */
+  highlight?: L;
   /** Packing line and carton for the description. */
   packing: { vi: string; en: string };
   carton: { vi: string; en: string };
@@ -51,45 +53,209 @@ type MaccaSku = {
 };
 
 const maccaSkuList: MaccaSku[] = [
-  { code: "HV450B", kind: "box", grams: 450, grade: "B", gift: true, packing: { vi: "Hộp giấy, kích thước 140 × 220 × 50 mm", en: "Paper box, 140 × 220 × 50 mm" }, carton: { vi: "40 – 80 hộp/thùng", en: "40 – 80 boxes per carton" }, images: [img("macca-box-450-front"), img("macca-box-450-angle"), img("macca-box-450-back")], nutrition: { energy: "759 kcal", fat: "74 g", carbs: "14 g", protein: "9 g" } },
-  { code: "HV250A", kind: "box", grams: 250, grade: "A", gift: true, salted: true, packing: { vi: "Hộp giấy lục giác, kích thước 70 × 70 × 200 mm", en: "Hexagonal paper box, 70 × 70 × 200 mm" }, carton: { vi: "40 – 100 hộp/thùng", en: "40 – 100 boxes per carton" }, images: [img("macca-hex-250a-front"), img("macca-hex-250a-top"), img("macca-hex-250a-nutrition"), img("macca-hex-250a-info"), img("macca-hex-250a-back"), img("macca-hex-250a-left")], nutrition: { energy: "750 kcal", fat: "72 g", carbs: "15 g", protein: "10 g" } },
-  { code: "HV250B", kind: "box", grams: 250, grade: "B", gift: true, salted: true, packing: { vi: "Hộp giấy lục giác, kích thước 70 × 70 × 200 mm", en: "Hexagonal paper box, 70 × 70 × 200 mm" }, carton: { vi: "40 – 100 hộp/thùng", en: "40 – 100 boxes per carton" }, images: [img("macca-hex-250b-front"), img("macca-hex-250b-top"), img("macca-hex-250b-nutrition"), img("macca-hex-250b-info"), img("macca-hex-250b-back"), img("macca-hex-250b-left")], nutrition: { energy: "750 kcal", fat: "72 g", carbs: "15 g", protein: "10 g" } },
-  { code: "HV160B", kind: "box", grams: 160, grade: "B", gift: true, salted: true, packing: { vi: "Hộp giấy lục giác", en: "Hexagonal paper box" }, carton: { vi: "40 – 120 hộp/thùng", en: "40 – 120 boxes per carton" }, images: [img("macca-hex-160b-front"), img("macca-hex-160b-top"), img("macca-hex-160b-nutrition"), img("macca-hex-160b-info"), img("macca-hex-160b-back"), img("macca-hex-160b-left")], nutrition: { energy: "750 kcal", fat: "72 g", carbs: "15 g", protein: "10 g" } },
-  { code: "ZV500A", taste: "plain", salted: true, kind: "inshell", grams: 500, grade: "A", size: "25 – 32 mm ±1", packing: { vi: "Túi zipper", en: "Zipper pouch" }, carton: { vi: "20 túi/thùng", en: "20 pouches per carton" }, images: [img("macca-zip-500a-front"), img("macca-zip-500a-right"), img("macca-zip-500a-left"), img("macca-zip-500a-top"), img("macca-zip-500a-back"), img("macca-zip-500a-back-angle")], nutrition: { energy: "759 kcal", fat: "74 g", carbs: "14 g", protein: "9 g" } },
-  { code: "ZV500A", id: "zv500a-rm", taste: "salt", salted: true, kind: "inshell", grams: 500, grade: "A", size: "25 – 32 mm ±1", packing: { vi: "Túi zipper", en: "Zipper pouch" }, carton: { vi: "20 túi/thùng", en: "20 pouches per carton" }, images: [img("macca-zip-500a-salt-front"), img("macca-zip-500a-salt-right"), img("macca-zip-500a-salt-left"), img("macca-zip-500a-salt-top"), img("macca-zip-500a-salt-back"), img("macca-zip-500a-salt-back-angle")], nutrition: { energy: "759 kcal", fat: "74 g", carbs: "14 g", protein: "9 g" } },
-  { code: "ZV500B", taste: "plain", salted: true, kind: "inshell", grams: 500, grade: "B", size: "22 – 24 mm ±1", packing: { vi: "Túi zipper", en: "Zipper pouch" }, carton: { vi: "20 túi/thùng", en: "20 pouches per carton" }, images: [img("macca-zip-500b-front"), img("macca-zip-500b-right"), img("macca-zip-500b-left"), img("macca-zip-500b-top"), img("macca-zip-500b-back"), img("macca-zip-500b-back-angle")], nutrition: { energy: "759 kcal", fat: "74 g", carbs: "14 g", protein: "9 g" } },
-  { code: "ZV500B", id: "zv500b-rm", taste: "salt", salted: true, kind: "inshell", grams: 500, grade: "B", size: "22 – 24 mm ±1", packing: { vi: "Túi zipper", en: "Zipper pouch" }, carton: { vi: "20 túi/thùng", en: "20 pouches per carton" }, images: [img("macca-zip-500b-salt-front"), img("macca-zip-500b-salt-right"), img("macca-zip-500b-salt-left"), img("macca-zip-500b-salt-top"), img("macca-zip-500b-salt-back"), img("macca-zip-500b-salt-back-angle")], nutrition: { energy: "759 kcal", fat: "74 g", carbs: "14 g", protein: "9 g" } },
-  { code: "PV500A", taste: "plain", salted: true, kind: "inshell", grams: 500, grade: "A", size: "25 – 32 mm ±1", packing: { vi: "Hũ nhựa PET", en: "PET jar" }, carton: { vi: "40 – 100 hũ/thùng", en: "40 – 100 jars per carton" }, images: [img("macca-jar-500a-front"), img("macca-jar-500a-left"), img("macca-jar-500a-right"), img("macca-jar-500a-back")], nutrition: { energy: "750 kcal", fat: "72 g", carbs: "15 g", protein: "10 g" } },
-  { code: "PV500A", id: "pv500a-rm", taste: "salt", salted: true, kind: "inshell", grams: 500, grade: "A", size: "25 – 32 mm ±1", packing: { vi: "Hũ nhựa PET", en: "PET jar" }, carton: { vi: "40 – 100 hũ/thùng", en: "40 – 100 jars per carton" }, images: [img("macca-jar-500a-salt-front"), img("macca-jar-500a-salt-left"), img("macca-jar-500a-salt-right"), img("macca-jar-500a-salt-back")], nutrition: { energy: "750 kcal", fat: "72 g", carbs: "15 g", protein: "10 g" } },
-  { code: "PV500B", taste: "plain", salted: true, kind: "inshell", grams: 500, grade: "B", size: "22 – 24 mm ±1", packing: { vi: "Hũ nhựa PET", en: "PET jar" }, carton: { vi: "40 – 100 hũ/thùng", en: "40 – 100 jars per carton" }, images: [img("macca-jar-500b-front"), img("macca-jar-500b-left"), img("macca-jar-500b-right"), img("macca-jar-500b-back")], nutrition: { energy: "750 kcal", fat: "72 g", carbs: "15 g", protein: "10 g" } },
+  { code: "HV400", kind: "box", grams: 400, grade: "B", size: "H450: 22 – 24 mm ±1", gift: true, highlight: { vi: "Hàng cao cấp · Dùng làm quà tặng; đóng hộp quà", en: "Premium gift box · Made for gifting", zh: "高端礼盒 · 送礼佳品", ja: "高級ギフト · 贈り物に最適", ko: "프리미엄 선물용" }, packing: { vi: "Hộp giấy, kích thước 140 × 220 × 50 mm", en: "Paper box, 140 × 220 × 50 mm" }, carton: { vi: "40 – 80 hộp/thùng", en: "40 – 80 boxes per carton" }, images: [img("macca-hv400"), img("macca-box-450-angle"), img("macca-box-450-back")], nutrition: { energy: "759 kcal", fat: "74 g", carbs: "14 g", protein: "9 g" } },
+  { code: "HV200", kind: "box", grams: 200, grade: "B", size: "HV250: 22 – 24 mm ±1", gift: true, salted: true, highlight: { vi: "Best choice! · Dùng làm quà tặng; đóng hộp quà", en: "Best choice! · Made for gifting", zh: "人气精选 · 送礼佳品", ja: "ベストチョイス · 贈り物に最適", ko: "베스트 초이스 · 선물용" }, packing: { vi: "Hộp giấy hình lục giác, kích thước 70 × 70 × 200 mm", en: "Hexagonal paper box, 70 × 70 × 200 mm" }, carton: { vi: "40 – 100 hộp/thùng", en: "40 – 100 boxes per carton" }, images: [img("macca-hv200"), img("macca-hex-250b-top"), img("macca-hex-250b-nutrition"), img("macca-hex-250b-info"), img("macca-hex-250b-back"), img("macca-hex-250b-left")], nutrition: { energy: "750 kcal", fat: "72 g", carbs: "15 g", protein: "10 g" } },
+  { code: "HV160", kind: "box", grams: 160, grade: "B", size: "HV160: 22 – 24 mm ±1", gift: true, salted: true, highlight: { vi: "Chuyên dùng đóng hộp quà tặng", en: "Made for gift hampers", zh: "礼盒专用", ja: "ギフトボックス専用", ko: "선물 세트 전용" }, packing: { vi: "Hộp giấy hình lục giác", en: "Hexagonal paper box" }, carton: { vi: "40 – 120 hộp/thùng", en: "40 – 120 boxes per carton" }, images: [img("macca-hv160"), img("macca-hex-160b-top"), img("macca-hex-160b-nutrition"), img("macca-hex-160b-info"), img("macca-hex-160b-back"), img("macca-hex-160b-left")], nutrition: { energy: "750 kcal", fat: "72 g", carbs: "15 g", protein: "10 g" } },
+  { code: "ZV450", taste: "plain", salted: true, kind: "inshell", grams: 450, grade: "B", size: "Z500B: 22 – 24 mm ±1", packing: { vi: "Túi zipper", en: "Zipper pouch" }, carton: { vi: "20 – 80 túi/thùng", en: "20 – 80 pouches per carton" }, images: [img("macca-zv450"), img("macca-zip-500b-right"), img("macca-zip-500b-left"), img("macca-zip-500b-top"), img("macca-zip-500b-back"), img("macca-zip-500b-back-angle")], nutrition: { energy: "759 kcal", fat: "74 g", carbs: "14 g", protein: "9 g" } },
+  { code: "ZV250", taste: "plain", salted: true, kind: "inshell", grams: 250, grade: "B", size: "Z250: 22 – 24 mm ±1", packing: { vi: "Túi zipper", en: "Zipper pouch" }, carton: { vi: "40 – 120 túi/thùng", en: "40 – 120 pouches per carton" }, images: [img("macca-zv250"), img("macca-inshell-250-back")], nutrition: { energy: "759 kcal", fat: "74 g", carbs: "14 g", protein: "9 g" } },
+  { code: "PV500B", taste: "plain", salted: true, kind: "inshell", grams: 500, grade: "B", size: "22 – 24 mm ±1", packing: { vi: "Hũ nhựa PET", en: "PET jar" }, carton: { vi: "40 – 100 hũ/thùng", en: "40 – 100 jars per carton" }, images: [img("macca-pv500b"), img("macca-jar-500b-left"), img("macca-jar-500b-right"), img("macca-jar-500b-back")], nutrition: { energy: "750 kcal", fat: "72 g", carbs: "15 g", protein: "10 g" } },
   { code: "PV500B", id: "pv500b-rm", taste: "salt", salted: true, kind: "inshell", grams: 500, grade: "B", size: "22 – 24 mm ±1", packing: { vi: "Hũ nhựa PET", en: "PET jar" }, carton: { vi: "40 – 100 hũ/thùng", en: "40 – 100 jars per carton" }, images: [img("macca-jar-500b-salt-front"), img("macca-jar-500b-salt-left"), img("macca-jar-500b-salt-right"), img("macca-jar-500b-salt-back")], nutrition: { energy: "750 kcal", fat: "72 g", carbs: "15 g", protein: "10 g" } },
-  { code: "PV250A", taste: "plain", salted: true, kind: "inshell", grams: 250, grade: "A", size: "25 – 32 mm ±1", gift: true, packing: { vi: "Hũ nhựa PET", en: "PET jar" }, carton: { vi: "40 – 100 hũ/thùng", en: "40 – 100 jars per carton" }, images: [img("macca-jar-250a-front"), img("macca-jar-250a-left"), img("macca-jar-250a-right"), img("macca-jar-250a-back")], nutrition: { energy: "750 kcal", fat: "72 g", carbs: "15 g", protein: "10 g" } },
+  { code: "PV500A", taste: "plain", salted: true, kind: "inshell", grams: 500, grade: "A", size: "25 – 32 mm ±1", packing: { vi: "Hũ nhựa PET", en: "PET jar" }, carton: { vi: "40 – 100 hũ/thùng", en: "40 – 100 jars per carton" }, images: [img("macca-pv500a"), img("macca-jar-500a-left"), img("macca-jar-500a-right"), img("macca-jar-500a-back")], nutrition: { energy: "750 kcal", fat: "72 g", carbs: "15 g", protein: "10 g" } },
+  { code: "PV500A", id: "pv500a-rm", taste: "salt", salted: true, kind: "inshell", grams: 500, grade: "A", size: "25 – 32 mm ±1", packing: { vi: "Hũ nhựa PET", en: "PET jar" }, carton: { vi: "40 – 100 hũ/thùng", en: "40 – 100 jars per carton" }, images: [img("macca-jar-500a-salt-front"), img("macca-jar-500a-salt-left"), img("macca-jar-500a-salt-right"), img("macca-jar-500a-salt-back")], nutrition: { energy: "750 kcal", fat: "72 g", carbs: "15 g", protein: "10 g" } },
+  { code: "PV250A", taste: "plain", salted: true, kind: "inshell", grams: 250, grade: "A", size: "25 – 32 mm ±1", gift: true, highlight: { vi: "Chuyên dùng đóng hộp quà tặng", en: "Made for gift hampers", zh: "礼盒专用", ja: "ギフトボックス専用", ko: "선물 세트 전용" }, packing: { vi: "Hũ nhựa PET", en: "PET jar" }, carton: { vi: "40 – 100 hũ/thùng", en: "40 – 100 jars per carton" }, images: [img("macca-pv250a"), img("macca-jar-250a-left"), img("macca-jar-250a-right"), img("macca-jar-250a-back")], nutrition: { energy: "750 kcal", fat: "72 g", carbs: "15 g", protein: "10 g" } },
   { code: "PV250A", id: "pv250a-rm", taste: "salt", salted: true, kind: "inshell", grams: 250, grade: "A", size: "25 – 32 mm ±1", gift: true, packing: { vi: "Hũ nhựa PET", en: "PET jar" }, carton: { vi: "40 – 100 hũ/thùng", en: "40 – 100 jars per carton" }, images: [img("macca-jar-250a-salt-front"), img("macca-jar-250a-salt-left"), img("macca-jar-250a-salt-right"), img("macca-jar-250a-salt-back")], nutrition: { energy: "750 kcal", fat: "72 g", carbs: "15 g", protein: "10 g" } },
-  { code: "PV250B", taste: "plain", salted: true, kind: "inshell", grams: 250, grade: "B", size: "22 – 24 mm ±1", gift: true, packing: { vi: "Hũ nhựa PET", en: "PET jar" }, carton: { vi: "40 – 100 hũ/thùng", en: "40 – 100 jars per carton" }, images: [img("macca-jar-250b-front"), img("macca-jar-250b-left"), img("macca-jar-250b-right"), img("macca-jar-250b-back")], nutrition: { energy: "750 kcal", fat: "72 g", carbs: "15 g", protein: "10 g" } },
+  { code: "PV250B", taste: "plain", salted: true, kind: "inshell", grams: 250, grade: "B", size: "22 – 24 mm ±1", gift: true, highlight: { vi: "Chuyên dùng đóng hộp quà tặng Tết", en: "Made for Tet gift hampers", zh: "春节礼盒专用", ja: "テトギフト専用", ko: "설 선물 세트 전용" }, packing: { vi: "Hũ nhựa PET", en: "PET jar" }, carton: { vi: "40 – 100 hũ/thùng", en: "40 – 100 jars per carton" }, images: [img("macca-pv250b"), img("macca-jar-250b-left"), img("macca-jar-250b-right"), img("macca-jar-250b-back")], nutrition: { energy: "750 kcal", fat: "72 g", carbs: "15 g", protein: "10 g" } },
   { code: "PV250B", id: "pv250b-rm", taste: "salt", salted: true, kind: "inshell", grams: 250, grade: "B", size: "22 – 24 mm ±1", gift: true, packing: { vi: "Hũ nhựa PET", en: "PET jar" }, carton: { vi: "40 – 100 hũ/thùng", en: "40 – 100 jars per carton" }, images: [img("macca-jar-250b-salt-front"), img("macca-jar-250b-salt-left"), img("macca-jar-250b-salt-right"), img("macca-jar-250b-salt-back")], nutrition: { energy: "750 kcal", fat: "72 g", carbs: "15 g", protein: "10 g" } },
 ];
 
-/**
- * Hexagonal box shots: white title = large nuts (grade A), gold title = small nuts (grade B).
- * macca-hex-160a-*.webp (160 g, grade A) is ready for when an HV160A is listed.
- */
+/** Wood-fire roasted salted cashew SKUs from VSAP's retail price list (bảng giá lẻ sản phẩm, 11/2026). */
+type CashewSku = {
+  id: string;
+  code: string;
+  grams: number;
+  size: { vi: string; en: string };
+  damaged?: string;
+  packing: { vi: string; en: string; zh: string; ja: string; ko: string };
+  carton: { vi: string; en: string };
+  highlight?: L;
+  images: string[];
+};
+
+const cashewSkuList: CashewSku[] = [
+  {
+    id: "dhv380-w180",
+    code: "ĐHV380 – W180",
+    grams: 450,
+    size: { vi: "A cồ - W180 – tuyển chọn", en: "Jumbo A - W180 – selected" },
+    damaged: "≤ 3%",
+    packing: { vi: "Hộp giấy, kích thước 140 × 220 × 50 mm", en: "Paper box, 140 × 220 × 50 mm", zh: "纸盒装", ja: "紙箱", ko: "종이 상자" },
+    carton: { vi: "40 – 80 hộp/thùng", en: "40 – 80 boxes per carton" },
+    highlight: { vi: "Hàng cao cấp: biếu tặng", en: "Premium grade: made for gifting", zh: "高端送礼佳品", ja: "高級ギフト用", ko: "프리미엄 선물용" },
+    images: [img("cashew-dhv380"), img("cashew-box-450-back-angle"), img("cashew-box-450-back")],
+  },
+  {
+    id: "dhlgv205-w180",
+    code: "ĐHLGV 205- W180",
+    grams: 205,
+    size: { vi: "A cồ - W180", en: "Jumbo A - W180" },
+    packing: { vi: "Hộp giấy hình lục giác, kích thước 70 × 70 × 200 mm", en: "Hexagonal paper box, 70 × 70 × 200 mm", zh: "六角纸盒装", ja: "六角形の紙箱", ko: "육각 종이 상자" },
+    carton: { vi: "40 – 100 hộp/thùng", en: "40 – 100 boxes per carton" },
+    highlight: { vi: "Dùng làm quà tặng; đóng hộp quà", en: "Made for gifting", zh: "送礼佳品", ja: "ギフトに最適", ko: "선물용" },
+    images: [img("cashew-dhlgv205"), img("cashew-hex-160-nutrition"), img("cashew-hex-160-info")],
+  },
+  {
+    id: "dhlgv150-w180",
+    code: "ĐHLGV 150- W180",
+    grams: 150,
+    size: { vi: "A cồ - W180", en: "Jumbo A - W180" },
+    packing: { vi: "Hộp giấy hình lục giác, kích thước 70 × 70 × 200 mm", en: "Hexagonal paper box, 70 × 70 × 200 mm", zh: "六角纸盒装", ja: "六角形の紙箱", ko: "육각 종이 상자" },
+    carton: { vi: "40 – 120 hộp/thùng", en: "40 – 120 boxes per carton" },
+    highlight: { vi: "Chuyên dùng đóng hộp quà tặng", en: "Made for gift hampers", zh: "礼盒专用", ja: "ギフトボックス専用", ko: "선물 세트 전용" },
+    images: [img("cashew-dhlgv150"), img("cashew-hex-160-nutrition"), img("cashew-hex-160-info")],
+  },
+  {
+    id: "dzv430-w180",
+    code: "ĐZV430 – W180",
+    grams: 430,
+    size: { vi: "A cồ - W180", en: "Jumbo A - W180" },
+    packing: { vi: "Túi zipper", en: "Zipper pouch", zh: "拉链袋", ja: "チャック袋", ko: "지퍼백" },
+    carton: { vi: "20 – 80 túi/thùng", en: "20 – 80 pouches per carton" },
+    highlight: { vi: "Xuất khẩu · Rang bằng củi, còn nguyên vỏ lụa", en: "Export grade · Wood-fire roasted, skin on", zh: "出口级 · 柴火烘焙，保留完整红衣", ja: "輸出品質 · 薪火焙煎、薄皮付き", ko: "수출용 · 장작불 로스팅, 속껍질째" },
+    images: [img("cashew-dzv430"), img("cashew-roasted-250-angle"), img("cashew-roasted-250-back")],
+  },
+  {
+    id: "dzv220-w180",
+    code: "ĐZV220 – W180",
+    grams: 220,
+    size: { vi: "A cồ - W180", en: "Jumbo A - W180" },
+    packing: { vi: "Túi zipper", en: "Zipper pouch", zh: "拉链袋", ja: "チャック袋", ko: "지퍼백" },
+    carton: { vi: "20 – 80 túi/thùng", en: "20 – 80 pouches per carton" },
+    images: [img("cashew-dzv220"), img("cashew-pouch-250-angle"), img("cashew-pouch-250-angle-2"), img("cashew-pouch-250-back")],
+  },
+  {
+    id: "dpv400-w180",
+    code: "ĐPV400 – W180",
+    grams: 400,
+    size: { vi: "A cồ - W180", en: "Jumbo A - W180" },
+    packing: { vi: "Hũ nhựa PET", en: "PET jar", zh: "PET塑料罐", ja: "PETジャー", ko: "PET 병" },
+    carton: { vi: "40 – 100 hũ/thùng", en: "40 – 100 jars per carton" },
+    images: [img("cashew-dpv400"), img("cashew-tub-500-back")],
+  },
+  {
+    id: "dpv250-w180",
+    code: "ĐPV250 – W180",
+    grams: 250,
+    size: { vi: "A cồ - W180", en: "Jumbo A - W180" },
+    packing: { vi: "Hũ nhựa PET", en: "PET jar", zh: "PET塑料罐", ja: "PETジャー", ko: "PET 병" },
+    carton: { vi: "40 – 100 hũ/thùng", en: "40 – 100 jars per carton" },
+    images: [img("cashew-dpv250"), img("cashew-tub-500-back")],
+  },
+  {
+    id: "dpv200-w180",
+    code: "ĐPV200 – W180",
+    grams: 200,
+    size: { vi: "A cồ - W180", en: "Jumbo A - W180" },
+    packing: { vi: "Hũ nhựa PET", en: "PET jar", zh: "PET塑料罐", ja: "PETジャー", ko: "PET 병" },
+    carton: { vi: "40 – 100 hũ/thùng", en: "40 – 100 jars per carton" },
+    highlight: { vi: "Chuyên dùng đóng hộp quà tặng", en: "Made for gift hampers", zh: "礼盒专用", ja: "ギフトボックス専用", ko: "선물 세트 전용" },
+    images: [img("cashew-dpv200"), img("cashew-tub-500-back")],
+  },
+  {
+    id: "dpv300-w180",
+    code: "ĐPV300 – W180",
+    grams: 300,
+    size: { vi: "A cồ - W180", en: "Jumbo A - W180" },
+    packing: { vi: "Hộp nhựa tròn", en: "Round plastic tub", zh: "圆形塑料盒", ja: "丸型プラスチック容器", ko: "원형 플라스틱 통" },
+    carton: { vi: "40 – 100 hộp/thùng", en: "40 – 100 tubs per carton" },
+    images: [img("cashew-dpv300"), img("cashew-tub-500-back")],
+  },
+  {
+    id: "dpovv200-w180",
+    code: "ĐPOVV200 – W180",
+    grams: 200,
+    size: { vi: "A cồ - W180", en: "Jumbo A - W180" },
+    packing: { vi: "Hộp nhựa Ovan", en: "Oval plastic tub", zh: "椭圆形塑料盒", ja: "楕円形プラスチック容器", ko: "타원형 플라스틱 통" },
+    carton: { vi: "40 – 100 hộp/thùng", en: "40 – 100 tubs per carton" },
+    highlight: { vi: "Chuyên đóng quà Tết", en: "Made for Tet gift hampers", zh: "春节礼盒专用", ja: "テトギフト専用", ko: "설 선물 세트 전용" },
+    images: [img("cashew-dpovv200"), img("cashew-tub-500-back")],
+  },
+  {
+    id: "dptv500-w180",
+    code: "ĐPTV500 – W180",
+    grams: 500,
+    size: { vi: "A cồ - W180", en: "Jumbo A - W180" },
+    packing: { vi: "Hộp nhựa trụ", en: "Cylinder plastic jar", zh: "圆柱形塑料罐", ja: "円筒形プラスチック容器", ko: "원통형 플라스틱 통" },
+    carton: { vi: "40 – 100 hộp/thùng", en: "40 – 100 jars per carton" },
+    images: [img("cashew-dptv500"), img("cashew-tub-500-back")],
+  },
+  {
+    id: "dhckv430-w180",
+    code: "ĐHCKV430 – W180",
+    grams: 430,
+    size: { vi: "A cồ - W180", en: "Jumbo A - W180" },
+    packing: { vi: "Hút chân không", en: "Vacuum pack", zh: "真空包装", ja: "真空パック", ko: "진공 포장" },
+    carton: { vi: "40 – 100 gói/thùng", en: "40 – 100 packs per carton" },
+    images: [img("cashew-dhckv430"), img("cashew-roasted-250-angle"), img("cashew-roasted-250-back")],
+  },
+];
 
 /**
- * The ten packs on VSAP's retail price list (bảng giá sản phẩm, 10/2026). Every other seed pack
- * (roasted & salted versions, macadamia kernels, cashews) starts hidden; Studio can show it again.
+ * The 21 packs on VSAP's retail price list (bảng giá lẻ sản phẩm, 11/2026): 9 macadamia + 12 cashew.
+ * Extra seed packs (roasted & salted macadamia jar variants, macadamia kernels) start hidden; Studio can show them again.
  */
-export const priceListIds = new Set(maccaSkuList.filter((k) => !k.id).map((k) => k.code.toLowerCase()));
+export const priceListIds = new Set([
+  ...maccaSkuList.filter((k) => !k.id).map((k) => k.code.toLowerCase()),
+  ...cashewSkuList.map((k) => k.id),
+]);
 
-/** Pack ids used before the price-list SKUs, redirected to their closest SKU (old links and search results). */
-export const legacyPackIds: Record<string, string> = { "macca-box": "hv450b", "macca-inshell-jar": "pv250a" };
+/** Pack ids used before the current price-list SKUs, redirected to their closest SKU (old links and search results). */
+export const legacyPackIds: Record<string, string> = {
+  "macca-box": "hv400",
+  hv450b: "hv400",
+  hv250a: "hv200",
+  hv250b: "hv200",
+  hv160b: "hv160",
+  zv500a: "zv450",
+  zv500b: "zv450",
+  "macca-inshell-jar": "pv250a",
+  "cashew-box": "dhv380-w180",
+  "cashew-hex": "dhlgv150-w180",
+  "cashew-pouch": "dzv220-w180",
+  "cashew-roasted": "dzv430-w180",
+  "cashew-tub": "dptv500-w180",
+};
 
-/** Retail prices (VND) from the price list. */
-// The roasted & salted pouches and jars (*-RM) are not on the price list: same price as the plain one for now.
+/** Retail prices (VNĐ) from VSAP's retail price list. */
+// The *-RM macadamia jar variants are not on the price list: same price as the plain one for now.
 const maccaPrices: Record<string, number> = {
-  HV450B: 155000, HV250A: 79000, HV250B: 74000, HV160B: 69000,
-  ZV500A: 158000, "ZV500A-RM": 158000, ZV500B: 148000, "ZV500B-RM": 148000,
-  PV500A: 168000, "PV500A-RM": 168000, PV500B: 158000, "PV500B-RM": 158000,
-  PV250A: 93000, "PV250A-RM": 93000, PV250B: 88000, "PV250B-RM": 88000,
+  HV400: 164000,
+  HV200: 107000,
+  HV160: 70000,
+  ZV450: 161000,
+  ZV250: 89000,
+  PV500B: 154000,
+  "PV500B-RM": 154000,
+  PV500A: 162000,
+  "PV500A-RM": 162000,
+  PV250A: 99000,
+  "PV250A-RM": 99000,
+  PV250B: 91000,
+  "PV250B-RM": 91000,
+};
+
+const cashewPrices: Record<string, number> = {
+  "dhv380-w180": 180000,
+  "dhlgv205-w180": 115000,
+  "dhlgv150-w180": 86000,
+  "dzv430-w180": 174000,
+  "dzv220-w180": 101000,
+  "dpv400-w180": 173000,
+  "dpv250-w180": 122000,
+  "dpv200-w180": 99000,
+  "dpv300-w180": 144000,
+  "dpovv200-w180": 118000,
+  "dptv500-w180": 199000,
+  "dhckv430-w180": 174000,
 };
 
 function maccaSkus(): RetailPack[] {
@@ -122,9 +288,9 @@ function maccaSkus(): RetailPack[] {
         ? { vi: "98% hạt macca, 2% muối", en: "98% macadamia nuts, 2% salt", zh: "98%夏威夷果，2%食盐", ja: "マカダミアナッツ98%、食塩2%", ko: "마카다미아 98%, 소금 2%" }
         : { vi: "100% hạt macca", en: "100% macadamia nuts", zh: "100%夏威夷果", ja: "マカダミアナッツ100%", ko: "마카다미아 100%" },
       nutrition: k.nutrition,
-      highlight: k.gift
+      highlight: k.highlight ?? (k.gift
         ? { vi: "Dùng làm quà tặng", en: "Made for gifting", zh: "送礼佳品", ja: "ギフトに最適", ko: "선물용" }
-        : { vi: "100% hạt macca từ Tây Nguyên", en: "100% Central Highlands macadamias", zh: "100%西原地区夏威夷果", ja: "中部高原産マカダミアナッツ100%", ko: "중부 고원산 마카다미아 100%" },
+        : { vi: "100% hạt macca từ Tây Nguyên", en: "100% Central Highlands macadamias", zh: "100%西原地区夏威夷果", ja: "中部高原産マカダミアナッツ100%", ko: "중부 고원산 마카다미아 100%" }),
       description: {
         vi: `Hạt macca sấy nứt vỏ tự nhiên, kèm dụng cụ tách vỏ. Không chứa chất bảo quản và phẩm màu, an toàn cho sức khỏe của bạn và gia đình; có thể ăn trực tiếp hoặc dùng chế biến nhiều món.
 
@@ -161,8 +327,74 @@ Do not eat after the expiry date.`,
   });
 }
 
+function cashewSkus(): RetailPack[] {
+  const defaultHighlight: L = {
+    vi: "Rang bằng củi, còn nguyên vỏ lụa",
+    en: "Roasted over wood fire, skin on",
+    zh: "柴火烘焙，保留完整红衣",
+    ja: "薪火で焙煎、薄皮付きのまま",
+    ko: "장작불 로스팅, 속껍질째",
+  };
+  return cashewSkuList.map((k) => {
+    const g = `${k.grams} g`;
+    const damagedLineVi = k.damaged ? `\n- Tỷ lệ hạt hư: ${k.damaged}` : "";
+    const damagedLineEn = k.damaged ? `\n- Damaged nuts: ${k.damaged}` : "";
+    return {
+      id: k.id,
+      slug: "cashew",
+      name: {
+        vi: `Hạt điều rang củi ${g}`,
+        en: `Wood-fire roasted cashews ${g}`,
+        zh: `柴火烘焙腰果 ${k.grams}克`,
+        ja: `薪火焙煎カシューナッツ ${k.grams}g`,
+        ko: `장작불 로스팅 캐슈넛 ${k.grams}g`,
+      },
+      flavor: {
+        vi: `Mã ${k.code} · Vị muối · Cỡ hạt ${k.size.vi}`,
+        en: `Code ${k.code} · Salted · ${k.size.en}`,
+        zh: `编号 ${k.code} · 盐焗味 · ${k.size.en}`,
+        ja: `品番 ${k.code} · 塩味 · ${k.size.en}`,
+        ko: `코드 ${k.code} · 소금맛 · ${k.size.en}`,
+      },
+      pack: k.packing,
+      weights: [g],
+      images: k.images,
+      ingredients: {
+        vi: "98% hạt điều, 2% muối",
+        en: "98% cashews, 2% salt",
+        zh: "98%腰果，2%食盐",
+        ja: "カシューナッツ98%、食塩2%",
+        ko: "캐슈넛 98%, 소금 2%",
+      },
+      nutrition: { energy: "583 kcal", fat: "46,6 g", carbs: "20,5 g", protein: "20,3 g" },
+      highlight: k.highlight ?? defaultHighlight,
+      description: {
+        vi: `Hạt điều rang củi truyền thống vị muối, cỡ hạt ${k.size.vi}. Không chất bảo quản, giữ trọn hương vị giòn béo tự nhiên.
+
+Thông số
+- Khối lượng tịnh: ${g}
+- Size hạt: ${k.size.vi}${damagedLineVi}
+- Đóng gói: ${k.packing.vi}
+- Đóng thùng: ${k.carton.vi}
+
+Lưu ý: bảo quản nơi khô ráo, đóng kín sau mỗi lần sử dụng và không dùng sản phẩm đã quá hạn.`,
+        en: `Traditional wood-fire roasted salted cashews (${k.size.en}). No preservatives, preserving the natural crunch and rich flavour.
+
+Specifications
+- Net weight: ${g}
+- Size: ${k.size.en}${damagedLineEn}
+- Packing: ${k.packing.en}
+- Carton: ${k.carton.en}
+
+Note: store in a cool, dry place, reseal tightly after each use, and do not eat after the expiry date.`,
+      },
+    };
+  });
+}
+
 export const retailPacks: RetailPack[] = [
   ...maccaSkus(),
+  ...cashewSkus(),
   {
     id: "macca-kernel-jar",
     slug: "macadamia",
@@ -173,66 +405,6 @@ export const retailPacks: RetailPack[] = [
     images: [img("macca-kernel-250"), img("macca-kernel-500"), img("macca-kernel-250-back")],
     ingredients: { vi: "98% hạt macca, 2% muối", en: "98% macadamia nuts, 2% salt", zh: "98%夏威夷果，2%食盐", ja: "マカダミアナッツ98%、食塩2%", ko: "마카다미아 98%, 소금 2%" },
     nutrition: { energy: "750 kcal", fat: "72 g", carbs: "15 g", protein: "10 g" },
-  },
-  {
-    id: "cashew-roasted",
-    slug: "cashew",
-    name: { vi: "Hạt điều rang củi", en: "Wood-fire roasted cashews", zh: "柴火烘焙腰果", ja: "薪火焙煎カシューナッツ", ko: "장작불 로스팅 캐슈넛" },
-    flavor: { vi: "Vị rang muối", en: "Roasted & salted", zh: "盐焗味", ja: "塩ロースト", ko: "소금 로스팅" },
-    pack: { vi: "Túi zip đáy đứng", en: "Stand-up zip pouch", zh: "自立拉链袋", ja: "スタンドチャック袋", ko: "스탠드 지퍼백" },
-    weights: ["250 g", "500 g"],
-    images: [img("cashew-roasted-250"), img("cashew-roasted-500"), img("cashew-roasted-250-angle"), img("cashew-roasted-250-back")],
-    ingredients: { vi: "98% hạt điều, 2% muối", en: "98% cashews, 2% salt", zh: "98%腰果，2%食盐", ja: "カシューナッツ98%、食塩2%", ko: "캐슈넛 98%, 소금 2%" },
-    highlight: { vi: "Rang bằng củi, còn nguyên vỏ lụa", en: "Roasted over wood fire, skin on", zh: "柴火烘焙，保留完整红衣", ja: "薪火で焙煎、薄皮付きのまま", ko: "장작불 로스팅, 속껍질째" },
-  },
-  {
-    id: "cashew-hex",
-    slug: "cashew",
-    name: { vi: "Hạt điều rang củi", en: "Wood-fire roasted cashews", zh: "柴火烘焙腰果", ja: "薪火焙煎カシューナッツ", ko: "장작불 로스팅 캐슈넛" },
-    flavor: { vi: "Vị rang muối", en: "Roasted & salted", zh: "盐焗味", ja: "塩ロースト", ko: "소금 로스팅" },
-    pack: { vi: "Hộp giấy lục giác", en: "Hexagonal carton", zh: "六角纸盒装", ja: "六角形の紙箱", ko: "육각 종이 상자" },
-    weights: ["160 g"],
-    images: [img("cashew-hex-160-front"), img("cashew-hex-160-nutrition"), img("cashew-hex-160-info")],
-    ingredients: { vi: "98% hạt điều, 2% muối", en: "98% cashews, 2% salt", zh: "98%腰果，2%食盐", ja: "カシューナッツ98%、食塩2%", ko: "캐슈넛 98%, 소금 2%" },
-    nutrition: { energy: "583 kcal", fat: "46,6 g", carbs: "20,5 g", protein: "20,3 g" },
-    highlight: { vi: "Rang bằng củi, còn nguyên vỏ lụa", en: "Roasted over wood fire, skin on", zh: "柴火烘焙，保留完整红衣", ja: "薪火で焙煎、薄皮付きのまま", ko: "장작불 로스팅, 속껍질째" },
-  },
-  {
-    id: "cashew-pouch",
-    slug: "cashew",
-    name: { vi: "Hạt điều rang củi", en: "Wood-fire roasted cashews", zh: "柴火烘焙腰果", ja: "薪火焙煎カシューナッツ", ko: "장작불 로스팅 캐슈넛" },
-    flavor: { vi: "", en: "", zh: "", ja: "", ko: "" },
-    pack: { vi: "Túi zip đáy đứng", en: "Stand-up zip pouch", zh: "自立拉链袋", ja: "スタンドチャック袋", ko: "스탠드 지퍼백" },
-    weights: ["250 g"],
-    images: [img("cashew-pouch-250-front"), img("cashew-pouch-250-angle"), img("cashew-pouch-250-angle-2"), img("cashew-pouch-250-back")],
-    ingredients: { vi: "99,9% hạt điều, 0,1% muối", en: "99.9% cashews, 0.1% salt", zh: "99.9%腰果，0.1%食盐", ja: "カシューナッツ99.9%、食塩0.1%", ko: "캐슈넛 99.9%, 소금 0.1%" },
-    nutrition: { energy: "617 kcal", fat: "47,7 g", carbs: "26,8 g", protein: "20,1 g" },
-    highlight: { vi: "Rang bằng củi, còn nguyên vỏ lụa", en: "Roasted over wood fire, skin on", zh: "柴火烘焙，保留完整红衣", ja: "薪火で焙煎、薄皮付きのまま", ko: "장작불 로스팅, 속껍질째" },
-    packer: "cashewDongPhu",
-  },
-  {
-    id: "cashew-box",
-    slug: "cashew",
-    name: { vi: "Hạt điều rang củi", en: "Wood-fire roasted cashews", zh: "柴火烘焙腰果", ja: "薪火焙煎カシューナッツ", ko: "장작불 로스팅 캐슈넛" },
-    flavor: { vi: "Vị rang muối", en: "Roasted & salted", zh: "盐焗味", ja: "塩ロースト", ko: "소금 로스팅" },
-    pack: { vi: "Hộp giấy", en: "Gift box", zh: "纸盒装", ja: "紙箱", ko: "종이 상자" },
-    weights: ["450 g"],
-    images: [img("cashew-box-450-front"), img("cashew-box-450-back-angle"), img("cashew-box-450-back")],
-    ingredients: { vi: "98% hạt điều, 2% muối", en: "98% cashews, 2% salt", zh: "98%腰果，2%食盐", ja: "カシューナッツ98%、食塩2%", ko: "캐슈넛 98%, 소금 2%" },
-    nutrition: { energy: "583 kcal", fat: "46,6 g", carbs: "20,5 g", protein: "20,3 g" },
-    highlight: { vi: "Rang bằng củi, còn nguyên vỏ lụa", en: "Roasted over wood fire, skin on", zh: "柴火烘焙，保留完整红衣", ja: "薪火で焙煎、薄皮付きのまま", ko: "장작불 로스팅, 속껍질째" },
-  },
-  {
-    id: "cashew-tub",
-    slug: "cashew",
-    name: { vi: "Hạt điều rang củi", en: "Wood-fire roasted cashews", zh: "柴火烘焙腰果", ja: "薪火焙煎カシューナッツ", ko: "장작불 로스팅 캐슈넛" },
-    flavor: { vi: "Vị rang muối", en: "Roasted & salted", zh: "盐焗味", ja: "塩ロースト", ko: "소금 로스팅" },
-    pack: { vi: "Hộp nhựa", en: "Clear tub", zh: "塑料盒装", ja: "クリアケース", ko: "투명 플라스틱 통" },
-    weights: ["500 g"],
-    images: [img("cashew-tub-500-front"), img("cashew-tub-500-back")],
-    ingredients: { vi: "98% hạt điều, 2% muối", en: "98% cashews, 2% salt", zh: "98%腰果，2%食盐", ja: "カシューナッツ98%、食塩2%", ko: "캐슈넛 98%, 소금 2%" },
-    nutrition: { energy: "583 kcal", fat: "46,6 g", carbs: "20,5 g", protein: "20,3 g" },
-    highlight: { vi: "Rang bằng củi, còn nguyên vỏ lụa", en: "Roasted over wood fire, skin on", zh: "柴火烘焙，保留完整红衣", ja: "薪火で焙煎、薄皮付きのまま", ko: "장작불 로스팅, 속껍질째" },
   },
 ];
 
@@ -251,17 +423,42 @@ export const retailFacts = {
 };
 
 /**
- * Giá bán lẻ (VNĐ). Macca nứt vỏ: theo bảng giá VSAP. Các mã còn lại là GIÁ TẠM theo
- * mặt bằng thị trường, chưa phải giá VSAP công bố: thay trong Studio › Bán lẻ rồi xuất bản.
+ * Giá bán lẻ (VNĐ) theo bảng giá lẻ VSAP (9 mã macca + 12 mã hạt điều rang củi).
+ * Nhân macca tách vỏ là giá tạm, giữ ẩn cho tới khi công bố.
  */
 export const tempPrices: Record<string, number> = {
   ...Object.fromEntries(Object.entries(maccaPrices).map(([code, price]) => [code.toLowerCase(), price])),
+  ...cashewPrices,
   "macca-kernel-jar": 225000,
-  "cashew-roasted": 195000,
-  "cashew-hex": 75000,
-  "cashew-pouch": 99000,
-  "cashew-box": 185000,
-  "cashew-tub": 205000,
+};
+
+/** Giá sỉ từ 50kg (VNĐ, giao tại xưởng, chưa VAT) theo Bảng giá sỉ VSAP ngày 08/11/2026. */
+export const wholesalePrices: Record<string, number> = {
+  hv400: 119000,
+  hv200: 77000,
+  hv160: 49000,
+  zv450: 117000,
+  zv250: 69000,
+  pv500b: 112000,
+  "pv500b-rm": 112000,
+  pv500a: 121000,
+  "pv500a-rm": 121000,
+  pv250a: 73000,
+  "pv250a-rm": 73000,
+  pv250b: 66000,
+  "pv250b-rm": 66000,
+  "dhv380-w180": 136000,
+  "dhlgv205-w180": 87000,
+  "dhlgv150-w180": 65000,
+  "dzv430-w180": 131000,
+  "dzv220-w180": 75000,
+  "dpv400-w180": 126000,
+  "dpv250-w180": 90000,
+  "dpv200-w180": 75000,
+  "dpv300-w180": 109000,
+  "dpovv200-w180": 89000,
+  "dptv500-w180": 152000,
+  "dhckv430-w180": 132000,
 };
 
 /** Contract packers printed on the labels. */

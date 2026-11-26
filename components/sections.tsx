@@ -11,7 +11,7 @@ export type Tone = "white" | "muted" | "dark";
 /** Background classes for a section tone. */
 export const toneBg: Record<Tone, string> = {
   // Studio › Giao diện / page style can recolour the plain sections (--page-bg).
-  white: "bg-[var(--page-bg,#fff)]",
+  white: "bg-[var(--page-bg)]",
   muted: "bg-mist-50",
   dark: "bg-forest-950 bg-dark-glow text-white",
 };
@@ -97,16 +97,26 @@ export const resolveImage = (image: CmsImage | undefined, pick: (v: CmsImage["al
   image ? { src: image.src, alt: pick(image.alt) } : undefined;
 
 /** Splits plain text on blank lines into paragraphs. */
-export function Paragraphs({ text, className = "" }: { text: string; className?: string }) {
+/**
+ * Text split into paragraphs on blank lines. A paragraph starting with "## "
+ * becomes a small subheading.
+ */
+export function Paragraphs({ text, className = "", headingClassName = "heading pt-3 text-xl text-heading" }: { text: string; className?: string; headingClassName?: string }) {
   return text
     .split(/\n\s*\n/)
     .map((p) => p.trim())
     .filter(Boolean)
-    .map((p, i) => (
-      <p key={i} className={className}>
-        {p}
-      </p>
-    ));
+    .map((p, i) =>
+      p.startsWith("## ") ? (
+        <h3 key={i} className={headingClassName}>
+          {p.slice(3).trim()}
+        </h3>
+      ) : (
+        <p key={i} className={className}>
+          {p}
+        </p>
+      ),
+    );
 }
 
 /**

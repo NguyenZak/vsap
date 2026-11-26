@@ -4,29 +4,31 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  /* Brand colours, taken from the VSAP logo (public/logo.svg): deep green #115931 / #0f6b3b,
-     leaf green #7cb442, sun yellow #ffc40d and chili red #d73e27. */
-  --color-forest-950: #082a17;
-  --color-forest-900: #115931;
-  --color-forest-800: #0f6b3b;
-  --color-forest-600: #2a8a45;
-  --color-leaf-500: #7cb442;
-  --color-leaf-300: #b9dc8f;
-  --color-sage-500: #7f8c7b;
-  --color-sage-400: #a2ac9e;
-  --color-sun-400: #ffc40d;
-  --color-sun-500: #f2b300;
-  --color-chili-600: #d73e27;
-  /* Warm cream neutrals, tinted toward the logo yellow. */
-  --color-mist-50: #fbf6e9;
-  --color-mist-100: #f4ecd8;
-  --color-mist-200: #e8dec5;
-  --color-ink-900: #17231a;
-  --color-ink-600: #59645b;
-  --color-ink-400: #8d968d;
+  /* Palette: cream paper + olive green (the "Kết nối thương mại" mockup):
+     page #f2f0e2, olive #425538, rule #c2c0b2. The token names are historical
+     (forest = olive greens, sun = light khaki accent, chili = brick for prices/alerts). */
+  --color-forest-950: #232c1e;
+  --color-forest-900: #425538;
+  --color-forest-800: #4f6344;
+  --color-forest-700: #56693f;
+  --color-forest-600: #5a6e4b;
+  --color-leaf-500: #8c9a6c;
+  --color-leaf-300: #c5ceac;
+  --color-sage-500: #80846f;
+  --color-sage-400: #a6a894;
+  --color-sun-400: #d3d6b4;
+  --color-sun-500: #b9be92;
+  --color-chili-600: #9a4a2e;
+  /* Cream neutrals. */
+  --color-mist-50: #eae7d5;
+  --color-mist-100: #e3dfca;
+  --color-mist-200: #ccc9b8;
+  --color-ink-900: #33392b;
+  --color-ink-600: #5c6150;
+  --color-ink-400: #8d8f7c;
   /* Semantic: card/field backgrounds and heading text. Both flip in dark mode (below). */
-  --color-surface: #ffffff;
-  --color-heading: #115931;
+  --color-surface: #f9f8f1;
+  --color-heading: #3a4b31;
 
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-phudu), var(--font-inter), ui-sans-serif, system-ui, sans-serif;
@@ -34,6 +36,8 @@
 
 :root {
   color-scheme: light;
+  /* Page (plain section) background; Studio page/theme styles override it. */
+  --page-bg: #f2f0e2;
 }
 
 html {
@@ -42,7 +46,7 @@ html {
 
 body {
   margin: 0;
-  background: var(--page-bg, #fff);
+  background: var(--page-bg);
   color: var(--color-ink-900);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
@@ -215,28 +219,28 @@ html:has(dialog[open]) {
   }
 }
 
-/* The logo's green → yellow → red sweep, as a thin brand line (footer top, hero progress). */
+/* Olive → sage sweep, as a thin brand line (footer top, hero progress). */
 @utility bg-brand-gradient {
-  background-image: linear-gradient(90deg, #115931 0%, #7cb442 38%, #ffc40d 72%, #d73e27 100%);
+  background-image: linear-gradient(90deg, #425538 0%, #8c9a6c 50%, #c5ceac 100%);
 }
 
-/* Dark sections and the footer: deep logo green lit by leaf-green and yellow glows. */
+/* Dark sections and the footer: deep olive lit by soft sage glows. */
 @utility bg-dark-glow {
   background-image:
-    radial-gradient(ellipse 60% 70% at 8% 0%, rgb(124 180 66 / 0.28), transparent 70%),
-    radial-gradient(ellipse 50% 60% at 95% 100%, rgb(255 196 13 / 0.16), transparent 70%);
+    radial-gradient(ellipse 60% 70% at 8% 0%, rgb(140 154 108 / 0.26), transparent 70%),
+    radial-gradient(ellipse 50% 60% at 95% 100%, rgb(211 214 180 / 0.12), transparent 70%);
 }
 
 /*
  * Accent line of section titles (Title in components/ui.tsx), painted with
- * the logo's colour sweep; lighter stops on dark backgrounds. The padding keeps
+ * an olive sweep; lighter stops on dark backgrounds. The padding keeps
  * italic overhangs and Vietnamese marks inside the clipped area.
  */
 .title-accent {
   width: fit-content;
   padding: 0 0.1em 0.12em 0;
   margin-bottom: -0.12em;
-  background-image: linear-gradient(90deg, #0f6b3b 0%, #4f9a2a 45%, #d4561f 100%);
+  background-image: linear-gradient(90deg, #3a4b31 0%, #5a6e4b 55%, #7d8c60 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -245,7 +249,7 @@ html:has(dialog[open]) {
   margin-inline: auto;
 }
 .text-white > .title-accent {
-  background-image: linear-gradient(90deg, #b9dc8f 0%, #ffc40d 55%, #ff8f4d 100%);
+  background-image: linear-gradient(90deg, #f2f0e2 0%, #d3d6b4 55%, #b9be92 100%);
 }
 
 /* Chinese, Japanese and Korean pages: no tight tracking on titles. */
@@ -330,22 +334,28 @@ header[data-solid] .menu-link:not([aria-current]) {
  */
 .dark {
   color-scheme: dark;
-  --page-bg: #000000;
-  --color-surface: #141414;
-  --color-heading: #f5f5f0;
-  --color-mist-50: #0b0b0b;
-  --color-mist-100: #1c1c1c;
-  --color-mist-200: #2e2e2e;
-  --color-ink-900: #f2f2f2;
-  --color-ink-600: #b3b3b3;
-  --color-ink-400: #8a8a8a;
-  --color-forest-600: #5aac5e;
-  /* The deepest green (footer, dark sections, overlays) goes black too; text on yellow stays dark. */
-  --color-forest-950: #000000;
+  --page-bg: #0a0908;
+  --color-surface: #171411;
+  --color-heading: #f7f3eb;
+  --color-mist-50: #110f0c;
+  --color-mist-100: #211d18;
+  --color-mist-200: #3f382e;
+  --color-ink-900: #f2ece1;
+  --color-ink-600: #cfc6b8;
+  --color-ink-400: #9e9587;
+  --color-forest-600: #a8c791;
+  --color-forest-700: #a8c791;
+  --color-forest-800: #29402e;
+  --color-forest-900: #1e3324;
+  /* Deep obsidian-espresso for footer, dark sections, and overlays; text on gold stays dark. */
+  --color-forest-950: #080705;
+  --color-sun-400: #dfb763;
+  --color-sun-500: #cca047;
+  --color-chili-600: #f28b5e;
 }
 /* A light page colour picked in Studio would leave dark text on light: the dark page colour wins. */
 .dark [style*="--page-bg"] {
-  --page-bg: #000000 !important;
+  --page-bg: #0a0908 !important;
 }
 /* Text colours picked in Studio are chosen for light backgrounds: use the design's colours instead… */
 .dark :not([data-cms-bg])[data-cms-text] :is(p, li, dd, dt, td, th, blockquote, figcaption, label),
@@ -355,28 +365,30 @@ header[data-solid] .menu-link:not([aria-current]) {
 /* …except in a section with its own background colour, which keeps its light look. */
 .dark [data-cms-bg] {
   color-scheme: light;
-  --page-bg: #fff;
-  --color-surface: #ffffff;
-  --color-heading: #115931;
-  --color-mist-50: #fbf6e9;
-  --color-mist-100: #f4ecd8;
-  --color-mist-200: #e8dec5;
-  --color-ink-900: #17231a;
-  --color-ink-600: #59645b;
-  --color-ink-400: #8d968d;
-  --color-forest-600: #2a8a45;
-  --color-forest-950: #082a17;
+  --page-bg: #f2f0e2;
+  --color-surface: #f9f8f1;
+  --color-heading: #3a4b31;
+  --color-mist-50: #eae7d5;
+  --color-mist-100: #e3dfca;
+  --color-mist-200: #ccc9b8;
+  --color-ink-900: #33392b;
+  --color-ink-600: #5c6150;
+  --color-ink-400: #8d8f7c;
+  --color-forest-600: #5a6e4b;
+  --color-forest-950: #232c1e;
 }
-/* The green → orange gradient of title accents is too dark on the dark background. */
+/* Muted champagne-gold gradient for title accents on dark luxury surfaces. */
 .dark .title-accent {
-  background-image: linear-gradient(90deg, #b9dc8f 0%, #ffc40d 55%, #ff8f4d 100%);
+  background-image: linear-gradient(90deg, #e5cfa0 0%, #c8a258 55%, #b58d42 100%);
 }
 .dark [data-cms-bg] .title-accent {
-  background-image: linear-gradient(90deg, #0f6b3b 0%, #4f9a2a 45%, #d4561f 100%);
+  background-image: linear-gradient(90deg, #3a4b31 0%, #5a6e4b 55%, #7d8c60 100%);
 }
-/* Plain black: no green/yellow glow on dark sections. */
+/* Subtle warm champagne-gold & botanical-sage ambient glow on dark luxury sections. */
 .dark .bg-dark-glow {
-  background-image: none;
+  background-image:
+    radial-gradient(ellipse 60% 70% at 10% 0%, rgb(200 162 88 / 0.09), transparent 70%),
+    radial-gradient(ellipse 50% 60% at 90% 100%, rgb(147 173 126 / 0.06), transparent 70%);
 }
 
 /*
@@ -385,15 +397,23 @@ header[data-solid] .menu-link:not([aria-current]) {
  * Unlayered, so they win over the Tailwind colour classes still on the elements.
  */
 .btn-primary {
-  background-color: var(--btn-primary-bg, var(--color-sun-400));
-  color: var(--btn-primary-text, var(--color-forest-950));
+  background-color: var(--btn-primary-bg, var(--color-forest-900));
+  color: var(--btn-primary-text, #f2f0e2);
 }
 .btn-primary:hover {
-  background-color: var(--btn-primary-hover, var(--btn-primary-bg, var(--color-sun-500)));
+  background-color: var(--btn-primary-hover, var(--btn-primary-bg, var(--color-forest-800)));
+}
+/* On dark olive sections and the footer the olive button would vanish: cream instead. */
+:is([data-tone="dark"], footer) .btn-primary {
+  background-color: var(--btn-primary-bg, #f2f0e2);
+  color: var(--btn-primary-text, var(--color-forest-900));
+}
+:is([data-tone="dark"], footer) .btn-primary:hover {
+  background-color: var(--btn-primary-hover, var(--btn-primary-bg, #e3dfca));
 }
 .btn-secondary {
   background-color: var(--btn-secondary-bg, var(--color-forest-900));
-  color: var(--btn-secondary-text, #fff);
+  color: var(--btn-secondary-text, #f2f0e2);
 }
 .btn-secondary:hover {
   background-color: var(--btn-secondary-hover, var(--btn-secondary-bg, var(--color-forest-800)));
@@ -413,17 +433,17 @@ header[data-solid] .menu-link:not([aria-current]) {
   background-color: var(--btn-outline-hover, rgb(255 255 255 / 0.1));
 }
 .btn-buy {
-  border-color: var(--btn-buy-bg, var(--color-chili-600));
-  background-color: var(--btn-buy-bg, var(--color-chili-600));
-  color: var(--btn-buy-text, #fff);
+  border-color: var(--btn-buy-bg, var(--color-forest-900));
+  background-color: var(--btn-buy-bg, var(--color-forest-900));
+  color: var(--btn-buy-text, #f2f0e2);
 }
 .btn-buy:hover {
-  background-color: var(--btn-buy-hover, var(--btn-buy-bg, color-mix(in oklab, var(--color-chili-600) 90%, transparent)));
+  background-color: var(--btn-buy-hover, var(--btn-buy-bg, var(--color-forest-800)));
 }
 /* "Add to cart" next to "Buy now": the buy colour as an outline. */
 .btn-buy-outline {
-  border-color: var(--btn-buy-bg, var(--color-chili-600));
-  color: var(--btn-buy-bg, var(--color-chili-600));
+  border-color: var(--btn-buy-bg, var(--color-forest-900));
+  color: var(--btn-buy-bg, var(--color-forest-900));
 }
 /* The header's quote button: light over the photo hero, dark once the header turns solid. */
 header:not([data-solid]) .btn-quote {

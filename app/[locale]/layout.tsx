@@ -42,7 +42,7 @@ export const generateStaticParams = localeParams;
 export const dynamic = "force-dynamic";
 
 export const viewport: Viewport = {
-  themeColor: "#115931",
+  themeColor: "#425538",
   colorScheme: "light",
 };
 

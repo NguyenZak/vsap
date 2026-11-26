@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { motion, useMotionValue, useReducedMotion, useSpring, useTransform } from "motion/react";
-import { ArrowUpRight, Eye, MessageCircle, ShoppingBag } from "lucide-react";
+import { ArrowUpRight, ChevronLeft, ChevronRight, Eye, MessageCircle, ShoppingBag } from "lucide-react";
 import { canBuy, discountPercent, type ShopItem } from "@/lib/shop";
 import { BuyBox } from "./BuyBox";
 import { useShop } from "./CartProvider";
@@ -11,23 +11,78 @@ import { CloseButton, Dialog } from "./Dialog";
 import { Gallery } from "./Gallery";
 import { Price } from "./Price";
 
-/** Retail packs as shop cards, with a quick-view popup for picking a size without leaving the page. */
-export function ProductGrid({ items, reveal = true }: { items: ShopItem[]; reveal?: boolean }) {
+/** Retail packs as shop cards (grid or horizontal slider), with a quick-view popup. */
+export function ProductGrid({
+  items,
+  reveal = true,
+  layout = "grid",
+  heading,
+}: {
+  items: ShopItem[];
+  reveal?: boolean;
+  layout?: "grid" | "slider";
+  heading?: string;
+}) {
   const [quick, setQuick] = useState<ShopItem | null>(null);
   const [origin, setOrigin] = useState<{ x: number; y: number } | null>(null);
-  const { t } = useShop();
+  const trackRef = useRef<HTMLUListElement>(null);
+  const { t, common } = useShop();
+
+  const slideBy = (dir: -1 | 1) => {
+    const el = trackRef.current;
+    if (!el) return;
+    el.scrollBy({ left: dir * Math.max(260, el.clientWidth * 0.85), behavior: "smooth" });
+  };
+
+  const isSlider = layout === "slider";
 
   return (
     <>
-      <ul className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4">
+      {isSlider && (
+        <div className="mb-4 flex items-center justify-between gap-4">
+          {heading ? <h3 className="font-display text-xl font-semibold text-heading sm:text-2xl">{heading}</h3> : <span />}
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => slideBy(-1)}
+              aria-label={common.prev}
+              className="grid size-9 place-items-center rounded-full bg-surface text-ink-900 shadow-sm ring-1 ring-mist-200 transition hover:bg-sun-400"
+            >
+              <ChevronLeft className="size-4" />
+            </button>
+            <button
+              type="button"
+              onClick={() => slideBy(1)}
+              aria-label={common.next}
+              className="grid size-9 place-items-center rounded-full bg-surface text-ink-900 shadow-sm ring-1 ring-mist-200 transition hover:bg-sun-400"
+            >
+              <ChevronRight className="size-4" />
+            </button>
+          </div>
+        </div>
+      )}
+
+      <ul
+        ref={trackRef}
+        className={
+          isSlider
+            ? "no-scrollbar flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2 sm:gap-4"
+            : "grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4"
+        }
+      >
         {items.map((item, i) => (
           // Cards rise in, staggered along the row, as they scroll into view (Motion).
           <motion.li
             key={item.id}
-            initial={reveal ? { opacity: 0, y: 40 } : false}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "0px 0px -10% 0px" }}
+            initial={!isSlider && reveal ? { opacity: 0, y: 40 } : false}
+            whileInView={!isSlider ? { opacity: 1, y: 0 } : undefined}
+            viewport={!isSlider ? { once: true, margin: "0px 0px -10% 0px" } : undefined}
             transition={{ type: "spring", stiffness: 140, damping: 20, delay: (i % 4) * 0.08 }}
+            className={
+              isSlider
+                ? "w-[calc((100%-0.75rem)/2)] shrink-0 snap-start md:w-[calc((100%-2rem)/3)] lg:w-[calc((100%-3rem)/4)]"
+                : undefined
+            }
           >
             <ProductCard
               item={item}
@@ -78,7 +133,7 @@ function ProductCard({ item, onQuickView }: { item: ShopItem; onQuickView: (e?: 
       style={{ rotateX, rotateY, transformPerspective: 900 }}
       className="group/card flex h-full flex-col overflow-hidden rounded-2xl bg-surface ring-1 ring-mist-200 transition-[box-shadow] hover:shadow-xl hover:shadow-forest-950/10 hover:ring-forest-600/30"
     >
-      <div className="relative aspect-[3/4] overflow-hidden bg-white">
+      <div className="relative aspect-square overflow-hidden bg-white">
         <Link href={item.href} tabIndex={-1} aria-hidden className="absolute inset-0">
           {front && (
             <img
@@ -116,14 +171,14 @@ function ProductCard({ item, onQuickView }: { item: ShopItem; onQuickView: (e?: 
         </button>
       </div>
 
-      <div className="flex flex-1 flex-col border-t border-mist-100 p-3.5 sm:p-4">
-        <h3 className="font-display text-sm font-semibold text-ink-900 sm:text-base">
+      <div className="flex flex-1 flex-col border-t border-mist-100 p-3 sm:p-4">
+        <h3 className="line-clamp-2 font-display text-[13px] leading-snug font-semibold text-ink-900 sm:text-base">
           <Link href={item.href} className="hover:text-forest-600">
             {item.name}
           </Link>
         </h3>
-        {item.flavor && <p className="mt-0.5 text-xs text-ink-600 sm:text-sm">{item.flavor}</p>}
-        <div className="mt-2">
+        {item.flavor && <p className="mt-1 line-clamp-2 text-[11px] leading-snug text-ink-600 sm:text-sm">{item.flavor}</p>}
+        <div className="mt-2.5">
           <Price item={item} size="card" />
         </div>
 
@@ -133,17 +188,17 @@ function ProductCard({ item, onQuickView }: { item: ShopItem; onQuickView: (e?: 
               type="button"
               whileTap={{ scale: 0.94 }}
               onClick={(e) => add(item.id, 1, true, e.currentTarget.closest("article")?.querySelector("img"))}
-              className="btn btn-primary inline-flex w-full items-center justify-center gap-2 rounded-full bg-sun-400 px-3 py-2.5 text-xs font-medium text-forest-950 transition hover:bg-sun-500 sm:text-sm"
+              className="btn btn-primary inline-flex w-full items-center justify-center gap-1.5 rounded-full bg-sun-400 px-2.5 py-2 text-xs font-medium whitespace-nowrap text-forest-950 transition hover:bg-sun-500 sm:gap-2 sm:px-3 sm:py-2.5 sm:text-sm"
             >
-              <ShoppingBag className="size-4" />
+              <ShoppingBag className="size-3.5 shrink-0 sm:size-4" />
               {t.addToCart}
             </motion.button>
           ) : (
             <Link
               href={item.soldOut ? item.href : `/${locale}/contact`}
-              className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-mist-200 px-3 py-2.5 text-xs font-medium text-ink-900 transition hover:border-forest-900 sm:text-sm"
+              className="inline-flex w-full items-center justify-center gap-1.5 rounded-full border border-mist-200 px-2.5 py-2 text-xs font-medium whitespace-nowrap text-ink-900 transition hover:border-forest-900 sm:gap-2 sm:px-3 sm:py-2.5 sm:text-sm"
             >
-              {item.soldOut ? <ArrowUpRight className="size-4" /> : <MessageCircle className="size-4" />}
+              {item.soldOut ? <ArrowUpRight className="size-3.5 shrink-0 sm:size-4" /> : <MessageCircle className="size-3.5 shrink-0 sm:size-4" />}
               {item.soldOut ? t.details : t.askPrice}
             </Link>
           )}
@@ -156,25 +211,25 @@ function ProductCard({ item, onQuickView }: { item: ShopItem; onQuickView: (e?: 
 function QuickView({ item, onClose }: { item: ShopItem; onClose: () => void }) {
   const { t } = useShop();
   return (
-    <div className="grid gap-6 p-4 sm:p-6 md:grid-cols-2 md:gap-8">
+    <div className="relative grid items-start gap-5 p-4 sm:p-6 md:grid-cols-2 md:gap-8 md:p-8">
+      <div className="absolute top-3 right-3 z-20 sm:top-4 sm:right-4">
+        <CloseButton label={t.continueShopping} onClick={onClose} />
+      </div>
       <Gallery images={item.images} alt={[item.name, item.flavor].filter(Boolean).join(" – ")} />
-      <div className="flex flex-col">
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <h2 className="heading text-3xl text-heading">
-              {item.name}
-              {item.flavor && <span className="accent block text-[1.05em] leading-tight text-ink-600">{item.flavor}</span>}
-            </h2>
-          </div>
-          <CloseButton label={t.continueShopping} onClick={onClose} />
+      <div className="flex min-w-0 flex-col">
+        <div className="md:pr-12">
+          <h2 className="heading text-xl leading-snug text-heading sm:text-2xl">
+            {item.name}
+            {item.flavor && <span className="accent mt-0.5 block text-[0.95em] leading-tight text-ink-600">{item.flavor}</span>}
+          </h2>
         </div>
-        <p className="mt-3 text-sm text-ink-600">
+        <p className="mt-2.5 text-sm text-ink-600">
           {t.status}: <span className={item.soldOut ? "font-medium text-chili-600" : "font-medium text-forest-600"}>{item.soldOut ? t.soldOut : t.inStock}</span>
         </p>
-        <div className="mt-5">
+        <div className="mt-4">
           <BuyBox item={item} onAdded={onClose} />
         </div>
-        <Link href={item.href} onClick={onClose} className="group mt-5 inline-flex items-center gap-1.5 self-start text-sm font-medium text-heading hover:text-forest-600">
+        <Link href={item.href} onClick={onClose} className="group mt-4 inline-flex items-center gap-1.5 self-start text-sm font-medium text-heading hover:text-forest-600">
           {t.details}
           <ArrowUpRight className="size-4 transition-transform group-hover:rotate-45" />
         </Link>

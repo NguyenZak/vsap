@@ -11,8 +11,8 @@ export default async function manifest(): Promise<MetadataRoute.Manifest> {
     description: settings.seo.description.vi,
     start_url: "/vi",
     display: "standalone",
-    background_color: "#ffffff",
-    theme_color: "#115931",
+    background_color: "#f2f0e2",
+    theme_color: "#425538",
     lang: "vi",
     icons: [
       { src: "/icon.svg", sizes: "any", type: "image/svg+xml" },

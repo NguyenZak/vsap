@@ -138,15 +138,15 @@ export const vi = {
     },
     values: {
       eyebrow: "Giá trị cốt lõi",
-      title: "Sáu cam kết",
-      accent: "trong từng lô hàng",
-      lead: "Những nguyên tắc định hướng cách VSAP chọn nguyên liệu, vận hành và đồng hành cùng đối tác.",
+      title: "Giá trị thực",
+      accent: "tạo nên niềm tin.",
+      lead: "VSAP lựa chọn phát triển bằng những giá trị có thể kiểm chứng, được thể hiện qua cách lựa chọn đối tác, chất lượng sản phẩm và trách nhiệm trong mỗi giao dịch.",
     },
     process: {
-      eyebrow: "Quy trình",
-      title: "Từ vườn Việt",
-      accent: "đến kho của bạn",
-      lead: "Mỗi khâu đều được kiểm soát và ghi nhận để đảm bảo chất lượng nhất quán giữa các lô hàng.",
+      eyebrow: "Hành trình nông sản",
+      title: "Từ vườn trồng",
+      accent: "đến bàn ăn",
+      lead: "Mỗi sản phẩm nông sản là kết quả của một hành trình, từ quá trình canh tác, thu hoạch đến chế biến và phân phối. VSAP hướng đến kiểm soát chất lượng xuyên suốt hành trình này, đề cao nguồn gốc rõ ràng, an toàn thực phẩm và giá trị thực của sản phẩm.",
       step: "Bước",
       location: "Vùng nguyên liệu Việt Nam",
     },
@@ -189,31 +189,93 @@ export const vi = {
       eyebrow: "Câu hỏi thường gặp",
       title: "Giải đáp nhanh",
       accent: "cho nhà nhập khẩu",
-      lead: "Những câu hỏi đối tác thường đặt ra khi bắt đầu làm việc với VSAP. Chưa thấy câu trả lời? Hãy liên hệ trực tiếp với chúng tôi.",
-      items: [
+      lead: "VSAP cung cấp thông tin để đối tác đánh giá sản phẩm và thống nhất các yêu cầu thương mại trước khi đặt hàng.",
+      // Mỗi nhóm hiện thành một hàng: tên nhóm bên trái, các câu hỏi bên phải.
+      groups: [
         {
-          q: "VSAP cung cấp những sản phẩm nào?",
-          a: "Ba dòng chủ lực là hạt điều (nhân trắng nguyên hạt W180 – W450, nhân vỡ, rang muối), hạt macca (nguyên vỏ sấy nứt, nhân theo style quốc tế) và yến sào Khánh Hòa (yến thô, yến tinh chế rút lông, yến chưng sẵn). Chi tiết có tại trang Sản phẩm.",
+          title: "Nguồn gốc và sản phẩm",
+          items: [
+            {
+              q: "VSAP cung cấp những sản phẩm nào?",
+              a: "Danh mục trọng tâm là hạt điều và mắc ca. Quy cách nhân, nguyên vỏ, rang hoặc nguyên vị được xác nhận theo danh mục và yêu cầu từng đơn hàng.",
+            },
+            {
+              q: "Nguồn gốc nguyên liệu được xác định như thế nào?",
+              a: "Xuất xứ nguyên liệu và nơi chế biến được xác nhận riêng theo từng lô. VSAP không mặc định mọi nguyên liệu đều có xuất xứ Việt Nam.",
+            },
+            {
+              q: "Mùa vụ và khả năng cung ứng quanh năm như thế nào?",
+              a: "Điều thường thu hoạch từ tháng 2 đến tháng 5; mắc ca tại nhiều vùng Tây Nguyên từ tháng 7 đến tháng 10. Khả năng cung ứng ngoài mùa phụ thuộc tồn kho, điều kiện bảo quản và kế hoạch của đối tác sản xuất.",
+            },
+          ],
         },
         {
-          q: "Tôi có thể nhận mẫu thử trước khi đặt hàng không?",
-          a: "Có. VSAP gửi mẫu thử kèm thông số kỹ thuật chi tiết theo yêu cầu để bạn đánh giá chất lượng trước khi ký hợp đồng.",
+          title: "Quy cách và chất lượng",
+          items: [
+            {
+              q: "Có thể yêu cầu quy cách riêng không?",
+              a: "Nhà nhập khẩu có thể gửi yêu cầu về cỡ hạt, tỷ lệ lỗi, độ ẩm, thành phần và quy cách bao bì để đánh giá khả năng đáp ứng.",
+            },
+            {
+              q: "Chất lượng được kiểm soát như thế nào?",
+              a: "Các chỉ tiêu chất lượng và phương pháp kiểm tra cần được thống nhất trước khi đặt hàng. Kết quả kiểm tra được đối chiếu với quy cách đã thỏa thuận.",
+            },
+            {
+              q: "VSAP có cung cấp chứng nhận và kết quả kiểm nghiệm không?",
+              a: "Hồ sơ hiện có của cơ sở sản xuất và kết quả kiểm nghiệm được xác nhận theo sản phẩm, lô hàng và thị trường. Các chứng nhận HACCP, ISO 22000, BRCGS hoặc hữu cơ chỉ được công bố khi có bằng chứng hợp lệ.",
+            },
+          ],
         },
         {
-          q: "VSAP có nhận đóng gói theo nhãn riêng (OEM) không?",
-          a: "Có. Ngoài đóng gói xuất khẩu số lượng lớn, VSAP nhận bao bì bán lẻ 250 g – 1 kg in nhãn riêng theo yêu cầu.",
+          title: "An toàn thực phẩm và đặt hàng",
+          items: [
+            {
+              q: "Các yêu cầu về dị ứng và hạn sử dụng được xử lý ra sao?",
+              a: "Hạt điều và mắc ca là thực phẩm có nguy cơ gây dị ứng. Thông tin dị ứng, nguy cơ tiếp xúc chéo, hạn sử dụng và điều kiện bảo quản được xác nhận theo sản phẩm và hồ sơ thực tế.",
+            },
+            {
+              q: "Có thể truy xuất thông tin từng lô hàng không?",
+              a: "Yêu cầu truy xuất được thống nhất trước khi đặt hàng, gồm mã lô, thông tin nguồn nguyên liệu, cơ sở chế biến và hồ sơ liên quan trong phạm vi có thể xác minh.",
+            },
+            {
+              q: "Số lượng đặt hàng tối thiểu (MOQ) là bao nhiêu?",
+              a: "MOQ phụ thuộc sản phẩm, quy cách đóng gói và kế hoạch sản xuất. Mức cụ thể được xác nhận trong báo giá.",
+            },
+          ],
         },
         {
-          q: "VSAP cung cấp những chứng từ xuất khẩu nào?",
-          a: "Hóa đơn thương mại, phiếu đóng gói, vận đơn, giấy chứng nhận xuất xứ (C/O), kiểm dịch thực vật, phiếu phân tích chất lượng (COA) và kiểm định bên thứ ba (SGS, Intertek…) theo yêu cầu.",
+          title: "Cung ứng và xuất khẩu",
+          items: [
+            {
+              q: "Có thể yêu cầu mẫu và nhãn riêng không?",
+              a: "Yêu cầu mẫu, OEM hoặc nhãn riêng được xem xét theo khả năng gia công, số lượng và quy định ghi nhãn tại thị trường đích. Chi phí và thời gian được thống nhất trước.",
+            },
+            {
+              q: "Thời gian giao hàng và năng lực cung ứng là bao nhiêu?",
+              a: "VSAP xác nhận theo tồn kho, mùa vụ, năng lực đối tác và lịch vận chuyển tại thời điểm đặt hàng; không áp dụng một mức cố định cho mọi đơn hàng.",
+            },
+            {
+              q: "VSAP cung cấp những chứng từ xuất khẩu nào?",
+              a: "Bộ chứng từ được thống nhất theo thị trường và giao dịch, có thể gồm hóa đơn thương mại, phiếu đóng gói, chứng từ vận tải, C/O, chứng thư kiểm dịch hoặc kiểm nghiệm khi cần và đủ điều kiện cấp.",
+            },
+          ],
         },
         {
-          q: "Điều kiện giao hàng như thế nào?",
-          a: "VSAP giao hàng theo điều kiện FOB hoặc CIF, hỗ trợ chuẩn bị chứng từ, thông quan và vận chuyển đến cảng đích.",
-        },
-        {
-          q: "Bao lâu tôi nhận được báo giá?",
-          a: "Đội ngũ kinh doanh phản hồi trong vòng 1 ngày làm việc kể từ khi nhận được yêu cầu.",
+          title: "Giao dịch và trách nhiệm",
+          items: [
+            {
+              q: "Điều kiện giao hàng và thanh toán như thế nào?",
+              a: "Các điều kiện như FOB, CIF hoặc FCA theo Incoterms® 2020 và phương thức thanh toán được đàm phán, ghi rõ địa điểm giao hàng và trách nhiệm các bên trong hợp đồng.",
+            },
+            {
+              q: "Nhà nhập khẩu cần cung cấp thông tin gì để nhận báo giá?",
+              a: "Vui lòng cung cấp thị trường đích, loại sản phẩm, quy cách, số lượng, yêu cầu chứng từ, bao bì và địa điểm giao hàng. Báo giá sẽ căn cứ vào các yêu cầu đã được xác nhận.",
+            },
+            {
+              q: "Khi có khiếu nại chất lượng, VSAP xử lý thế nào?",
+              a: "Các bên thống nhất thời hạn thông báo, hồ sơ lô hàng, bằng chứng và phương pháp kiểm tra. Biện pháp xử lý căn cứ vào kết quả xác minh và điều khoản hợp đồng.",
+            },
+          ],
         },
       ],
     },
@@ -226,59 +288,87 @@ export const vi = {
   },
   values: [
     {
-      title: "Chất lượng quốc tế",
-      body: "VSAP cam kết cung cấp nông sản đạt tiêu chuẩn cao, được kiểm soát nghiêm ngặt từ vùng trồng, thu hoạch, đóng gói đến vận chuyển.",
+      title: "Chọn đúng từ gốc",
+      body: "Lựa chọn đối tác không chỉ dựa trên giá thành, mà còn dựa trên năng lực, uy tín, nguồn gốc nguyên liệu và trách nhiệm đối với sản phẩm.",
     },
     {
-      title: "Tươi ngon tự nhiên",
-      body: "Giữ trọn hương vị, độ tươi và giá trị nguyên bản của nông sản Việt trong từng sản phẩm xuất khẩu.",
+      title: "Chất lượng có căn cứ",
+      body: "Chất lượng cần được thể hiện bằng tiêu chí cụ thể, thông tin có thể kiểm chứng và sự nhất quán giữa các lô hàng, thay vì những lời giới thiệu.",
     },
     {
-      title: "Uy tín bền vững",
-      body: "Minh bạch trong quy trình, đúng cam kết với đối tác, xây dựng niềm tin lâu dài trên thị trường quốc tế.",
+      title: "Minh bạch để lựa chọn",
+      body: "Cung cấp thông tin trung thực về nguồn gốc, quy cách, chất lượng và giá cả, để khách hàng có cơ sở đưa ra quyết định phù hợp.",
     },
     {
-      title: "Kết nối toàn cầu",
-      body: "Lấy cảm hứng từ Trading Map, VSAP đóng vai trò kết nối nông sản Việt với các thị trường, đối tác và chuỗi cung ứng toàn cầu.",
+      title: "Giá trị được sẻ chia",
+      body: "Hài hòa lợi ích giữa nhà cung cấp, đối tác thương mại và người tiêu dùng. Hợp tác chỉ thực sự bền vững khi các bên cùng nhận được giá trị tương xứng.",
     },
     {
-      title: "Chuyên nghiệp trong vận hành",
-      body: "Tối ưu từng khâu từ kiểm định chất lượng, bao bì, logistics, chứng từ đến giao hàng, đảm bảo hiệu quả và nhất quán.",
-    },
-    {
-      title: "Phát triển cùng nông sản Việt",
-      body: "Đồng hành cùng nhà vườn, vùng nguyên liệu và đối tác để nâng cao giá trị nông sản Việt trên bản đồ thế giới.",
+      title: "Trách nhiệm vượt qua giao dịch",
+      body: "Không dừng lại ở việc cung cấp sản phẩm. VSAP coi việc lắng nghe, tiếp nhận phản hồi và giải quyết vấn đề là một phần của trách nhiệm kinh doanh.",
     },
   ],
   process: [
-    { title: "Vùng trồng", body: "Lựa chọn vùng nguyên liệu, làm việc trực tiếp với nhà vườn về giống và canh tác." },
-    { title: "Thu hoạch", body: "Thu hái đúng độ chín, phơi sấy và bảo quản hạt thô theo tiêu chuẩn." },
-    { title: "Chế biến", body: "Tách vỏ, sấy, bóc lụa và phân loại theo kích cỡ, màu sắc." },
-    { title: "Kiểm định", body: "Kiểm tra độ ẩm, tạp chất, cảm quan và an toàn thực phẩm từng lô." },
-    { title: "Đóng gói", body: "Hút chân không hoặc nạp khí trơ, giữ hạt giòn và tươi lâu." },
-    { title: "Giao hàng", body: "Hoàn thiện chứng từ, thông quan và vận chuyển đến cảng đích." },
+    { title: "Vùng trồng & Canh tác", body: "Lựa chọn nguồn nguyên liệu có xuất xứ rõ ràng, quan tâm đến điều kiện canh tác và chất lượng nông sản ngay từ vùng trồng." },
+    { title: "Thu hoạch & Thu gom", body: "Thu hoạch vào thời điểm phù hợp, thu gom và bảo quản nguyên liệu nhằm hạn chế tổn thất và duy trì chất lượng tự nhiên." },
+    { title: "Sơ chế & Tuyển chọn", body: "Làm sạch, sơ chế và phân loại nguyên liệu theo kích thước, độ đồng đều và các tiêu chí chất lượng của từng sản phẩm." },
+    { title: "Chế biến", body: "Áp dụng phương pháp chế biến phù hợp với từng loại hạt, chú trọng an toàn thực phẩm, hương vị và chất lượng thành phẩm." },
+    { title: "Kiểm soát chất lượng", body: "Kiểm tra sản phẩm theo các tiêu chí chất lượng đã xác lập và yêu cầu an toàn thực phẩm trước khi đưa ra thị trường." },
+    { title: "Đóng gói & Bảo quản", body: "Sử dụng bao bì phù hợp với đặc tính sản phẩm, cung cấp thông tin minh bạch và duy trì điều kiện bảo quản cần thiết." },
+    { title: "Phân phối", body: "Tổ chức lưu kho, vận chuyển và phân phối phù hợp nhằm duy trì chất lượng sản phẩm trong quá trình lưu thông." },
+    { title: "Đến bàn ăn người tiêu dùng", body: "Đưa nông sản trở thành một phần trong đời sống hằng ngày, với chất lượng phù hợp, thông tin rõ ràng và giá trị sử dụng thiết thực." },
   ],
   about: {
-    metaTitle: "Câu chuyện & giá trị cốt lõi",
-    metaDescription: "Câu chuyện, sứ mệnh và giá trị cốt lõi của VSAP – thương hiệu nông sản Việt chuẩn quốc tế.",
+    metaTitle: "Về chúng tôi: câu chuyện, sứ mệnh và giá trị cốt lõi",
+    metaDescription: "Công ty Cổ phần Nông sản Tinh hoa Việt (VSAP) kinh doanh và phân phối hạt điều, mắc ca; hợp tác với đơn vị cung ứng uy tín, minh bạch về xuất xứ, quy cách và giá cả.",
     eyebrow: "Về chúng tôi",
-    title: "Nâng tầm nông sản Việt",
-      accent: "trên bản đồ thế giới",
-    lead: "VSAP ra đời từ niềm tin rằng nông sản Việt Nam xứng đáng có vị trí cao hơn trong chuỗi cung ứng toàn cầu, không chỉ về sản lượng mà còn về chất lượng và thương hiệu.",
+    title: "Kết nối nguồn cung uy tín",
+    accent: "với thị trường",
+    lead: "Công ty Cổ phần Nông sản Tinh hoa Việt (VSAP) hoạt động trong lĩnh vực kinh doanh và phân phối sản phẩm nông sản, tập trung vào hạt điều và mắc ca.",
+    intro: {
+      lead: "VSAP lựa chọn hợp tác với các đơn vị cung ứng, sản xuất và chế biến uy tín, trên cơ sở nguồn gốc rõ ràng, điều kiện an toàn thực phẩm và khả năng đáp ứng yêu cầu chất lượng.",
+      body: "Chúng tôi chú trọng kiểm soát sản phẩm, minh bạch thông tin về xuất xứ, quy cách và giá cả, giúp khách hàng có cơ sở lựa chọn phù hợp. VSAP hướng đến xây dựng quan hệ thương mại lâu dài với khách hàng và đối tác trong nước, quốc tế.",
+      points: ["Nguồn cung uy tín", "Thông tin minh bạch"],
+    },
     story: {
       title: "Câu chuyện VSAP",
+      lead: "Bắt đầu từ giá trị thực của nông sản",
+      // Đoạn bắt đầu bằng "## " hiện thành tiêu đề nhỏ.
       paragraphs: [
-        "Việt Nam sở hữu những vùng nguyên liệu hạt điều, macca và yến sào có chất lượng hàng đầu, nhưng giá trị mà nhà vườn nhận được vẫn còn khiêm tốn. VSAP được xây dựng để thu hẹp khoảng cách đó.",
-        "Chúng tôi kết nối nhà vườn, cơ sở chế biến và đối tác quốc tế trong một chuỗi minh bạch, nơi mỗi lô hàng đều có nguồn gốc rõ ràng, được kiểm soát chất lượng và giao đúng cam kết.",
+        "Công ty Cổ phần Nông sản Tinh hoa Việt được thành lập tại tỉnh Đắk Lắk, một địa phương thuộc vùng Tây Nguyên Việt Nam, nơi nông nghiệp giữ vai trò quan trọng trong đời sống và phát triển kinh tế. Với thương hiệu VSAP, công ty lựa chọn kinh doanh và phát triển các sản phẩm nông sản, trước mắt tập trung vào hai dòng sản phẩm là hạt điều và mắc ca.",
+        "## Bắt đầu từ những sản phẩm quen thuộc",
+        "Việt Nam có nguồn nông sản phong phú, nhiều sản phẩm đã có mặt trên thị trường quốc tế. Tuy nhiên, giữa giá trị của nguyên liệu, năng lực chế biến và việc xây dựng thương hiệu đến người tiêu dùng vẫn còn những khoảng cách nhất định.",
+        "VSAP được hình thành với mong muốn tham gia vào quá trình thu hẹp khoảng cách đó bằng những công việc cụ thể: lựa chọn nguồn hàng, kiểm soát chất lượng, hoàn thiện quy cách đóng gói, phát triển thương hiệu và tổ chức phân phối sản phẩm.",
+        "Việc lựa chọn hạt điều và mắc ca làm những sản phẩm khởi đầu xuất phát từ giá trị dinh dưỡng, tính ứng dụng trong đời sống và tiềm năng phát triển của hai ngành hàng này tại Việt Nam.",
+        "## Lựa chọn mô hình phát triển phù hợp",
+        "Ở giai đoạn đầu, VSAP lựa chọn mô hình hợp tác với các đơn vị sản xuất, chế biến và gia công sản phẩm mang thương hiệu riêng, thay vì đầu tư trực tiếp nhà máy sản xuất.",
+        "Mô hình này cho phép công ty tập trung nguồn lực vào việc lựa chọn sản phẩm, xây dựng tiêu chí chất lượng, phát triển bao bì, quản lý hàng hóa và tìm hiểu nhu cầu thực tế của thị trường. Đồng thời, đây cũng là cơ sở để từng bước xây dựng mối quan hệ hợp tác với các đơn vị cung ứng, sản xuất và phân phối nông sản.",
+        "## Quan điểm kinh doanh",
+        "VSAP xác định chất lượng sản phẩm, thông tin minh bạch và giá bán hợp lý là những yếu tố nền tảng trong hoạt động kinh doanh.",
+        "Một sản phẩm cần được giới thiệu đúng với nguồn gốc, đặc điểm, thành phần và giá trị sử dụng của nó. Người tiêu dùng cần có đủ thông tin để tự đánh giá và đưa ra lựa chọn phù hợp với nhu cầu của mình.",
+        "Bên cạnh hoạt động kinh doanh, VSAP dành sự quan tâm đến việc chia sẻ kiến thức về nông sản, dinh dưỡng, phương pháp chế biến và bảo quản thực phẩm. Đây cũng là định hướng xây dựng nội dung trên website VSAP.COM.VN.",
+        "## Định hướng phát triển",
+        "VSAP hướng đến xây dựng hệ thống phân phối thông qua các kênh bán buôn, bán lẻ, thương mại điện tử và hợp tác với các đối tác kinh doanh. Danh mục sản phẩm sẽ từng bước được mở rộng trên cơ sở nhu cầu thị trường và khả năng kiểm soát chất lượng của doanh nghiệp.",
+        "Là một doanh nghiệp còn trẻ, VSAP hiểu rằng việc xây dựng thương hiệu cần thời gian, sự nhất quán và trách nhiệm trong từng hoạt động kinh doanh.",
+        "Công ty lựa chọn phát triển từng bước, bắt đầu từ những sản phẩm cụ thể, những mối quan hệ hợp tác thực tế và sự tin tưởng được hình thành qua quá trình phục vụ khách hàng.",
+        "Đó là cách VSAP bắt đầu câu chuyện của mình và cũng là định hướng mà công ty mong muốn duy trì trong quá trình phát triển lâu dài.",
       ],
     },
     mission: {
       title: "Sứ mệnh",
-      body: "Mang nông sản Việt chất lượng cao đến với thị trường quốc tế, tạo giá trị bền vững cho nhà vườn, đối tác và người tiêu dùng.",
+      headline: "Đưa giá trị thực của sản phẩm",
+      accent: "đến người tiêu dùng",
+      lead: "Kết nối các đơn vị cung ứng, sản xuất uy tín với thị trường; đưa đến khách hàng những sản phẩm có nguồn gốc rõ ràng, chất lượng phù hợp và giá cả hợp lý.",
+      body: "VSAP hướng đến góp phần xây dựng thị trường minh bạch, nơi khách hàng có đủ thông tin để lựa chọn và các đối tác được hợp tác trên cơ sở công bằng, trách nhiệm.",
+      points: ["Chất lượng sản phẩm", "Giá trị cho người tiêu dùng"],
     },
     vision: {
       title: "Tầm nhìn",
-      body: "Trở thành thương hiệu nông sản Việt được tin cậy trong chuỗi cung ứng hạt dinh dưỡng toàn cầu.",
+      headline: "Phát triển bằng uy tín",
+      accent: "và sự minh bạch",
+      lead: "VSAP hướng đến trở thành đối tác cung ứng và phân phối nông sản đáng tin cậy tại Việt Nam, từng bước mở rộng hợp tác trên thị trường quốc tế.",
+      body: "Công ty định hướng xây dựng hệ thống đối tác uy tín, danh mục sản phẩm phù hợp với nhu cầu thị trường và năng lực kiểm soát chất lượng; phát triển ổn định trên cơ sở minh bạch trong giao dịch và trách nhiệm với khách hàng.",
+      points: ["Kết nối đối tác", "Phát triển nguồn cung"],
     },
     slogan: {
       title: "Good Food – Good Health",
@@ -451,6 +541,8 @@ export const vi = {
     error: "Không gửi được đơn hàng. Vui lòng thử lại hoặc gọi cho VSAP.",
     required: "Bắt buộc",
     oldPrice: "Giá cũ",
+    retailPrice: "Giá lẻ",
+    wholesalePrice: "Giá sỉ (từ 50kg)",
     perk5: "Được kiểm tra hàng khi nhận",
     perk6: "Đổi trả trong 7 ngày",
     share: "Chia sẻ",

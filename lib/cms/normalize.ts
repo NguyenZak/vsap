@@ -109,6 +109,7 @@ export function normalizePack(raw: RetailPack): RetailPack {
     ...pack,
     price: price ?? null,
     oldPrice: validPrice(pack.oldPrice) ? pack.oldPrice : null,
+    wholesalePrice: validPrice(pack.wholesalePrice) ? pack.wholesalePrice : null,
     soldOut: pack.soldOut === true,
     hidden: pack.hidden === true,
     description: { ...emptyL(), ...(isObject(pack.description) ? pack.description : {}) } as RetailPack["description"],

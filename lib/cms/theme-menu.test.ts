@@ -211,7 +211,7 @@ describe("text outline and shadow", () => {
 });
 
 describe("dark mode setting", () => {
-  it("is light unless chosen in Studio, including content saved by the first version", () => {
+  it("defaults to light and preserves valid darkMode values, falling back to light for legacy unknown values", () => {
     expect(content.theme.darkMode).toBe("light");
     const old = structuredClone(content) as unknown as { theme: Record<string, unknown> };
     delete old.theme.darkMode;

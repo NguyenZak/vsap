@@ -193,12 +193,50 @@ describe("policies", () => {
 });
 
 describe("price-list catalogue", () => {
-  it("shows exactly the ten price-list packs and hides the rest", () => {
+  it("shows exactly the 21 price-list packs and hides the rest", () => {
     const shown = visiblePacks(defaultContent().retailPacks).map((p) => p.id);
-    expect(shown.sort()).toEqual(["hv160b", "hv250a", "hv250b", "hv450b", "pv250a", "pv250b", "pv500a", "pv500b", "zv500a", "zv500b"]);
+    expect(shown.sort()).toEqual([
+      "dhckv430-w180",
+      "dhlgv150-w180",
+      "dhlgv205-w180",
+      "dhv380-w180",
+      "dpovv200-w180",
+      "dptv500-w180",
+      "dpv200-w180",
+      "dpv250-w180",
+      "dpv300-w180",
+      "dpv400-w180",
+      "dzv220-w180",
+      "dzv430-w180",
+      "hv160",
+      "hv200",
+      "hv400",
+      "pv250a",
+      "pv250b",
+      "pv500a",
+      "pv500b",
+      "zv250",
+      "zv450",
+    ]);
   });
 
   it("cannot order a hidden pack", () => {
     expect(priceOrder([{ id: "x", qty: 1 }], [pack({ id: "x", price: 100000, hidden: true })])).toBeNull();
+  });
+
+  it("includes wholesale prices for all 21 price-list packs alongside retail prices", () => {
+    const shown = visiblePacks(defaultContent().retailPacks);
+    expect(shown).toHaveLength(21);
+    for (const p of shown) {
+      expect(p.price, p.id).toBeGreaterThan(0);
+      expect(p.wholesalePrice, p.id).toBeGreaterThan(0);
+      expect(p.wholesalePrice!, p.id).toBeLessThan(p.price!);
+      expect(toShopItem(p, "vi").wholesalePrice).toBe(p.wholesalePrice);
+    }
+    const byId = Object.fromEntries(shown.map((p) => [p.id, p]));
+    expect(byId["hv400"].wholesalePrice).toBe(119000);
+    expect(byId["pv500a"].wholesalePrice).toBe(121000);
+    expect(byId["dhv380-w180"].wholesalePrice).toBe(136000);
+    expect(byId["dptv500-w180"].wholesalePrice).toBe(152000);
   });
 });

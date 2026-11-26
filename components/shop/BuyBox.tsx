@@ -24,26 +24,36 @@ export function BuyBox({ item, onAdded }: { item: ShopItem; onAdded?: () => void
     onAdded?.();
   };
 
+  const hasWholesale = item.wholesalePrice !== null;
+
   return (
     <div>
-      <div className="flex flex-wrap items-center gap-x-8 gap-y-1 rounded-xl bg-mist-50 px-5 py-4">
-        <p className="w-20 shrink-0 text-sm text-ink-600">{t.price}:</p>
-        <Price item={item} size="large" />
-      </div>
+      {hasWholesale ? (
+        <div className="rounded-xl border border-mist-200/60 bg-mist-50 px-4 py-3.5 sm:px-5 sm:py-4">
+          <Price item={item} size="large" />
+        </div>
+      ) : (
+        <div className="flex flex-wrap items-center gap-x-6 gap-y-2 rounded-xl border border-mist-200/60 bg-mist-50 px-4 py-3.5 sm:gap-x-8 sm:px-5 sm:py-4">
+          <p className="w-20 shrink-0 text-sm text-ink-600">{t.price}:</p>
+          <div className="min-w-0 flex-1">
+            <Price item={item} size="large" />
+          </div>
+        </div>
+      )}
 
       {buyable ? (
         <>
-          <div className="mt-5 flex items-center gap-8 px-5">
-            <span className="w-20 shrink-0 text-sm text-ink-600">{t.quantity}:</span>
+          <div className="mt-4 flex items-center justify-between gap-4 px-1 sm:mt-5 sm:justify-start sm:gap-8 sm:px-5">
+            <span className="shrink-0 text-sm text-ink-600 sm:w-20">{t.quantity}:</span>
             <QtyStepper value={qty} onChange={setQty} labels={t} />
           </div>
-          <div className="mt-6 grid grid-cols-2 gap-3">
+          <div className="mt-5 grid grid-cols-2 gap-2.5 sm:mt-6 sm:gap-3">
             <button
               type="button"
               onClick={(e) => addToCart(true, e)}
-              className="btn btn-buy-outline inline-flex items-center justify-center gap-2 rounded-lg border-2 border-chili-600 px-3 py-3 text-sm font-semibold tracking-wide text-chili-600 uppercase transition hover:bg-chili-600/5"
+              className="btn btn-buy-outline inline-flex items-center justify-center gap-1.5 rounded-lg border-2 border-chili-600 px-2.5 py-3 text-xs font-semibold tracking-wide text-chili-600 uppercase transition hover:bg-chili-600/5 sm:gap-2 sm:px-3 sm:text-sm"
             >
-              <ShoppingBag className="size-4" />
+              <ShoppingBag className="size-4 shrink-0" />
               {t.addToCart}
             </button>
             <button
@@ -52,7 +62,7 @@ export function BuyBox({ item, onAdded }: { item: ShopItem; onAdded?: () => void
                 addToCart(false);
                 router.push(`/${locale}/cart`);
               }}
-              className="btn btn-buy inline-flex items-center justify-center rounded-lg border-2 border-chili-600 bg-chili-600 px-3 py-3 text-sm font-semibold tracking-wide text-white uppercase transition hover:bg-chili-600/90"
+              className="btn btn-buy inline-flex items-center justify-center rounded-lg border-2 border-chili-600 bg-chili-600 px-2.5 py-3 text-xs font-semibold tracking-wide text-white uppercase transition hover:bg-chili-600/90 sm:px-3 sm:text-sm"
             >
               {t.buyNow}
             </button>

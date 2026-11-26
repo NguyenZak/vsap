@@ -16,9 +16,9 @@ export function Gallery({ images, alt }: { images: string[]; alt: string }) {
   if (n === 0) return <div className="aspect-square rounded-2xl bg-mist-50" />;
 
   return (
-    <div className="flex flex-col-reverse gap-3 sm:flex-row">
+    <div className="flex min-w-0 flex-col-reverse gap-3 sm:flex-row">
       {n > 1 && (
-        <ul className="no-scrollbar flex gap-2 overflow-x-auto sm:max-h-[34rem] sm:flex-col sm:overflow-y-auto">
+        <ul className="no-scrollbar flex min-w-0 max-w-full gap-2 overflow-x-auto sm:max-h-[34rem] sm:flex-col sm:overflow-y-auto">
           {images.map((src, k) => (
             <li key={`${src}-${k}`} className="shrink-0">
               <button
@@ -26,7 +26,7 @@ export function Gallery({ images, alt }: { images: string[]; alt: string }) {
                 onClick={() => setI(k)}
                 aria-label={`${labels.photo} ${k + 1}`}
                 aria-pressed={k === i}
-                className="block size-16 overflow-hidden rounded-xl border-2 border-transparent bg-mist-50 transition hover:border-mist-200 aria-pressed:border-forest-600 sm:size-20"
+                className="block size-14 overflow-hidden rounded-xl border-2 border-mist-200/50 bg-white transition hover:border-forest-600/50 aria-pressed:border-forest-900 sm:size-20"
               >
                 <img src={src} alt="" loading="lazy" className="size-full object-contain p-1" />
               </button>
@@ -34,7 +34,7 @@ export function Gallery({ images, alt }: { images: string[]; alt: string }) {
           ))}
         </ul>
       )}
-      <div className="group relative aspect-square flex-1 overflow-hidden rounded-2xl bg-mist-50">
+      <div className="group relative aspect-square flex-1 self-start overflow-hidden rounded-2xl border border-mist-200/60 bg-white">
         <AnimatePresence initial={false} custom={dir}>
           <motion.img
             key={i}
@@ -60,7 +60,7 @@ export function Gallery({ images, alt }: { images: string[]; alt: string }) {
               else if (info.offset.x > 60 || info.velocity.x > 400) go(-1);
             }}
             draggable={false}
-            className="absolute inset-0 size-full cursor-grab touch-pan-y object-contain p-4 select-none active:cursor-grabbing sm:p-8"
+            className="absolute inset-0 size-full cursor-grab touch-pan-y object-contain p-2 select-none active:cursor-grabbing sm:p-6"
           />
         </AnimatePresence>
         {n > 1 && (
