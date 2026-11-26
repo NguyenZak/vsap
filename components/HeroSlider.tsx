@@ -263,7 +263,7 @@ export function HeroSlider({ slides, autoplay: AUTOPLAY, scrollLabel, rankValue,
                   <div data-fade data-intro={intro}>
                     <Tag tone="glass">{s.eyebrow}</Tag>
                   </div>
-                  <Heading className="heading mt-5 max-w-5xl text-[2.6rem] text-white sm:text-6xl lg:text-7xl">
+                  <Heading className="heading mt-5 max-w-5xl text-[2.125rem] text-white sm:text-6xl lg:text-7xl">
                     <span className="-mt-[0.15em] block overflow-hidden pt-[0.15em] pb-[0.04em]">
                       <span data-line data-intro={intro} className="block">
                         {s.title}

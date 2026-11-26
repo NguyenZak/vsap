@@ -193,7 +193,7 @@ describe("policies", () => {
 });
 
 describe("price-list catalogue", () => {
-  it("shows exactly the 21 price-list packs and hides the rest", () => {
+  it("shows exactly the 23 price-list packs and hides the rest", () => {
     const shown = visiblePacks(defaultContent().retailPacks).map((p) => p.id);
     expect(shown.sort()).toEqual([
       "dhckv430-w180",
@@ -213,7 +213,9 @@ describe("price-list catalogue", () => {
       "hv400",
       "pv250a",
       "pv250b",
+      "pv250b-rm",
       "pv500a",
+      "pv500a-rm",
       "pv500b",
       "zv250",
       "zv450",
@@ -224,9 +226,9 @@ describe("price-list catalogue", () => {
     expect(priceOrder([{ id: "x", qty: 1 }], [pack({ id: "x", price: 100000, hidden: true })])).toBeNull();
   });
 
-  it("includes wholesale prices for all 21 price-list packs alongside retail prices", () => {
+  it("includes wholesale prices for all 23 price-list packs alongside retail prices", () => {
     const shown = visiblePacks(defaultContent().retailPacks);
-    expect(shown).toHaveLength(21);
+    expect(shown).toHaveLength(23);
     for (const p of shown) {
       expect(p.price, p.id).toBeGreaterThan(0);
       expect(p.wholesalePrice, p.id).toBeGreaterThan(0);

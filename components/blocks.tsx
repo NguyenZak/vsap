@@ -583,7 +583,7 @@ const renderers: Record<string, Renderer> = {
         <div data-reveal>
           {t(p.eyebrow) && <Tag tone={dark ? "glass" : "light"}>{t(p.eyebrow)}</Tag>}
           {(t(p.title) || t(p.accent)) && <Title title={t(p.title)} accent={t(p.accent)} className={`mt-4 text-4xl sm:text-5xl ${dark ? "text-white" : "text-heading"}`} />}
-          {t(p.lead) && <p className={`mt-5 text-lg leading-relaxed first:mt-0 ${dark ? "text-white/85" : "text-ink-900"}`}>{t(p.lead)}</p>}
+          {t(p.lead) && <p className={`mt-5 text-base leading-relaxed first:mt-0 sm:text-lg ${dark ? "text-white/85" : "text-ink-900"}`}>{t(p.lead)}</p>}
           <div className={`mt-5 space-y-4 text-sm leading-relaxed ${dark ? "text-white/70" : "text-ink-600"}`}>
             <Paragraphs text={t(p.body)} />
           </div>

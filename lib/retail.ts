@@ -200,11 +200,14 @@ const cashewSkuList: CashewSku[] = [
 ];
 
 /**
- * The 21 packs on VSAP's retail price list (bảng giá lẻ sản phẩm, 11/2026): 9 macadamia + 12 cashew.
+ * The 23 packs on VSAP's retail price list (giá bán lẻ, 24/11/2026): 11 macadamia + 12 cashew.
  * Extra seed packs (roasted & salted macadamia jar variants, macadamia kernels) start hidden; Studio can show them again.
  */
 export const priceListIds = new Set([
   ...maccaSkuList.filter((k) => !k.id).map((k) => k.code.toLowerCase()),
+  // Roasted & salted jars priced on the 24/11/2026 list.
+  "pv500a-rm",
+  "pv250b-rm",
   ...cashewSkuList.map((k) => k.id),
 ]);
 
@@ -225,37 +228,38 @@ export const legacyPackIds: Record<string, string> = {
   "cashew-tub": "dptv500-w180",
 };
 
-/** Retail prices (VNĐ) from VSAP's retail price list. */
-// The *-RM macadamia jar variants are not on the price list: same price as the plain one for now.
+/** Retail prices (VNĐ) from VSAP's retail price list (Giá bán lẻ sản phẩm VSAP, 24/11/2026). */
+// The list prices the roasted & salted jars PV500A-RM and PV250B-RM on their own; PV500B-RM and
+// PV250A-RM are not on it and keep their plain jar's price. ZV250 is not on it either: last listed price.
 const maccaPrices: Record<string, number> = {
-  HV400: 164000,
-  HV200: 107000,
-  HV160: 70000,
-  ZV450: 161000,
+  HV400: 168000,
+  HV200: 105000,
+  HV160: 82000,
+  ZV450: 165000,
   ZV250: 89000,
-  PV500B: 154000,
-  "PV500B-RM": 154000,
-  PV500A: 162000,
-  "PV500A-RM": 162000,
-  PV250A: 99000,
-  "PV250A-RM": 99000,
-  PV250B: 91000,
-  "PV250B-RM": 91000,
+  PV500B: 174000,
+  "PV500B-RM": 174000,
+  PV500A: 185000,
+  "PV500A-RM": 183000,
+  PV250A: 107000,
+  "PV250A-RM": 107000,
+  PV250B: 101000,
+  "PV250B-RM": 108000,
 };
 
 const cashewPrices: Record<string, number> = {
-  "dhv380-w180": 180000,
-  "dhlgv205-w180": 115000,
-  "dhlgv150-w180": 86000,
-  "dzv430-w180": 174000,
-  "dzv220-w180": 101000,
-  "dpv400-w180": 173000,
-  "dpv250-w180": 122000,
-  "dpv200-w180": 99000,
-  "dpv300-w180": 144000,
-  "dpovv200-w180": 118000,
-  "dptv500-w180": 199000,
-  "dhckv430-w180": 174000,
+  "dhv380-w180": 185000,
+  "dhlgv205-w180": 114000,
+  "dhlgv150-w180": 91000,
+  "dzv430-w180": 209000,
+  "dzv220-w180": 117000,
+  "dpv400-w180": 205000,
+  "dpv250-w180": 141000,
+  "dpv200-w180": 117000,
+  "dpv300-w180": 174000,
+  "dpovv200-w180": 142000,
+  "dptv500-w180": 245000,
+  "dhckv430-w180": 211000,
 };
 
 function maccaSkus(): RetailPack[] {

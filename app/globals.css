@@ -96,6 +96,21 @@ body {
 }
 
 /*
+ * Phones (below the sm breakpoint): the display sizes step down one notch so
+ * section titles fit two or three lines instead of five. Desktop is unchanged.
+ * A page or theme heading scale (Studio › Giao diện) sets these inline and wins.
+ */
+@media (width < 40rem) {
+  :root {
+    --text-2xl: 1.375rem;
+    --text-3xl: 1.625rem;
+    --text-4xl: 1.875rem;
+    --text-5xl: 2.25rem;
+    --text-6xl: 2.5rem;
+  }
+}
+
+/*
  * Vertical rhythm for CMS sections (components/blocks.tsx). Two neighbouring
  * sections on the same background share one gap instead of stacking two.
  */

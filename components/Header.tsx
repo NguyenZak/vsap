@@ -241,7 +241,7 @@ export function Header({ locale, nav, items: links, menuStyle, contact: site, lo
                     className="group flex items-center gap-4 py-4"
                   >
                     <span className="w-6 text-xs text-ink-400 tabular-nums">{String(i + 1).padStart(2, "0")}</span>
-                    <span className={`heading flex-1 text-3xl ${active ? "accent text-[2.1rem] text-forest-600" : "text-heading"}`}>
+                    <span className={`heading flex-1 text-3xl ${active ? "accent text-[1.8rem] text-forest-600" : "text-heading"}`}>
                       {l.label}
                     </span>
                     <ArrowUpRight className="size-5 text-ink-400 transition group-hover:rotate-45 group-hover:text-forest-600" />
