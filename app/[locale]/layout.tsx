@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Phudu } from "next/font/google";
+import { Google_Sans, Inter, Phudu } from "next/font/google";
 import { FloatingContact } from "@/components/FloatingContact";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
@@ -26,8 +26,16 @@ const font = Inter({
   display: "swap",
 });
 
-// Titles (the .heading utility and product names): Phudu, a Vietnamese-made display sans (SIL OFL).
-const display = Phudu({
+// Titles (the .heading utility and product names): Google Sans (SIL OFL), with Vietnamese glyphs.
+const display = Google_Sans({
+  subsets: ["latin", "vietnamese"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-google-sans",
+  display: "swap",
+});
+
+// Still selectable in Studio › Giao diện.
+const phudu = Phudu({
   subsets: ["latin", "vietnamese"],
   weight: ["400", "500", "600", "700"],
   variable: "--font-phudu",
@@ -96,7 +104,7 @@ export default async function LocaleLayout({ children, params }: Props) {
   return (
     // suppressHydrationWarning: the inline script below adds the `js` class before React hydrates.
     // Studio › Giao diện › Chế độ tối: "dark" is rendered dark from the server, "system" follows the device.
-    <html lang={localeInfo[locale].html} className={`${font.variable} ${display.variable}${theme.darkMode === "dark" ? " dark" : ""}`} suppressHydrationWarning>
+    <html lang={localeInfo[locale].html} className={`${font.variable} ${display.variable} ${phudu.variable}${theme.darkMode === "dark" ? " dark" : ""}`} suppressHydrationWarning>
       <head>
         {/* Lets CSS hide intro elements before first paint, only when JS will animate them in. */}
         <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js')" }} />

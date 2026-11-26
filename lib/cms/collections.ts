@@ -330,7 +330,7 @@ export const pageStyleFields: FieldDef[] = [
   { key: "heading", label: "Màu tiêu đề", type: "color" },
   { key: "text", label: "Màu chữ", type: "color", help: "Không áp vào section nền tối, để chữ trắng vẫn đọc được." },
   fontField("font", "Font chữ thường", "Inter"),
-  fontField("headingFont", "Font tiêu đề", "Phudu"),
+  fontField("headingFont", "Font tiêu đề", "Google Sans"),
   scaleField("textScale", "Cỡ chữ thường (%)"),
   scaleField("headingScale", "Cỡ tiêu đề (%)"),
   textEffectsField,

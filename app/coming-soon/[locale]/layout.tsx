@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Phudu } from "next/font/google";
+import { Google_Sans, Inter, Phudu } from "next/font/google";
 import { pick } from "@/lib/cms/links";
 import { getContent } from "@/lib/cms/store";
 import { localeParams, metadataLocale, resolveLocale } from "@/lib/i18n";
@@ -7,7 +7,8 @@ import { localeInfo } from "@/lib/locales";
 import "../../globals.css";
 
 const font = Inter({ subsets: ["latin", "vietnamese"], weight: ["400", "500", "600"], variable: "--font-inter", display: "swap" });
-const display = Phudu({ subsets: ["latin", "vietnamese"], weight: ["400", "500", "600", "700"], variable: "--font-phudu", display: "swap" });
+const display = Google_Sans({ subsets: ["latin", "vietnamese"], weight: ["400", "500", "600", "700"], variable: "--font-google-sans", display: "swap" });
+const phudu = Phudu({ subsets: ["latin", "vietnamese"], weight: ["400", "500", "600", "700"], variable: "--font-phudu", display: "swap" });
 
 /*
  * Root layout of the "Coming soon" page. proxy.ts rewrites every website page here
@@ -38,7 +39,7 @@ export async function generateMetadata({ params }: Omit<Props, "children">): Pro
 export default async function ComingSoonLayout({ children, params }: Props) {
   const locale = resolveLocale((await params).locale);
   return (
-    <html lang={localeInfo[locale].html} className={`${font.variable} ${display.variable}`}>
+    <html lang={localeInfo[locale].html} className={`${font.variable} ${display.variable} ${phudu.variable}`}>
       <body className="min-h-dvh bg-forest-950">{children}</body>
     </html>
   );

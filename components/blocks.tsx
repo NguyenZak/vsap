@@ -108,6 +108,20 @@ type Renderer = (p: P, ctx: BlockCtx, section: Section) => React.ReactNode;
  * subtitle (lead), a wide photo, the paragraphs, highlights as illustrated cards and an
  * optional centred tagline.
  */
+/** FAQ with every answer visible: question on the left, answer on the right (stacked on phones). */
+function OpenFaq({ items }: { items: { title: string; body: string }[] }) {
+  return (
+    <dl className="divide-y divide-mist-200/60">
+      {items.map((it, i) => (
+        <div key={i} data-reveal className="grid gap-2 py-6 first:pt-0 last:pb-0 md:grid-cols-5 md:gap-8">
+          <dt className="text-base leading-snug font-medium text-heading md:col-span-2">{it.title}</dt>
+          <dd className="text-[15px] leading-relaxed whitespace-pre-line text-ink-600 md:col-span-3">{it.body}</dd>
+        </div>
+      ))}
+    </dl>
+  );
+}
+
 function stackedImageText(p: P, ctx: BlockCtx, dark: boolean) {
   const { t, img } = makeT(ctx);
   const cards = list(p.points)
@@ -400,6 +414,8 @@ const renderers: Record<string, Renderer> = {
   faq(p, ctx, section) {
     const { t } = makeT(ctx);
     const items = list(p.items).map((f) => ({ group: t(f.group), icon: "message-question", title: t(f.q), body: t(f.a) }));
+    // "open" (the default, also for sections saved before the option existed): every answer shown, no clicking.
+    const open = str(p.layout) !== "accordion";
     // Items that carry a group name are shown as rows: group name on the left, its questions on the right.
     // Consecutive items with the same group name form one group.
     if (items.some((it) => it.group)) {
@@ -415,12 +431,12 @@ const renderers: Record<string, Renderer> = {
           <div className={`divide-y divide-mist-200 ${hasHeading(p, ctx) ? "mt-12" : ""}`}>
             {groups.map((g, gi) => (
               <div key={gi} className="grid gap-4 py-8 first:pt-0 last:pb-0 lg:grid-cols-12 lg:gap-10">
-                <div data-reveal className="lg:col-span-4">
+                <div data-reveal className={`lg:col-span-4 ${open ? "lg:sticky lg:top-28 lg:self-start" : ""}`}>
                   <p className="text-xs font-medium tracking-widest text-ink-400 tabular-nums">{String(gi + 1).padStart(2, "0")}</p>
                   {g.title && <h3 className="heading mt-2 text-xl text-heading sm:text-2xl">{g.title}</h3>}
                 </div>
                 <div className="lg:col-span-8">
-                  <AccordionCards name={`faq-${section.id}`} items={g.items} openFirst={gi === 0} />
+                  {open ? <OpenFaq items={g.items} /> : <AccordionCards name={`faq-${section.id}`} items={g.items} openFirst={gi === 0} />}
                 </div>
               </div>
             ))}
@@ -428,6 +444,15 @@ const renderers: Record<string, Renderer> = {
         </div>
       );
     }
+    if (open)
+      return (
+        <div className="block-pad container-page">
+          {heading(p, ctx)}
+          <div className={`max-w-5xl ${hasHeading(p, ctx) ? "mt-12" : ""}`}>
+            <OpenFaq items={items} />
+          </div>
+        </div>
+      );
     const half = Math.ceil(items.length / 2);
     return (
       <div className="block-pad container-page">

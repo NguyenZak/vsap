@@ -264,10 +264,19 @@ export const sectionDefs: SectionDef[] = [
   {
     type: "faq",
     label: "Câu hỏi thường gặp",
-    description: "Câu hỏi bấm mở: hai cột, hoặc theo nhóm nếu có điền tên nhóm.",
+    description: "Câu hỏi và trả lời hiện sẵn (hoặc bấm mở), theo nhóm nếu có điền tên nhóm.",
     icon: "message-circle-question",
     fields: [
       ...headingFields(),
+      {
+        key: "layout",
+        label: "Cách hiện",
+        type: "select",
+        options: [
+          { value: "open", label: "Hiện sẵn câu trả lời" },
+          { value: "accordion", label: "Bấm để mở câu trả lời" },
+        ],
+      },
       {
         key: "items",
         label: "Câu hỏi",
@@ -282,7 +291,7 @@ export const sectionDefs: SectionDef[] = [
         newItem: () => ({ group: l(""), q: l("Câu hỏi mới?", "New question?"), a: l("Câu trả lời.", "The answer.") }),
       },
     ],
-    create: () => ({ ...sampleHeading(), items: [{ group: l(""), q: l("Câu hỏi?", "Question?"), a: l("Trả lời.", "Answer.") }] }),
+    create: () => ({ ...sampleHeading(), layout: "open", items: [{ group: l(""), q: l("Câu hỏi?", "Question?"), a: l("Trả lời.", "Answer.") }] }),
   },
   {
     type: "cta",

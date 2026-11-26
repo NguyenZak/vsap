@@ -8,7 +8,8 @@ type Font = { key: string; label: string; stack: string; /** Google Fonts family
 /** Every font has Vietnamese glyphs. */
 export const fonts: Font[] = [
   { key: "inter", label: "Inter (chữ thường mặc định)", stack: "var(--font-inter), ui-sans-serif, system-ui, sans-serif" },
-  { key: "phudu", label: "Phudu (tiêu đề mặc định)", stack: "var(--font-phudu), var(--font-inter), ui-sans-serif, sans-serif" },
+  { key: "google-sans", label: "Google Sans (tiêu đề mặc định)", stack: "var(--font-google-sans), var(--font-inter), ui-sans-serif, sans-serif" },
+  { key: "phudu", label: "Phudu", stack: "var(--font-phudu), var(--font-inter), ui-sans-serif, sans-serif" },
   { key: "be-vietnam-pro", label: "Be Vietnam Pro", stack: '"Be Vietnam Pro", ui-sans-serif, sans-serif', google: "Be Vietnam Pro" },
   { key: "montserrat", label: "Montserrat", stack: "Montserrat, ui-sans-serif, sans-serif", google: "Montserrat" },
   { key: "roboto", label: "Roboto", stack: "Roboto, ui-sans-serif, sans-serif", google: "Roboto" },
