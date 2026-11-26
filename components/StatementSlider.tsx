@@ -186,7 +186,7 @@ export function StatementSlider({ eyebrow, items, hold: HOLD, labels }: Props) {
             <p className="sr-only">{`${item.strong} ${item.muted} ${item.tail}`}</p>
             <p
               aria-hidden="true"
-              className="heading max-w-[72rem] text-3xl text-heading sm:text-4xl lg:text-[2.85rem] lg:leading-[1.18]"
+              className="heading max-w-[72rem] text-3xl text-heading sm:text-4xl lg:text-[2.4rem] lg:leading-[1.18]"
             >
               <span data-st-start className="inline-block h-[0.9em] w-0 align-[-0.1em]" />
               <Chars text={item.strong} />

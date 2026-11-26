@@ -200,7 +200,7 @@ export function mergePageStyle(theme: Partial<PageStyle> | undefined, page: Part
 
 // Tailwind's text-* sizes (rem); the scales multiply these.
 const TEXT_SIZES: Record<string, number> = { xs: 0.75, sm: 0.875, base: 1, lg: 1.125, xl: 1.25 };
-const HEADING_SIZES: Record<string, number> = { "2xl": 1.5, "3xl": 1.875, "4xl": 2.25, "5xl": 3, "6xl": 3.75, "7xl": 4.5, "8xl": 6, "9xl": 8 };
+const HEADING_SIZES: Record<string, number> = { "2xl": 1.375, "3xl": 1.625, "4xl": 1.875, "5xl": 2.5, "6xl": 3, "7xl": 3.5, "8xl": 4.5, "9xl": 8 };
 
 function sizeVars(sizes: Record<string, number>, pct: number) {
   return Object.fromEntries(Object.entries(sizes).map(([k, rem]) => [`--text-${k}`, `${+(rem * pct / 100).toFixed(4)}rem`]));

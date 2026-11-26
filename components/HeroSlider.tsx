@@ -266,10 +266,15 @@ export function HeroSlider({ slides, autoplay: AUTOPLAY, scrollLabel, rankValue,
                   inert={i !== index}
                   className={`[grid-area:1/1] ${i === 0 ? "" : "invisible"}`}
                 >
-                  <div data-fade data-intro={intro}>
-                    <Tag tone="glass">{s.eyebrow}</Tag>
-                  </div>
-                  <Heading className="heading mt-5 max-w-5xl text-[2.125rem] text-white sm:text-6xl lg:text-7xl">
+                  {s.eyebrow && (
+                    <div data-fade data-intro={intro} className="mb-5">
+                      <Tag tone="glass">{s.eyebrow}</Tag>
+                    </div>
+                  )}
+                  {/* A banner with its text baked into the image leaves the fields empty: keep the heading for screen readers. */}
+                  {!s.title && !s.accent && <Heading className="sr-only">{s.image.alt}</Heading>}
+                  {(s.title || s.accent) && (
+                  <Heading className="heading max-w-5xl text-[1.875rem] text-white sm:text-6xl lg:text-7xl">
                     <span className="-mt-[0.15em] block overflow-hidden pt-[0.15em] pb-[0.04em]">
                       <span data-line data-intro={intro} className="block">
                         {s.title}
@@ -281,6 +286,8 @@ export function HeroSlider({ slides, autoplay: AUTOPLAY, scrollLabel, rankValue,
                       </span>
                     </span>
                   </Heading>
+                  )}
+                  {((s.buttonLabel && s.buttonHref) || (s.secondaryLabel && s.secondaryHref)) && (
                   <div data-fade data-intro={intro} className="mt-7 flex flex-wrap gap-3">
                     {s.buttonLabel && s.buttonHref && <Button href={s.buttonHref}>{s.buttonLabel}</Button>}
                     {s.secondaryLabel && s.secondaryHref && (
@@ -289,6 +296,7 @@ export function HeroSlider({ slides, autoplay: AUTOPLAY, scrollLabel, rankValue,
                       </Button>
                     )}
                   </div>
+                  )}
                 </div>
               );
             })}
