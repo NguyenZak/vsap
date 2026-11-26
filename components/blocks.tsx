@@ -28,6 +28,7 @@ import {
 import { SIZES } from "@/lib/responsive";
 import { inquiryProducts } from "@/lib/cms/inquiry-format";
 import { CmsIcon } from "./cms/Icon";
+import { Illustration } from "./Illustration";
 import { Button, Tag, Title } from "./ui";
 
 export type BlockCtx = {
@@ -102,6 +103,54 @@ const hasHeading = (p: P, ctx: BlockCtx) => ["eyebrow", "title", "accent", "lead
 
 type Renderer = (p: P, ctx: BlockCtx, section: Section) => React.ReactNode;
 
+/**
+ * imageText, "stacked" layout (Sứ mệnh / Tầm nhìn): small brand line, big title and
+ * subtitle (lead), a wide photo, the paragraphs, highlights as illustrated cards and an
+ * optional centred tagline.
+ */
+function stackedImageText(p: P, ctx: BlockCtx, dark: boolean) {
+  const { t, img } = makeT(ctx);
+  const cards = list(p.points)
+    .map((it) => ({ text: t(it.text), art: str(it.art) }))
+    .filter((c) => c.text || c.art);
+  return (
+    <div className="block-pad container-page">
+      <div data-reveal>
+        {t(p.eyebrow) && <p className={`text-sm font-bold tracking-wide ${dark ? "text-white/80" : "text-heading"}`}>{t(p.eyebrow)}</p>}
+        {t(p.title) && <h2 className={`heading mt-3 text-5xl uppercase sm:text-6xl lg:text-7xl ${dark ? "text-white" : "text-heading"}`}>{t(p.title)}</h2>}
+        {t(p.lead) && <p className={`mt-4 text-xl leading-snug sm:text-2xl ${dark ? "text-white/75" : "text-sage-500"}`}>{t(p.lead)}</p>}
+      </div>
+      {img(p.image) && (
+        <div data-reveal="clip" className="relative mt-8 aspect-video overflow-hidden rounded-2xl sm:mt-10 sm:aspect-[3/1]">
+          <CmsImg image={img(p.image)} parallax sizes={SIZES.full} className="absolute inset-0 size-full" />
+        </div>
+      )}
+      <div data-reveal className={`mt-8 max-w-4xl space-y-4 text-base leading-relaxed sm:text-lg ${dark ? "text-white/85" : "text-ink-900"}`}>
+        <Paragraphs text={t(p.body)} />
+      </div>
+      {cards.length > 0 && (
+        <ul className="mt-10 grid gap-x-3 gap-y-8 sm:grid-cols-2">
+          {cards.map((c, i) => (
+            <li key={i} data-reveal>
+              {c.art && (
+                <div className={`flex aspect-[16/9] items-center justify-center rounded-2xl ${dark ? "bg-white/5" : "bg-mist-50"}`}>
+                  <Illustration name={c.art} className="h-4/5 w-auto" />
+                </div>
+              )}
+              {c.text && <h3 className={`mt-4 text-lg font-semibold ${dark ? "text-white" : "text-ink-900"}`}>{c.text}</h3>}
+            </li>
+          ))}
+        </ul>
+      )}
+      {t(p.tagline) && (
+        <p data-reveal className={`mx-auto mt-12 max-w-4xl text-center text-sm font-bold tracking-wide uppercase sm:text-base ${dark ? "text-white/85" : "text-heading"}`}>
+          {t(p.tagline)}
+        </p>
+      )}
+    </div>
+  );
+}
+
 const renderers: Record<string, Renderer> = {
   hero(p, ctx) {
     const { t, img, href } = makeT(ctx);
@@ -112,6 +161,7 @@ const renderers: Record<string, Renderer> = {
       accent: t(s.accent),
       lead: t(s.lead),
       image: img(s.image) ?? { src: "", alt: "" },
+      mobileImage: img(s.mobileImage),
       buttonLabel: t(s.buttonLabel),
       buttonHref: href(s.buttonHref),
       secondaryLabel: t(s.secondaryLabel),
@@ -574,6 +624,7 @@ const renderers: Record<string, Renderer> = {
     const tone = toneOf({ id: "", type: "imageText", props: p }) as Tone;
     const imageLeft = str(p.imageSide) === "left";
     const dark = tone === "dark";
+    if (str(p.layout) === "stacked") return stackedImageText(p, ctx, dark);
     const points = list(p.points).map((it) => t(it.text)).filter(Boolean);
     return (
       <div className="block-pad container-page grid gap-10 lg:grid-cols-2 lg:items-center">

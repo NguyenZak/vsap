@@ -31,6 +31,15 @@ const sampleHeading = () => ({
   lead: l("Mô tả ngắn cho section này.", "A short description for this section."),
 });
 
+/** Card drawings in components/Illustration.tsx. */
+const illustrationOptions = [
+  { value: "", label: "Không có" },
+  { value: "truck", label: "Xe tải" },
+  { value: "nut-tree", label: "Cây có hạt" },
+  { value: "quality-check", label: "Kính lúp kiểm tra" },
+  { value: "nut-plate", label: "Đĩa hạt" },
+];
+
 export const sectionDefs: SectionDef[] = [
   {
     type: "hero",
@@ -50,7 +59,8 @@ export const sectionDefs: SectionDef[] = [
           { key: "title", label: "Tiêu đề", type: "text" },
           { key: "accent", label: "Tiêu đề (dòng nghiêng)", type: "text" },
           { key: "lead", label: "Mô tả", type: "textarea", rows: 3 },
-          { key: "image", label: "Ảnh nền", type: "image" },
+          { key: "image", label: "Ảnh nền (máy tính)", type: "image" },
+          { key: "mobileImage", label: "Ảnh nền trên điện thoại", type: "image", help: "Ảnh dọc cho màn hình dưới 768px. Để trống thì dùng ảnh máy tính." },
           ...button(),
           { key: "secondaryLabel", label: "Chữ nút phụ", type: "text", help: "Để trống để ẩn nút phụ." },
           { key: "secondaryHref", label: "Liên kết nút phụ", type: "link" },
@@ -62,6 +72,7 @@ export const sectionDefs: SectionDef[] = [
           accent: l("dòng nhấn", "accent line"),
           lead: l("Mô tả slide.", "Slide description."),
           image: img("/images/highlands.webp", "Ảnh slide", "Slide image"),
+          mobileImage: img(""),
           buttonLabel: l("Xem sản phẩm", "Explore products"),
           buttonHref: "/products",
           secondaryLabel: l("Nhận báo giá", "Get a quote"),
@@ -91,6 +102,7 @@ export const sectionDefs: SectionDef[] = [
           accent: l("dòng nhấn", "accent line"),
           lead: l("Mô tả slide.", "Slide description."),
           image: img("/images/highlands.webp"),
+          mobileImage: img(""),
           buttonLabel: l("Xem sản phẩm", "Explore products"),
           buttonHref: "/products",
           secondaryLabel: l(""),
@@ -395,15 +407,36 @@ export const sectionDefs: SectionDef[] = [
     description: "Ảnh một bên, tiêu đề, nội dung và nút bên còn lại.",
     icon: "layout-panel-left",
     fields: [
+      {
+        key: "layout",
+        label: "Bố cục",
+        type: "select",
+        options: [
+          { value: "side", label: "Ảnh một bên, chữ một bên" },
+          { value: "stacked", label: "Tiêu đề lớn, ảnh rộng, thẻ minh họa bên dưới" },
+        ],
+      },
       ...headingFields(),
-      { key: "body", label: "Nội dung", type: "textarea", rows: 6 },
-      { key: "points", label: "Điểm nhấn", type: "list", itemLabel: "điểm nhấn", titleKey: "text", fields: [{ key: "text", label: "Nội dung", type: "text" }], newItem: () => ({ text: l("Điểm nhấn", "Highlight") }) },
+      { key: "body", label: "Nội dung", type: "textarea", rows: 6, help: "Xuống dòng hai lần để tách đoạn." },
+      {
+        key: "points",
+        label: "Điểm nhấn",
+        type: "list",
+        itemLabel: "điểm nhấn",
+        titleKey: "text",
+        fields: [
+          { key: "text", label: "Nội dung", type: "text" },
+          { key: "art", label: "Hình minh họa", type: "select", options: illustrationOptions, help: "Chỉ hiện ở bố cục ảnh rộng: mỗi điểm nhấn thành một thẻ có hình." },
+        ],
+        newItem: () => ({ text: l("Điểm nhấn", "Highlight"), art: "" }),
+      },
+      { key: "tagline", label: "Câu khẩu hiệu cuối", type: "text", help: "Chỉ hiện ở bố cục ảnh rộng, căn giữa dưới các thẻ." },
       { key: "image", label: "Ảnh", type: "image" },
-      { key: "imageSide", label: "Vị trí ảnh", type: "select", options: [{ value: "left", label: "Trái" }, { value: "right", label: "Phải" }] },
+      { key: "imageSide", label: "Vị trí ảnh", type: "select", options: [{ value: "left", label: "Trái" }, { value: "right", label: "Phải" }], help: "Dùng cho bố cục ảnh một bên." },
       ...button(),
       toneField,
     ],
-    create: () => ({ ...sampleHeading(), body: l("Nội dung.", "Content."), points: [], image: img("/images/cashew-grove.webp"), imageSide: "right", buttonLabel: l(""), buttonHref: "", tone: "white" }),
+    create: () => ({ layout: "side", ...sampleHeading(), body: l("Nội dung.", "Content."), points: [], tagline: l(""), image: img("/images/cashew-grove.webp"), imageSide: "right", buttonLabel: l(""), buttonHref: "", tone: "white" }),
   },
   {
     type: "gallery",

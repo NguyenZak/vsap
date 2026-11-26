@@ -36,6 +36,11 @@ export const images = {
     alt: { vi: "Trái điều chín và non trên cành", en: "Ripe and young cashew fruits on the branch", zh: "枝头上成熟与未成熟的腰果果实", ja: "枝についた熟したカシューの実と若い実", ko: "가지에 달린 익은 캐슈 열매와 어린 열매" },
     source: pexels(10615965),
   },
+  nutBowls: {
+    src: "/images/cashew-macadamia-bowls.webp",
+    alt: { vi: "Hạt điều và hạt macca trong hai bát gốm", en: "Cashews and macadamias in two ceramic bowls", zh: "两只陶碗里的腰果和夏威夷果", ja: "2つの陶器の器に入ったカシューナッツとマカダミアナッツ", ko: "도자기 그릇 두 개에 담긴 캐슈너트와 마카다미아" },
+    source: "Ảnh từ bản mẫu Sứ mệnh / Tầm nhìn do VSAP gửi (11/2026)",
+  },
   cashewApple: {
     src: "/images/cashew-apple.webp",
     alt: { vi: "Trái điều chín cùng hạt", en: "Ripe cashew apples with their nuts", zh: "成熟的腰果梨及其果实", ja: "ナッツの付いた熟したカシューアップル", ko: "견과가 달린 잘 익은 캐슈 애플" },

@@ -26,6 +26,9 @@ const blank = (): L => emptyL();
 const pic = (key: ImageKey): CmsImage => ({ src: images[key].src, alt: { ...images[key].alt } });
 const section = (id: string, type: string, props: Record<string, unknown>): Section => ({ id, type, props });
 
+/** Card illustrations (components/Illustration.tsx) for the Sứ mệnh / Tầm nhìn highlights, in order. */
+const aboutArt = { mission: ["quality-check", "nut-plate"], vision: ["truck", "nut-tree"] } as const;
+
 /** eyebrow/title/accent/lead for a dictionary block that has them. */
 function heading(get: (d: Dict) => { eyebrow?: string; title: string; accent?: string; lead?: string }) {
   return {
@@ -200,16 +203,18 @@ const pages: Record<PageId, Omit<Page, "style">> = {
         imageB: pic("macadamiaTree"),
         tone: "muted",
       }),
-      ...(["mission", "vision"] as const).map((k, i) =>
+      ...(["mission", "vision"] as const).map((k) =>
         section(`about-${k}`, "imageText", {
-          eyebrow: tr((d) => d.about[k].title),
-          title: tr((d) => d.about[k].headline),
-          accent: tr((d) => d.about[k].accent),
-          lead: tr((d) => d.about[k].lead),
-          body: tr((d) => d.about[k].body),
-          points: vi.about[k].points.map((_, j) => ({ text: tr((d) => d.about[k].points[j]) })),
-          image: pic(i === 0 ? "macadamiaSpoon" : "cashewTreeSky"),
-          imageSide: i === 0 ? "right" : "left",
+          layout: "stacked",
+          eyebrow: tr(() => "VSAP / VSAP.COM.VN"),
+          title: tr((d) => d.about[k].title),
+          accent: blank(),
+          lead: tr((d) => d.about[k].subtitle),
+          body: tr((d) => `${d.about[k].lead}\n\n${d.about[k].body}`),
+          points: vi.about[k].points.map((_, j) => ({ text: tr((d) => d.about[k].points[j]), art: aboutArt[k][j] })),
+          tagline: k === "vision" ? tr((d) => d.about.vision.tagline) : blank(),
+          image: pic("nutBowls"),
+          imageSide: "left",
           buttonLabel: blank(),
           buttonHref: "",
           tone: "white",

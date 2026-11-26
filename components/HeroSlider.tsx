@@ -8,6 +8,9 @@ import { Button, Tag } from "./ui";
 
 const pad = (n: number) => String(n).padStart(2, "0");
 
+/** Viewports that get a slide's mobile image (below Tailwind's md). */
+const MOBILE = "(max-width: 767px)";
+
 type Img = { src: string; alt: string };
 
 export type HeroSlide = {
@@ -17,6 +20,8 @@ export type HeroSlide = {
   accent: string;
   lead: string;
   image: Img;
+  /** Shown below 768px instead of `image` when set (a portrait crop for phones). */
+  mobileImage?: Img;
   buttonLabel: string;
   buttonHref: string;
   secondaryLabel: string;
@@ -227,20 +232,21 @@ export function HeroSlider({ slides, autoplay: AUTOPLAY, scrollLabel, rankValue,
             aria-hidden={i !== index}
             className={`absolute inset-0 overflow-hidden ${i === 0 ? "" : "invisible"}`}
           >
-            <img
-              src={s.image.src}
-              srcSet={srcSetFor(s.image.src)}
-              sizes="100vw"
-              alt={s.image.alt}
-              loading={i === 0 ? "eager" : "lazy"}
-              fetchPriority={i === 0 ? "high" : undefined}
-              decoding="async"
-              className="size-full object-cover will-change-transform"
-            />
+            <picture className="contents">
+              {s.mobileImage?.src && <source media={MOBILE} srcSet={srcSetFor(s.mobileImage.src) ?? s.mobileImage.src} sizes="100vw" />}
+              <img
+                src={s.image.src}
+                srcSet={srcSetFor(s.image.src)}
+                sizes="100vw"
+                alt={s.image.alt}
+                loading={i === 0 ? "eager" : "lazy"}
+                fetchPriority={i === 0 ? "high" : undefined}
+                decoding="async"
+                className="size-full object-cover will-change-transform"
+              />
+            </picture>
           </div>
         ))}
-        <div className="absolute inset-0 z-[3] bg-gradient-to-t from-black/65 via-black/10 to-black/30" />
-        <div className="absolute inset-0 z-[3] bg-gradient-to-r from-black/40 to-transparent" />
       </div>
 
       <div className="container-page flex flex-1 flex-col justify-end pb-10 pt-32 lg:pb-12">
