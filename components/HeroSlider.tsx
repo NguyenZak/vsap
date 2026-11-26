@@ -41,12 +41,12 @@ type Props = {
   labels: { prev: string; next: string; pause: string; play: string; slide: string };
 };
 
-type Controls = { go: (to: number, dir: number) => void; sync: () => void };
+type Controls = { go: (to: number) => void; sync: () => void };
 
 /**
- * Full-screen hero carousel. GSAP drives everything: a clip-path wipe between
- * photos with a slow Ken Burns zoom, masked line-by-line title reveals, and a
- * progress bar per slide that doubles as the autoplay timer. Autoplay pauses on
+ * Full-screen hero carousel. The photos stay still (no zoom or slide, so banners
+ * with text baked in are never cropped further); slides cross-fade, and a
+ * progress bar per slide doubles as the autoplay timer. Autoplay pauses on
  * keyboard focus, a hidden tab or the pause button (not on mouse hover: the hero
  * fills the screen, so the pointer is almost always over it), and is off entirely
  * for visitors who prefer reduced motion.
@@ -67,38 +67,23 @@ export function HeroSlider({ slides, autoplay: AUTOPLAY, scrollLabel, rankValue,
       const medias = q<HTMLElement>("[data-media]");
       const texts = q<HTMLElement>("[data-text]");
       const bars = q<HTMLElement>("[data-bar]");
-      const img = (el: HTMLElement) => el.querySelector("img");
-      const lines = (el: HTMLElement) => el.querySelectorAll("[data-line]");
-      const fades = (el: HTMLElement) => el.querySelectorAll("[data-fade]");
       const reduce = prefersReducedMotion();
 
-      // Take over from the CSS failsafe that keeps intro elements hidden until JS runs.
-      q("[data-intro]").forEach((el) => el.removeAttribute("data-intro"));
       if (reduce || n < 2) setAutoplay(false);
 
       let current = 0;
       let busy: gsap.core.Timeline | null = null;
       let timer: gsap.core.Tween | null = null;
-      let zoom: gsap.core.Tween | null = null;
 
       const sync = () => {
         const f = flags.current;
         const hold = f.focus || f.user || document.hidden;
-        if (hold) {
-          timer?.pause();
-          zoom?.pause();
-        } else {
-          timer?.resume();
-          zoom?.resume();
-        }
+        if (hold) timer?.pause();
+        else timer?.resume();
       };
 
-      const kenBurns = (el: HTMLElement, delay: number) => {
-        zoom?.kill();
-        if (!reduce) zoom = gsap.to(img(el), { scale: 1, duration: AUTOPLAY + 2, ease: "none", delay });
-      };
-
-      const go = contextSafe!((to: number, dir: number) => {
+      // No zoom, slide or text reveal: photos stay still at their full frame and slides just cross-fade.
+      const go = contextSafe!((to: number) => {
         if (to === current) return;
         busy?.progress(1);
         const from = current;
@@ -109,41 +94,20 @@ export function HeroSlider({ slides, autoplay: AUTOPLAY, scrollLabel, rankValue,
         const [fromMedia, toMedia] = [medias[from], medias[to]];
         const [fromText, toText] = [texts[from], texts[to]];
         gsap.set(fromMedia, { zIndex: 1 });
-        gsap.set(toMedia, { zIndex: 2, visibility: "visible" });
-        gsap.set(toText, { visibility: "visible" });
+        gsap.set(toMedia, { zIndex: 2 });
 
         busy = gsap
           .timeline({
-            defaults: { ease: "power3.inOut" },
+            defaults: { ease: "power1.inOut" },
             onComplete: () => {
-              gsap.set([fromMedia, fromText], { visibility: "hidden" });
+              gsap.set([fromMedia, fromText], { autoAlpha: 0 });
               busy = null;
             },
           })
-          .fromTo(
-            toMedia,
-            { clipPath: dir > 0 ? "inset(0% 0% 0% 100%)" : "inset(0% 100% 0% 0%)" },
-            { clipPath: "inset(0% 0% 0% 0%)", duration: 1.3 * m },
-            0,
-          )
-          .fromTo(img(toMedia), { scale: 1.3, xPercent: 6 * dir }, { scale: 1.12, xPercent: 0, duration: 1.3 * m }, 0)
-          .to(img(fromMedia), { xPercent: -8 * dir, duration: 1.3 * m }, 0)
-          .to(lines(fromText), { yPercent: -110, duration: 0.55 * m, stagger: 0.05, ease: "power2.in" }, 0)
-          .to(fades(fromText), { autoAlpha: 0, y: -12, duration: 0.4 * m, stagger: 0.04, ease: "power2.in" }, 0)
-          .fromTo(
-            lines(toText),
-            { yPercent: 110 },
-            { yPercent: 0, duration: 1 * m, stagger: 0.09, ease: "power4.out" },
-            0.55 * m,
-          )
-          .fromTo(
-            fades(toText),
-            { autoAlpha: 0, y: 18 },
-            { autoAlpha: 1, y: 0, duration: 0.8 * m, stagger: 0.08, ease: "power3.out" },
-            0.7 * m,
-          );
+          .fromTo(toMedia, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.7 * m }, 0)
+          .to(fromText, { autoAlpha: 0, duration: 0.3 * m }, 0)
+          .fromTo(toText, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.4 * m }, 0.3 * m);
 
-        kenBurns(toMedia, 1.3 * m);
         startTimer(to);
       });
 
@@ -155,32 +119,12 @@ export function HeroSlider({ slides, autoplay: AUTOPLAY, scrollLabel, rankValue,
         timer = gsap.fromTo(
           bars[i],
           { scaleX: 0 },
-          { scaleX: 1, duration: AUTOPLAY, ease: "none", onComplete: () => go((i + 1) % n, 1) },
+          { scaleX: 1, duration: AUTOPLAY, ease: "none", onComplete: () => go((i + 1) % n) },
         );
         sync();
       };
 
-      gsap.set([...medias.slice(1), ...texts.slice(1)], { visibility: "hidden" });
-
-      if (!reduce) {
-        gsap
-          .timeline({ defaults: { ease: "power4.out" } })
-          .fromTo(img(medias[0]), { scale: 1.35 }, { scale: 1.12, duration: 2, ease: "power3.out" }, 0)
-          .fromTo(lines(texts[0]), { yPercent: 110 }, { yPercent: 0, duration: 1.2, stagger: 0.12 }, 0.25)
-          .fromTo(
-            fades(texts[0]),
-            { autoAlpha: 0, y: 18 },
-            { autoAlpha: 1, y: 0, duration: 0.9, stagger: 0.08, ease: "power3.out" },
-            0.5,
-          )
-          .fromTo(
-            q("[data-chrome]"),
-            { autoAlpha: 0, y: 16 },
-            { autoAlpha: 1, y: 0, duration: 0.8, stagger: 0.08, ease: "power3.out" },
-            0.8,
-          );
-        kenBurns(medias[0], 2);
-      }
+      gsap.set([...medias.slice(1), ...texts.slice(1)], { autoAlpha: 0 });
       startTimer(0);
 
       controls.current = { go, sync };
@@ -190,22 +134,22 @@ export function HeroSlider({ slides, autoplay: AUTOPLAY, scrollLabel, rankValue,
     { scope: root },
   );
 
-  const go = (to: number, dir: number) => controls.current.go(((to % n) + n) % n, dir);
+  const go = (to: number) => controls.current.go(((to % n) + n) % n);
   const hold = (key: "focus" | "user", value: boolean) => {
     flags.current[key] = value;
     controls.current.sync();
   };
 
   const onKeyDown = (e: KeyboardEvent) => {
-    if (e.key === "ArrowRight") go(index + 1, 1);
-    if (e.key === "ArrowLeft") go(index - 1, -1);
+    if (e.key === "ArrowRight") go(index + 1);
+    if (e.key === "ArrowLeft") go(index - 1);
   };
   const onTouchStart = (e: TouchEvent) => (touchX.current = e.touches[0].clientX);
   const onTouchEnd = (e: TouchEvent) => {
     if (touchX.current === null) return;
     const dx = e.changedTouches[0].clientX - touchX.current;
     touchX.current = null;
-    if (Math.abs(dx) > 50) go(index + (dx < 0 ? 1 : -1), dx < 0 ? 1 : -1);
+    if (Math.abs(dx) > 50) go(index + (dx < 0 ? 1 : -1));
   };
 
   const round =
@@ -242,7 +186,7 @@ export function HeroSlider({ slides, autoplay: AUTOPLAY, scrollLabel, rankValue,
                 loading={i === 0 ? "eager" : "lazy"}
                 fetchPriority={i === 0 ? "high" : undefined}
                 decoding="async"
-                className="size-full object-cover will-change-transform"
+                className="size-full object-cover"
               />
             </picture>
           </div>
@@ -254,7 +198,6 @@ export function HeroSlider({ slides, autoplay: AUTOPLAY, scrollLabel, rankValue,
           <div className="grid">
             {slides.map((s, i) => {
               const Heading = i === 0 ? "h1" : "h2";
-              const intro = i === 0 || undefined;
               return (
                 <div
                   key={i}
@@ -267,7 +210,7 @@ export function HeroSlider({ slides, autoplay: AUTOPLAY, scrollLabel, rankValue,
                   className={`[grid-area:1/1] ${i === 0 ? "" : "invisible"}`}
                 >
                   {s.eyebrow && (
-                    <div data-fade data-intro={intro} className="mb-5">
+                    <div className="mb-5">
                       <Tag tone="glass">{s.eyebrow}</Tag>
                     </div>
                   )}
@@ -276,19 +219,19 @@ export function HeroSlider({ slides, autoplay: AUTOPLAY, scrollLabel, rankValue,
                   {(s.title || s.accent) && (
                   <Heading className="heading max-w-5xl text-[1.875rem] text-white sm:text-6xl lg:text-7xl">
                     <span className="-mt-[0.15em] block overflow-hidden pt-[0.15em] pb-[0.04em]">
-                      <span data-line data-intro={intro} className="block">
+                      <span className="block">
                         {s.title}
                       </span>
                     </span>
                     <span className="-mt-[0.15em] -mb-[0.1em] block overflow-hidden pt-[0.15em] pb-[0.14em]">
-                      <span data-line data-intro={intro} className="accent block text-[1.1em] leading-[1] text-sun-400">
+                      <span className="accent block text-[1.1em] leading-[1] text-sun-400">
                         {s.accent}
                       </span>
                     </span>
                   </Heading>
                   )}
                   {((s.buttonLabel && s.buttonHref) || (s.secondaryLabel && s.secondaryHref)) && (
-                  <div data-fade data-intro={intro} className="mt-7 flex flex-wrap gap-3">
+                  <div className="mt-7 flex flex-wrap gap-3">
                     {s.buttonLabel && s.buttonHref && <Button href={s.buttonHref}>{s.buttonLabel}</Button>}
                     {s.secondaryLabel && s.secondaryHref && (
                       <Button href={s.secondaryHref} variant="glass">
@@ -302,7 +245,7 @@ export function HeroSlider({ slides, autoplay: AUTOPLAY, scrollLabel, rankValue,
             })}
           </div>
 
-          <div data-chrome data-intro className={`flex shrink-0 items-center gap-2.5 ${n < 2 ? "hidden" : ""}`}>
+          <div className={`flex shrink-0 items-center gap-2.5 ${n < 2 ? "hidden" : ""}`}>
             <p className="mr-2 text-white tabular-nums" aria-hidden="true">
               <span className="text-3xl font-medium tracking-tight">{pad(index + 1)}</span>
               <span className="text-sm text-white/60"> / {pad(n)}</span>
@@ -320,23 +263,23 @@ export function HeroSlider({ slides, autoplay: AUTOPLAY, scrollLabel, rankValue,
                 {paused ? <Play className="size-4" /> : <Pause className="size-4" />}
               </button>
             )}
-            <button type="button" className={round} aria-label={labels.prev} onClick={() => go(index - 1, -1)}>
+            <button type="button" className={round} aria-label={labels.prev} onClick={() => go(index - 1)}>
               <ArrowLeft className="size-4" />
             </button>
-            <button type="button" className={round} aria-label={labels.next} onClick={() => go(index + 1, 1)}>
+            <button type="button" className={round} aria-label={labels.next} onClick={() => go(index + 1)}>
               <ArrowRight className="size-4" />
             </button>
           </div>
         </div>
       </div>
 
-      <div className="container-page" data-chrome data-intro>
+      <div className="container-page">
         <div className={`grid gap-2 ${n < 2 ? "hidden" : ""}`} style={{ gridTemplateColumns: `repeat(${n}, minmax(0, 1fr))` }}>
           {slides.map((s, i) => (
             <button
               key={i}
               type="button"
-              onClick={() => go(i, i > index ? 1 : -1)}
+              onClick={() => go(i)}
               aria-label={`${labels.slide} ${i + 1}: ${s.label}`}
               aria-current={i === index || undefined}
               className="group pt-1 pb-3 text-left"
@@ -361,7 +304,7 @@ export function HeroSlider({ slides, autoplay: AUTOPLAY, scrollLabel, rankValue,
             className={`inline-flex shrink-0 items-center gap-2 text-xs whitespace-nowrap uppercase tracking-wider sm:text-sm ${scrollLabel ? "" : "invisible"}`}
           >
             {scrollLabel}
-            <ArrowDown className="size-4 animate-bounce" />
+            <ArrowDown className="size-4" />
           </button>
           <div className="flex items-center gap-3 sm:gap-4">
             {(rankValue || rankLabel) && (
