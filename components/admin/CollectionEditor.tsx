@@ -5,7 +5,7 @@ import { ChevronDown, ChevronUp, Copy, GripVertical, Plus, Trash2 } from "lucide
 import type { FieldDef } from "@/lib/cms/fields";
 import { FieldForm } from "./fields";
 import { Panel } from "./PageEditor";
-import { Pane, PaneHandle } from "./Panes";
+import { Pane, PaneHandle, useMobilePane } from "./Panes";
 
 type Path = (string | number)[];
 
@@ -45,6 +45,7 @@ export function CollectionEditor<T extends object>({
   header?: (item: T) => React.ReactNode;
 }) {
   const [drag, setDrag] = useState<number | null>(null);
+  const pane = useMobilePane();
   const current = items[selected];
   const move = (from: number, to: number) => {
     if (to < 0 || to >= items.length || from === to) return;
@@ -82,11 +83,11 @@ export function CollectionEditor<T extends object>({
                   {thumb(item) && <img src={thumb(item)} alt="" className="size-full object-cover" />}
                 </span>
               )}
-              <button type="button" onClick={() => onSelect(i)} className="min-w-0 flex-1 text-left">
+              <button type="button" onClick={() => { onSelect(i); pane.show("editor"); }} className="min-w-0 flex-1 text-left">
                 <span className="block truncate text-sm text-ink-900">{label(item) || "(chưa đặt tên)"}</span>
                 {sublabel && <span className="block truncate text-xs text-ink-400">{sublabel(item)}</span>}
               </button>
-              <div className={`flex ${i === selected ? "" : "opacity-0 group-hover:opacity-100"}`}>
+              <div className={`flex ${i === selected ? "" : "opacity-0 group-hover:opacity-100 max-lg:opacity-100"}`}>
                 <button type="button" title="Lên" onClick={() => move(i, i - 1)} disabled={i === 0} className="rounded p-1 text-ink-400 hover:bg-mist-100 disabled:opacity-30">
                   <ChevronUp className="size-3.5" />
                 </button>
@@ -104,6 +105,7 @@ export function CollectionEditor<T extends object>({
             onClick={() => {
               onItems([...items, newItem()]);
               onSelect(items.length);
+              pane.show("editor");
             }}
             className="flex w-full items-center justify-center gap-2 rounded-lg bg-forest-900 py-2.5 text-sm font-medium text-white hover:bg-forest-800"
           >

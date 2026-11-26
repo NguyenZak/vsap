@@ -175,7 +175,7 @@ export function SectionList({
                   <span className="block truncate text-sm text-ink-900">{def?.label ?? s.type}</span>
                   <span className="block truncate text-xs text-ink-400">{sectionSummary(s) || " "}</span>
                 </button>
-                <div className={`flex items-center ${active ? "" : "opacity-0 group-hover:opacity-100"}`}>
+                <div className={`flex items-center ${active ? "" : "opacity-0 group-hover:opacity-100 max-lg:opacity-100"}`}>
                   <button
                     type="button"
                     title={s.hidden ? "Hiện section" : "Ẩn section"}

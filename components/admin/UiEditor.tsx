@@ -4,7 +4,7 @@ import { useState } from "react";
 import type { UiStrings } from "@/lib/cms/types";
 import { locales, type Locale } from "@/lib/locales";
 import { Panel } from "./PageEditor";
-import { Pane, PaneHandle } from "./Panes";
+import { Pane, PaneHandle, useMobilePane } from "./Panes";
 
 type Path = (string | number)[];
 
@@ -215,6 +215,7 @@ function Rows({ byLang, path, onChange }: { byLang: Record<Locale, Strings>; pat
 export function UiEditor({ ui, onChange, initialGroup = "nav" }: { ui: Record<Locale, UiStrings>; onChange: (path: Path, v: unknown) => void; initialGroup?: keyof UiStrings }) {
   const keys = Object.keys(groups) as (keyof UiStrings)[];
   const [group, setGroup] = useState<keyof UiStrings>(initialGroup);
+  const pane = useMobilePane();
   return (
     <>
       <Pane id="list" defaultSize="16rem" minSize="12rem" maxSize="28rem" className="bg-white">
@@ -224,7 +225,7 @@ export function UiEditor({ ui, onChange, initialGroup = "nav" }: { ui: Record<Lo
         </div>
         <nav className="space-y-0.5 p-3">
           {keys.map((k) => (
-            <button key={k} type="button" onClick={() => setGroup(k)} className={`block w-full rounded-lg px-3 py-2 text-left text-sm ${group === k ? "bg-forest-900 text-white" : "text-ink-900 hover:bg-mist-100"}`}>
+            <button key={k} type="button" onClick={() => { setGroup(k); pane.show("editor"); }} className={`block w-full rounded-lg px-3 py-2 text-left text-sm ${group === k ? "bg-forest-900 text-white" : "text-ink-900 hover:bg-mist-100"}`}>
               {groups[k]}
             </button>
           ))}

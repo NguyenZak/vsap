@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Loader2, Mail, MapPin, MessageCircle, Phone, ReceiptText, RefreshCw, Search, ShoppingCart, Trash2, User } from "lucide-react";
 import { orderStatuses, orderStatusInfo, type Order, type OrderStatus } from "@/lib/cms/order-format";
 import { api, formatTime } from "./api";
-import { Pane, PaneHandle } from "./Panes";
+import { Pane, PaneHandle, useMobilePane } from "./Panes";
 
 const statusTone: Record<OrderStatus, string> = {
   new: "bg-sun-400 text-forest-950",
@@ -31,6 +31,7 @@ export function OrdersView({ onCounts }: { onCounts?: (c: Record<OrderStatus, nu
   const [counts, setCounts] = useState<Record<OrderStatus, number> | null>(null);
   // A Telegram alert links to /admin?view=orders&id=… to open that order directly.
   const [selected, setSelected] = useState<number | null>(() => (typeof window === "undefined" ? null : Number(new URLSearchParams(location.search).get("id")) || null));
+  const pane = useMobilePane();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const selectedRef = useRef<number | null>(null);
@@ -134,7 +135,7 @@ export function OrdersView({ onCounts }: { onCounts?: (c: Record<OrderStatus, nu
           )}
           {items?.map((o) => (
             <li key={o.id} className="border-b border-mist-200">
-              <button type="button" onClick={() => setSelected(o.id)} className={`block w-full px-4 py-3 text-left transition ${selected === o.id ? "bg-sun-400/15" : "hover:bg-mist-50"}`}>
+              <button type="button" onClick={() => { setSelected(o.id); pane.show("detail"); }} className={`block w-full px-4 py-3 text-left transition ${selected === o.id ? "bg-sun-400/15" : "hover:bg-mist-50"}`}>
                 <span className="flex items-center gap-2">
                   {o.status === "new" && <span className="size-2 shrink-0 rounded-full bg-forest-600" aria-label="Mới" />}
                   <span className={`min-w-0 flex-1 truncate text-sm ${o.status === "new" ? "font-semibold text-ink-900" : "text-ink-900"}`}>

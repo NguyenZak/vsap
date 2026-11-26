@@ -63,7 +63,7 @@ import type { L, PageId, Partner, Policy, PostCategory, Product, RetailPack, Sec
 import { api, formatTime, type Me } from "./api";
 import { CollectionEditor } from "./CollectionEditor";
 import { FieldData, FieldForm, LinkSuggestions } from "./fields";
-import { Pane, PaneHandle, Panes } from "./Panes";
+import { MobileProvider, Pane, PaneHandle, Panes, useIsMobile } from "./Panes";
 import { Panel, SectionInspector, SectionList } from "./PageEditor";
 import { Preview, type PreviewHandle } from "./Preview";
 import { SeoPreview } from "./SeoPreview";
@@ -147,6 +147,10 @@ export function Studio() {
   const [newOrders, setNewOrders] = useState(0);
   // Website hidden behind "Coming soon" (Cài đặt › Hiển thị website): shown as a badge in the top bar.
   const [siteHidden, setSiteHidden] = useState(false);
+  // Phones and portrait tablets: one column at a time and the nav in a drawer (see Panes).
+  const mobile = useIsMobile();
+  const [navOpen, setNavOpen] = useState(false);
+  const [mobilePane, setMobilePane] = useState<string | null>(null);
   // Opening Chữ giao diện from that setting lands on the Coming soon strings.
   const [uiGroup, setUiGroup] = useState<"nav" | "comingSoon">("nav");
   const preview = useRef<PreviewHandle>(null);
@@ -388,6 +392,8 @@ export function Studio() {
     setView(v);
     setSelected(null);
     setItemIndex(0);
+    setMobilePane(null);
+    setNavOpen(false);
   };
 
   // What the preview shows for the current view.
@@ -410,130 +416,8 @@ export function Studio() {
     fonts: fontChoices(content?.theme.fonts ?? []),
   };
 
-  return (
-    <FieldData.Provider value={fieldData}>
-    <div className="flex h-dvh flex-col bg-mist-50 text-ink-900">
-      <div className="fixed inset-0 z-[120] flex items-center justify-center bg-white p-8 text-center lg:hidden">
-        <div>
-          <img src="/logo.svg" alt="VSAP" className="mx-auto h-10 w-auto" />
-          <p className="mt-5 font-medium text-ink-900">VSAP Studio cần màn hình rộng hơn</p>
-          <p className="mt-1 text-sm text-ink-600">Vui lòng mở trên máy tính hoặc máy tính bảng xoay ngang (từ 1024px).</p>
-        </div>
-      </div>
-      {content && <LinkSuggestions extra={[...content.products.map((p) => `/products/${p.slug}`), ...content.categories.map((c) => `/${c.slug}`)]} />}
-
-      {/* Top bar */}
-      <header className="flex h-14 shrink-0 items-center gap-3 border-b border-mist-200 bg-white px-4">
-        <img src="/logo.svg" alt="VSAP" className="h-8 w-auto" />
-        <span className="rounded-md bg-forest-900 px-2 py-0.5 text-[11px] font-semibold tracking-wider text-sun-400 uppercase">Studio</span>
-        {content && <SaveBadge state={save} error={saveError} hasDraft={hasDraft} canPublish={canPublish} />}
-        {siteHidden && (
-          <button
-            type="button"
-            onClick={can("site") ? openSystem : undefined}
-            disabled={!can("site")}
-            title="Khách chỉ thấy trang Sắp ra mắt. Tài khoản Studio vẫn xem được toàn bộ website."
-            className="inline-flex items-center gap-1.5 rounded-full bg-chili-600 px-2.5 py-1 text-xs font-medium text-white enabled:hover:bg-chili-600/90 disabled:cursor-default"
-          >
-            <EyeOff className="size-3.5" /> Website đang ẩn
-          </button>
-        )}
-        <div className="ml-auto flex items-center gap-1.5">
-          {content && canWrite && (
-            <>
-              <button type="button" title="Hoàn tác (Ctrl/Cmd + Z)" onClick={undo} disabled={!past.current.length} className="rounded-lg p-2 text-ink-600 hover:bg-mist-100 disabled:opacity-30">
-                <Undo2 className="size-4" />
-              </button>
-              <button type="button" title="Làm lại (Ctrl/Cmd + Shift + Z)" onClick={redo} disabled={!future.current.length} className="rounded-lg p-2 text-ink-600 hover:bg-mist-100 disabled:opacity-30">
-                <Redo2 className="size-4" />
-              </button>
-              <span className="mx-1 h-6 w-px bg-mist-200" />
-            </>
-          )}
-          {content && <span className="hidden text-xs text-ink-400 xl:inline">Xuất bản lần cuối: {formatTime(publishedAt)}</span>}
-          {hasDraft && canPublish && (
-            <button type="button" onClick={doDiscard} className="rounded-lg px-3 py-2 text-sm text-ink-600 hover:bg-mist-100">
-              Bỏ thay đổi
-            </button>
-          )}
-          <a href={`/${locale}`} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm text-ink-600 hover:bg-mist-100">
-            <ExternalLink className="size-4" /> Xem website
-          </a>
-          {content && canPublish && (
-            <button
-              type="button"
-              onClick={() => setPublishOpen(true)}
-              disabled={!hasDraft && save !== "pending"}
-              className="inline-flex items-center gap-1.5 rounded-lg bg-sun-400 px-4 py-2 text-sm font-medium text-forest-950 transition hover:bg-sun-500 disabled:bg-mist-100 disabled:text-ink-400"
-            >
-              <Rocket className="size-4" /> Xuất bản
-            </button>
-          )}
-          <div className="relative ml-1">
-            <button
-              type="button"
-              onClick={() => setMenuOpen((o) => !o)}
-              aria-expanded={menuOpen}
-              aria-haspopup="menu"
-              className="flex items-center gap-2 rounded-lg py-1 pr-2 pl-1 hover:bg-mist-100"
-            >
-              <span className="flex size-8 items-center justify-center rounded-full bg-forest-900 text-xs font-semibold text-sun-400">
-                {me.user.name.trim().split(/\s+/).pop()?.[0]?.toUpperCase() ?? "?"}
-              </span>
-              <span className="hidden text-left leading-tight 2xl:block">
-                <span className="block text-xs font-medium text-ink-900">{me.user.name}</span>
-                <span className="block text-[11px] text-ink-400">{me.user.username}</span>
-              </span>
-            </button>
-            {menuOpen && (
-              <>
-                <div className="fixed inset-0 z-[90]" onClick={() => setMenuOpen(false)} />
-                <div role="menu" className="absolute top-full right-0 z-[95] mt-2 w-64 rounded-xl border border-mist-200 bg-white p-2 shadow-xl">
-                  <div className="px-2 py-2">
-                    <p className="text-sm font-medium text-ink-900">{me.user.name}</p>
-                    <p className="mt-0.5 flex items-center gap-2 text-xs text-ink-400">
-                      <span className="font-mono">{me.user.username}</span> <RoleBadge role={me.user.role} />
-                    </p>
-                  </div>
-                  <div className="my-1 h-px bg-mist-200" />
-                  {!me.user.owner && (
-                    <button
-                      type="button"
-                      role="menuitem"
-                      onClick={() => {
-                        setMenuOpen(false);
-                        setPasswordOpen(true);
-                      }}
-                      className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-sm text-ink-900 hover:bg-mist-100"
-                    >
-                      <KeyRound className="size-4 text-ink-600" /> Đổi mật khẩu
-                    </button>
-                  )}
-                  <button
-                    type="button"
-                    role="menuitem"
-                    onClick={async () => {
-                      await saveNow();
-                      await api.logout();
-                      location.href = "/admin/login";
-                    }}
-                    className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-sm text-ink-900 hover:bg-mist-100"
-                  >
-                    <LogOut className="size-4 text-ink-600" /> Đăng xuất
-                  </button>
-                </div>
-              </>
-            )}
-          </div>
-        </div>
-      </header>
-
-      <div className="flex min-h-0 flex-1">
-        {/* Shell: the nav rail and everything right of it; the rail can be dragged wider. */}
-        <Panes id="shell">
-        <Pane id="nav" defaultSize="4.5rem" minSize="4.5rem" maxSize="15rem" className="bg-white">
-        {/* Main nav: icon over label when narrow, icon beside label once dragged wider (container query). */}
-        <nav className="@container flex min-h-0 flex-1 flex-col items-stretch gap-1 overflow-y-auto py-3">
+  const navButtons = (
+    <>
           {nav
             .filter((n) => can(n.perm))
             .map((n) => {
@@ -556,14 +440,14 @@ export function Studio() {
                 </button>
               );
             })}
-        </nav>
-        </Pane>
-        <PaneHandle />
-        <Pane id="main" fill>
+    </>
+  );
+
+  const mainContent = (
         <div className="flex min-h-0 min-w-0 flex-1">
 
         {/* Editors: resizable columns (+ preview) for the multi-column views */}
-        <MaybePanes id={paneLayout(view.kind)}>
+        <MaybePanes id={paneLayout(view.kind)} mobileActive={mobilePane} onMobileActive={setMobilePane}>
         {view.kind === "page" && content && (
           <>
             <Pane id="list" defaultSize="18rem" minSize="12rem" maxSize="32rem" className="bg-white">
@@ -586,7 +470,8 @@ export function Studio() {
                 selected={selected}
                 onSelect={(id) => {
                   setSelected(id);
-                  if (id !== "seo") preview.current?.focus(id, true);
+                  if (mobile) setMobilePane("editor");
+                  else if (id !== "seo") preview.current?.focus(id, true);
                 }}
                 onChange={(sections: Section[]) => onField(["pages", view.id, "sections"], sections)}
               />
@@ -848,7 +733,8 @@ export function Studio() {
                   view.kind === "page"
                     ? (id) => {
                         setSelected(id);
-                        preview.current?.focus(id, false);
+                        if (mobile) setMobilePane("editor");
+                        else preview.current?.focus(id, false);
                       }
                     : undefined
                 }
@@ -858,9 +744,171 @@ export function Studio() {
         )}
         </MaybePanes>
         </div>
-        </Pane>
-        </Panes>
+  );
+
+  return (
+    <MobileProvider value={mobile}>
+    <FieldData.Provider value={fieldData}>
+    <div className="flex h-dvh flex-col bg-mist-50 text-ink-900">
+      {content && <LinkSuggestions extra={[...content.products.map((p) => `/products/${p.slug}`), ...content.categories.map((c) => `/${c.slug}`)]} />}
+
+      {/* Top bar */}
+      <header className="flex h-14 shrink-0 items-center gap-2 border-b border-mist-200 bg-white px-2 lg:gap-3 lg:px-4">
+        <button type="button" onClick={() => setNavOpen(true)} aria-label="Mở menu Studio" className="rounded-lg p-2 text-ink-900 hover:bg-mist-100 lg:hidden">
+          <MenuIcon className="size-5" />
+        </button>
+        <img src="/logo.svg" alt="VSAP" className="hidden h-8 w-auto sm:block" />
+        <span className="hidden rounded-md bg-forest-900 px-2 py-0.5 text-[11px] font-semibold tracking-wider text-sun-400 uppercase sm:inline">Studio</span>
+        <span className="min-w-0 truncate text-sm font-medium text-ink-900 lg:hidden">{nav.find((n) => n.kind === view.kind)?.label}</span>
+        {content && <SaveBadge state={save} error={saveError} hasDraft={hasDraft} canPublish={canPublish} />}
+        {siteHidden && (
+          <button
+            type="button"
+            onClick={can("site") ? openSystem : undefined}
+            disabled={!can("site")}
+            title="Khách chỉ thấy trang Sắp ra mắt. Tài khoản Studio vẫn xem được toàn bộ website."
+            className="inline-flex items-center gap-1.5 rounded-full bg-chili-600 px-2.5 py-1 text-xs font-medium text-white enabled:hover:bg-chili-600/90 disabled:cursor-default"
+          >
+            <EyeOff className="size-3.5" /> <span className="hidden sm:inline">Website đang ẩn</span>
+          </button>
+        )}
+        <div className="ml-auto flex shrink-0 items-center gap-1 lg:gap-1.5">
+          {content && canWrite && (
+            <span className="hidden items-center gap-1.5 lg:flex">
+              <button type="button" title="Hoàn tác (Ctrl/Cmd + Z)" onClick={undo} disabled={!past.current.length} className="rounded-lg p-2 text-ink-600 hover:bg-mist-100 disabled:opacity-30">
+                <Undo2 className="size-4" />
+              </button>
+              <button type="button" title="Làm lại (Ctrl/Cmd + Shift + Z)" onClick={redo} disabled={!future.current.length} className="rounded-lg p-2 text-ink-600 hover:bg-mist-100 disabled:opacity-30">
+                <Redo2 className="size-4" />
+              </button>
+              <span className="mx-1 h-6 w-px bg-mist-200" />
+            </span>
+          )}
+          {content && <span className="hidden text-xs text-ink-400 xl:inline">Xuất bản lần cuối: {formatTime(publishedAt)}</span>}
+          {hasDraft && canPublish && (
+            <button type="button" onClick={doDiscard} className="hidden rounded-lg px-3 py-2 text-sm text-ink-600 hover:bg-mist-100 lg:block">
+              Bỏ thay đổi
+            </button>
+          )}
+          <a href={`/${locale}`} target="_blank" rel="noreferrer" title="Xem website" className="inline-flex items-center gap-1.5 rounded-lg p-2 text-sm text-ink-600 hover:bg-mist-100 lg:px-3">
+            <ExternalLink className="size-4" /> <span className="hidden lg:inline">Xem website</span>
+          </a>
+          {content && canPublish && (
+            <button
+              type="button"
+              onClick={() => setPublishOpen(true)}
+              disabled={!hasDraft && save !== "pending"}
+              className="inline-flex items-center gap-1.5 rounded-lg bg-sun-400 px-3 py-2 text-sm font-medium text-forest-950 transition hover:bg-sun-500 disabled:bg-mist-100 disabled:text-ink-400 lg:px-4"
+            >
+              <Rocket className="size-4" /> Xuất bản
+            </button>
+          )}
+          <div className="relative ml-1">
+            <button
+              type="button"
+              onClick={() => setMenuOpen((o) => !o)}
+              aria-expanded={menuOpen}
+              aria-haspopup="menu"
+              className="flex items-center gap-2 rounded-lg py-1 pr-2 pl-1 hover:bg-mist-100"
+            >
+              <span className="flex size-8 items-center justify-center rounded-full bg-forest-900 text-xs font-semibold text-sun-400">
+                {me.user.name.trim().split(/\s+/).pop()?.[0]?.toUpperCase() ?? "?"}
+              </span>
+              <span className="hidden text-left leading-tight 2xl:block">
+                <span className="block text-xs font-medium text-ink-900">{me.user.name}</span>
+                <span className="block text-[11px] text-ink-400">{me.user.username}</span>
+              </span>
+            </button>
+            {menuOpen && (
+              <>
+                <div className="fixed inset-0 z-[90]" onClick={() => setMenuOpen(false)} />
+                <div role="menu" className="absolute top-full right-0 z-[95] mt-2 w-64 max-w-[calc(100vw-1rem)] rounded-xl border border-mist-200 bg-white p-2 shadow-xl">
+                  <div className="px-2 py-2">
+                    <p className="text-sm font-medium text-ink-900">{me.user.name}</p>
+                    <p className="mt-0.5 flex items-center gap-2 text-xs text-ink-400">
+                      <span className="font-mono">{me.user.username}</span> <RoleBadge role={me.user.role} />
+                    </p>
+                  </div>
+                  <div className="my-1 h-px bg-mist-200" />
+                  {hasDraft && canPublish && (
+                    <button
+                      type="button"
+                      role="menuitem"
+                      onClick={() => {
+                        setMenuOpen(false);
+                        doDiscard();
+                      }}
+                      className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-sm text-ink-900 hover:bg-mist-100 lg:hidden"
+                    >
+                      <Undo2 className="size-4 text-ink-600" /> Bỏ thay đổi
+                    </button>
+                  )}
+                  {!me.user.owner && (
+                    <button
+                      type="button"
+                      role="menuitem"
+                      onClick={() => {
+                        setMenuOpen(false);
+                        setPasswordOpen(true);
+                      }}
+                      className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-sm text-ink-900 hover:bg-mist-100"
+                    >
+                      <KeyRound className="size-4 text-ink-600" /> Đổi mật khẩu
+                    </button>
+                  )}
+                  <button
+                    type="button"
+                    role="menuitem"
+                    onClick={async () => {
+                      await saveNow();
+                      await api.logout();
+                      location.href = "/admin/login";
+                    }}
+                    className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-sm text-ink-900 hover:bg-mist-100"
+                  >
+                    <LogOut className="size-4 text-ink-600" /> Đăng xuất
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      </header>
+
+      <div className="flex min-h-0 flex-1">
+        {mobile ? (
+          mainContent
+        ) : (
+          /* Shell: the nav rail and everything right of it; the rail can be dragged wider. */
+          <Panes id="shell">
+            <Pane id="nav" defaultSize="4.5rem" minSize="4.5rem" maxSize="15rem" className="bg-white">
+              {/* Main nav: icon over label when narrow, icon beside label once dragged wider (container query). */}
+              <nav className="@container flex min-h-0 flex-1 flex-col items-stretch gap-1 overflow-y-auto py-3">{navButtons}</nav>
+            </Pane>
+            <PaneHandle />
+            <Pane id="main" fill>
+              {mainContent}
+            </Pane>
+          </Panes>
+        )}
       </div>
+
+      {mobile && navOpen && (
+        <div className="fixed inset-0 z-[100]">
+          <div className="absolute inset-0 bg-black/40" onClick={() => setNavOpen(false)} />
+          <div className="absolute inset-y-0 left-0 flex w-72 max-w-[85vw] flex-col bg-white shadow-2xl">
+            <div className="flex h-14 shrink-0 items-center gap-2 border-b border-mist-200 px-3">
+              <img src="/logo.svg" alt="VSAP" className="h-7 w-auto" />
+              <span className="rounded-md bg-forest-900 px-2 py-0.5 text-[11px] font-semibold tracking-wider text-sun-400 uppercase">Studio</span>
+              <button type="button" onClick={() => setNavOpen(false)} aria-label="Đóng menu" className="ml-auto rounded-lg p-2 text-ink-600 hover:bg-mist-100">
+                <X className="size-5" />
+              </button>
+            </div>
+            {/* Always wide: the container query puts each icon beside its label. */}
+            <nav className="@container flex min-h-0 flex-1 flex-col items-stretch gap-1 overflow-y-auto py-3 [&>button]:py-2.5">{navButtons}</nav>
+          </div>
+        </div>
+      )}
 
       {publishOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm" onMouseDown={(e) => e.target === e.currentTarget && setPublishOpen(false)}>
@@ -909,6 +957,7 @@ export function Studio() {
       )}
     </div>
     </FieldData.Provider>
+    </MobileProvider>
   );
 }
 
@@ -926,25 +975,26 @@ function categoryIssues(categories: PostCategory[]): string {
 function SaveBadge({ state, error, hasDraft, canPublish }: { state: SaveState; error: string; hasDraft: boolean; canPublish: boolean }) {
   if (state === "error")
     return (
-      <span title={error} className="ml-2 inline-flex items-center gap-1.5 rounded-full bg-red-50 px-2.5 py-1 text-xs text-chili-600">
-        <AlertTriangle className="size-3.5" /> Lưu thất bại — {error}
+      <span title={error} className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-red-50 px-2.5 py-1 text-xs text-chili-600">
+        <AlertTriangle className="size-3.5" /> Lưu thất bại<span className="hidden lg:inline"> — {error}</span>
       </span>
     );
   if (state === "pending" || state === "saving")
     return (
-      <span className="ml-2 inline-flex items-center gap-1.5 rounded-full bg-mist-100 px-2.5 py-1 text-xs text-ink-600">
-        <Loader2 className="size-3.5 animate-spin" /> Đang lưu nháp…
+      <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-mist-100 px-2.5 py-1 text-xs text-ink-600">
+        <Loader2 className="size-3.5 animate-spin" /> <span className="hidden sm:inline">Đang lưu nháp…</span>
       </span>
     );
   if (hasDraft)
     return (
-      <span className="ml-2 inline-flex items-center gap-1.5 rounded-full bg-sun-500/10 px-2.5 py-1 text-xs text-ink-900">
-        <Check className="size-3.5 text-forest-600" /> Đã lưu nháp · {canPublish ? "chưa xuất bản" : "chờ Biên tập chính xuất bản"}
+      <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-sun-500/10 px-2.5 py-1 text-xs text-ink-900">
+        <Check className="size-3.5 text-forest-600" /> <span className="sm:hidden">Nháp</span>
+        <span className="hidden sm:inline">Đã lưu nháp · {canPublish ? "chưa xuất bản" : "chờ Biên tập chính xuất bản"}</span>
       </span>
     );
   return (
-    <span className="ml-2 inline-flex items-center gap-1.5 rounded-full bg-sun-400/30 px-2.5 py-1 text-xs text-forest-900">
-      <Check className="size-3.5" /> Đang khớp với website
+    <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-sun-400/30 px-2.5 py-1 text-xs text-forest-900">
+      <Check className="size-3.5" /> <span className="hidden sm:inline">Đang khớp với website</span>
     </span>
   );
 }
@@ -989,9 +1039,9 @@ const PANE_LAYOUTS: Partial<Record<View["kind"], string>> = {
 const paneLayout = (kind: View["kind"]) => PANE_LAYOUTS[kind] ?? null;
 
 /** Resizable columns for multi-column views; other views render straight into the row. */
-function MaybePanes({ id, children }: { id: string | null; children: React.ReactNode }) {
+function MaybePanes({ id, children, ...mobile }: { id: string | null; children: React.ReactNode; mobileActive: string | null; onMobileActive: (id: string) => void }) {
   return id ? (
-    <Panes key={id} id={id}>
+    <Panes key={id} id={id} {...mobile}>
       {children}
     </Panes>
   ) : (

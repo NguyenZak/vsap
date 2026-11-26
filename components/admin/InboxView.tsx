@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { BellRing, Building2, Download, Globe2, Inbox, Loader2, Mail, MessageCircle, Package, Phone, RefreshCw, Search, Trash2 } from "lucide-react";
 import { inquiryStatuses, inquiryStatusInfo, type Inquiry, type InquiryStatus } from "@/lib/cms/inquiry-format";
 import { api, formatTime, type TelegramStatus } from "./api";
-import { Pane, PaneHandle } from "./Panes";
+import { Pane, PaneHandle, useMobilePane } from "./Panes";
 
 const productLabel: Record<string, string> = { cashew: "Hạt điều", macadamia: "Hạt macca", other: "Khác" };
 
@@ -31,6 +31,7 @@ export function InboxView({ onCounts, onConfigure }: { onCounts?: (c: Record<Inq
   const [counts, setCounts] = useState<Record<InquiryStatus, number> | null>(null);
   // A Telegram alert links to /admin?view=inbox&id=… to open that request directly.
   const [selected, setSelected] = useState<number | null>(() => (typeof window === "undefined" ? null : Number(new URLSearchParams(location.search).get("id")) || null));
+  const pane = useMobilePane();
   const [telegram, setTelegram] = useState<TelegramStatus | null>(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -94,6 +95,7 @@ export function InboxView({ onCounts, onConfigure }: { onCounts?: (c: Record<Inq
 
   const open = (item: Inquiry) => {
     setSelected(item.id);
+    pane.show("detail");
     // Opening a new request means someone is on it.
     if (item.status === "new") setItemStatus(item, "processing");
   };

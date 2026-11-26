@@ -14,7 +14,7 @@ import { FieldData, FieldForm } from "./fields";
 import { Panel } from "./PageEditor";
 import { Preview, type PreviewHandle } from "./Preview";
 import { SeoPreview } from "./SeoPreview";
-import { Pane, PaneHandle } from "./Panes";
+import { Pane, PaneHandle, useMobilePane } from "./Panes";
 
 type Path = (string | number)[];
 type Save = "idle" | "pending" | "saving" | "saved" | "error";
@@ -35,6 +35,7 @@ export function PostsView({ settings, canWrite, canPublish, locale, onLocale }: 
   const [filter, setFilter] = useState("");
   const [error, setError] = useState("");
   const [selected, setSelected] = useState<string | null>(null);
+  const pane = useMobilePane();
   const [record, setRecord] = useState<PostRecord | null>(null);
   const [draft, setDraft] = useState<Post | null>(null);
   const [save, setSave] = useState<Save>("idle");
@@ -92,6 +93,7 @@ export function PostsView({ settings, canWrite, canPublish, locale, onLocale }: 
       if (!confirm("Bài đang sửa chưa lưu được. Vẫn chuyển bài khác và bỏ thay đổi đó?")) return;
     }
     setSelected(id);
+    pane.show("editor");
     setRecord(null);
     setDraft(null);
     try {
