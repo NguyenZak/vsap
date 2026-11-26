@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8" />
+<title>VSAP banner – Ăn ngon sống khỏe</title>
+<!-- Second VSAP hero banner, laid out after a retail rice-brand ad: product group on a crate
+     at the left, puffy two-line title, three raised cards and a "MUA NGAY" button at the right.
+     Render: Chrome headless, window 1920x1080 (#desktop) or 1080x1920 (#mobile). -->
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@800&family=Phudu:wght@800;900&display=block" rel="stylesheet" />
+<style>
+  * { margin: 0; box-sizing: border-box; }
+  html, body { background: #fff; overflow: hidden; }
+  #stage { position: relative; overflow: hidden; }
+  canvas { position: absolute; inset: 0; }
+  .abs { position: absolute; }
+  img.abs { display: block; }
+
+  /* Puffy lettering: extrusion, gradient face, gloss. */
+  .lt { position: absolute; white-space: nowrap; font-family: "Baloo 2", sans-serif; font-weight: 800; line-height: 1; letter-spacing: -.01em; }
+  .lt span { display: block; }
+  .lt span + span { position: absolute; left: 0; top: 0; }
+  .lt .o { color: transparent; filter: drop-shadow(0 .06em .07em rgba(30, 50, 10, .35)); }
+  .lt .h { -webkit-background-clip: text; background-clip: text; color: transparent;
+           background: linear-gradient(180deg, rgba(255,255,255,.75) 0%, rgba(255,255,255,.2) 22%, rgba(255,255,255,0) 32%); -webkit-background-clip: text; }
+  .lt .f { -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .orange .x { color: #d9640e; }
+  .orange .f { background: linear-gradient(180deg, #ffe36a 0%, #ffbe2e 35%, #ff9a1c 70%, #f2780f 100%); -webkit-background-clip: text; }
+  .green .x { color: #0f4d1d; }
+  .green .f { background: linear-gradient(180deg, #43a443 0%, #2a8a33 40%, #1b6d28 100%); -webkit-background-clip: text; }
+
+  /* Raised cream cards on a green slab. */
+  .card { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
+          border-radius: 28px; background: linear-gradient(180deg, #fffef6 0%, #f6efd6 100%);
+          box-shadow: inset 0 0 0 9px #fffef6, inset 0 0 0 11px #e4d9b2, 0 16px 0 #1f6d2a, 0 18px 0 #17561f, 0 30px 26px rgba(15, 50, 15, .35);
+          font-family: "Phudu", sans-serif; font-weight: 800; color: #1c6a29; line-height: .98; text-transform: uppercase; }
+  .card .sm { font-size: .5em; letter-spacing: .02em; margin-bottom: .12em; }
+  .btn { display: flex; align-items: center; justify-content: center; gap: .3em; border-radius: 30px;
+         background: linear-gradient(180deg, #fffef6 0%, #f6efd6 100%);
+         box-shadow: inset 0 0 0 8px #fffef6, inset 0 0 0 10px #e4d9b2, 0 16px 0 #1f6d2a, 0 18px 0 #17561f, 0 30px 26px rgba(15, 50, 15, .35);
+         font-family: "Phudu", sans-serif; font-weight: 900; color: #1c6a29; letter-spacing: .01em; }
+  .btn i { display: inline-flex; width: .9em; height: .9em; border-radius: 50%; background: #1c6a29; align-items: center; justify-content: center; }
+  .pack { filter: drop-shadow(0 20px 18px rgba(10, 40, 10, .38)); }
+</style>
+</head>
+<body>
+<div id="stage"><canvas id="c"></canvas></div>
+<script>
+const mobile = location.hash === "#mobile";
+const W = mobile ? 1080 : 1920, H = mobile ? 1920 : 1080;
+const stage = document.getElementById("stage");
+stage.style.width = W + "px"; stage.style.height = H + "px";
+const cv = document.getElementById("c"); cv.width = W; cv.height = H;
+const ctx = cv.getContext("2d");
+let seed = 11;
+const rnd = () => ((seed = (seed * 16807) % 2147483647) - 1) / 2147483646;
+const R = (a, b) => a + rnd() * (b - a);
+const pick = (a) => a[Math.floor(rnd() * a.length)];
+
+// ---------- Sky ----------
+const horizon = mobile ? H * .6 : H * .56;
+const sky = ctx.createLinearGradient(0, 0, 0, horizon);
+sky.addColorStop(0, "#7cc3ef"); sky.addColorStop(.6, "#b9e2f8"); sky.addColorStop(1, "#eef9ff");
+ctx.fillStyle = sky; ctx.fillRect(0, 0, W, H);
+function glow(x, y, r, c) {
+  const g = ctx.createRadialGradient(x, y, 0, x, y, r);
+  g.addColorStop(0, c); g.addColorStop(1, "rgba(255,255,255,0)");
+  ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+}
+glow(W * .5, horizon, W * .7, "rgba(255,255,255,.7)");
+function cloud(cx, cy, s, a = 1) {
+  ctx.save(); ctx.globalAlpha = a; ctx.filter = `blur(${Math.round(7 * s)}px)`;
+  for (let i = 0; i < 22; i++) {
+    const x = cx + R(-170, 170) * s, y = cy + R(-25, 30) * s, r = R(35, 80) * s;
+    const g = ctx.createRadialGradient(x, y, 0, x, y, r);
+    g.addColorStop(0, "rgba(255,255,255,.95)"); g.addColorStop(1, "rgba(255,255,255,0)");
+    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, r, 0, 7); ctx.fill();
+  }
+  ctx.restore();
+}
+(mobile
+  ? [[200, 150, 1.1, .8], [880, 260, 1.2, .8], [540, 1040, 1.4, .9], [150, 1080, 1, .8], [960, 1060, 1, .8]]
+  : [[160, 180, 1.2, .7], [760, 120, 1, .6], [1120, 520, 1.5, .9], [1650, 160, 1.3, .7], [420, 560, 1.2, .8], [1800, 560, 1.1, .8]]
+).forEach((c) => cloud(...c));
+
+// ---------- Lawn ----------
+const lawnY = mobile
+  ? (x) => horizon + 40 - (x / W) * 50 + Math.sin(x / 260) * 10
+  : (x) => horizon + 40 - Math.pow(x / W, 1.6) * 70 + Math.sin(x / 300) * 8;
+// Distant soft hill line.
+ctx.save(); ctx.filter = "blur(3px)";
+ctx.beginPath(); ctx.moveTo(0, H);
+for (let x = 0; x <= W; x += 6) ctx.lineTo(x, lawnY(x) - 18 + Math.sin(x / 120) * 6);
+ctx.lineTo(W, H); ctx.closePath(); ctx.fillStyle = "#a9d98a"; ctx.fill(); ctx.restore();
+ctx.beginPath(); ctx.moveTo(0, H);
+for (let x = 0; x <= W; x += 4) ctx.lineTo(x, lawnY(x));
+ctx.lineTo(W, H); ctx.closePath();
+const lg = ctx.createLinearGradient(0, horizon, 0, H);
+lg.addColorStop(0, "#9be05a"); lg.addColorStop(.35, "#6cc43a"); lg.addColorStop(1, "#3f9a25");
+ctx.fillStyle = lg; ctx.fill();
+ctx.save(); ctx.clip();
+// Mowed-lawn texture: fine short strokes, lighter far away.
+ctx.lineCap = "round";
+for (let i = 0; i < (mobile ? 42000 : 52000); i++) {
+  const x = R(0, W), top = lawnY(x), y = top + Math.pow(rnd(), 1.4) * (H - top);
+  const depth = (y - top) / (H - top), l = 2 + depth * 10 * R(.6, 1.2);
+  ctx.strokeStyle = pick(["#3f9a25", "#58b032", "#7cc84c", "#a6e06a", "#2f7d22"]);
+  ctx.globalAlpha = R(.25, .7); ctx.lineWidth = .8 + depth * 1.6;
+  ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + R(-1.5, 1.5) * depth * 3, y - l); ctx.stroke();
+}
+ctx.globalAlpha = 1;
+const sh = ctx.createLinearGradient(0, horizon, 0, H);
+sh.addColorStop(0, "rgba(230,255,200,.35)"); sh.addColorStop(.25, "rgba(230,255,200,0)"); sh.addColorStop(1, "rgba(10,60,10,.25)");
+ctx.fillStyle = sh; ctx.fillRect(0, 0, W, H);
+ctx.restore();
+
+// ---------- Helpers ----------
+function el(html, css) {
+  const d = document.createElement("div"); d.innerHTML = html.trim();
+  const n = d.firstChild; n.classList.add("abs"); Object.assign(n.style, css); stage.appendChild(n); return n;
+}
+const img = (src, css, cls = "") => el(`<img src="${src}" class="${cls}">`, css);
+function leafSVG(w, rot, blur = 0, dark = false) {
+  return el(`<svg width="${w}" height="${w * .6}" viewBox="-60 -36 120 72"><defs><linearGradient id="lf${w}${rot}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${dark ? "#4aa63a" : "#a8e45c"}"/><stop offset="1" stop-color="${dark ? "#1e6d22" : "#3d9a2a"}"/></linearGradient></defs>
+    <path d="M-55 0 C-25 -38 30 -34 56 0 C30 30 -25 34 -55 0Z" fill="url(#lf${w}${rot})"/><path d="M-55 0 Q0 -5 54 0" stroke="rgba(255,255,255,.5)" stroke-width="2.5" fill="none"/></svg>`,
+    { transform: `rotate(${rot}deg)`, filter: blur ? `blur(${blur}px)` : "none" });
+}
+// Wooden crate drawn as SVG.
+function crate(w, h) {
+  const plank = (y, ph, i) => `<rect x="${w * .07}" y="${y}" width="${w * .86}" height="${ph - 6}" rx="4" fill="url(#wood${i % 2})"/>
+    <rect x="${w * .07}" y="${y + ph - 8}" width="${w * .86}" height="3" fill="rgba(90,50,15,.35)"/>`;
+  const ph = h / 3;
+  return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}"><defs>
+    <linearGradient id="wood0" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f0c787"/><stop offset="1" stop-color="#d79a52"/></linearGradient>
+    <linearGradient id="wood1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e8b973"/><stop offset="1" stop-color="#cc8c45"/></linearGradient>
+    <linearGradient id="post" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#c98a45"/><stop offset=".5" stop-color="#e9b877"/><stop offset="1" stop-color="#b9783a"/></linearGradient></defs>
+    <rect width="${w}" height="${h}" rx="8" fill="#a8692d"/>
+    ${[0, 1, 2].map((i) => plank(i * ph + 3, ph, i)).join("")}
+    <rect x="0" y="0" width="${w * .08}" height="${h}" rx="6" fill="url(#post)"/>
+    <rect x="${w * .92}" y="0" width="${w * .08}" height="${h}" rx="6" fill="url(#post)"/>
+  </svg>`;
+}
+
+// ---------- Layout ----------
+const L = mobile
+  ? {
+      crate: { left: 150, top: 1400, w: 370, h: 240 },
+      packs: [
+        ["hex-macca.png", { left: "475px", top: "1095px", height: "540px" }],
+        ["box-cashew.png", { left: "200px", top: "1130px", height: "465px" }],
+        "crate",
+        ["pouch-cashew.png", { left: "335px", top: "1282px", height: "408px" }],
+        ["box-macca.png", { left: "650px", top: "1350px", height: "335px" }],
+      ],
+      bowl: { left: "70px", top: "1555px", width: "270px" },
+      nuts: { left: "800px", top: "1560px", width: "200px" },
+      t1: { cx: 540, top: 205, w: 760 }, t2small: { w: 220 }, t2big: { w: 480 }, t2top: 385, t2cx: 560,
+      cards: { top: 640, w: 236, h: 200, gap: 26, cx: 540, fs: 44 },
+      btn: { cx: 540, top: 915, w: 460, h: 104, fs: 58 },
+      leaves: [[60, 455, 120, -25, 0], [960, 1780, 300, -40, 6, true], [-40, -10, 260, 30, 5, true]],
+    }
+  : {
+      crate: { left: 140, top: 590, w: 470, h: 290 },
+      packs: [
+        ["hex-macca.png", { left: "540px", top: "215px", height: "620px" }],
+        ["box-cashew.png", { left: "215px", top: "290px", height: "520px" }],
+        "crate",
+        ["pouch-cashew.png", { left: "410px", top: "450px", height: "470px" }],
+        ["box-macca.png", { left: "740px", top: "545px", height: "375px" }],
+      ],
+      bowl: { left: "50px", top: "755px", width: "300px" },
+      nuts: { left: "950px", top: "800px", width: "190px" },
+      t1: { cx: 1480, top: 150, w: 720 }, t2small: { w: 200 }, t2big: { w: 460 }, t2top: 345, t2cx: 1500,
+      cards: { top: 590, w: 220, h: 200, gap: 30, cx: 1480, fs: 42 },
+      btn: { cx: 1480, top: 860, w: 450, h: 108, fs: 58 },
+      leaves: [[-30, -20, 300, 35, 6, true], [1760, 900, 320, -35, 7, true], [1180, 380, 110, -30, 0]],
+    };
+
+// Crate, packs (back to front), decor.
+L.packs.forEach((p) =>
+  p === "crate"
+    ? el(crate(L.crate.w, L.crate.h), { left: L.crate.left + "px", top: L.crate.top + "px", filter: "drop-shadow(0 18px 18px rgba(20,40,10,.35))" })
+    : img(p[0], p[1], "pack"),
+);
+img("cashew-bowl.webp", { ...L.bowl, filter: "drop-shadow(0 16px 16px rgba(20,40,10,.35))" });
+img("home_coll_1_banner.webp", { ...L.nuts, filter: "drop-shadow(0 12px 14px rgba(20,40,10,.35))" });
+
+// Cards and button.
+{
+  const C = L.cards, x0 = C.cx - (C.w * 3 + C.gap * 2) / 2;
+  const truck = `<svg width="2.6em" height="1.57em" viewBox="0 0 76 46"><g fill="#1c6a29"><rect x="16" y="4" width="36" height="26" rx="3"/><path d="M54 12h10l9 10v8H54z"/><circle cx="26" cy="36" r="7"/><circle cx="62" cy="36" r="7"/></g><circle cx="26" cy="36" r="3" fill="#fffef6"/><circle cx="62" cy="36" r="3" fill="#fffef6"/><g stroke="#1c6a29" stroke-width="4" stroke-linecap="round"><path d="M2 10h10M6 18h8M2 26h10"/></g></svg>`;
+  const cards = [
+    `<div class="card"><span>Hạt điều</span><span>rang củi</span></div>`,
+    `<div class="card"><span class="sm">Hạt macca</span><span style="font-size:1.45em">nứt vỏ</span></div>`,
+    `<div class="card"><span class="sm" style="margin-bottom:.25em">Giao tận nơi</span>${truck}</div>`,
+  ];
+  cards.forEach((html, i) => el(html, { left: x0 + i * (C.w + C.gap) + "px", top: C.top + "px", width: C.w + "px", height: C.h + "px", fontSize: C.fs + "px" }));
+  const B = L.btn;
+  el(`<div class="btn">MUA NGAY <i><svg width=".42em" height=".42em" viewBox="0 0 10 16"><path d="M2 2l6 6-6 6" stroke="#fffef6" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></i></div>`,
+    { left: B.cx - B.w / 2 + "px", top: B.top + "px", width: B.w + "px", height: B.h + "px", fontSize: B.fs + "px" });
+}
+
+L.leaves.forEach(([x, y, w, r, b, d]) => { const n = leafSVG(w, r, b, d); n.style.left = x + "px"; n.style.top = y + "px"; n.style.zIndex = 20; });
+
+// Title lettering, fitted to width once the font is in.
+async function lettering() {
+  await document.fonts.load('800 100px "Baloo 2"', "ĂN NGON sống Khỏe");
+  await document.fonts.load('800 40px "Phudu"', "MUA NGAY");
+  const make = (text, cls) => el(`<div class="lt ${cls}"><span class="o">${text}</span><span class="x">${text}</span><span class="f">${text}</span><span class="h">${text}</span></div>`, { fontSize: "100px" });
+  const fit = (n, w) => { n.style.fontSize = (100 * w / n.querySelector(".f").offsetWidth).toFixed(1) + "px"; };
+  const extrude = (n, color, steps) => {
+    const s = []; for (let i = 1; i <= steps; i++) s.push(`0 ${(i * .008).toFixed(3)}em 0 ${color}`);
+    n.querySelector(".x").style.textShadow = s.join(",");
+    n.querySelector(".o").style.textShadow = `0 ${(steps * .008 + .01).toFixed(3)}em .04em rgba(30,50,10,.35)`;
+  };
+  const t1 = make("ĂN NGON", "orange"); fit(t1, L.t1.w); extrude(t1, "#c9580b", 7);
+  t1.style.left = L.t1.cx - t1.offsetWidth / 2 + "px"; t1.style.top = L.t1.top + "px";
+  const small = make("sống", "green"); fit(small, L.t2small.w); extrude(small, "#0f4d1d", 6);
+  const big = make("Khỏe", "green"); fit(big, L.t2big.w); extrude(big, "#0f4d1d", 8);
+  const gap = 18, total = small.offsetWidth + gap + big.offsetWidth, x = L.t2cx - total / 2;
+  big.style.left = x + small.offsetWidth + gap + "px"; big.style.top = L.t2top + "px";
+  // "sống" sits low beside the big word, like the small "TỪ" in the reference.
+  small.style.left = x + "px"; small.style.top = L.t2top + big.offsetHeight - small.offsetHeight - big.offsetHeight * .1 + "px";
+}
+lettering().then(() => document.fonts.ready).then(() => Promise.all([...document.images].map((i) => i.decode().catch(() => {})))).then(() => (document.title = "ready"));
+</script>
+</body>
+</html>
