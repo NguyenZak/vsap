@@ -68,11 +68,15 @@ const valuesSection = (id: string) =>
 const processSection = (id: string) =>
   section(id, "process", {
     ...heading((d) => d.home.process),
+    layout: "journey",
+    summary: tr((d) => d.home.process.summary),
     autoplay: 1.5,
     location: tr((d) => d.home.process.location),
     steps: vi.process.map((_, i) => ({
       icon: stepIcons[i % stepIcons.length],
+      tag: tr((d) => d.process[i].tag),
       title: tr((d) => d.process[i].title),
+      short: tr((d) => d.process[i].short),
       body: tr((d) => d.process[i].body),
       image: pic(stepPhotos[i % stepPhotos.length]),
     })),

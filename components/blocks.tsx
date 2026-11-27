@@ -10,6 +10,7 @@ import type { CmsImage, L, PageStyle, Post, Section, SectionStyle, SiteContent, 
 import { HeroSlider } from "./HeroSlider";
 import { InquiryForm } from "./InquiryForm";
 import { FeaturedPost, PostGrid } from "./PostCards";
+import { ProcessJourney } from "./ProcessJourney";
 import { ProcessTabs } from "./ProcessTabs";
 import { ProductGrid } from "./shop/ProductGrid";
 import { toShopItem, visiblePacks } from "@/lib/shop";
@@ -315,13 +316,28 @@ const renderers: Record<string, Renderer> = {
 
   process(p, ctx) {
     const { t, img } = makeT(ctx);
-    const steps = list(p.steps).map((s) => ({ icon: str(s.icon), title: t(s.title), body: t(s.body), image: img(s.image) ?? { src: "", alt: "" } }));
+    const rows = list(p.steps);
+    const tabs = p.layout === "tabs";
     return (
       <div className="block-pad container-page">
         {heading(p, ctx)}
-        {steps.length > 0 && (
-          <div className={hasHeading(p, ctx) ? "mt-10" : ""}>
-            <ProcessTabs steps={steps} autoplay={num(p.autoplay, 1.5)} stepLabel={ctx.ui.common.step} location={t(p.location)} />
+        {rows.length > 0 && (
+          <div className={hasHeading(p, ctx) ? (tabs ? "mt-10" : "mt-12") : ""}>
+            {tabs ? (
+              <ProcessTabs
+                steps={rows.map((s) => ({ icon: str(s.icon), title: t(s.title), body: t(s.body), image: img(s.image) ?? { src: "", alt: "" } }))}
+                autoplay={num(p.autoplay, 1.5)}
+                stepLabel={ctx.ui.common.step}
+                location={t(p.location)}
+              />
+            ) : (
+              <ProcessJourney
+                steps={rows.map((s) => ({ icon: str(s.icon), tag: t(s.tag), title: t(s.title), short: t(s.short), body: t(s.body) }))}
+                stepLabel={ctx.ui.common.step}
+                brand={ctx.content.settings.name}
+                summary={t(p.summary) || t(p.eyebrow)}
+              />
+            )}
           </div>
         )}
       </div>
