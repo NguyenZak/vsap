@@ -1,6 +1,8 @@
 import { handle, json } from "@/lib/cms/api";
 import { orderStatusInfo } from "@/lib/cms/order-format";
 import { deleteOrder, listOrders, orderCounts, updateOrder } from "@/lib/cms/orders";
+import { forgetOrder, notifyOrderSubscribers, safely } from "@/lib/cms/push";
+import { getPublishedContent } from "@/lib/cms/store";
 import { audit } from "@/lib/cms/users";
 
 /** List orders (with counts per status). Sales staff handle orders with the same permission as quote requests. */
@@ -19,6 +21,17 @@ export async function PATCH(req: Request) {
     const { order, before } = await updateOrder(Number(id), { status, note }, user.username);
     if (before.status !== order.status) {
       await audit(user, "order.status", `#${order.id} ${order.data.customer.name}`, `${orderStatusInfo[before.status].label} → ${orderStatusInfo[order.status].label}`);
+      // Tell the customer, if they asked for updates after checkout.
+      const key = ({ confirmed: "orderConfirmed", shipping: "orderShipping", done: "orderDone", cancelled: "orderCancelled" } as const)[order.status as "confirmed"];
+      if (key) {
+        const { ui } = await getPublishedContent();
+        await safely(() =>
+          notifyOrderSubscribers(order.id, (locale) => {
+            const t = (ui[locale as keyof typeof ui] ?? ui.vi).push;
+            return { title: t.orderTitle.replace("{id}", String(order.id)), body: t[key], url: `/${locale in ui ? locale : "vi"}/products`, tag: `order-${order.id}` };
+          }),
+        );
+      }
     }
     return json({ order });
   });
@@ -29,6 +42,7 @@ export async function DELETE(req: Request) {
     const id = Number(new URL(req.url).searchParams.get("id"));
     if (!id) throw new Error("Missing id");
     await deleteOrder(id);
+    await safely(() => forgetOrder(id));
     await audit(user, "order.delete", `#${id}`);
     return json({ ok: true });
   });

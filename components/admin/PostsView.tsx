@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
-import { AlertTriangle, CalendarClock, Check, Loader2, Newspaper, Plus, Rocket, RotateCcw, Trash2, Undo2 } from "lucide-react";
+import { AlertTriangle, BellRing, CalendarClock, Check, Loader2, Newspaper, Plus, Rocket, RotateCcw, Trash2, Undo2 } from "lucide-react";
 import { postFields } from "@/lib/cms/collections";
 import { setIn } from "@/lib/cms/fields";
 import { channelOf, isScheduled, postPath, postProblem, slugify } from "@/lib/cms/post-format";
@@ -15,6 +15,7 @@ import { Panel } from "./PageEditor";
 import { Preview, type PreviewHandle } from "./Preview";
 import { SeoPreview } from "./SeoPreview";
 import { Pane, PaneHandle, useMobilePane } from "./Panes";
+import { sendPostPush } from "./PushViews";
 
 type Path = (string | number)[];
 type Save = "idle" | "pending" | "saving" | "saved" | "error";
@@ -292,6 +293,23 @@ export function PostsView({ settings, canWrite, canPublish, locale, onLocale }: 
                   {live && (
                     <button type="button" onClick={() => act("unpublish")} disabled={!!busy} className="inline-flex items-center gap-1.5 rounded-lg border border-mist-200 bg-white px-3 py-1.5 text-sm text-ink-900 hover:bg-mist-50">
                       <RotateCcw className="size-4" /> Gỡ khỏi website
+                    </button>
+                  )}
+                  {live && !isScheduled(record.published!) && (
+                    <button
+                      type="button"
+                      title="Gửi thông báo đẩy tới khách đã đăng ký nhận tin bài mới"
+                      onClick={async () => {
+                        try {
+                          const res = await sendPostPush(record.id, record.published!.title.vi || record.published!.title.en);
+                          if (res) alert(`Đã gửi tới ${res.sent} thiết bị${res.failed ? `, ${res.failed} thiết bị lỗi` : ""}.`);
+                        } catch (e) {
+                          alert((e as Error).message);
+                        }
+                      }}
+                      className="inline-flex items-center gap-1.5 rounded-lg border border-mist-200 bg-white px-3 py-1.5 text-sm text-ink-900 hover:bg-mist-50"
+                    >
+                      <BellRing className="size-4" /> Gửi thông báo
                     </button>
                   )}
                   {live && !changed && (

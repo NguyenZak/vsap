@@ -407,6 +407,7 @@ function ui(d: Dict): UiStrings {
       policyUpdated: d.footer.policyUpdated,
     },
     chat: { ...d.chat },
+    push: { ...d.push },
     comingSoon: { ...d.comingSoon },
     contactInfo: { ...d.contact.info },
     form: { ...d.contact.form, productOptions: { other: d.contact.form.productOptions.other } },

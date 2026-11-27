@@ -1,5 +1,6 @@
 import { handle, json } from "@/lib/cms/api";
 import { deletePost, getPostAdmin, savePostDraft } from "@/lib/cms/posts";
+import { alertDraftWaiting, safely } from "@/lib/cms/push";
 import { audit, recentlyLogged } from "@/lib/cms/users";
 
 type Ctx = { params: Promise<{ id: string }> };
@@ -16,6 +17,7 @@ export async function PUT(req: Request, { params }: Ctx) {
     const savedAt = await savePostDraft(id, body, user.username);
     const slug = String(body.slug ?? "");
     if (!(await recentlyLogged(user.username, "post.save", 15 * 60_000, slug))) await audit(user, "post.save", slug);
+    await safely(() => alertDraftWaiting(user, `bài “${slug}”`));
     return json({ savedAt });
   });
 }

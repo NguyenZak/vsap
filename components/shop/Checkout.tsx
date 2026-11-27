@@ -5,10 +5,12 @@ import { useEffect, useState } from "react";
 import { CheckCircle2, ShoppingBag, Trash2, Wallet } from "lucide-react";
 import { formatPrice } from "@/lib/shop";
 import type { Province } from "@/lib/vn-admin";
+import type { UiStrings } from "@/lib/cms/types";
+import { OrderPushOptIn } from "../PushOptIn";
 import { useShop } from "./CartProvider";
 import { QtyStepper } from "./Dialog";
 
-type State = { kind: "idle" } | { kind: "sending" } | { kind: "done"; id: number | null } | { kind: "error"; message: string };
+type State = { kind: "idle" } | { kind: "sending" } | { kind: "done"; id: number | null; token?: string } | { kind: "error"; message: string };
 
 const input =
   "mt-1.5 w-full rounded-xl border border-mist-200 bg-surface px-4 py-3 text-sm text-ink-900 outline-none transition placeholder:text-ink-400 focus:border-forest-600 focus:ring-2 focus:ring-forest-600/15";
@@ -16,7 +18,7 @@ const input =
 /** Cart review and delivery form; the order is priced again on the server. */
 type PolicyLink = { href: string; label: string } | null;
 
-export function Checkout({ terms, privacy }: { terms: PolicyLink; privacy: PolicyLink }) {
+export function Checkout({ terms, privacy, push }: { terms: PolicyLink; privacy: PolicyLink; push: UiStrings["push"] }) {
   const { t, locale, priced, subtotal, setQty, remove, clear, ready } = useShop();
   const [state, setState] = useState<State>({ kind: "idle" });
 
@@ -26,6 +28,7 @@ export function Checkout({ terms, privacy }: { terms: PolicyLink; privacy: Polic
         <CheckCircle2 className="mx-auto size-12 text-forest-600" />
         <h2 className="heading mt-5 text-3xl text-heading">{t.successTitle}</h2>
         <p className="mt-3 text-ink-600">{t.successBody.replace("{id}", state.id ? String(state.id) : "")}</p>
+        {state.id && state.token && <OrderPushOptIn t={push} locale={locale} id={state.id} token={state.token} />}
         <Link href={`/${locale}/products`} className="mt-8 inline-flex rounded-full bg-forest-900 px-5 py-3 text-sm font-medium text-white transition hover:bg-forest-800">
           {t.continueShopping}
         </Link>
@@ -74,10 +77,10 @@ export function Checkout({ terms, privacy }: { terms: PolicyLink; privacy: Polic
           website: field("website"),
         }),
       });
-      const data = (await res.json().catch(() => ({}))) as { ok?: boolean; id?: number | null };
+      const data = (await res.json().catch(() => ({}))) as { ok?: boolean; id?: number | null; pushToken?: string };
       if (!res.ok || !data.ok) throw new Error();
       clear();
-      setState({ kind: "done", id: data.id ?? null });
+      setState({ kind: "done", id: data.id ?? null, token: data.pushToken });
       window.scrollTo({ top: 0 });
     } catch {
       setState({ kind: "error", message: t.error });

@@ -474,6 +474,27 @@ export const zh: Dictionary = {
     },
   },
   /** Shown to visitors while the site is not public (Studio › Cài đặt › Hiển thị website). */
+  // Push notifications: footer opt-in, order updates after checkout.
+  push: {
+    optIn: "接收通知",
+    optInTitle: "接收 VSAP 通知",
+    optInBody: "新文章和优惠直接发送到您的设备，可随时关闭。",
+    enable: "开启通知",
+    disable: "关闭通知",
+    enabled: "此设备已开启通知。",
+    blocked: "浏览器已阻止本网站的通知。请在浏览器设置中允许通知后重试。",
+    unsupported: "此浏览器不支持通知。",
+    iosHint: "在 iPhone、iPad 上：点按“分享” › “添加到主屏幕”，从主屏幕打开 VSAP 后再开启通知。",
+    error: "未能开启通知，请重试。",
+    orderOptIn: "订单更新时通知我",
+    orderOptedIn: "订单更新时您将收到通知。",
+    orderTitle: "订单 #{id}",
+    orderConfirmed: "VSAP 已确认您的订单。",
+    orderShipping: "您的订单正在配送中。",
+    orderDone: "订单已完成，感谢您的购买！",
+    orderCancelled: "订单已取消。如需帮助，请联系 VSAP。",
+    close: "关闭",
+  },
   comingSoon: {
     tag: "即将上线",
     title: "VSAP 全新网站",

@@ -1,5 +1,6 @@
 import { handle, json } from "@/lib/cms/api";
 import { adminState, saveDraft } from "@/lib/cms/store";
+import { alertDraftWaiting, safely } from "@/lib/cms/push";
 import { audit, recentlyLogged } from "@/lib/cms/users";
 
 export async function GET(req: Request) {
@@ -12,6 +13,7 @@ export async function PUT(req: Request) {
     const savedAt = await saveDraft(await req.json());
     // Autosave runs every few seconds; one log line per editing session is enough.
     if (!(await recentlyLogged(user.username, "draft.save", 15 * 60_000))) await audit(user, "draft.save", "site");
+    await safely(() => alertDraftWaiting(user, "nội dung website"));
     return json({ savedAt });
   });
 }

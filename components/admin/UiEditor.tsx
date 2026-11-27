@@ -13,6 +13,7 @@ const groups: Record<keyof UiStrings, string> = {
   common: "Nút & nhãn dùng chung",
   footer: "Chân trang",
   chat: "Nút liên hệ nổi (Zalo/WhatsApp)",
+  push: "Thông báo đẩy (nút đăng ký, báo trạng thái đơn)",
   comingSoon: "Trang Sắp ra mắt (khi website không công khai)",
   contactInfo: "Thẻ liên hệ",
   form: "Form yêu cầu báo giá",

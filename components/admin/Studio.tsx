@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   AlertTriangle,
+  BellRing,
   Boxes,
   Building2,
   Check,
@@ -76,6 +77,7 @@ import { PostsView } from "./PostsView";
 import { AuditView, ChangePassword, RoleBadge, UsersView } from "./TeamViews";
 import { SiteVisibility } from "./SiteVisibility";
 import { TelegramSettings } from "./TelegramSettings";
+import { PushSettings, PushView } from "./PushViews";
 
 type Path = (string | number)[];
 type View =
@@ -83,7 +85,7 @@ type View =
   | {
       kind:
         | "products" | "retail" | "partners" | "policies" | "settings" | "ui" | "media" | "history" | "news" | "categories"
-        | "menu" | "theme" | "inbox" | "orders" | "users" | "audit" | "system";
+        | "menu" | "theme" | "inbox" | "orders" | "push" | "users" | "audit" | "system";
     };
 
 type SaveState = "idle" | "pending" | "saving" | "saved" | "error";
@@ -106,13 +108,14 @@ const nav: { kind: View["kind"]; label: string; icon: typeof FileText; perm: Per
   { kind: "history", label: "Lịch sử", icon: History, perm: "content.read" },
   { kind: "inbox", label: "Báo giá", icon: Inbox, perm: "inquiries" },
   { kind: "orders", label: "Đơn hàng", icon: ShoppingCart, perm: "inquiries" },
+  { kind: "push", label: "Gửi thông báo", icon: BellRing, perm: "content.publish" },
   { kind: "users", label: "Tài khoản", icon: Users, perm: "users" },
   { kind: "audit", label: "Nhật ký", icon: ScrollText, perm: "audit" },
   { kind: "system", label: "Cài đặt", icon: Settings, perm: "users" },
 ];
 
 /** Views that don't use the site preview pane. */
-const NO_PREVIEW: View["kind"][] = ["media", "history", "news", "inbox", "orders", "users", "audit", "system"];
+const NO_PREVIEW: View["kind"][] = ["media", "history", "news", "inbox", "orders", "push", "users", "audit", "system"];
 
 function viewFromUrl(): View {
   if (typeof window === "undefined") return { kind: "page", id: "home" };
@@ -143,6 +146,7 @@ export function Studio() {
   const [toast, setToast] = useState("");
   const [menuOpen, setMenuOpen] = useState(false);
   const [passwordOpen, setPasswordOpen] = useState(false);
+  const [pushOpen, setPushOpen] = useState(false);
   const [newInquiries, setNewInquiries] = useState(0);
   const [newOrders, setNewOrders] = useState(0);
   // Website hidden behind "Coming soon" (Cài đặt › Hiển thị website): shown as a badge in the top bar.
@@ -686,6 +690,7 @@ export function Studio() {
         )}
         {view.kind === "inbox" && <InboxView onCounts={onInboxCounts} onConfigure={can("users") ? openSystem : undefined} />}
         {view.kind === "orders" && <OrdersView onCounts={onOrderCounts} />}
+        {view.kind === "push" && <PushView />}
         {view.kind === "system" && (
           <div className="min-h-0 flex-1 overflow-y-auto bg-mist-50 p-6">
             <div className="mx-auto max-w-2xl space-y-5">
@@ -843,6 +848,17 @@ export function Studio() {
                       <Undo2 className="size-4 text-ink-600" /> Bỏ thay đổi
                     </button>
                   )}
+                  <button
+                    type="button"
+                    role="menuitem"
+                    onClick={() => {
+                      setMenuOpen(false);
+                      setPushOpen(true);
+                    }}
+                    className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-sm text-ink-900 hover:bg-mist-100"
+                  >
+                    <BellRing className="size-4 text-ink-600" /> Thông báo đẩy
+                  </button>
                   {!me.user.owner && (
                     <button
                       type="button"
@@ -949,6 +965,7 @@ export function Studio() {
       )}
 
       {passwordOpen && <ChangePassword onClose={() => setPasswordOpen(false)} />}
+      {pushOpen && <PushSettings onClose={() => setPushOpen(false)} />}
 
       {toast && (
         <div role="status" className="fixed bottom-5 left-1/2 z-[110] -translate-x-1/2 rounded-full bg-forest-900 px-4 py-2 text-sm text-white shadow-lg">

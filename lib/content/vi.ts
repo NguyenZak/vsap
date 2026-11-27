@@ -480,6 +480,27 @@ export const vi = {
     },
   },
   /** Shown to visitors while the site is not public (Studio › Cài đặt › Hiển thị website). */
+  // Push notifications: footer opt-in, order updates after checkout.
+  push: {
+    optIn: "Nhận thông báo",
+    optInTitle: "Nhận thông báo từ VSAP",
+    optInBody: "Tin tức mới và ưu đãi gửi thẳng tới thiết bị của bạn. Bạn có thể tắt bất cứ lúc nào.",
+    enable: "Bật thông báo",
+    disable: "Tắt thông báo",
+    enabled: "Đã bật thông báo trên thiết bị này.",
+    blocked: "Trình duyệt đang chặn thông báo của website này. Hãy cho phép thông báo trong cài đặt trình duyệt rồi thử lại.",
+    unsupported: "Trình duyệt này chưa hỗ trợ thông báo.",
+    iosHint: "Trên iPhone, iPad: bấm Chia sẻ › Thêm vào Màn hình chính, mở VSAP từ màn hình chính rồi bật thông báo.",
+    error: "Chưa bật được thông báo. Vui lòng thử lại.",
+    orderOptIn: "Báo cho tôi khi đơn hàng được cập nhật",
+    orderOptedIn: "Bạn sẽ nhận thông báo khi đơn hàng được cập nhật.",
+    orderTitle: "Đơn hàng #{id}",
+    orderConfirmed: "VSAP đã xác nhận đơn hàng của bạn.",
+    orderShipping: "Đơn hàng của bạn đang được giao.",
+    orderDone: "Đơn hàng đã hoàn tất. Cảm ơn bạn đã mua hàng!",
+    orderCancelled: "Đơn hàng đã được huỷ. Liên hệ VSAP nếu bạn cần hỗ trợ.",
+    close: "Đóng",
+  },
   comingSoon: {
     tag: "Sắp ra mắt",
     title: "Website mới của VSAP",

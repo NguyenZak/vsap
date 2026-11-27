@@ -5,10 +5,10 @@ import { orderStatuses, type Order, type OrderData, type OrderStatus } from "./o
 type Row = Omit<Order, "data"> & { data: string };
 const fromRow = (r: Row): Order => ({ ...r, data: JSON.parse(r.data) as OrderData });
 
-export async function saveOrder(data: OrderData, meta: { locale?: string; source?: string; ipHash: string }) {
+export async function saveOrder(data: OrderData, meta: { locale?: string; source?: string; ipHash: string; pushToken?: string }) {
   const res = await (await db())
-    .prepare("INSERT INTO cms_orders (created_at, status, data, locale, source, ip_hash) VALUES (?, 'new', ?, ?, ?, ?)")
-    .bind(Date.now(), JSON.stringify(data), meta.locale ?? null, meta.source?.slice(0, 300) ?? null, meta.ipHash)
+    .prepare("INSERT INTO cms_orders (created_at, status, data, locale, source, ip_hash, push_token) VALUES (?, 'new', ?, ?, ?, ?, ?)")
+    .bind(Date.now(), JSON.stringify(data), meta.locale ?? null, meta.source?.slice(0, 300) ?? null, meta.ipHash, meta.pushToken ?? null)
     .run();
   return res.meta.last_row_id;
 }

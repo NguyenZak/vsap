@@ -19,11 +19,17 @@ const SCHEMA = [
   `CREATE TABLE IF NOT EXISTS cms_orders (id INTEGER PRIMARY KEY AUTOINCREMENT, created_at INTEGER NOT NULL, status TEXT NOT NULL DEFAULT 'new', data TEXT NOT NULL, locale TEXT, source TEXT, ip_hash TEXT, note TEXT, updated_at INTEGER, updated_by TEXT)`,
   `CREATE INDEX IF NOT EXISTS cms_orders_ip ON cms_orders (ip_hash, created_at)`,
   // News posts: `draft` is what editors change, `published` is what visitors see (null = not live).
+  // Web Push subscriptions (lib/cms/push.ts): one row per browser, `topics` is a space-padded token list.
+  `CREATE TABLE IF NOT EXISTS cms_push (id INTEGER PRIMARY KEY AUTOINCREMENT, endpoint TEXT NOT NULL UNIQUE, p256dh TEXT NOT NULL, auth TEXT NOT NULL, user_id TEXT, topics TEXT NOT NULL, locale TEXT, created_at INTEGER NOT NULL, last_ok_at INTEGER, fails INTEGER NOT NULL DEFAULT 0)`,
   `CREATE TABLE IF NOT EXISTS cms_posts (id TEXT PRIMARY KEY, slug TEXT NOT NULL UNIQUE, draft TEXT NOT NULL, published TEXT, published_at INTEGER, created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL, updated_by TEXT)`,
 ];
 
 /** Columns added after a table first shipped: [table, column, definition]. */
-const COLUMNS: [string, string, string][] = [["cms_revisions", "author", "TEXT"]];
+const COLUMNS: [string, string, string][] = [
+  ["cms_revisions", "author", "TEXT"],
+  // Secret given to the customer with a new order, so only they can follow it by push notification.
+  ["cms_orders", "push_token", "TEXT"],
+];
 
 async function migrate(d: D1Database) {
   await d.batch(SCHEMA.map((q) => d.prepare(q)));

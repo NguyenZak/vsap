@@ -31,7 +31,7 @@ export default async function CartPage({ params }: Props) {
         </div>
       </div>
       <section className="container-page py-10 sm:py-14">
-        <Checkout terms={link("terms")} privacy={link("privacy")} />
+        <Checkout terms={link("terms")} privacy={link("privacy")} push={content.ui[locale].push} />
       </section>
     </>
   );

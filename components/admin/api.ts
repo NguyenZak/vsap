@@ -49,6 +49,8 @@ export const api = {
   deleteMedia: (key: string) => call<{ ok: true }>(`/api/admin/media?key=${encodeURIComponent(key)}`, { method: "DELETE" }),
   login: (username: string, password: string) => call<{ ok: true }>("/api/admin/login", { method: "POST", body: JSON.stringify({ username, password }) }),
   me: () => call<Me>("/api/admin/me"),
+  push: <T = { allowed: string[]; topics: string[]; publicKey?: string }>(body: Record<string, unknown>) =>
+    call<T>("/api/admin/push", { method: "POST", body: JSON.stringify(body) }),
   changePassword: (current: string, next: string) => call<{ ok: true }>("/api/admin/me", { method: "PUT", body: JSON.stringify({ current, next }) }),
 
   users: () => call<{ users: PublicUser[] }>("/api/admin/users"),

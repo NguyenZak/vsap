@@ -4,6 +4,7 @@ import type { InquiryData as Inquiry } from "@/lib/cms/inquiry-format";
 import { recentFrom, saveInquiry } from "@/lib/cms/inquiries";
 import { getPublishedContent } from "@/lib/cms/store";
 import { notifyInquiry } from "@/lib/cms/notify";
+import { notifyStaff, safely } from "@/lib/cms/push";
 import { closedToVisitors } from "@/lib/cms/visibility";
 import { isLocale } from "@/lib/locales";
 
@@ -98,6 +99,14 @@ export async function POST(request: Request) {
     alerted = await notifyInquiry({ id, data: inquiry, locale, source, country }, new URL(request.url).origin);
   } catch (e) {
     console.error("Telegram alert failed", e);
+  }
+
+  // 4) Push to Studio devices that asked for quote requests.
+  if (stored) {
+    const who = [inquiry.name, inquiry.company].filter(Boolean).join(" · ");
+    await safely(() =>
+      notifyStaff("inquiries", { title: "Yêu cầu báo giá mới", body: [who, inquiry.product].filter(Boolean).join(" — "), url: id ? `/admin?view=inbox&id=${id}` : "/admin?view=inbox", tag: id ? `inquiry-${id}` : undefined }),
+    );
   }
 
   // Only report failure when the request reached nobody.

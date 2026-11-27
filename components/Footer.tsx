@@ -4,6 +4,7 @@ import { pick } from "@/lib/cms/links";
 import type { SiteContent, UiStrings } from "@/lib/cms/types";
 import type { Locale } from "@/lib/i18n";
 import { localeInfo } from "@/lib/locales";
+import { PushOptIn } from "./PushOptIn";
 import { Button } from "./ui";
 
 type Props = { locale: Locale; content: SiteContent; ui: UiStrings };
@@ -132,6 +133,9 @@ export function Footer({ locale, content, ui }: Props) {
                   </Link>
                 </li>
               ))}
+              <li>
+                <PushOptIn t={ui.push} locale={locale} />
+              </li>
             </ul>
           </div>
         </div>

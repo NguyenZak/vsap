@@ -475,6 +475,27 @@ export const en: Dictionary = {
     },
   },
   /** Shown to visitors while the site is not public (Studio › Cài đặt › Hiển thị website). */
+  // Push notifications: footer opt-in, order updates after checkout.
+  push: {
+    optIn: "Get notifications",
+    optInTitle: "Notifications from VSAP",
+    optInBody: "New articles and offers sent straight to your device. You can turn them off at any time.",
+    enable: "Turn on notifications",
+    disable: "Turn off notifications",
+    enabled: "Notifications are on for this device.",
+    blocked: "Your browser is blocking notifications from this site. Allow them in the browser settings and try again.",
+    unsupported: "This browser does not support notifications.",
+    iosHint: "On iPhone or iPad: tap Share › Add to Home Screen, open VSAP from the Home Screen, then turn on notifications.",
+    error: "Notifications could not be turned on. Please try again.",
+    orderOptIn: "Notify me when my order is updated",
+    orderOptedIn: "You will be notified when your order is updated.",
+    orderTitle: "Order #{id}",
+    orderConfirmed: "VSAP has confirmed your order.",
+    orderShipping: "Your order is on its way.",
+    orderDone: "Your order is complete. Thank you for shopping with VSAP!",
+    orderCancelled: "Your order has been cancelled. Contact VSAP if you need help.",
+    close: "Close",
+  },
   comingSoon: {
     tag: "Coming soon",
     title: "VSAP’s new website",

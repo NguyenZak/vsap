@@ -475,6 +475,27 @@ export const ko: Dictionary = {
     },
   },
   /** Shown to visitors while the site is not public (Studio › Cài đặt › Hiển thị website). */
+  // Push notifications: footer opt-in, order updates after checkout.
+  push: {
+    optIn: "알림 받기",
+    optInTitle: "VSAP 알림 받기",
+    optInBody: "새 글과 혜택 소식을 기기로 바로 보내 드립니다. 언제든지 끌 수 있습니다.",
+    enable: "알림 켜기",
+    disable: "알림 끄기",
+    enabled: "이 기기에서 알림이 켜져 있습니다.",
+    blocked: "브라우저가 이 사이트의 알림을 차단하고 있습니다. 브라우저 설정에서 알림을 허용한 뒤 다시 시도해 주세요.",
+    unsupported: "이 브라우저는 알림을 지원하지 않습니다.",
+    iosHint: "iPhone, iPad에서는 공유 › 홈 화면에 추가를 누르고, 홈 화면에서 VSAP를 연 다음 알림을 켜 주세요.",
+    error: "알림을 켜지 못했습니다. 다시 시도해 주세요.",
+    orderOptIn: "주문이 업데이트되면 알려 주세요",
+    orderOptedIn: "주문이 업데이트되면 알림을 받게 됩니다.",
+    orderTitle: "주문 #{id}",
+    orderConfirmed: "VSAP에서 주문을 확인했습니다.",
+    orderShipping: "주문하신 상품이 배송 중입니다.",
+    orderDone: "주문이 완료되었습니다. 구매해 주셔서 감사합니다!",
+    orderCancelled: "주문이 취소되었습니다. 도움이 필요하시면 VSAP에 문의해 주세요.",
+    close: "닫기",
+  },
   comingSoon: {
     tag: "오픈 예정",
     title: "VSAP의 새 웹사이트가",

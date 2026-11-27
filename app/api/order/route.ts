@@ -2,6 +2,7 @@ import { clientHash } from "@/lib/cms/api";
 import { notifyOrder } from "@/lib/cms/notify";
 import type { OrderCustomer } from "@/lib/cms/order-format";
 import { recentOrdersFrom, saveOrder } from "@/lib/cms/orders";
+import { newOrderToken, notifyStaff, safely } from "@/lib/cms/push";
 import { getPublishedContent } from "@/lib/cms/store";
 import { closedToVisitors } from "@/lib/cms/visibility";
 import { isLocale } from "@/lib/locales";
@@ -53,10 +54,11 @@ export async function POST(request: Request) {
   const data = { customer, ...priced };
 
   let id: number | null = null;
+  const pushToken = newOrderToken();
   try {
     const ipHash = await clientHash(request, `order:${new Date().toISOString().slice(0, 10)}`);
     if ((await recentOrdersFrom(ipHash, WINDOW_MS)) >= MAX_PER_WINDOW) return Response.json({ ok: false }, { status: 429 });
-    id = await saveOrder(data, { locale, source, ipHash });
+    id = await saveOrder(data, { locale, source, ipHash, pushToken });
   } catch (e) {
     console.error("Order could not be stored", e);
   }
@@ -68,7 +70,13 @@ export async function POST(request: Request) {
     console.error("Telegram alert failed", e);
   }
 
+  if (id !== null) {
+    const total = new Intl.NumberFormat("vi-VN").format(priced.total);
+    await safely(() => notifyStaff("orders", { title: `Đơn hàng mới #${id}`, body: `${customer.name} · ${total} ₫ · ${priced.items.length} sản phẩm`, url: `/admin?view=orders&id=${id}`, tag: `order-${id}` }));
+  }
+
   // Only report failure when the order reached nobody.
   if (id === null && !alerted) return Response.json({ ok: false }, { status: 502 });
-  return Response.json({ ok: true, id, total: priced.total });
+  // pushToken lets this customer (and only them) follow the order by push notification.
+  return Response.json({ ok: true, id, total: priced.total, pushToken: id === null ? undefined : pushToken });
 }

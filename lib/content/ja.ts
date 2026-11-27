@@ -474,6 +474,27 @@ export const ja: Dictionary = {
     },
   },
   /** Shown to visitors while the site is not public (Studio › Cài đặt › Hiển thị website). */
+  // Push notifications: footer opt-in, order updates after checkout.
+  push: {
+    optIn: "通知を受け取る",
+    optInTitle: "VSAP からのお知らせ",
+    optInBody: "新着記事やキャンペーン情報をお使いの端末に直接お届けします。いつでもオフにできます。",
+    enable: "通知をオンにする",
+    disable: "通知をオフにする",
+    enabled: "この端末で通知がオンになっています。",
+    blocked: "ブラウザがこのサイトの通知をブロックしています。ブラウザの設定で通知を許可してから、もう一度お試しください。",
+    unsupported: "このブラウザは通知に対応していません。",
+    iosHint: "iPhone・iPad の場合：共有 › ホーム画面に追加 をタップし、ホーム画面から VSAP を開いて通知をオンにしてください。",
+    error: "通知をオンにできませんでした。もう一度お試しください。",
+    orderOptIn: "注文の更新時に通知する",
+    orderOptedIn: "注文が更新されると通知が届きます。",
+    orderTitle: "ご注文 #{id}",
+    orderConfirmed: "VSAP がご注文を確認しました。",
+    orderShipping: "ご注文の商品を配送中です。",
+    orderDone: "ご注文が完了しました。お買い上げありがとうございました！",
+    orderCancelled: "ご注文はキャンセルされました。ご不明な点は VSAP までお問い合わせください。",
+    close: "閉じる",
+  },
   comingSoon: {
     tag: "近日公開",
     title: "VSAPの新しいウェブサイトは",
