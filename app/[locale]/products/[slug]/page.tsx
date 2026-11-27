@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { ArrowLeft, MapPin, Package } from "lucide-react";
 import { InquiryForm } from "@/components/InquiryForm";
 import { Rich } from "@/components/RichText";
-import { alignClass } from "@/lib/cms/align";
+import { alignClass, sizeStyle } from "@/lib/cms/text-style";
 import { ProductGrid } from "@/components/shop/ProductGrid";
 import { CmsImg, Paragraphs, SectionHeading } from "@/components/sections";
 import { Button, Title } from "@/components/ui";
@@ -93,7 +93,9 @@ export default async function ProductPage({ params }: Props) {
             {product.latin && <span className="accent block text-[0.6em] leading-tight text-white/85">{product.latin}</span>}
           </h1>
           <p data-intro className={`mt-5 max-w-xl text-sm leading-relaxed text-white/85 sm:text-base ${alignClass(product.shortAlign)}`}>
-            <Rich text={tr(product.short)} locale={locale} />
+            <span style={sizeStyle(product.shortSize)}>
+              <Rich text={tr(product.short)} locale={locale} />
+            </span>
           </p>
           <div data-intro className="mt-8 flex flex-wrap gap-3">
             <Button href="#inquiry">{ui.common.requestQuote}</Button>
@@ -107,11 +109,13 @@ export default async function ProductPage({ params }: Props) {
             {/* One plain paragraph reads as a big statement; a longer text ("## " heading, blank-line paragraphs) as an article. */}
             {/^## |\n\s*\n/.test(tr(product.description).trim()) ? (
               <div className="space-y-4 text-base leading-relaxed text-ink-600 sm:text-lg">
-                <Paragraphs text={tr(product.description)} locale={locale} align={product.descriptionAlign} headingClassName="heading text-3xl text-heading sm:text-4xl" />
+                <Paragraphs text={tr(product.description)} locale={locale} align={product.descriptionAlign} size={product.descriptionSize} headingClassName="heading text-3xl text-heading sm:text-4xl" />
               </div>
             ) : (
               <p className={`heading text-2xl text-heading sm:text-3xl ${alignClass(product.descriptionAlign)}`}>
-                <Rich text={tr(product.description)} locale={locale} />
+                <span style={sizeStyle(product.descriptionSize)}>
+                  <Rich text={tr(product.description)} locale={locale} />
+                </span>
               </p>
             )}
             {tr(product.origin) && (

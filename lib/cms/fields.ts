@@ -6,7 +6,7 @@ type Base = { key: string; label: string; help?: string };
 
 export type FieldDef =
   /** One line in both languages. */
-  | (Base & { type: "text" })
+  | (Base & { type: "text"; /** Shows a size − / + stored as `<key>Size` (lib/cms/text-style.ts). */ sizable?: boolean })
   /** Several lines in both languages. */
   | (Base & { type: "textarea"; rows?: number })
   /** Several lines in every language with bold / italic / link buttons (components/RichText.tsx renders it). */
@@ -50,8 +50,8 @@ export const img = (src: string, vi = "", en = vi) => ({ src, alt: l(vi, en) });
 export function headingFields(): FieldDef[] {
   return [
     { key: "eyebrow", label: "Nhãn nhỏ", type: "text" },
-    { key: "title", label: "Tiêu đề", type: "text" },
-    { key: "accent", label: "Tiêu đề (dòng nghiêng)", type: "text", help: "Dòng chữ serif nghiêng dưới tiêu đề." },
+    { key: "title", label: "Tiêu đề", type: "text", sizable: true },
+    { key: "accent", label: "Tiêu đề (dòng nghiêng)", type: "text", sizable: true, help: "Dòng chữ serif nghiêng dưới tiêu đề." },
     { key: "lead", label: "Mô tả ngắn", type: "richtext", rows: 3 },
   ];
 }

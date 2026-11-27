@@ -2,13 +2,13 @@
 
 import { createContext, useContext, useRef, useState } from "react";
 import { locales, type Locale } from "@/lib/locales";
-import { AlignCenter, AlignJustify, AlignLeft, AlignRight, Bold, ChevronDown, ChevronUp, Copy, GripVertical, Heading2, Heading3, ImageIcon, Italic, Link2, List, ListOrdered, Minus, Plus, Quote, Trash2 } from "lucide-react";
+import { AArrowDown, AArrowUp, AlignCenter, AlignJustify, AlignLeft, AlignRight, Bold, ChevronDown, ChevronUp, Copy, GripVertical, Heading2, Heading3, ImageIcon, Italic, Link2, List, ListOrdered, Minus, Plus, Quote, Trash2 } from "lucide-react";
 import { getIn, type FieldDef } from "@/lib/cms/fields";
 import { iconNames } from "@/lib/cms/icons";
 import { CmsIcon } from "@/components/cms/Icon";
 import { api } from "./api";
 import { MediaPicker } from "./MediaPicker";
-import { alignClass } from "@/lib/cms/align";
+import { alignClass, SIZE_MAX, SIZE_MIN, sizeOffset } from "@/lib/cms/text-style";
 
 type Path = (string | number)[];
 type OnChange = (path: Path, value: unknown) => void;
@@ -129,10 +129,6 @@ const richTools: { label: string; icon: typeof Bold; key?: string; edit: Edit }[
   { label: "Liên kết (⌘K)", icon: Link2, key: "k", edit: { before: "[", after: "](/contact)", placeholder: "chữ liên kết" } },
 ];
 
-/**
- * Bilingual text with a small toolbar for inline formatting. The buttons act on the
- * language box that last had focus, wrapping the selection (or a placeholder).
- */
 const alignTools = [
   { value: "left", label: "Căn trái", icon: AlignLeft },
   { value: "center", label: "Căn giữa", icon: AlignCenter },
@@ -140,12 +136,46 @@ const alignTools = [
   { value: "justify", label: "Căn đều hai bên", icon: AlignJustify },
 ] as const;
 
+/** A − / + pair that moves a text's size from the design default, in whole px. */
+function SizeStepper({ value, onChange }: { value: number; onChange: (v: number) => void }) {
+  const n = sizeOffset(value);
+  const set = (v: number) => onChange(Math.max(SIZE_MIN, Math.min(SIZE_MAX, v)));
+  const btn = "grid size-6 place-items-center rounded text-ink-600 hover:bg-white hover:text-ink-900 disabled:opacity-30";
+  return (
+    <span className="inline-flex items-center gap-0.5" title="Cỡ chữ so với mặc định của thiết kế (điện thoại và máy tính cùng cộng/trừ)">
+      <button type="button" aria-label="Giảm cỡ chữ 1px" disabled={n <= SIZE_MIN} onClick={() => set(n - 1)} className={btn}>
+        <AArrowDown className="size-4" />
+      </button>
+      <button
+        type="button"
+        onClick={() => set(0)}
+        disabled={!n}
+        aria-label="Về cỡ mặc định"
+        title={n ? "Bấm để về cỡ mặc định" : "Cỡ mặc định"}
+        className={`min-w-11 rounded px-1 text-center text-[11px] tabular-nums ${n ? "bg-white font-semibold text-ink-900 shadow-sm" : "text-ink-400"}`}
+      >
+        {n ? `${n > 0 ? "+" : ""}${n}px` : "Cỡ"}
+      </button>
+      <button type="button" aria-label="Tăng cỡ chữ 1px" disabled={n >= SIZE_MAX} onClick={() => set(n + 1)} className={btn}>
+        <AArrowUp className="size-4" />
+      </button>
+    </span>
+  );
+}
+
+/**
+ * Bilingual text with a toolbar: bold / italic / link act on the language box that
+ * last had focus, wrapping the selection (or a placeholder); alignment and size
+ * apply to the whole field in every language and are stored beside it.
+ */
 function RichBilingual({
   value,
   onChange,
   rows = 3,
   align,
   onAlign,
+  size,
+  onSize,
 }: {
   value: L;
   onChange: (v: L) => void;
@@ -153,6 +183,9 @@ function RichBilingual({
   /** "" = the section's own alignment; otherwise left / center / right / justify for every language. */
   align: string;
   onAlign: (v: string) => void;
+  /** px offset from the design size (0 = default). */
+  size: number;
+  onSize: (v: number) => void;
 }) {
   const areas = useRef<Partial<Record<Locale, HTMLTextAreaElement | null>>>({});
   const [lang, setLang] = useState<Locale>("vi");
@@ -180,7 +213,7 @@ function RichBilingual({
 
   return (
     <div className="overflow-hidden rounded-lg border border-mist-200 bg-white focus-within:border-forest-600 focus-within:ring-2 focus-within:ring-sun-400/50">
-      <div className="flex items-center gap-0.5 border-b border-mist-200 bg-mist-50 px-1.5 py-1">
+      <div className="flex flex-wrap items-center gap-0.5 border-b border-mist-200 bg-mist-50 px-1.5 py-1">
         {richTools.map((t) => (
           <button
             key={t.label}
@@ -212,7 +245,8 @@ function RichBilingual({
             <t.icon className="size-4" />
           </button>
         ))}
-        <span className="ml-auto hidden truncate pr-1 text-[11px] text-ink-400 sm:inline">**đậm** · *nghiêng* · [chữ](/link)</span>
+        <span aria-hidden="true" className="mx-1 h-5 w-px bg-mist-200" />
+        <SizeStepper value={size} onChange={onSize} />
       </div>
       <div className="space-y-1.5 p-1.5">
         {locales.map((l) => (
@@ -555,7 +589,10 @@ function Field({ field, value, path, onChange, parent }: { field: FieldDef; valu
             rows={field.rows}
             align={String(getIn(parent, [`${field.key}Align`]) ?? "")}
             onAlign={(v) => onChange([...path.slice(0, -1), `${field.key}Align`], v)}
+            size={sizeOffset(getIn(parent, [`${field.key}Size`]))}
+            onSize={(v) => onChange([...path.slice(0, -1), `${field.key}Size`], v)}
           />
+          <p className="mt-1 text-[11px] text-ink-400">**đậm** · *nghiêng* · [chữ](/link). Căn lề và cỡ chữ áp dụng cho cả ô, mọi ngôn ngữ.</p>
           <Help text={field.help} />
         </div>
       );
@@ -563,7 +600,16 @@ function Field({ field, value, path, onChange, parent }: { field: FieldDef; valu
     case "textarea":
       return (
         <div>
-          <Label field={field} />
+          {field.type === "text" && field.sizable ? (
+            <div className="flex items-end justify-between gap-2">
+              <Label field={field} />
+              <span className="mb-1 rounded-md bg-mist-50 px-0.5">
+                <SizeStepper value={sizeOffset(getIn(parent, [`${field.key}Size`]))} onChange={(v) => onChange([...path.slice(0, -1), `${field.key}Size`], v)} />
+              </span>
+            </div>
+          ) : (
+            <Label field={field} />
+          )}
           <Bilingual value={asL(value)} onChange={set} multiline={field.type === "textarea"} rows={field.type === "textarea" ? field.rows : undefined} />
           <Help text={field.help} />
         </div>

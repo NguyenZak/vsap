@@ -317,8 +317,8 @@ export const sectionDefs: SectionDef[] = [
     icon: "megaphone",
     fields: [
       { key: "eyebrow", label: "Dòng trên tiêu đề", type: "text", help: "Chỉ hiện khi không có ảnh nền, ví dụ VSAP." },
-      { key: "title", label: "Tiêu đề", type: "text" },
-      { key: "accent", label: "Tiêu đề (dòng nghiêng)", type: "text", help: "Không có ảnh nền: hiện thành dòng phụ chữ in hoa dưới tiêu đề." },
+      { key: "title", label: "Tiêu đề", type: "text", sizable: true },
+      { key: "accent", label: "Tiêu đề (dòng nghiêng)", type: "text", sizable: true, help: "Không có ảnh nền: hiện thành dòng phụ chữ in hoa dưới tiêu đề." },
       { key: "lead", label: "Mô tả", type: "richtext", rows: 3 },
       { key: "note", label: "Dòng phụ (nghiêng)", type: "richtext", rows: 2, help: "Chỉ hiện khi không có ảnh nền, ví dụ bản tiếng Anh của mô tả." },
       ...button(),

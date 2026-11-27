@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound, permanentRedirect } from "next/navigation";
 import { BadgeCheck, Boxes, ChevronRight, Headset, PackageOpen, RotateCcw, Wallet } from "lucide-react";
 import { Rich } from "@/components/RichText";
-import { alignClass } from "@/lib/cms/align";
+import { alignClass, sizeStyle } from "@/lib/cms/text-style";
 import { BuyBox } from "@/components/shop/BuyBox";
 import { Gallery } from "@/components/shop/Gallery";
 import { MoreText } from "@/components/shop/MoreText";
@@ -193,7 +193,9 @@ export default async function PackPage({ params }: Props) {
                     {description ? (
                       description.split(/\n\s*\n/).map((para, i) => (
                         <p key={i} className={`whitespace-pre-line ${alignClass(pack.descriptionAlign)}`}>
-                          <Rich text={para} locale={locale} />
+                          <span style={sizeStyle(pack.descriptionSize)}>
+                            <Rich text={para} locale={locale} />
+                          </span>
                         </p>
                       ))
                     ) : (

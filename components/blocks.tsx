@@ -10,7 +10,7 @@ import type { CmsImage, L, PageStyle, Post, Section, SectionStyle, SiteContent, 
 import { HeroSlider } from "./HeroSlider";
 import { InquiryForm } from "./InquiryForm";
 import { Rich } from "./RichText";
-import { alignClass } from "@/lib/cms/align";
+import { alignClass, sizeStyle } from "@/lib/cms/text-style";
 import { FeaturedPost, PostGrid } from "./PostCards";
 import { ProcessJourney } from "./ProcessJourney";
 import { ProcessTabs } from "./ProcessTabs";
@@ -61,8 +61,8 @@ function makeT(ctx: BlockCtx) {
   };
   const href = (v: unknown) => localHref(str(v), ctx.locale);
   /**
-   * Rich text field `key` of `o` (bold, italic, links), aligned by its `<key>Align`
-   * setting when one is chosen; null when empty.
+   * Rich text field `key` of `o` (bold, italic, links), aligned and sized by its
+   * `<key>Align` / `<key>Size` settings when chosen; null when empty.
    */
   const rt = (o: unknown, key: string) => {
     const rec = (o ?? {}) as P;
@@ -70,7 +70,14 @@ function makeT(ctx: BlockCtx) {
     if (!s) return null;
     const rich = <Rich text={s} locale={ctx.locale} />;
     const align = alignClass(rec[`${key}Align`]);
-    return align ? <span className={`block ${align}`}>{rich}</span> : rich;
+    const size = sizeStyle(rec[`${key}Size`]);
+    return align || size ? (
+      <span className={align ? `block ${align}` : undefined} style={size}>
+        {rich}
+      </span>
+    ) : (
+      rich
+    );
   };
   return { t, img, href, rt };
 }
@@ -100,7 +107,7 @@ export function toneOf(section: Section): Tone | "none" {
 
 function heading(p: P, ctx: BlockCtx, tone: Tone = "white") {
   const { t, rt } = makeT(ctx);
-  return <SectionHeading eyebrow={t(p.eyebrow)} title={t(p.title)} accent={t(p.accent)} lead={rt(p, "lead")} tone={tone} />;
+  return <SectionHeading eyebrow={t(p.eyebrow)} title={t(p.title)} accent={t(p.accent)} titleSize={p.titleSize} accentSize={p.accentSize} lead={rt(p, "lead")} tone={tone} />;
 }
 
 /**
@@ -152,8 +159,16 @@ function plainCta(p: P, ctx: BlockCtx) {
     <div className="block-pad container-page">
       <div data-reveal className="mx-auto max-w-4xl text-center">
         {t(p.eyebrow) && <p className="heading text-3xl text-heading uppercase sm:text-4xl">{t(p.eyebrow)}</p>}
-        {t(p.title) && <h2 className={`heading text-3xl text-heading uppercase sm:text-4xl ${t(p.eyebrow) ? "mt-3" : ""}`}>{t(p.title)}</h2>}
-        {t(p.accent) && <p className="mt-3 text-base tracking-wide text-sage-500 uppercase sm:text-lg">{t(p.accent)}</p>}
+        {t(p.title) && (
+          <h2 className={`heading text-3xl text-heading uppercase sm:text-4xl ${t(p.eyebrow) ? "mt-3" : ""}`}>
+            <span style={sizeStyle(p.titleSize)}>{t(p.title)}</span>
+          </h2>
+        )}
+        {t(p.accent) && (
+          <p className="mt-3 text-base tracking-wide text-sage-500 uppercase sm:text-lg">
+            <span style={sizeStyle(p.accentSize)}>{t(p.accent)}</span>
+          </p>
+        )}
         {(t(p.lead) || t(p.note) || showButton) && (
           <div className="mt-8 border-t border-mist-200 pt-8">
             {t(p.lead) && <p className="text-lg leading-relaxed text-ink-900 sm:text-xl">{rt(p, "lead")}</p>}
@@ -173,7 +188,9 @@ function plainCta(p: P, ctx: BlockCtx) {
           <div className={`mt-8 space-y-2 border-t border-mist-200 pt-6 text-sm text-ink-600 sm:text-base ${alignClass(p.taglineAlign)}`}>
             {tagline.map((l, i) => (
               <p key={i}>
-                <Rich text={l} locale={ctx.locale} />
+                <span style={sizeStyle(p.taglineSize)}>
+                  <Rich text={l} locale={ctx.locale} />
+                </span>
               </p>
             ))}
           </div>
@@ -192,7 +209,11 @@ function stackedImageText(p: P, ctx: BlockCtx, dark: boolean) {
     <div className="block-pad container-page">
       <div data-reveal>
         {t(p.eyebrow) && <p className={`text-sm font-bold tracking-wide ${dark ? "text-white/80" : "text-heading"}`}>{t(p.eyebrow)}</p>}
-        {t(p.title) && <h2 className={`heading mt-3 text-5xl uppercase sm:text-6xl lg:text-7xl ${dark ? "text-white" : "text-heading"}`}>{t(p.title)}</h2>}
+        {t(p.title) && (
+          <h2 className={`heading mt-3 text-5xl uppercase sm:text-6xl lg:text-7xl ${dark ? "text-white" : "text-heading"}`}>
+            <span style={sizeStyle(p.titleSize)}>{t(p.title)}</span>
+          </h2>
+        )}
         {t(p.lead) && <p className={`mt-4 text-xl leading-snug sm:text-2xl ${dark ? "text-white/75" : "text-sage-500"}`}>{rt(p, "lead")}</p>}
       </div>
       {img(p.image) && (
@@ -201,7 +222,7 @@ function stackedImageText(p: P, ctx: BlockCtx, dark: boolean) {
         </div>
       )}
       <div data-reveal className={`mt-8 max-w-4xl space-y-4 text-base leading-relaxed sm:text-lg ${dark ? "text-white/85" : "text-ink-900"}`}>
-        <Paragraphs text={t(p.body)} align={p.bodyAlign} locale={ctx.locale} />
+        <Paragraphs text={t(p.body)} align={p.bodyAlign} size={p.bodySize} locale={ctx.locale} />
       </div>
       {cards.length > 0 && (
         <ul className="mt-10 grid gap-x-3 gap-y-8 sm:grid-cols-2">
@@ -269,7 +290,7 @@ const renderers: Record<string, Renderer> = {
             </div>
           )}
           <div data-intro>
-            <Title as="h1" title={t(p.title)} accent={t(p.accent)} className="mt-5 max-w-3xl text-4xl text-white sm:text-5xl lg:text-6xl" />
+            <Title as="h1" title={t(p.title)} accent={t(p.accent)} titleSize={p.titleSize} accentSize={p.accentSize} className="mt-5 max-w-3xl text-4xl text-white sm:text-5xl lg:text-6xl" />
           </div>
           {t(p.lead) && (
             <p data-intro className="mt-4 max-w-2xl text-sm leading-relaxed text-white/80 sm:text-base">
@@ -389,7 +410,7 @@ const renderers: Record<string, Renderer> = {
     return (
       <div className="block-pad relative overflow-x-clip">
         <div className="container-page relative">
-          {decor ? <SectionHeading eyebrow={t(p.eyebrow)} title={t(p.title)} accent={t(p.accent)} lead={rt(p, "lead")} tone={tone} align="center" /> : heading(p, ctx, tone)}
+          {decor ? <SectionHeading eyebrow={t(p.eyebrow)} title={t(p.title)} accent={t(p.accent)} titleSize={p.titleSize} accentSize={p.accentSize} lead={rt(p, "lead")} tone={tone} align="center" /> : heading(p, ctx, tone)}
           {items.length > 0 && (
             <div className={hasHeading(p, ctx) ? "mt-12" : ""}>
               {isHome ? (
@@ -552,7 +573,7 @@ const renderers: Record<string, Renderer> = {
           <CmsImg image={img(p.image)} decorative parallax className="absolute inset-0 -z-10 size-full" />
           <div className="absolute inset-0 -z-10 bg-gradient-to-r from-black/65 via-black/35 to-black/10" />
           <div data-reveal className="max-w-xl">
-            <Title title={t(p.title)} accent={t(p.accent)} className="text-4xl text-white sm:text-5xl" />
+            <Title title={t(p.title)} accent={t(p.accent)} titleSize={p.titleSize} accentSize={p.accentSize} className="text-4xl text-white sm:text-5xl" />
             {t(p.lead) && <p className="mt-5 text-sm leading-relaxed text-white/85 sm:text-base">{rt(p, "lead")}</p>}
             {t(p.buttonLabel) && str(p.buttonHref) && (
               <div className="mt-8 flex flex-wrap gap-3">
@@ -576,7 +597,7 @@ const renderers: Record<string, Renderer> = {
             {t(p.lead) && <p className={`heading text-2xl sm:text-3xl ${dark ? "text-white" : "text-heading"}`}>{rt(p, "lead")}</p>}
             <Paragraphs
               text={t(p.body)}
-              align={p.bodyAlign}
+              align={p.bodyAlign} size={p.bodySize}
               locale={ctx.locale}
               className={`text-base leading-relaxed ${dark ? "text-white/75" : "text-ink-600"}`}
               headingClassName={`heading pt-4 text-xl sm:text-2xl ${dark ? "text-white" : "text-heading"}`}
@@ -628,7 +649,7 @@ const renderers: Record<string, Renderer> = {
           {hasHeading(p, ctx) && (
             <div data-reveal className="mb-10">
               {t(p.eyebrow) && <Tag tone={dark ? "glass" : "light"}>{t(p.eyebrow)}</Tag>}
-              <Title title={t(p.title)} accent={t(p.accent)} className={`mt-4 text-4xl sm:text-5xl ${dark ? "text-white" : "text-heading"}`} />
+              <Title title={t(p.title)} accent={t(p.accent)} titleSize={p.titleSize} accentSize={p.accentSize} className={`mt-4 text-4xl sm:text-5xl ${dark ? "text-white" : "text-heading"}`} />
               {t(p.lead) && <p className={`mt-5 max-w-md text-sm leading-relaxed ${dark ? "text-white/75" : "text-ink-600"}`}>{rt(p, "lead")}</p>}
             </div>
           )}
@@ -648,7 +669,7 @@ const renderers: Record<string, Renderer> = {
       <div className="block-pad container-page grid gap-10 lg:grid-cols-2">
         <div data-reveal>
           {t(p.eyebrow) && <Tag tone={dark ? "glass" : "light"}>{t(p.eyebrow)}</Tag>}
-          <Title title={t(p.title)} accent={t(p.accent)} className={`mt-4 text-4xl sm:text-5xl ${dark ? "text-white" : "text-heading"}`} />
+          <Title title={t(p.title)} accent={t(p.accent)} titleSize={p.titleSize} accentSize={p.accentSize} className={`mt-4 text-4xl sm:text-5xl ${dark ? "text-white" : "text-heading"}`} />
           {t(p.lead) && <p className={`mt-5 max-w-md text-sm leading-relaxed ${dark ? "text-white/75" : "text-ink-600"}`}>{rt(p, "lead")}</p>}
         </div>
         <ul className="space-y-2.5">
@@ -715,9 +736,9 @@ const renderers: Record<string, Renderer> = {
     const center = str(p.align) === "center";
     return (
       <div className={`block-pad container-page ${center ? "text-center" : ""}`}>
-        <SectionHeading eyebrow={t(p.eyebrow)} title={t(p.title)} accent={t(p.accent)} lead={rt(p, "lead")} tone={tone} align={center ? "center" : "left"} />
+        <SectionHeading eyebrow={t(p.eyebrow)} title={t(p.title)} accent={t(p.accent)} titleSize={p.titleSize} accentSize={p.accentSize} lead={rt(p, "lead")} tone={tone} align={center ? "center" : "left"} />
         <div data-reveal className={`mt-8 max-w-3xl space-y-5 text-base leading-relaxed ${center ? "mx-auto" : ""} ${tone === "dark" ? "text-white/80" : "text-ink-600"}`}>
-          <Paragraphs text={t(p.body)} align={p.bodyAlign} locale={ctx.locale} />
+          <Paragraphs text={t(p.body)} align={p.bodyAlign} size={p.bodySize} locale={ctx.locale} />
         </div>
       </div>
     );
@@ -737,10 +758,10 @@ const renderers: Record<string, Renderer> = {
         </div>
         <div data-reveal>
           {t(p.eyebrow) && <Tag tone={dark ? "glass" : "light"}>{t(p.eyebrow)}</Tag>}
-          {(t(p.title) || t(p.accent)) && <Title title={t(p.title)} accent={t(p.accent)} className={`mt-4 text-4xl sm:text-5xl ${dark ? "text-white" : "text-heading"}`} />}
+          {(t(p.title) || t(p.accent)) && <Title title={t(p.title)} accent={t(p.accent)} titleSize={p.titleSize} accentSize={p.accentSize} className={`mt-4 text-4xl sm:text-5xl ${dark ? "text-white" : "text-heading"}`} />}
           {t(p.lead) && <p className={`mt-5 text-base leading-relaxed first:mt-0 sm:text-lg ${dark ? "text-white/85" : "text-ink-900"}`}>{rt(p, "lead")}</p>}
           <div className={`mt-5 space-y-4 text-sm leading-relaxed ${dark ? "text-white/70" : "text-ink-600"}`}>
-            <Paragraphs text={t(p.body)} align={p.bodyAlign} locale={ctx.locale} />
+            <Paragraphs text={t(p.body)} align={p.bodyAlign} size={p.bodySize} locale={ctx.locale} />
           </div>
           {points.length > 0 && (
             <ul className="mt-6 flex flex-wrap gap-2">

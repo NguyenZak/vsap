@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
+import { sizeStyle } from "@/lib/cms/text-style";
 
 type Variant = "sun" | "white" | "dark" | "glass";
 
@@ -56,19 +57,27 @@ export function Title({
   accent,
   as: As = "h2",
   className = "",
+  titleSize,
+  accentSize,
 }: {
   title: string;
   accent?: string;
   as?: "h1" | "h2";
   className?: string;
+  /** Stored px offsets from Studio (lib/cms/text-style.ts). */
+  titleSize?: unknown;
+  accentSize?: unknown;
 }) {
+  const own = sizeStyle(titleSize);
   return (
     <As className={`heading ${className}`}>
-      {title}
+      {own ? <span style={own}>{title}</span> : title}
       {accent && (
         <>
           {" "}
-          <span className="accent title-accent block text-[1.1em] leading-[1]">{accent}</span>
+          <span className="accent title-accent block text-[1.1em] leading-[1]" style={sizeStyle(accentSize, "1.1em")}>
+            {accent}
+          </span>
         </>
       )}
     </As>

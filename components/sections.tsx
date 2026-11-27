@@ -5,7 +5,7 @@ import { ArrowUpRight, Handshake, Minus, Plus } from "lucide-react";
 import type { CmsImage } from "@/lib/cms/types";
 import type { Locale } from "@/lib/locales";
 import { Rich } from "./RichText";
-import { alignClass } from "@/lib/cms/align";
+import { alignClass, sizeStyle } from "@/lib/cms/text-style";
 import { SIZES, srcSetFor } from "@/lib/responsive";
 import { CmsIcon } from "./cms/Icon";
 import { Tag, Title } from "./ui";
@@ -28,10 +28,15 @@ export function SectionHeading({
   lead,
   tone = "white",
   align = "split",
+  titleSize,
+  accentSize,
 }: {
   eyebrow?: string;
   title?: string;
   accent?: string;
+  /** Stored px offsets for the title and its accent line (lib/cms/text-style.ts). */
+  titleSize?: unknown;
+  accentSize?: unknown;
   /** Plain text or a rich text field rendered with <Rich>. */
   lead?: ReactNode;
   tone?: Tone;
@@ -54,7 +59,13 @@ export function SectionHeading({
       <div data-reveal className={center ? "max-w-2xl lg:max-w-4xl" : "max-w-2xl"}>
         {eyebrow && <Tag tone={dark ? "glass" : "light"}>{eyebrow}</Tag>}
         {(title || accent) && (
-          <Title title={title ?? ""} accent={accent} className={`mt-4 text-4xl sm:text-5xl ${dark ? "text-white" : "text-heading"}`} />
+          <Title
+            title={title ?? ""}
+            accent={accent}
+            titleSize={titleSize}
+            accentSize={accentSize}
+            className={`mt-4 text-4xl sm:text-5xl ${dark ? "text-white" : "text-heading"}`}
+          />
         )}
       </div>
       {lead && (
@@ -112,13 +123,15 @@ export function Paragraphs({
   text,
   locale,
   align,
+  size,
   className = "",
   headingClassName = "heading pt-3 text-xl text-heading",
 }: {
   text: string;
   locale: Locale;
-  /** Stored `<key>Align` value (lib/cms/align.ts). */
+  /** Stored `<key>Align` and `<key>Size` values (lib/cms/text-style.ts). */
   align?: unknown;
+  size?: unknown;
   className?: string;
   headingClassName?: string;
 }) {
@@ -129,11 +142,13 @@ export function Paragraphs({
     .map((p, i) =>
       p.startsWith("## ") ? (
         <h3 key={i} className={`${headingClassName} ${alignClass(align)}`}>
-          {p.slice(3).trim()}
+          <span style={sizeStyle(size)}>{p.slice(3).trim()}</span>
         </h3>
       ) : (
         <p key={i} className={`${className} ${alignClass(align)}`}>
-          <Rich text={p} locale={locale} />
+          <span style={sizeStyle(size)}>
+            <Rich text={p} locale={locale} />
+          </span>
         </p>
       ),
     );
