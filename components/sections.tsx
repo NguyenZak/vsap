@@ -1,7 +1,11 @@
 // Shared building blocks for the section renderers in components/blocks.tsx.
 import Link from "next/link";
+import type { ReactNode } from "react";
 import { ArrowUpRight, Handshake, Minus, Plus } from "lucide-react";
 import type { CmsImage } from "@/lib/cms/types";
+import type { Locale } from "@/lib/locales";
+import { Rich } from "./RichText";
+import { alignClass } from "@/lib/cms/align";
 import { SIZES, srcSetFor } from "@/lib/responsive";
 import { CmsIcon } from "./cms/Icon";
 import { Tag, Title } from "./ui";
@@ -28,7 +32,8 @@ export function SectionHeading({
   eyebrow?: string;
   title?: string;
   accent?: string;
-  lead?: string;
+  /** Plain text or a rich text field rendered with <Rich>. */
+  lead?: ReactNode;
   tone?: Tone;
   align?: "split" | "left" | "center";
 }) {
@@ -102,19 +107,33 @@ export const resolveImage = (image: CmsImage | undefined, pick: (v: CmsImage["al
  * Text split into paragraphs on blank lines. A paragraph starting with "## "
  * becomes a small subheading.
  */
-export function Paragraphs({ text, className = "", headingClassName = "heading pt-3 text-xl text-heading" }: { text: string; className?: string; headingClassName?: string }) {
+/** A rich text field split into paragraphs at blank lines; a paragraph starting "## " is a subheading. */
+export function Paragraphs({
+  text,
+  locale,
+  align,
+  className = "",
+  headingClassName = "heading pt-3 text-xl text-heading",
+}: {
+  text: string;
+  locale: Locale;
+  /** Stored `<key>Align` value (lib/cms/align.ts). */
+  align?: unknown;
+  className?: string;
+  headingClassName?: string;
+}) {
   return text
     .split(/\n\s*\n/)
     .map((p) => p.trim())
     .filter(Boolean)
     .map((p, i) =>
       p.startsWith("## ") ? (
-        <h3 key={i} className={headingClassName}>
+        <h3 key={i} className={`${headingClassName} ${alignClass(align)}`}>
           {p.slice(3).trim()}
         </h3>
       ) : (
-        <p key={i} className={className}>
-          {p}
+        <p key={i} className={`${className} ${alignClass(align)}`}>
+          <Rich text={p} locale={locale} />
         </p>
       ),
     );
@@ -130,7 +149,7 @@ export function AccordionCards({
   openFirst = true,
 }: {
   name: string;
-  items: { icon: string; title: string; body: string }[];
+  items: { icon: string; title: string; body: ReactNode }[];
   openFirst?: boolean;
 }) {
   return (
@@ -177,7 +196,7 @@ export function StatCards({ stats }: { stats: { value: string; label: string }[]
   );
 }
 
-export type ProductCardView = { href: string; name: string; latin: string; short: string; image?: { src: string; alt: string }; grades: string[]; cta: string };
+export type ProductCardView = { href: string; name: string; latin: string; short: ReactNode; image?: { src: string; alt: string }; grades: string[]; cta: string };
 
 export function ProductCard({ card }: { card: ProductCardView }) {
   return (

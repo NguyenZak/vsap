@@ -1,12 +1,12 @@
 "use client";
 
-import { useId, useRef, useState } from "react";
+import { useId, useRef, useState, type ReactNode } from "react";
 import { MapPin } from "lucide-react";
 import { gsap, MOTION_OK, prefersReducedMotion, ScrollTrigger, useGSAP } from "@/lib/gsap";
 import { srcSetFor } from "@/lib/responsive";
 import { CmsIcon } from "./cms/Icon";
 
-export type ProcessStep = { icon: string; title: string; body: string; image: { src: string; alt: string } };
+export type ProcessStep = { icon: string; title: string; body: ReactNode; image: { src: string; alt: string } };
 
 /**
  * "How it works" block: a row of step tabs above one large photo with a

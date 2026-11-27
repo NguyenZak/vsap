@@ -1,12 +1,12 @@
 "use client";
 
-import { useId, useRef, useState } from "react";
+import { useId, useRef, useState, type ReactNode } from "react";
 import { Minus, Plus } from "lucide-react";
 import { gsap, prefersReducedMotion, ScrollTrigger, useGSAP } from "@/lib/gsap";
 import { srcSetFor } from "@/lib/responsive";
 import { CmsIcon } from "./cms/Icon";
 
-export type ShowcaseItem = { icon: string; title: string; body: string; image: { src: string; alt: string } };
+export type ShowcaseItem = { icon: string; title: string; body: ReactNode; image: { src: string; alt: string } };
 
 /**
  * Core values as an accordion driving a photo slider: the open item picks the

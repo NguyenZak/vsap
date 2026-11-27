@@ -6,6 +6,7 @@ import { getContent, isPreview } from "@/lib/cms/store";
 import type { L, PageId } from "@/lib/cms/types";
 import { metadataLocale, resolveLocale } from "@/lib/i18n";
 import { mergePageStyle, pageStyleVars } from "@/lib/cms/theme";
+import { plainText } from "@/lib/markdown";
 import { breadcrumbJsonLd, faqJsonLd, jsonLdHtml, pageImage, seoMetadata } from "@/lib/seo";
 
 type Params = Promise<{ locale: string }>;
@@ -22,7 +23,7 @@ export async function CmsPage({ id, params }: { id: PageId; params: Params }) {
   if (id !== "home") jsonLd.push(breadcrumbJsonLd(content, locale, [{ name: ui.nav[id], path: page.path }]));
   const faq = page.sections.find((s) => s.type === "faq" && !s.hidden);
   const faqItems = ((faq?.props.items as { q: L; a: L }[] | undefined) ?? [])
-    .map((f) => ({ q: pick(f.q, locale), a: pick(f.a, locale) }))
+    .map((f) => ({ q: pick(f.q, locale), a: plainText(pick(f.a, locale)) }))
     .filter((f) => f.q && f.a);
   if (faqItems.length) jsonLd.push(faqJsonLd(faqItems));
 

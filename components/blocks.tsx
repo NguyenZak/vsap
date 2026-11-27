@@ -9,6 +9,8 @@ import { emptyPageStyle, sectionStyleVars } from "@/lib/cms/theme";
 import type { CmsImage, L, PageStyle, Post, Section, SectionStyle, SiteContent, UiStrings } from "@/lib/cms/types";
 import { HeroSlider } from "./HeroSlider";
 import { InquiryForm } from "./InquiryForm";
+import { Rich } from "./RichText";
+import { alignClass } from "@/lib/cms/align";
 import { FeaturedPost, PostGrid } from "./PostCards";
 import { ProcessJourney } from "./ProcessJourney";
 import { ProcessTabs } from "./ProcessTabs";
@@ -58,7 +60,19 @@ function makeT(ctx: BlockCtx) {
     return i?.src ? { src: i.src, alt: pick(i.alt, ctx.locale) } : undefined;
   };
   const href = (v: unknown) => localHref(str(v), ctx.locale);
-  return { t, img, href };
+  /**
+   * Rich text field `key` of `o` (bold, italic, links), aligned by its `<key>Align`
+   * setting when one is chosen; null when empty.
+   */
+  const rt = (o: unknown, key: string) => {
+    const rec = (o ?? {}) as P;
+    const s = t(rec[key]);
+    if (!s) return null;
+    const rich = <Rich text={s} locale={ctx.locale} />;
+    const align = alignClass(rec[`${key}Align`]);
+    return align ? <span className={`block ${align}`}>{rich}</span> : rich;
+  };
+  return { t, img, href, rt };
 }
 
 const gradeCount = (c: SiteContent) => c.products.reduce((n, p) => n + (p.grades?.length ?? 0), 0);
@@ -85,8 +99,8 @@ export function toneOf(section: Section): Tone | "none" {
 }
 
 function heading(p: P, ctx: BlockCtx, tone: Tone = "white") {
-  const { t } = makeT(ctx);
-  return <SectionHeading eyebrow={t(p.eyebrow)} title={t(p.title)} accent={t(p.accent)} lead={t(p.lead)} tone={tone} />;
+  const { t, rt } = makeT(ctx);
+  return <SectionHeading eyebrow={t(p.eyebrow)} title={t(p.title)} accent={t(p.accent)} lead={rt(p, "lead")} tone={tone} />;
 }
 
 /**
@@ -111,7 +125,7 @@ type Renderer = (p: P, ctx: BlockCtx, section: Section) => React.ReactNode;
  * optional centred tagline.
  */
 /** FAQ with every answer visible: question on the left, answer on the right (stacked on phones). */
-function OpenFaq({ items }: { items: { title: string; body: string }[] }) {
+function OpenFaq({ items }: { items: { title: string; body: React.ReactNode }[] }) {
   return (
     <dl className="divide-y divide-mist-200/60">
       {items.map((it, i) => (
@@ -130,7 +144,7 @@ function OpenFaq({ items }: { items: { title: string; body: string }[] }) {
  * a two-line button, another rule and the tagline lines.
  */
 function plainCta(p: P, ctx: BlockCtx) {
-  const { t, href } = makeT(ctx);
+  const { t, href, rt } = makeT(ctx);
   const lines = (v: unknown) => t(v as L).split("\n").map((l) => l.trim()).filter(Boolean);
   const tagline = lines(p.tagline);
   const showButton = t(p.buttonLabel) && str(p.buttonHref);
@@ -142,8 +156,8 @@ function plainCta(p: P, ctx: BlockCtx) {
         {t(p.accent) && <p className="mt-3 text-base tracking-wide text-sage-500 uppercase sm:text-lg">{t(p.accent)}</p>}
         {(t(p.lead) || t(p.note) || showButton) && (
           <div className="mt-8 border-t border-mist-200 pt-8">
-            {t(p.lead) && <p className="text-lg leading-relaxed text-ink-900 sm:text-xl">{t(p.lead)}</p>}
-            {t(p.note) && <p className="mt-3 text-sm leading-relaxed text-ink-400 italic sm:text-base">{t(p.note)}</p>}
+            {t(p.lead) && <p className="text-lg leading-relaxed text-ink-900 sm:text-xl">{rt(p, "lead")}</p>}
+            {t(p.note) && <p className="mt-3 text-sm leading-relaxed text-ink-400 italic sm:text-base">{rt(p, "note")}</p>}
             {showButton && (
               <Link
                 href={href(p.buttonHref)}
@@ -156,9 +170,11 @@ function plainCta(p: P, ctx: BlockCtx) {
           </div>
         )}
         {tagline.length > 0 && (
-          <div className="mt-8 space-y-2 border-t border-mist-200 pt-6 text-sm text-ink-600 sm:text-base">
+          <div className={`mt-8 space-y-2 border-t border-mist-200 pt-6 text-sm text-ink-600 sm:text-base ${alignClass(p.taglineAlign)}`}>
             {tagline.map((l, i) => (
-              <p key={i}>{l}</p>
+              <p key={i}>
+                <Rich text={l} locale={ctx.locale} />
+              </p>
             ))}
           </div>
         )}
@@ -168,7 +184,7 @@ function plainCta(p: P, ctx: BlockCtx) {
 }
 
 function stackedImageText(p: P, ctx: BlockCtx, dark: boolean) {
-  const { t, img } = makeT(ctx);
+  const { t, img, rt } = makeT(ctx);
   const cards = list(p.points)
     .map((it) => ({ text: t(it.text), art: str(it.art) }))
     .filter((c) => c.text || c.art);
@@ -177,7 +193,7 @@ function stackedImageText(p: P, ctx: BlockCtx, dark: boolean) {
       <div data-reveal>
         {t(p.eyebrow) && <p className={`text-sm font-bold tracking-wide ${dark ? "text-white/80" : "text-heading"}`}>{t(p.eyebrow)}</p>}
         {t(p.title) && <h2 className={`heading mt-3 text-5xl uppercase sm:text-6xl lg:text-7xl ${dark ? "text-white" : "text-heading"}`}>{t(p.title)}</h2>}
-        {t(p.lead) && <p className={`mt-4 text-xl leading-snug sm:text-2xl ${dark ? "text-white/75" : "text-sage-500"}`}>{t(p.lead)}</p>}
+        {t(p.lead) && <p className={`mt-4 text-xl leading-snug sm:text-2xl ${dark ? "text-white/75" : "text-sage-500"}`}>{rt(p, "lead")}</p>}
       </div>
       {img(p.image) && (
         <div data-reveal="clip" className="relative mt-8 aspect-video overflow-hidden rounded-2xl sm:mt-10 sm:aspect-[3/1]">
@@ -185,7 +201,7 @@ function stackedImageText(p: P, ctx: BlockCtx, dark: boolean) {
         </div>
       )}
       <div data-reveal className={`mt-8 max-w-4xl space-y-4 text-base leading-relaxed sm:text-lg ${dark ? "text-white/85" : "text-ink-900"}`}>
-        <Paragraphs text={t(p.body)} />
+        <Paragraphs text={t(p.body)} align={p.bodyAlign} locale={ctx.locale} />
       </div>
       {cards.length > 0 && (
         <ul className="mt-10 grid gap-x-3 gap-y-8 sm:grid-cols-2">
@@ -203,7 +219,7 @@ function stackedImageText(p: P, ctx: BlockCtx, dark: boolean) {
       )}
       {t(p.tagline) && (
         <p data-reveal className={`mx-auto mt-12 max-w-4xl text-center text-sm font-bold tracking-wide uppercase sm:text-base ${dark ? "text-white/85" : "text-heading"}`}>
-          {t(p.tagline)}
+          {rt(p, "tagline")}
         </p>
       )}
     </div>
@@ -243,7 +259,7 @@ const renderers: Record<string, Renderer> = {
   },
 
   pageHero(p, ctx) {
-    const { t } = makeT(ctx);
+    const { t, rt } = makeT(ctx);
     return (
       <div className="bg-dark-glow relative isolate flex items-end overflow-hidden border-b border-mist-200/40 bg-forest-950">
         <div className="container-page pt-32 pb-14 sm:pt-40 sm:pb-16">
@@ -257,7 +273,7 @@ const renderers: Record<string, Renderer> = {
           </div>
           {t(p.lead) && (
             <p data-intro className="mt-4 max-w-2xl text-sm leading-relaxed text-white/80 sm:text-base">
-              {t(p.lead)}
+              {rt(p, "lead")}
             </p>
           )}
         </div>
@@ -300,8 +316,8 @@ const renderers: Record<string, Renderer> = {
   },
 
   values(p, ctx) {
-    const { t, img } = makeT(ctx);
-    const items = list(p.items).map((v) => ({ icon: str(v.icon), title: t(v.title), body: t(v.body), image: img(v.image) ?? { src: "", alt: "" } }));
+    const { t, img, rt } = makeT(ctx);
+    const items = list(p.items).map((v) => ({ icon: str(v.icon), title: t(v.title), body: rt(v, "body"), image: img(v.image) ?? { src: "", alt: "" } }));
     return (
       <div className="block-pad container-page">
         {heading(p, ctx)}
@@ -315,7 +331,7 @@ const renderers: Record<string, Renderer> = {
   },
 
   process(p, ctx) {
-    const { t, img } = makeT(ctx);
+    const { t, img, rt } = makeT(ctx);
     const rows = list(p.steps);
     const tabs = p.layout === "tabs";
     return (
@@ -325,14 +341,14 @@ const renderers: Record<string, Renderer> = {
           <div className={hasHeading(p, ctx) ? (tabs ? "mt-10" : "mt-12") : ""}>
             {tabs ? (
               <ProcessTabs
-                steps={rows.map((s) => ({ icon: str(s.icon), title: t(s.title), body: t(s.body), image: img(s.image) ?? { src: "", alt: "" } }))}
+                steps={rows.map((s) => ({ icon: str(s.icon), title: t(s.title), body: rt(s, "body"), image: img(s.image) ?? { src: "", alt: "" } }))}
                 autoplay={num(p.autoplay, 1.5)}
                 stepLabel={ctx.ui.common.step}
                 location={t(p.location)}
               />
             ) : (
               <ProcessJourney
-                steps={rows.map((s) => ({ icon: str(s.icon), tag: t(s.tag), title: t(s.title), short: t(s.short), body: t(s.body) }))}
+                steps={rows.map((s) => ({ icon: str(s.icon), tag: t(s.tag), title: t(s.title), short: t(s.short), body: rt(s, "body") }))}
                 stepLabel={ctx.ui.common.step}
                 brand={ctx.content.settings.name}
                 summary={t(p.summary) || t(p.eyebrow)}
@@ -355,7 +371,7 @@ const renderers: Record<string, Renderer> = {
   },
 
   retail(p, ctx, section) {
-    const { t } = makeT(ctx);
+    const { t, rt } = makeT(ctx);
     const tone = toneOf({ id: "", type: "retail", props: p }) as Tone;
     const items = visiblePacks(ctx.content.retailPacks).map((r) => toShopItem(r, ctx.locale));
     // Nut photos at both edges (on unless switched off in Studio); the heading is centred between them.
@@ -373,7 +389,7 @@ const renderers: Record<string, Renderer> = {
     return (
       <div className="block-pad relative overflow-x-clip">
         <div className="container-page relative">
-          {decor ? <SectionHeading eyebrow={t(p.eyebrow)} title={t(p.title)} accent={t(p.accent)} lead={t(p.lead)} tone={tone} align="center" /> : heading(p, ctx, tone)}
+          {decor ? <SectionHeading eyebrow={t(p.eyebrow)} title={t(p.title)} accent={t(p.accent)} lead={rt(p, "lead")} tone={tone} align="center" /> : heading(p, ctx, tone)}
           {items.length > 0 && (
             <div className={hasHeading(p, ctx) ? "mt-12" : ""}>
               {isHome ? (
@@ -394,7 +410,7 @@ const renderers: Record<string, Renderer> = {
 
   // The Products page by group: each product group (Studio › Sản phẩm) with its retail products underneath.
   productGroups(p, ctx) {
-    const { t, img } = makeT(ctx);
+    const { t, img, rt } = makeT(ctx);
     const tone = toneOf({ id: "", type: "productGroups", props: p }) as Tone;
     const dark = tone === "dark";
     const packs = visiblePacks(ctx.content.retailPacks);
@@ -416,7 +432,7 @@ const renderers: Record<string, Renderer> = {
                   )}
                   <div>
                     <h3 className={`heading text-3xl sm:text-4xl ${dark ? "text-white" : "text-heading"}`}>{t(group.name)}</h3>
-                    {t(group.short) && <p className={`mt-2 max-w-2xl text-sm leading-relaxed ${dark ? "text-white/70" : "text-ink-600"}`}>{t(group.short)}</p>}
+                    {t(group.short) && <p className={`mt-2 max-w-2xl text-sm leading-relaxed ${dark ? "text-white/70" : "text-ink-600"}`}>{rt(group, "short")}</p>}
                   </div>
                 </div>
                 <Button href={localHref(`/products/${group.slug}`, ctx.locale)} variant={dark ? "sun" : "dark"} className="shrink-0 self-start sm:self-auto">
@@ -436,12 +452,12 @@ const renderers: Record<string, Renderer> = {
   },
 
   productCards(p, ctx) {
-    const { t, img } = makeT(ctx);
+    const { t, img, rt } = makeT(ctx);
     const cards = ctx.content.products.map((pr) => ({
       href: localHref(`/products/${pr.slug}`, ctx.locale),
       name: t(pr.name),
       latin: pr.latin,
-      short: t(pr.short),
+      short: rt(pr, "short"),
       image: img(pr.image),
       grades: pr.grades.map((g) => g.code),
       cta: t(p.ctaLabel) || ctx.ui.common.viewProduct,
@@ -472,8 +488,8 @@ const renderers: Record<string, Renderer> = {
   },
 
   faq(p, ctx, section) {
-    const { t } = makeT(ctx);
-    const items = list(p.items).map((f) => ({ group: t(f.group), icon: "message-question", title: t(f.q), body: t(f.a) }));
+    const { t, rt } = makeT(ctx);
+    const items = list(p.items).map((f) => ({ group: t(f.group), icon: "message-question", title: t(f.q), body: rt(f, "a") }));
     // "open" (the default, also for sections saved before the option existed): every answer shown, no clicking.
     const open = str(p.layout) !== "accordion";
     // Items that carry a group name are shown as rows: group name on the left, its questions on the right.
@@ -528,7 +544,7 @@ const renderers: Record<string, Renderer> = {
   },
 
   cta(p, ctx) {
-    const { t, img, href } = makeT(ctx);
+    const { t, img, href, rt } = makeT(ctx);
     if (!img(p.image)?.src) return plainCta(p, ctx);
     return (
       <div className="container-page py-16 sm:py-24">
@@ -537,7 +553,7 @@ const renderers: Record<string, Renderer> = {
           <div className="absolute inset-0 -z-10 bg-gradient-to-r from-black/65 via-black/35 to-black/10" />
           <div data-reveal className="max-w-xl">
             <Title title={t(p.title)} accent={t(p.accent)} className="text-4xl text-white sm:text-5xl" />
-            {t(p.lead) && <p className="mt-5 text-sm leading-relaxed text-white/85 sm:text-base">{t(p.lead)}</p>}
+            {t(p.lead) && <p className="mt-5 text-sm leading-relaxed text-white/85 sm:text-base">{rt(p, "lead")}</p>}
             {t(p.buttonLabel) && str(p.buttonHref) && (
               <div className="mt-8 flex flex-wrap gap-3">
                 <Button href={href(p.buttonHref)}>{t(p.buttonLabel)}</Button>
@@ -550,16 +566,18 @@ const renderers: Record<string, Renderer> = {
   },
 
   story(p, ctx) {
-    const { t, img } = makeT(ctx);
+    const { t, img, rt } = makeT(ctx);
     const dark = str(p.tone) === "dark";
     return (
       <div className="block-pad container-page grid gap-10 lg:grid-cols-12 lg:items-start">
         <div data-reveal className="lg:col-span-6">
           {t(p.tag) && <Tag tone={dark ? "glass" : "light"}>{t(p.tag)}</Tag>}
           <div className="mt-6 space-y-5">
-            {t(p.lead) && <p className={`heading text-2xl sm:text-3xl ${dark ? "text-white" : "text-heading"}`}>{t(p.lead)}</p>}
+            {t(p.lead) && <p className={`heading text-2xl sm:text-3xl ${dark ? "text-white" : "text-heading"}`}>{rt(p, "lead")}</p>}
             <Paragraphs
               text={t(p.body)}
+              align={p.bodyAlign}
+              locale={ctx.locale}
               className={`text-base leading-relaxed ${dark ? "text-white/75" : "text-ink-600"}`}
               headingClassName={`heading pt-4 text-xl sm:text-2xl ${dark ? "text-white" : "text-heading"}`}
             />
@@ -578,7 +596,7 @@ const renderers: Record<string, Renderer> = {
   },
 
   pillars(p, ctx) {
-    const { t } = makeT(ctx);
+    const { t, rt } = makeT(ctx);
     const tone = toneOf({ id: "", type: "pillars", props: p }) as Tone;
     const items = list(p.items);
     const cols = items.length >= 4 ? "md:grid-cols-2 lg:grid-cols-4" : items.length === 2 ? "md:grid-cols-2" : "md:grid-cols-3";
@@ -592,7 +610,7 @@ const renderers: Record<string, Renderer> = {
                 <CmsIcon name={str(it.icon)} className="size-5" />
               </span>
               <h3 className={`heading mt-8 text-2xl ${tone === "dark" ? "text-white" : "text-heading"}`}>{t(it.title)}</h3>
-              <p className={`mt-3 text-sm leading-relaxed whitespace-pre-line ${tone === "dark" ? "text-white/70" : "text-ink-600"}`}>{t(it.body)}</p>
+              <p className={`mt-3 text-sm leading-relaxed whitespace-pre-line ${tone === "dark" ? "text-white/70" : "text-ink-600"}`}>{rt(it, "body")}</p>
             </li>
           ))}
         </ul>
@@ -601,9 +619,9 @@ const renderers: Record<string, Renderer> = {
   },
 
   accordionImage(p, ctx, section) {
-    const { t, img } = makeT(ctx);
+    const { t, img, rt } = makeT(ctx);
     const dark = str(p.tone) === "dark";
-    const items = list(p.items).map((it) => ({ icon: str(it.icon), title: t(it.title), body: t(it.body) }));
+    const items = list(p.items).map((it) => ({ icon: str(it.icon), title: t(it.title), body: rt(it, "body") }));
     return (
       <div className="block-pad container-page grid gap-4 lg:grid-cols-2">
         <div>
@@ -611,7 +629,7 @@ const renderers: Record<string, Renderer> = {
             <div data-reveal className="mb-10">
               {t(p.eyebrow) && <Tag tone={dark ? "glass" : "light"}>{t(p.eyebrow)}</Tag>}
               <Title title={t(p.title)} accent={t(p.accent)} className={`mt-4 text-4xl sm:text-5xl ${dark ? "text-white" : "text-heading"}`} />
-              {t(p.lead) && <p className={`mt-5 max-w-md text-sm leading-relaxed ${dark ? "text-white/75" : "text-ink-600"}`}>{t(p.lead)}</p>}
+              {t(p.lead) && <p className={`mt-5 max-w-md text-sm leading-relaxed ${dark ? "text-white/75" : "text-ink-600"}`}>{rt(p, "lead")}</p>}
             </div>
           )}
           <AccordionCards name={`acc-${section.id}`} items={items} />
@@ -624,14 +642,14 @@ const renderers: Record<string, Renderer> = {
   },
 
   checklist(p, ctx) {
-    const { t } = makeT(ctx);
+    const { t, rt } = makeT(ctx);
     const dark = str(p.tone) === "dark";
     return (
       <div className="block-pad container-page grid gap-10 lg:grid-cols-2">
         <div data-reveal>
           {t(p.eyebrow) && <Tag tone={dark ? "glass" : "light"}>{t(p.eyebrow)}</Tag>}
           <Title title={t(p.title)} accent={t(p.accent)} className={`mt-4 text-4xl sm:text-5xl ${dark ? "text-white" : "text-heading"}`} />
-          {t(p.lead) && <p className={`mt-5 max-w-md text-sm leading-relaxed ${dark ? "text-white/75" : "text-ink-600"}`}>{t(p.lead)}</p>}
+          {t(p.lead) && <p className={`mt-5 max-w-md text-sm leading-relaxed ${dark ? "text-white/75" : "text-ink-600"}`}>{rt(p, "lead")}</p>}
         </div>
         <ul className="space-y-2.5">
           {list(p.items).map((it, i) => (
@@ -692,21 +710,21 @@ const renderers: Record<string, Renderer> = {
   },
 
   textBlock(p, ctx) {
-    const { t } = makeT(ctx);
+    const { t, rt } = makeT(ctx);
     const tone = toneOf({ id: "", type: "textBlock", props: p }) as Tone;
     const center = str(p.align) === "center";
     return (
       <div className={`block-pad container-page ${center ? "text-center" : ""}`}>
-        <SectionHeading eyebrow={t(p.eyebrow)} title={t(p.title)} accent={t(p.accent)} lead={t(p.lead)} tone={tone} align={center ? "center" : "left"} />
+        <SectionHeading eyebrow={t(p.eyebrow)} title={t(p.title)} accent={t(p.accent)} lead={rt(p, "lead")} tone={tone} align={center ? "center" : "left"} />
         <div data-reveal className={`mt-8 max-w-3xl space-y-5 text-base leading-relaxed ${center ? "mx-auto" : ""} ${tone === "dark" ? "text-white/80" : "text-ink-600"}`}>
-          <Paragraphs text={t(p.body)} />
+          <Paragraphs text={t(p.body)} align={p.bodyAlign} locale={ctx.locale} />
         </div>
       </div>
     );
   },
 
   imageText(p, ctx) {
-    const { t, img, href } = makeT(ctx);
+    const { t, img, href, rt } = makeT(ctx);
     const tone = toneOf({ id: "", type: "imageText", props: p }) as Tone;
     const imageLeft = str(p.imageSide) === "left";
     const dark = tone === "dark";
@@ -720,9 +738,9 @@ const renderers: Record<string, Renderer> = {
         <div data-reveal>
           {t(p.eyebrow) && <Tag tone={dark ? "glass" : "light"}>{t(p.eyebrow)}</Tag>}
           {(t(p.title) || t(p.accent)) && <Title title={t(p.title)} accent={t(p.accent)} className={`mt-4 text-4xl sm:text-5xl ${dark ? "text-white" : "text-heading"}`} />}
-          {t(p.lead) && <p className={`mt-5 text-base leading-relaxed first:mt-0 sm:text-lg ${dark ? "text-white/85" : "text-ink-900"}`}>{t(p.lead)}</p>}
+          {t(p.lead) && <p className={`mt-5 text-base leading-relaxed first:mt-0 sm:text-lg ${dark ? "text-white/85" : "text-ink-900"}`}>{rt(p, "lead")}</p>}
           <div className={`mt-5 space-y-4 text-sm leading-relaxed ${dark ? "text-white/70" : "text-ink-600"}`}>
-            <Paragraphs text={t(p.body)} />
+            <Paragraphs text={t(p.body)} align={p.bodyAlign} locale={ctx.locale} />
           </div>
           {points.length > 0 && (
             <ul className="mt-6 flex flex-wrap gap-2">

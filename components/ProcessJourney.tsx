@@ -2,7 +2,7 @@ import { ArrowDown, ArrowLeft, ArrowRight } from "lucide-react";
 import type { ReactNode } from "react";
 import { CmsIcon } from "./cms/Icon";
 
-export type JourneyStep = { icon: string; tag: string; title: string; short: string; body: string };
+export type JourneyStep = { icon: string; tag: string; title: string; short: string; body: ReactNode };
 
 // Flat illustration palette (an artwork, so it keeps its colours in dark mode too).
 const OLIVE = "#66774d";

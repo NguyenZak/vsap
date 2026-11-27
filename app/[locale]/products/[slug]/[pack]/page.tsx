@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, permanentRedirect } from "next/navigation";
 import { BadgeCheck, Boxes, ChevronRight, Headset, PackageOpen, RotateCcw, Wallet } from "lucide-react";
+import { Rich } from "@/components/RichText";
+import { alignClass } from "@/lib/cms/align";
 import { BuyBox } from "@/components/shop/BuyBox";
 import { Gallery } from "@/components/shop/Gallery";
 import { MoreText } from "@/components/shop/MoreText";
@@ -11,6 +13,7 @@ import { ShareBar } from "@/components/shop/ShareBar";
 import { pick } from "@/lib/cms/links";
 import { getContent } from "@/lib/cms/store";
 import { metadataLocale, resolveLocale } from "@/lib/i18n";
+import { plainText } from "@/lib/markdown";
 import { breadcrumbJsonLd, jsonLdHtml, seoMetadata } from "@/lib/seo";
 import { legacyPackIds } from "@/lib/retail";
 import { packHref, toShopItem, visiblePacks } from "@/lib/shop";
@@ -38,7 +41,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     locale,
     path: `/products/${pack.product}/${pack.id}`,
     title: name,
-    description: pick(pack.description, locale).split(/\n\s*\n/)[0] || name,
+    description: plainText(pick(pack.description, locale).split(/\n\s*\n/)[0]) || name,
     image: pack.images[0]?.src,
     imageAlt: name,
   });
@@ -94,7 +97,7 @@ export default async function PackPage({ params }: Props) {
     "@context": "https://schema.org",
     "@type": "Product",
     name: [item.name, item.flavor].filter(Boolean).join(" – "),
-    description: description || tr(pack.ingredients),
+    description: plainText(description) || tr(pack.ingredients),
     image: item.images.map((src) => new URL(src, site.url).toString()),
     brand: { "@type": "Brand", name: site.name },
     sku: pack.id,
@@ -189,8 +192,8 @@ export default async function PackPage({ params }: Props) {
                   <div className="space-y-4 text-sm leading-relaxed text-ink-600 sm:text-base">
                     {description ? (
                       description.split(/\n\s*\n/).map((para, i) => (
-                        <p key={i} className="whitespace-pre-line">
-                          {para}
+                        <p key={i} className={`whitespace-pre-line ${alignClass(pack.descriptionAlign)}`}>
+                          <Rich text={para} locale={locale} />
                         </p>
                       ))
                     ) : (

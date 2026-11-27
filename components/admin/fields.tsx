@@ -2,12 +2,13 @@
 
 import { createContext, useContext, useRef, useState } from "react";
 import { locales, type Locale } from "@/lib/locales";
-import { Bold, ChevronDown, ChevronUp, Copy, GripVertical, Heading2, Heading3, ImageIcon, Italic, Link2, List, ListOrdered, Minus, Plus, Quote, Trash2 } from "lucide-react";
+import { AlignCenter, AlignJustify, AlignLeft, AlignRight, Bold, ChevronDown, ChevronUp, Copy, GripVertical, Heading2, Heading3, ImageIcon, Italic, Link2, List, ListOrdered, Minus, Plus, Quote, Trash2 } from "lucide-react";
 import { getIn, type FieldDef } from "@/lib/cms/fields";
 import { iconNames } from "@/lib/cms/icons";
 import { CmsIcon } from "@/components/cms/Icon";
 import { api } from "./api";
 import { MediaPicker } from "./MediaPicker";
+import { alignClass } from "@/lib/cms/align";
 
 type Path = (string | number)[];
 type OnChange = (path: Path, value: unknown) => void;
@@ -118,6 +119,125 @@ function Bilingual({ value, onChange, multiline, rows = 3 }: { value: L; onChang
           )}
         </div>
       ))}
+    </div>
+  );
+}
+
+const richTools: { label: string; icon: typeof Bold; key?: string; edit: Edit }[] = [
+  { label: "Đậm (⌘B)", icon: Bold, key: "b", edit: { before: "**", after: "**", placeholder: "chữ đậm" } },
+  { label: "Nghiêng (⌘I)", icon: Italic, key: "i", edit: { before: "*", after: "*", placeholder: "chữ nghiêng" } },
+  { label: "Liên kết (⌘K)", icon: Link2, key: "k", edit: { before: "[", after: "](/contact)", placeholder: "chữ liên kết" } },
+];
+
+/**
+ * Bilingual text with a small toolbar for inline formatting. The buttons act on the
+ * language box that last had focus, wrapping the selection (or a placeholder).
+ */
+const alignTools = [
+  { value: "left", label: "Căn trái", icon: AlignLeft },
+  { value: "center", label: "Căn giữa", icon: AlignCenter },
+  { value: "right", label: "Căn phải", icon: AlignRight },
+  { value: "justify", label: "Căn đều hai bên", icon: AlignJustify },
+] as const;
+
+function RichBilingual({
+  value,
+  onChange,
+  rows = 3,
+  align,
+  onAlign,
+}: {
+  value: L;
+  onChange: (v: L) => void;
+  rows?: number;
+  /** "" = the section's own alignment; otherwise left / center / right / justify for every language. */
+  align: string;
+  onAlign: (v: string) => void;
+}) {
+  const areas = useRef<Partial<Record<Locale, HTMLTextAreaElement | null>>>({});
+  const [lang, setLang] = useState<Locale>("vi");
+
+  const apply = (target: Locale, { before, after = "", placeholder = "" }: Edit) => {
+    const el = areas.current[target];
+    const text = value[target];
+    const start = el?.selectionStart ?? text.length;
+    const end = el?.selectionEnd ?? text.length;
+    let picked = text.slice(start, end) || placeholder;
+    let tail = after;
+    if (before === "[") {
+      const url = window.prompt("Đường dẫn: trang trong web (/contact, /products) hoặc https://…", "/contact");
+      if (url === null) return;
+      tail = `](${url.trim() || "/"})`;
+      picked = picked.replace(/[[\]]/g, "");
+    }
+    onChange({ ...value, [target]: `${text.slice(0, start)}${before}${picked}${tail}${text.slice(end)}` });
+    requestAnimationFrame(() => {
+      if (!el) return;
+      el.focus();
+      el.setSelectionRange(start + before.length, start + before.length + picked.length);
+    });
+  };
+
+  return (
+    <div className="overflow-hidden rounded-lg border border-mist-200 bg-white focus-within:border-forest-600 focus-within:ring-2 focus-within:ring-sun-400/50">
+      <div className="flex items-center gap-0.5 border-b border-mist-200 bg-mist-50 px-1.5 py-1">
+        {richTools.map((t) => (
+          <button
+            key={t.label}
+            type="button"
+            title={t.label}
+            aria-label={t.label}
+            // Keep the text box's selection: act on mouse down, before focus moves to the button.
+            onMouseDown={(e) => {
+              e.preventDefault();
+              apply(lang, t.edit);
+            }}
+            onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && (e.preventDefault(), apply(lang, t.edit))}
+            className="rounded p-1.5 text-ink-600 hover:bg-white hover:text-ink-900"
+          >
+            <t.icon className="size-4" />
+          </button>
+        ))}
+        <span aria-hidden="true" className="mx-1 h-5 w-px bg-mist-200" />
+        {alignTools.map((t) => (
+          <button
+            key={t.value}
+            type="button"
+            title={align === t.value ? `${t.label} (bấm lần nữa để về mặc định)` : t.label}
+            aria-label={t.label}
+            aria-pressed={align === t.value}
+            onClick={() => onAlign(align === t.value ? "" : t.value)}
+            className={`rounded p-1.5 ${align === t.value ? "bg-white text-ink-900 shadow-sm" : "text-ink-600 hover:bg-white hover:text-ink-900"}`}
+          >
+            <t.icon className="size-4" />
+          </button>
+        ))}
+        <span className="ml-auto hidden truncate pr-1 text-[11px] text-ink-400 sm:inline">**đậm** · *nghiêng* · [chữ](/link)</span>
+      </div>
+      <div className="space-y-1.5 p-1.5">
+        {locales.map((l) => (
+          <div key={l} className="relative">
+            <span className="pointer-events-none absolute top-2 left-2.5 rounded bg-mist-100 px-1 text-[10px] font-semibold text-ink-600 uppercase">{l}</span>
+            <textarea
+              ref={(el) => {
+                areas.current[l] = el;
+              }}
+              value={value[l]}
+              rows={rows}
+              onFocus={() => setLang(l)}
+              onKeyDown={(e) => {
+                if (!(e.metaKey || e.ctrlKey)) return;
+                const tool = richTools.find((t) => t.key === e.key.toLowerCase());
+                if (!tool) return;
+                e.preventDefault();
+                apply(l, tool.edit);
+              }}
+              onChange={(e) => onChange({ ...value, [l]: e.target.value })}
+              className={`${inputCls} resize-y pl-10 leading-relaxed ${alignClass(align)}`}
+            />
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
@@ -369,7 +489,7 @@ function MarkdownField({ value, onChange }: { value: L; onChange: (v: L) => void
   );
 }
 
-function Field({ field, value, path, onChange }: { field: FieldDef; value: unknown; path: Path; onChange: OnChange }) {
+function Field({ field, value, path, onChange, parent }: { field: FieldDef; value: unknown; path: Path; onChange: OnChange; parent?: unknown }) {
   const set = (v: unknown) => onChange(path, v);
   const { categories, fonts } = useContext(FieldData);
   switch (field.type) {
@@ -425,6 +545,20 @@ function Field({ field, value, path, onChange }: { field: FieldDef; value: unkno
         </label>
       );
     }
+    case "richtext":
+      return (
+        <div>
+          <Label field={field} />
+          <RichBilingual
+            value={asL(value)}
+            onChange={set}
+            rows={field.rows}
+            align={String(getIn(parent, [`${field.key}Align`]) ?? "")}
+            onAlign={(v) => onChange([...path.slice(0, -1), `${field.key}Align`], v)}
+          />
+          <Help text={field.help} />
+        </div>
+      );
     case "text":
     case "textarea":
       return (
@@ -546,7 +680,7 @@ export function FieldForm({ fields, value, path = [], onChange }: { fields: Fiel
   return (
     <div className="space-y-4">
       {fields.map((f) => (
-        <Field key={f.key} field={f} value={getIn(value, [f.key])} path={[...path, f.key]} onChange={onChange} />
+        <Field key={f.key} field={f} value={getIn(value, [f.key])} path={[...path, f.key]} onChange={onChange} parent={value} />
       ))}
     </div>
   );

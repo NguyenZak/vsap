@@ -238,6 +238,9 @@ export type Product = {
   latin: string;
   short: L;
   description: L;
+  /** Rich text alignment from Studio (lib/cms/align.ts); absent = default. */
+  shortAlign?: string;
+  descriptionAlign?: string;
   origin: L;
   image: CmsImage;
   gallery: CmsImage[];
@@ -268,6 +271,7 @@ export type RetailPack = {
   hidden: boolean;
   /** Longer text for the pack's own page; blank lines start new paragraphs. */
   description: L;
+  descriptionAlign?: string;
   images: { src: string }[];
   ingredients: L;
   highlight: L;

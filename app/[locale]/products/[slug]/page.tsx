@@ -3,6 +3,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, MapPin, Package } from "lucide-react";
 import { InquiryForm } from "@/components/InquiryForm";
+import { Rich } from "@/components/RichText";
+import { alignClass } from "@/lib/cms/align";
 import { ProductGrid } from "@/components/shop/ProductGrid";
 import { CmsImg, Paragraphs, SectionHeading } from "@/components/sections";
 import { Button, Title } from "@/components/ui";
@@ -10,6 +12,7 @@ import { inquiryProducts } from "@/lib/cms/inquiry-format";
 import { pick } from "@/lib/cms/links";
 import { getContent } from "@/lib/cms/store";
 import { metadataLocale, resolveLocale } from "@/lib/i18n";
+import { plainText as stripMarks } from "@/lib/markdown";
 import { breadcrumbJsonLd, jsonLdHtml, seoMetadata } from "@/lib/seo";
 import { toShopItem, visiblePacks } from "@/lib/shop";
 
@@ -34,7 +37,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     locale,
     path: `/products/${product.slug}`,
     title: pick(product.seo?.title, locale) || pick(product.name, locale),
-    description: pick(product.seo?.description, locale) || pick(product.short, locale),
+    description: pick(product.seo?.description, locale) || plainText(pick(product.short, locale)),
     image: product.image?.src,
     imageAlt: pick(product.image?.alt, locale),
   });
@@ -89,8 +92,8 @@ export default async function ProductPage({ params }: Props) {
             {tr(product.name)}
             {product.latin && <span className="accent block text-[0.6em] leading-tight text-white/85">{product.latin}</span>}
           </h1>
-          <p data-intro className="mt-5 max-w-xl text-sm leading-relaxed text-white/85 sm:text-base">
-            {tr(product.short)}
+          <p data-intro className={`mt-5 max-w-xl text-sm leading-relaxed text-white/85 sm:text-base ${alignClass(product.shortAlign)}`}>
+            <Rich text={tr(product.short)} locale={locale} />
           </p>
           <div data-intro className="mt-8 flex flex-wrap gap-3">
             <Button href="#inquiry">{ui.common.requestQuote}</Button>
@@ -104,10 +107,12 @@ export default async function ProductPage({ params }: Props) {
             {/* One plain paragraph reads as a big statement; a longer text ("## " heading, blank-line paragraphs) as an article. */}
             {/^## |\n\s*\n/.test(tr(product.description).trim()) ? (
               <div className="space-y-4 text-base leading-relaxed text-ink-600 sm:text-lg">
-                <Paragraphs text={tr(product.description)} headingClassName="heading text-3xl text-heading sm:text-4xl" />
+                <Paragraphs text={tr(product.description)} locale={locale} align={product.descriptionAlign} headingClassName="heading text-3xl text-heading sm:text-4xl" />
               </div>
             ) : (
-              <p className="heading text-2xl text-heading sm:text-3xl">{tr(product.description)}</p>
+              <p className={`heading text-2xl text-heading sm:text-3xl ${alignClass(product.descriptionAlign)}`}>
+                <Rich text={tr(product.description)} locale={locale} />
+              </p>
             )}
             {tr(product.origin) && (
               <p className="mt-8 inline-flex items-start gap-3 rounded-2xl bg-surface p-2 pr-5 text-sm text-ink-600">
@@ -233,11 +238,13 @@ export default async function ProductPage({ params }: Props) {
   );
 }
 
-/** Description without "## " heading lines, as one paragraph (structured data). */
+/** Description without "## " heading lines or formatting marks, as one paragraph (structured data, meta). */
 function plainText(text: string) {
-  return text
-    .split(/\n\s*\n/)
-    .map((p) => p.trim())
-    .filter((p) => p && !p.startsWith("## "))
-    .join(" ");
+  return stripMarks(
+    text
+      .split(/\n\s*\n/)
+      .map((p) => p.trim())
+      .filter((p) => p && !p.startsWith("## "))
+      .join(" "),
+  );
 }

@@ -16,7 +16,7 @@ export type SectionDef = {
 const iconItem = (titleLabel = "Tiêu đề"): FieldDef[] => [
   { key: "icon", label: "Biểu tượng", type: "icon" },
   { key: "title", label: titleLabel, type: "text" },
-  { key: "body", label: "Nội dung", type: "textarea", rows: 3 },
+  { key: "body", label: "Nội dung", type: "richtext", rows: 3 },
 ];
 
 const button = (prefix = ""): FieldDef[] => [
@@ -303,7 +303,7 @@ export const sectionDefs: SectionDef[] = [
         fields: [
           { key: "group", label: "Nhóm", type: "text", help: "Không bắt buộc. Các câu liền nhau cùng tên nhóm hiện chung một hàng; để trống tất cả thì hiện hai cột." },
           { key: "q", label: "Câu hỏi", type: "text" },
-          { key: "a", label: "Trả lời", type: "textarea", rows: 4 },
+          { key: "a", label: "Trả lời", type: "richtext", rows: 4 },
         ],
         newItem: () => ({ group: l(""), q: l("Câu hỏi mới?", "New question?"), a: l("Câu trả lời.", "The answer.") }),
       },
@@ -319,11 +319,11 @@ export const sectionDefs: SectionDef[] = [
       { key: "eyebrow", label: "Dòng trên tiêu đề", type: "text", help: "Chỉ hiện khi không có ảnh nền, ví dụ VSAP." },
       { key: "title", label: "Tiêu đề", type: "text" },
       { key: "accent", label: "Tiêu đề (dòng nghiêng)", type: "text", help: "Không có ảnh nền: hiện thành dòng phụ chữ in hoa dưới tiêu đề." },
-      { key: "lead", label: "Mô tả", type: "textarea", rows: 3 },
-      { key: "note", label: "Dòng phụ (nghiêng)", type: "textarea", rows: 2, help: "Chỉ hiện khi không có ảnh nền, ví dụ bản tiếng Anh của mô tả." },
+      { key: "lead", label: "Mô tả", type: "richtext", rows: 3 },
+      { key: "note", label: "Dòng phụ (nghiêng)", type: "richtext", rows: 2, help: "Chỉ hiện khi không có ảnh nền, ví dụ bản tiếng Anh của mô tả." },
       ...button(),
       { key: "buttonSub", label: "Dòng phụ của nút", type: "text", help: "Chỉ hiện khi không có ảnh nền." },
-      { key: "tagline", label: "Khẩu hiệu cuối", type: "textarea", rows: 2, help: "Chỉ hiện khi không có ảnh nền. Mỗi dòng một câu." },
+      { key: "tagline", label: "Khẩu hiệu cuối", type: "richtext", rows: 2, help: "Chỉ hiện khi không có ảnh nền. Mỗi dòng một câu." },
       { key: "image", label: "Ảnh nền", type: "image", help: "Để trống = khung nền sáng, chữ căn giữa." },
     ],
     create: () => ({
@@ -346,8 +346,8 @@ export const sectionDefs: SectionDef[] = [
     icon: "book-open",
     fields: [
       { key: "tag", label: "Nhãn nhỏ", type: "text" },
-      { key: "lead", label: "Đoạn mở đầu (chữ lớn)", type: "textarea", rows: 3 },
-      { key: "body", label: "Đoạn tiếp theo", type: "textarea", rows: 8, help: "Xuống dòng hai lần để tách đoạn. Đoạn bắt đầu bằng \"## \" hiện thành tiêu đề nhỏ." },
+      { key: "lead", label: "Đoạn mở đầu (chữ lớn)", type: "richtext", rows: 3 },
+      { key: "body", label: "Đoạn tiếp theo", type: "richtext", rows: 8, help: "Xuống dòng hai lần để tách đoạn. Đoạn bắt đầu bằng \"## \" hiện thành tiêu đề nhỏ." },
       { key: "imageA", label: "Ảnh 1", type: "image" },
       { key: "imageB", label: "Ảnh 2", type: "image" },
       toneField,
@@ -429,7 +429,7 @@ export const sectionDefs: SectionDef[] = [
     icon: "text",
     fields: [
       ...headingFields(),
-      { key: "body", label: "Nội dung", type: "textarea", rows: 8, help: "Xuống dòng hai lần để tách đoạn." },
+      { key: "body", label: "Nội dung", type: "richtext", rows: 8, help: "Xuống dòng hai lần để tách đoạn." },
       { key: "align", label: "Căn chỉnh", type: "select", options: [{ value: "left", label: "Trái" }, { value: "center", label: "Giữa" }] },
       toneField,
     ],
@@ -451,7 +451,7 @@ export const sectionDefs: SectionDef[] = [
         ],
       },
       ...headingFields(),
-      { key: "body", label: "Nội dung", type: "textarea", rows: 6, help: "Xuống dòng hai lần để tách đoạn." },
+      { key: "body", label: "Nội dung", type: "richtext", rows: 6, help: "Xuống dòng hai lần để tách đoạn." },
       {
         key: "points",
         label: "Điểm nhấn",

@@ -9,6 +9,8 @@ export type FieldDef =
   | (Base & { type: "text" })
   /** Several lines in both languages. */
   | (Base & { type: "textarea"; rows?: number })
+  /** Several lines in every language with bold / italic / link buttons (components/RichText.tsx renders it). */
+  | (Base & { type: "richtext"; rows?: number })
   /** Language-neutral single line (codes, numbers shown as text, names). */
   | (Base & { type: "string"; placeholder?: string })
   /** `zeroIsDefault`: stored 0 means "design default" and shows as an empty box. */
@@ -50,7 +52,7 @@ export function headingFields(): FieldDef[] {
     { key: "eyebrow", label: "Nhãn nhỏ", type: "text" },
     { key: "title", label: "Tiêu đề", type: "text" },
     { key: "accent", label: "Tiêu đề (dòng nghiêng)", type: "text", help: "Dòng chữ serif nghiêng dưới tiêu đề." },
-    { key: "lead", label: "Mô tả ngắn", type: "textarea", rows: 3 },
+    { key: "lead", label: "Mô tả ngắn", type: "richtext", rows: 3 },
   ];
 }
 
