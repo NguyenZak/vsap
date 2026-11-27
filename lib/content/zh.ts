@@ -120,7 +120,6 @@ export const zh: Dictionary = {
       shelfLife: "保质期",
       serving: "食用建议",
       storage: "储存方法",
-      packedBy: "包装地",
       standard: "执行标准",
       view: "查看详情",
       detailTitle: "包装产品",

@@ -20,8 +20,6 @@ export type RetailPack = {
   /** Per 100 g, as printed on the label. Omitted when the label is not legible. */
   nutrition?: { energy: string; fat: string; carbs: string; protein: string };
   highlight?: L;
-  /** Who packed it, when the label names someone other than the product's usual packer. */
-  packer?: keyof typeof packers;
   /** Text for the product page (Vietnamese and English; the other languages show English). */
   description?: Pick<L, "vi" | "en">;
 };
@@ -465,25 +463,3 @@ export const wholesalePrices: Record<string, number> = {
   "dhckv430-w180": 132000,
 };
 
-/** Contract packers printed on the labels. */
-export const packers = {
-  macadamia: {
-    name: "Công ty TNHH Fine Farm",
-    address: { vi: "02-D1 Buôn KoTam, phường Tân An, tỉnh Đắk Lắk", en: "02-D1 Buon KoTam, Tan An Ward, Dak Lak Province", zh: "越南多乐省 Tân An 坊 Buôn KoTam 02-D1号", ja: "ベトナム ダクラク省 Tân An 坊 Buôn KoTam 02-D1", ko: "베트남 닥락성 Tân An 동 Buôn KoTam 02-D1" },
-  },
-  cashew: {
-    name: "Công ty TNHH MTV DV XNK Hoàng Khang",
-    address: { vi: "Số 300, KP Phước Vĩnh, phường Phước Vĩnh, TP. Đồng Nai", en: "300 Phuoc Vinh Quarter, Phuoc Vinh Ward, Dong Nai", zh: "越南同奈市 Phước Vĩnh 坊 Phước Vĩnh 街区300号", ja: "ベトナム ドンナイ市 Phước Vĩnh 坊 Phước Vĩnh 街区 300番地", ko: "베트남 동나이시 Phước Vĩnh 동 Phước Vĩnh 구역 300번지" },
-  },
-  /** Printed as "Sản xuất tại" on the 250 g pouch. */
-  cashewDongPhu: {
-    name: "Chi nhánh Công ty TNHH Thực phẩm Đồng Phú",
-    address: {
-      vi: "Số 30 đường Nguyễn Chí Thanh, khu phố Phú Cường, phường Bình Phước, TP. Đồng Nai",
-      en: "30 Nguyen Chi Thanh Street, Phu Cuong Quarter, Binh Phuoc Ward, Dong Nai",
-      zh: "越南同奈市 Bình Phước 坊 Phú Cường 街区 Nguyễn Chí Thanh 路30号",
-      ja: "ベトナム ドンナイ市 Bình Phước 坊 Phú Cường 街区 Nguyễn Chí Thanh 通り30番地",
-      ko: "베트남 동나이시 Bình Phước 동 Phú Cường 구역 Nguyễn Chí Thanh 거리 30번지",
-    },
-  },
-} satisfies Record<RetailPack["slug"] | "cashewDongPhu", { name: string; address: L }>;

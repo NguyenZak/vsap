@@ -81,8 +81,6 @@ export const retailFields: FieldDef[] = [
   { key: "shelfLife", label: "Hạn sử dụng", type: "text" },
   { key: "serving", label: "Khuyên dùng", type: "text", help: "Để trống để ẩn." },
   { key: "storage", label: "Bảo quản", type: "textarea", rows: 2 },
-  { key: "packer", label: "Đơn vị đóng gói", type: "string" },
-  { key: "packerAddress", label: "Địa chỉ đơn vị đóng gói", type: "text" },
   {
     key: "nutrition",
     label: "Dinh dưỡng trong 100 g",
@@ -115,8 +113,6 @@ export const newRetailPack = () => ({
   shelfLife: l("12 tháng kể từ ngày sản xuất", "12 months from production date"),
   serving: l(""),
   storage: l("Bảo quản nơi khô ráo, thoáng mát.", "Store in a cool, dry place."),
-  packer: "",
-  packerAddress: l(""),
   nutrition: { energy: "", fat: "", carbs: "", protein: "" },
 });
 

@@ -79,7 +79,6 @@ export default async function PackPage({ params }: Props) {
     [r.shelfLife, tr(pack.shelfLife)],
     [r.serving, tr(pack.serving)],
     [r.storage, tr(pack.storage)],
-    [r.packedBy, [pack.packer, tr(pack.packerAddress)].filter(Boolean).join(" · ")],
   ].filter(([, value]) => value);
   const description = tr(pack.description).trim();
   const perks = [

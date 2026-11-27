@@ -88,7 +88,6 @@ const keyLabels: Record<string, string> = {
   shelfLife: "Hạn sử dụng",
   serving: "Khuyên dùng",
   storage: "Bảo quản",
-  packedBy: "Đóng gói tại",
   view: "Xem chi tiết",
   news: "Tin tức",
   health: "Sức khỏe và đời sống",

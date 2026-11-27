@@ -11,7 +11,7 @@ import { images, type ImageKey } from "../images";
 import { partners } from "../partners";
 import { policies, UPDATED as POLICIES_UPDATED } from "../content/policies";
 import { products } from "../products";
-import { packers, priceListIds, retailFacts, retailPacks, tempPrices, wholesalePrices } from "../retail";
+import { priceListIds, retailFacts, retailPacks, tempPrices, wholesalePrices } from "../retail";
 import { site } from "../site";
 import { emptyL, locales, type Locale } from "../locales";
 import { emptyButtonStyle, emptyMenuStyle, emptyPageStyle } from "./theme";
@@ -441,7 +441,6 @@ function ui(d: Dict): UiStrings {
       shelfLife: home.retail.shelfLife,
       serving: home.retail.serving,
       storage: home.retail.storage,
-      packedBy: home.retail.packedBy,
     },
     shop: (({ from: _from, size: _size, required: _required, ...shop }) => shop)(d.shop),
   };
@@ -516,8 +515,6 @@ export function defaultContent(): SiteContent {
       shelfLife: { ...retailFacts.shelfLife },
       serving: r.slug === "macadamia" ? { ...retailFacts.serving } : blank(),
       storage: { ...retailFacts.storage },
-      packer: packers[r.packer ?? r.slug].name,
-      packerAddress: { ...packers[r.packer ?? r.slug].address },
       nutrition: r.nutrition ? { ...r.nutrition } : { energy: "", fat: "", carbs: "", protein: "" },
     })),
     partners: partners.map((p) => ({ name: p.name, logo: p.logo ?? "", url: p.url ?? "" })),

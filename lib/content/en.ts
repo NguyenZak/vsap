@@ -120,7 +120,6 @@ export const en: Dictionary = {
       shelfLife: "Shelf life",
       serving: "Serving",
       storage: "Storage",
-      packedBy: "Packed by",
       standard: "Standard",
       view: "View details",
       detailTitle: "Packaged products",

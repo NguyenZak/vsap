@@ -70,7 +70,7 @@ export type UiStrings = {
   news: { readMore: string; back: string; published: string; minutes: string; more: string; empty: string; ctaTitle: string; ctaBody: string };
   retail: {
     ingredients: string; nutrition: string; energy: string; fat: string; carbs: string; protein: string;
-    shelfLife: string; serving: string; storage: string; packedBy: string;
+    shelfLife: string; serving: string; storage: string;
   };
   /** Retail shop: product cards, quick view, product page, cart and checkout. */
   shop: {
@@ -274,8 +274,6 @@ export type RetailPack = {
   shelfLife: L;
   serving: L;
   storage: L;
-  packer: string;
-  packerAddress: L;
   /** Per 100 g; leave all empty to hide the nutrition table. */
   nutrition: { energy: string; fat: string; carbs: string; protein: string };
 };

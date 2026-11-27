@@ -123,7 +123,6 @@ export const vi = {
       shelfLife: "Hạn sử dụng",
       serving: "Khuyên dùng",
       storage: "Bảo quản",
-      packedBy: "Đóng gói tại",
       standard: "Tiêu chuẩn",
       view: "Xem chi tiết",
       detailTitle: "Sản phẩm đóng gói",

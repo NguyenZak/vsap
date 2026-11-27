@@ -101,8 +101,8 @@ export function siteUrl(value: unknown, fallback: string): string {
  * ([{ weight, price }]); keep the first size's price and drop the sizes.
  */
 export function normalizePack(raw: RetailPack): RetailPack {
-  const legacy = raw as RetailPack & { weights?: unknown; variants?: unknown };
-  const { weights: _weights, variants, ...pack } = legacy;
+  const legacy = raw as RetailPack & { weights?: unknown; variants?: unknown; packer?: unknown; packerAddress?: unknown };
+  const { weights: _weights, variants, packer: _packer, packerAddress: _packerAddress, ...pack } = legacy;
   const first = Array.isArray(variants) ? variants.find(isObject) : undefined;
   const price = validPrice(pack.price) ? pack.price : first && validPrice(first.price) ? first.price : undefined;
   return {

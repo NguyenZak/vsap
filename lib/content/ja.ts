@@ -120,7 +120,6 @@ export const ja: Dictionary = {
       shelfLife: "賞味期限",
       serving: "おすすめの召し上がり方",
       storage: "保存方法",
-      packedBy: "包装地",
       standard: "規格基準",
       view: "詳細を見る",
       detailTitle: "包装製品",

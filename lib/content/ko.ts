@@ -120,7 +120,6 @@ export const ko: Dictionary = {
       shelfLife: "유통기한",
       serving: "섭취 방법",
       storage: "보관 방법",
-      packedBy: "포장 장소",
       standard: "기준",
       view: "상세 보기",
       detailTitle: "포장 제품",
