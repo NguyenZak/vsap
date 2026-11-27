@@ -96,6 +96,23 @@ body {
 }
 
 /*
+ * Body text on the public site is 1px smaller on desktop (1024px and up):
+ * xs 11px, sm 13px, base 15px, lg 17px, xl 19px. Phones and tablets keep
+ * Tailwind's sizes. Set on the site's <body> (class "site-text"), so Studio is
+ * unaffected; a page or theme text scale (Studio › Giao diện) sets these inline and wins.
+ */
+@media (width >= 64rem) {
+  .site-text {
+    --text-xs: 0.6875rem;
+    --text-sm: 0.8125rem;
+    --text-base: 0.9375rem;
+    --text-lg: 1.0625rem;
+    --text-xl: 1.1875rem;
+    font-size: var(--text-base);
+  }
+}
+
+/*
  * Display sizes, a notch below Tailwind's defaults so titles stay compact.
  * Phones (below the sm breakpoint) step down further so section titles fit two
  * or three lines. Keep in step with HEADING_SIZES in lib/cms/theme.ts.

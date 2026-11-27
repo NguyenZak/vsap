@@ -40,7 +40,7 @@ export default async function ComingSoonLayout({ children, params }: Props) {
   const locale = resolveLocale((await params).locale);
   return (
     <html lang={localeInfo[locale].html} className={`${font.variable} ${display.variable} ${phudu.variable}`}>
-      <body className="min-h-dvh bg-forest-950">{children}</body>
+      <body className="site-text min-h-dvh bg-forest-950">{children}</body>
     </html>
   );
 }

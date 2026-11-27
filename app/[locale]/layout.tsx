@@ -122,7 +122,7 @@ export default async function LocaleLayout({ children, params }: Props) {
         {customFaces && <style dangerouslySetInnerHTML={{ __html: customFaces }} />}
       </head>
       {/* Theme › fonts and text sizes apply everywhere, header and footer included. */}
-      <body className="flex min-h-dvh flex-col" style={{ ...pageStyleVars(theme.page), ...buttons.style }} {...buttons.attrs}>
+      <body className="site-text flex min-h-dvh flex-col" style={{ ...pageStyleVars(theme.page), ...buttons.style }} {...buttons.attrs}>
         <CartProvider
           locale={locale}
           t={ui.shop}
