@@ -117,7 +117,7 @@ function OpenFaq({ items }: { items: { title: string; body: string }[] }) {
       {items.map((it, i) => (
         <div key={i} data-reveal className="grid gap-2 py-6 first:pt-0 last:pb-0 md:grid-cols-5 md:gap-8">
           <dt className="text-base leading-snug font-medium text-heading md:col-span-2">{it.title}</dt>
-          <dd className="text-[15px] leading-relaxed whitespace-pre-line text-ink-600 md:col-span-3">{it.body}</dd>
+          <dd className="text-[15px] lg:text-[14px] leading-relaxed whitespace-pre-line text-ink-600 md:col-span-3">{it.body}</dd>
         </div>
       ))}
     </dl>

@@ -96,18 +96,28 @@ body {
 }
 
 /*
- * Body text on the public site is 1px smaller on desktop (1024px and up):
- * xs 11px, sm 13px, base 15px, lg 17px, xl 19px. Phones and tablets keep
- * Tailwind's sizes. Set on the site's <body> (class "site-text"), so Studio is
- * unaffected; a page or theme text scale (Studio › Giao diện) sets these inline and wins.
+ * On desktop (1024px and up) the public site's text is smaller: body sizes by
+ * 2px (xs 10px, sm 12px, base 14px, lg 16px, xl 18px), headings and the menu by
+ * 1px (--desk-shrink). Phones and tablets keep the sizes above. Set on the site's
+ * <body> (class "site-text"), so Studio is unaffected; a page or theme scale
+ * (Studio › Giao diện) sets the --text-* variables inline and wins.
  */
 @media (width >= 64rem) {
   .site-text {
-    --text-xs: 0.6875rem;
-    --text-sm: 0.8125rem;
-    --text-base: 0.9375rem;
-    --text-lg: 1.0625rem;
-    --text-xl: 1.1875rem;
+    --desk-shrink: 1px;
+    --text-xs: 0.625rem;
+    --text-sm: 0.75rem;
+    --text-base: 0.875rem;
+    --text-lg: 1rem;
+    --text-xl: 1.125rem;
+    --text-2xl: calc(1.375rem - 1px);
+    --text-3xl: calc(1.625rem - 1px);
+    --text-4xl: calc(1.875rem - 1px);
+    --text-5xl: calc(2.5rem - 1px);
+    --text-6xl: calc(3rem - 1px);
+    --text-7xl: calc(3.5rem - 1px);
+    --text-8xl: calc(4.5rem - 1px);
+    --text-9xl: calc(8rem - 1px);
     font-size: var(--text-base);
   }
 }
@@ -361,7 +371,7 @@ section[data-frame="box"] {
   text-transform: var(--menu-case, none);
 }
 .menu-link {
-  font-size: var(--menu-size, 0.875rem);
+  font-size: calc(var(--menu-size, 0.875rem) - var(--desk-shrink, 0px));
 }
 header:not([data-solid]) .menu-link:not([aria-current]) {
   color: var(--menu-color, rgb(255 255 255 / 0.9));

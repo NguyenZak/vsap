@@ -143,7 +143,7 @@ export function Footer({ locale, content, ui }: Props) {
 
       <p
         aria-hidden="true"
-        className="accent container-page select-none overflow-hidden pb-4 text-[8.5vw] leading-none whitespace-nowrap text-white/[0.08] xl:text-[7rem]"
+        className="accent container-page select-none overflow-hidden pb-4 text-[8.5vw] leading-none whitespace-nowrap text-white/[0.08] xl:text-[calc(7rem_-_1px)]"
       >
         {site.tagline}
       </p>

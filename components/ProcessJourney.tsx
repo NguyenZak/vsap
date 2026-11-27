@@ -141,7 +141,7 @@ function Summary({ steps, brand, title }: { steps: JourneyStep[]; brand: string;
   });
   const box = ({ step, i }: { step: JourneyStep; i: number }) => (
     <li key={i} className="flex min-h-20 flex-1 flex-col items-center justify-center gap-1.5 rounded-xl bg-[#e4e4d4] px-1 py-3 text-center dark:bg-mist-200">
-      <span className="grid size-7 place-items-center rounded-full bg-forest-700 text-[11px] font-bold text-white dark:text-forest-950">{num(i)}</span>
+      <span className="grid size-7 place-items-center rounded-full bg-forest-700 text-[11px] lg:text-[10px] font-bold text-white dark:text-forest-950">{num(i)}</span>
       <span className="text-[11px] leading-tight font-semibold text-ink-900 sm:text-xs">{step.short || step.title}</span>
     </li>
   );

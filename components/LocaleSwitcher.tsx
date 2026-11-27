@@ -83,7 +83,7 @@ export function LocaleSwitcher({ locale }: { locale: Locale }) {
             >
               <span>
                 {names[l]}
-                <span className="ml-1.5 text-[11px] text-ink-400 uppercase">{l}</span>
+                <span className="ml-1.5 text-[11px] lg:text-[10px] text-ink-400 uppercase">{l}</span>
               </span>
               {l === locale && <Check className="size-4" aria-hidden="true" />}
             </Link>

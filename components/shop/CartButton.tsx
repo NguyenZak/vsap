@@ -26,7 +26,7 @@ export function CartButton() {
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.4, opacity: 0 }}
             transition={{ type: "spring", stiffness: 500, damping: 18 }}
-            className="absolute -top-1 -right-1 grid h-5 min-w-5 place-items-center rounded-full bg-chili-600 px-1 text-[0.7rem] font-semibold text-white tabular-nums"
+            className="absolute -top-1 -right-1 grid h-5 min-w-5 place-items-center rounded-full bg-chili-600 px-1 text-[0.7rem] lg:text-[calc(0.7rem_-_1px)] font-semibold text-white tabular-nums"
           >
             {count > 99 ? "99+" : count}
           </motion.span>

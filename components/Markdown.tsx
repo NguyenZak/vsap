@@ -56,7 +56,7 @@ function Inlines({ nodes, locale }: { nodes: Inline[]; locale: Locale }) {
 export function Markdown({ source, locale }: { source: string; locale: Locale }) {
   const blocks = parseMarkdown(source);
   return (
-    <div className="space-y-6 text-base leading-[1.8] text-ink-600 sm:text-[1.0625rem]">
+    <div className="space-y-6 text-base leading-[1.8] text-ink-600 sm:text-[1.0625rem] lg:text-[1rem]">
       {blocks.map((b, i) => {
         switch (b.t) {
           case "h": {
